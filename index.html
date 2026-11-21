@@ -310,20 +310,20 @@
       min-width: 0;
     }
     .card-step-btn {
-      width: 21px;
-      height: 24px;
+      width: 26px;
+      height: 28px;
       flex-shrink: 0;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid #262b36;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #2a303d;
       color: #f5a623;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 700;
       line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      touch-action: manipulation;
+      touch-action: pan-y;
     }
     .card-step-btn:active {
       background: rgba(245, 166, 35, 0.2);
@@ -576,6 +576,124 @@
       font-size: 11px;
     }
 
+    /* Half Frame 2-in-1 Lab Bar */
+    .hf-lab-bar {
+      width: 100%;
+      padding: 4px 10px;
+      flex-shrink: 0;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: #0d1016;
+      border-top: 1px solid #1b202b;
+      z-index: 12;
+    }
+    .hf-lab-bar.visible {
+      display: flex;
+    }
+    .hf-lab-slots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      flex: 1;
+    }
+    .hf-slot-btn {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 7px;
+      background: #161a23;
+      border: 1px solid #2a303d;
+      color: var(--text-secondary);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 128px;
+    }
+    .hf-slot-btn.has-photo {
+      color: #f3f4f6;
+      border-color: rgba(245, 166, 35, 0.45);
+    }
+    .hf-slot-btn.needs-photo {
+      color: #f5a623;
+      border-style: dashed;
+      border-color: rgba(245, 166, 35, 0.72);
+      background: rgba(245, 166, 35, 0.1);
+    }
+    .hf-swap-btn {
+      width: 26px;
+      height: 24px;
+      flex-shrink: 0;
+      border-radius: 7px;
+      background: #161a23;
+      border: 1px solid #2a303d;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hf-swap-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .hf-mode-pill {
+      height: 24px;
+      padding: 0 8px;
+      flex-shrink: 0;
+      border-radius: 7px;
+      background: rgba(245, 166, 35, 0.14);
+      border: 1px solid rgba(245, 166, 35, 0.65);
+      color: #f5a623;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .hf-mode-pill:not(.active) {
+      background: #161a23;
+      border-color: #2a303d;
+      color: var(--text-secondary);
+    }
+    .hf-sample-target-bar {
+      display: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .hf-sample-target-bar.visible {
+      display: grid;
+    }
+    .hf-target-chip {
+      height: 30px;
+      border-radius: 8px;
+      background: #171a22;
+      border: 1px solid #292f3b;
+      color: var(--text-secondary);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .hf-target-chip.active {
+      background: rgba(245, 166, 35, 0.16);
+      border-color: #f5a623;
+      color: #f5a623;
+    }
+
     .hold-badge {
       position: absolute;
       top: 10px;
@@ -623,6 +741,32 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 4px;
       width: 100%;
+    }
+    .tweak-frame-grid {
+      display: none;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      width: 100%;
+    }
+    .tweak-frame-grid.open {
+      display: grid;
+    }
+    .tweak-frame-chip {
+      height: 30px;
+      border-radius: 7px;
+      background: #0d0f14;
+      border: 1px solid #232834;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tweak-frame-chip.active {
+      border-color: #f5a623;
+      background: rgba(245, 166, 35, 0.16);
+      color: #f5a623;
     }
     .tweak-sub-pill {
       min-width: 0;
@@ -1020,8 +1164,8 @@
     .vf-hf-ghost {
       display: none;
       position: absolute;
-      top: 32px;
-      left: 6px;
+      top: 10px;
+      left: 10px;
       width: 44px;
       aspect-ratio: 3 / 4;
       object-fit: cover;
@@ -1035,8 +1179,8 @@
     .vf-hf-diptych-bar {
       display: none;
       position: absolute;
-      top: 32px;
-      left: 6px;
+      top: 10px;
+      left: 10px;
       align-items: center;
       gap: 4px;
       padding: 2px 6px;
@@ -1051,7 +1195,7 @@
       z-index: 6;
     }
     .vf-hf-diptych-bar.active { display: inline-flex; }
-    .vf-hf-diptych-bar.has-first { left: 56px; }
+    .vf-hf-diptych-bar.has-first { left: 60px; }
     .vf-hf-diptych-bar button {
       color: #cbd5e1;
       font-size: 10px;
@@ -1608,8 +1752,10 @@
       -webkit-user-select: none;
     }
     .lens-barrel-dock.lens-barrel-vf {
-      max-width: 344px;
-      background: linear-gradient(180deg, rgba(24,28,36,0.94) 0%, rgba(12,15,20,0.94) 100%);
+      width: 100%;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #191d26 0%, #0d1016 100%);
     }
     .lens-barrel-dock.lens-barrel-picker {
       margin-bottom: 6px;
@@ -1939,7 +2085,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      transition: transform 0.08s ease, opacity 0.14s ease, outline-color 0.14s ease;
+      transition: transform 0.08s ease, opacity 0.14s ease, outline-color 0.14s ease, background 0.14s ease;
     }
     .shutter-btn::after {
       content: "";
@@ -1951,13 +2097,28 @@
       pointer-events: none;
     }
     .shutter-btn:active { transform: scale(0.92); }
+    .shutter-wind-lbl {
+      display: none;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      color: #111;
+      line-height: 1;
+      pointer-events: none;
+    }
     .shutter-btn.needs-wind {
-      opacity: 0.46;
-      outline-color: #f59e0b;
+      background: radial-gradient(circle at 38% 35%, #fde68a 0%, #f59e0b 70%, #d97706 100%);
+      outline-color: #fbbf24;
+      box-shadow: 0 0 14px rgba(245, 166, 35, 0.55), 0 4px 14px rgba(0,0,0,0.82);
     }
     .shutter-btn.needs-wind::after {
-      border-color: rgba(245, 158, 11, 0.65);
-      background: rgba(245, 158, 11, 0.22);
+      display: none;
+    }
+    .shutter-btn.needs-wind .shutter-wind-lbl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .bottom-nav {
@@ -1973,16 +2134,50 @@
       border-top: 1px solid #1b1f27;
       z-index: 30;
     }
+    .bnav-roll-lbl {
+      display: none;
+      font-size: 10px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
     .app-shell[data-active-tab="darkroom"] .bottom-nav {
       height: calc(46px + env(safe-area-inset-bottom));
-      grid-template-columns: repeat(2, minmax(0, 132px));
+      grid-template-columns: repeat(3, minmax(0, 108px));
       justify-content: center;
-      gap: 14px;
+      gap: 10px;
     }
     .app-shell[data-active-tab="darkroom"] .bnav-shutter {
       display: none;
     }
-    .app-shell[data-active-tab="darkroom"] .bnav-group {
+    .app-shell[data-active-tab="darkroom"] .bnav-group-lab {
+      display: contents;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-btn[data-tab="darkroom"] {
+      order: 1;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(245, 166, 35, 0.08);
+      border: 1px solid rgba(245, 166, 35, 0.48);
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-roll-btn {
+      order: 2;
+      width: auto;
+      height: 36px;
+      padding: 0 10px;
+      gap: 5px;
+      border-radius: 10px;
+      background: #13161e;
+      border: 1px solid #242a36;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-roll-lbl {
+      display: inline;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-roll-btn .roll-count-badge {
+      position: static;
+      margin-left: 1px;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-group-cam {
+      order: 3;
       height: 36px;
     }
     .bnav-group {
@@ -2076,6 +2271,7 @@
     /* ==================== ROLLIE DOCKED COMBO PICKER (LIVE PREVIEW ABOVE) ==================== */
     .app-shell.picker-open #view-darkroom .tool-dock,
     .app-shell.picker-open #view-camera .vf-bottom-hud,
+    .app-shell.picker-open #camLensBarrel,
     .app-shell.picker-open #camComboTrio,
     .app-shell.picker-open .bottom-nav {
       display: none;
@@ -2516,6 +2712,124 @@
         padding: 2px 4px;
       }
     }
+
+    /* Compact Docked Combo Picker on shorter viewports */
+    @media (max-height: 720px) {
+      .combo-dock-panel {
+        padding: 6px 10px calc(8px + env(safe-area-inset-bottom));
+        gap: 4px;
+      }
+      .clapper-col {
+        padding: 4px 7px 4px;
+      }
+      .picker-spec-bar {
+        margin-bottom: 3px;
+        min-height: 15px;
+        font-size: 9.5px;
+      }
+      .picker-tile {
+        width: 82px;
+        padding: 3px;
+        gap: 2px;
+      }
+      .picker-tile .combo-card-art {
+        height: 28px;
+      }
+      .picker-tile .combo-card-art svg,
+      .picker-tile .combo-card-art img {
+        height: 27px;
+      }
+    }
+
+    /* Tablet / Desktop 2-Column Split Studio */
+    @media (min-width: 820px) {
+      body {
+        align-items: center;
+        padding: 12px;
+      }
+      .app-shell {
+        max-width: min(1140px, 96vw);
+        height: min(94dvh, 840px);
+        max-height: min(94dvh, 840px);
+        border-radius: 16px;
+        border: 1px solid #232936;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.78);
+        padding-top: 0;
+      }
+      .topbar {
+        height: 48px;
+        padding: 0 16px;
+      }
+      #view-darkroom.active {
+        flex-direction: row;
+      }
+      #view-darkroom .stage-area {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      #view-darkroom .stage-photo-slot {
+        padding: 16px;
+      }
+      #view-darkroom .tool-dock {
+        width: 360px;
+        flex-shrink: 0;
+        border-top: none;
+        border-left: 1px solid #1e222b;
+        padding: 12px;
+        gap: 10px;
+        overflow-y: auto;
+      }
+      #view-darkroom .combo-trio-grid {
+        gap: 8px;
+      }
+      #view-darkroom .combo-card {
+        padding: 8px 6px;
+      }
+      #view-camera .cam-wrap {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 356px;
+        grid-template-rows: auto auto 1fr;
+        gap: 8px 14px;
+        padding: 12px 16px;
+        align-items: start;
+      }
+      #view-camera .cam-vf-box {
+        grid-column: 1;
+        grid-row: 1 / 4;
+        margin: 0;
+        height: 100%;
+      }
+      #view-camera .cam-top-plate {
+        grid-column: 2;
+        grid-row: 1;
+      }
+      #view-camera #camLensBarrel {
+        grid-column: 2;
+        grid-row: 2;
+        margin-bottom: 0;
+      }
+      #view-camera #camComboTrio {
+        grid-column: 2;
+        grid-row: 3;
+        align-self: end;
+      }
+      .app-shell.picker-open #view-camera .cam-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+      .app-shell.picker-open #view-camera .cam-vf-box {
+        grid-row: 2;
+      }
+      .app-shell.picker-open #view-camera .cam-top-plate {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .sheet-card {
+        max-width: 560px;
+        margin: 0 auto;
+        border-radius: 18px 18px 0 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2529,6 +2843,13 @@
         <div class="brand-info">
           <div class="brand-title">Tee's Lab</div>
         </div>
+      </div>
+      <div class="topbar-actions">
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <button class="btn-icon-top" id="btnLabRandom" type="button" title="Randomize combo" aria-label="Randomize combo">🎲</button>
+        <button class="btn-icon-top" id="btnLabShare" type="button" title="Copy shareable recipe link" aria-label="Share combo">🔗</button>
+        <button class="btn-pill btn-ghost" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
+        <button class="btn-pill btn-brass" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
       </div>
     </header>
 
@@ -2554,13 +2875,13 @@
           </div>
         </div>
 
-        <div class="stage-overlay-bottom">
-          <div class="stage-action-group">
-            <input type="file" id="fileInput" accept="image/*" hidden />
-            <button class="btn-stage-photo" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️</button>
-            <button class="btn-pill btn-brass btn-stage-save" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
+        <div class="hf-lab-bar" id="hfLabBar">
+          <div class="hf-lab-slots">
+            <button class="hf-slot-btn has-photo" id="btnHfLabSlot1" type="button" title="Replace Half Frame 1/2 (Left)">1/2 Photo 1</button>
+            <button class="hf-swap-btn" id="btnHfLabSwap" type="button" title="Swap Left & Right frames" aria-label="Swap Left and Right frames">⇄</button>
+            <button class="hf-slot-btn needs-photo" id="btnHfLabSlot2" type="button" title="Add or replace Half Frame 2/2 (Right)">+ 2/2 Photo 2</button>
           </div>
-          <button class="rollie-combo-caption" id="liveGearBadge" title="Tap to change combo">SLR (3:2) — 50mm — <strong>Pro 400H</strong></button>
+          <button class="hf-mode-pill active" id="btnHfLabModeToggle" type="button" title="Toggle 2-in-1 Half Frame diptych or single frame">2F · 2-in-1</button>
         </div>
       </div>
 
@@ -2571,10 +2892,11 @@
           <div class="tweak-pills-wrap" id="tweakPillsStrip"></div>
         </div>
 
-        <!-- Collapsible Adjust Drawer (Opens directly under Adjust pill) -->
+        <!-- Collapsible Adjust / Frame Drawer -->
         <div class="tweak-drawer" id="tweakDrawer">
+          <div class="tweak-frame-grid" id="tweakFrameStrip"></div>
           <div class="tweak-sub-grid" id="tweakSubStrip"></div>
-          <div class="tweak-header-row">
+          <div class="tweak-header-row" id="tweakHeaderRow">
             <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 100%</span>
             <div style="display:flex;gap:6px;align-items:center;">
               <select class="dark-select" id="leakTypeSelect" style="display:none;padding:2px 6px;font-size:10px;"></select>
@@ -2757,11 +3079,13 @@
               </div>
               <button id="camSourceStatus" class="vf-source-status" type="button" title="Simulated sample preview — tap to enable live camera">Simulated</button>
             </div>
-            <div class="lens-barrel-dock lens-barrel-vf" id="camLensBarrel" aria-label="Lens focal, manual focus and aperture rings"></div>
           </div>
 
           <div class="shutter-flash" id="shutterFlash"></div>
         </div>
+
+        <!-- Mechanical Lens Barrel Controller (Detached below Viewfinder) -->
+        <div class="lens-barrel-dock lens-barrel-vf" id="camLensBarrel" aria-label="Lens focal, manual focus and aperture rings"></div>
 
         <!-- 3-Card Combo Selector in Camera -->
         <div class="combo-trio-grid" id="camComboTrio">
@@ -2810,6 +3134,7 @@
             <rect x="13" y="9.8" width="6.2" height="4.8" rx="0.7" stroke="#94a3b8" stroke-width="1.1"/>
             <path d="M13 8.4h1.1M15.8 8.4h1.1M18.6 8.4h1.1M13 16h1.1M15.8 16h1.1" stroke="#f5a623" stroke-width="1.3" stroke-linecap="round"/>
           </svg>
+          <span class="bnav-roll-lbl">Roll</span>
           <span class="roll-count-badge" id="contactCount">0</span>
         </button>
         <button class="bnav-btn" data-tab="darkroom" type="button" title="Open Lab darkroom">
@@ -2817,7 +3142,9 @@
         </button>
       </div>
 
-      <button class="shutter-btn bnav-shutter" id="btnShutter" type="button" title="Take photo" aria-label="Take photo"></button>
+      <button class="shutter-btn bnav-shutter" id="btnShutter" type="button" title="Take photo" aria-label="Take photo">
+        <span class="shutter-wind-lbl" aria-hidden="true">WIND ↻</span>
+      </button>
 
       <div class="bnav-group bnav-group-cam active">
         <button class="bnav-btn active" data-tab="camera" type="button" title="Camera — tap while in Camera to flip front/rear">
@@ -2932,6 +3259,10 @@
           <span>🖼️ Add Photo</span>
           <button class="btn-pill btn-ghost" id="btnCloseSampleSheet" style="height:26px;">✕</button>
         </div>
+        <div class="hf-sample-target-bar" id="hfSampleTargetBar">
+          <button class="hf-target-chip active" id="btnSampleTarget1" data-hf-slot="1" type="button">1/2 Left Frame</button>
+          <button class="hf-target-chip" id="btnSampleTarget2" data-hf-slot="2" type="button">2/2 Right Frame</button>
+        </div>
         <button class="btn-pill btn-brass" id="btnSheetOpenPhoto" type="button" style="width:100%;height:36px;font-size:12.5px;border-radius:10px;margin-bottom:10px;">➕ Choose Photo from Library</button>
         <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Sample scenes</div>
         <div class="sample-grid-3" id="sampleStrip"></div>
@@ -3009,9 +3340,9 @@
     {
       id: 'half-frame',
       name: 'Half Frame',
-      formatLabel: '3:4 Portrait',
+      formatLabel: '35mm · 2-in-1',
       aspect: 3 / 4,
-      meta: 'Vertical 3:4 half-frame portrait composition',
+      meta: '2 vertical 3:4 frames paired into 1 horizontal 3:2 shot',
       defaultFocalId: '35mm',
       recLenses: ['35mm', '28mm'],
       recFilms: ['fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200', 'ilford-hp5'],
@@ -4103,6 +4434,7 @@
     previewSourceCanvas: null,
     previewSourceData: null,
     sourceIsDiptych: false,
+    sourceFromCameraRoll: false,
     activeSampleId: SAMPLES[0].id,
     exif: null,
 
@@ -4150,6 +4482,11 @@
     camLockedEV: null,
     camNeedsWind: false,
     halfFrameFirstCanvas: null,
+    halfFrameLabSecondCanvas: null,
+    halfFrameLabSecondPreviewCanvas: null,
+    halfFrameLabSecondSampleId: null,
+    halfFrameLabSecondFromCameraRoll: false,
+    halfFrameTargetSlot: 1,
     camShotCount: 0,
     camMaxShots: 36,
     camRollId: '',
@@ -4377,6 +4714,14 @@
       saveLocalAppState();
     }
   } catch (e) { state.phoneId = 'auto-detect'; }
+  const HALF_FRAME_2F_DEFAULT_KEY = 'tees-lab-hf-2f-default-v1';
+  try {
+    if (!localStorage.getItem(HALF_FRAME_2F_DEFAULT_KEY)) {
+      state.hfDiptychMode = true;
+      localStorage.setItem(HALF_FRAME_2F_DEFAULT_KEY, '1');
+      saveLocalAppState();
+    }
+  } catch (e) { state.hfDiptychMode = true; }
   let saveStateTimer = 0;
   function scheduleSaveLocalAppState() {
     window.clearTimeout(saveStateTimer);
@@ -4784,11 +5129,24 @@
         zoom: 1.0
       };
     }
+    if (body.id === 'half-frame' && state.hfDiptychMode) {
+      let w = Math.min(maxDim, 1260);
+      w = Math.max(240, Math.round(w));
+      let h = Math.max(160, Math.round(w * (840 / 1260)));
+      if (maxPixels > 0 && w * h > maxPixels) {
+        const s = Math.sqrt(maxPixels / (w * h));
+        w = Math.max(240, Math.round(w * s));
+        h = Math.max(160, Math.round(w * (840 / 1260)));
+      }
+      return { w, h, ratio: 3 / 2, zoom: state.sourceFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0), isHalfFramePair: true };
+    }
     let ratio = getBodyAspect(body, lens);
-    if (body.id !== 'half-frame' && ratio > 1 && srcCanvas.height > srcCanvas.width) {
+    if (ratio > 1 && srcCanvas.height > srcCanvas.width) {
+      ratio = 1 / ratio;
+    } else if (ratio < 1 && srcCanvas.width > srcCanvas.height) {
       ratio = 1 / ratio;
     }
-    const zoom = lens.cropZoom || 1.0;
+    const zoom = state.sourceFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0);
     let w, h;
     if (ratio >= 1) {
       w = Math.min(maxDim, Math.max(180, Math.round(maxDim)));
@@ -4807,10 +5165,67 @@
 
   let labCropCanvas = null;
   function buildLabCroppedCanvas(srcCanvas, maxDim, reuseScratch = false, maxPixels = 0) {
-    const { w, h, ratio, zoom } = getLabTargetDimensions(srcCanvas, maxDim, maxPixels);
+    const { w, h, ratio, zoom, isHalfFramePair } = getLabTargetDimensions(srcCanvas, maxDim, maxPixels);
     const c = reuseScratch ? (labCropCanvas || (labCropCanvas = document.createElement('canvas'))) : document.createElement('canvas');
     if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
-    drawCroppedSource(c.getContext('2d'), srcCanvas, w, h, ratio, zoom);
+    const ctx = c.getContext('2d');
+
+    if (isHalfFramePair) {
+      const { lens } = getSelectedGear();
+      const pad = Math.max(3, Math.round(w * (20 / 1260)));
+      const halfW = Math.max(40, Math.round((w - pad * 3) / 2));
+      const halfH = Math.max(50, h - pad * 2);
+      ctx.fillStyle = '#090a0d';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(pad, pad, halfW, halfH);
+      ctx.clip();
+      ctx.translate(pad, pad);
+      drawCroppedSource(ctx, srcCanvas, halfW, halfH, 3 / 4, zoom);
+      ctx.restore();
+
+      const rightX = pad * 2 + halfW;
+      const isPreview = srcCanvas === state.previewSourceCanvas;
+      const slot2Canvas = isPreview
+        ? (state.halfFrameLabSecondPreviewCanvas || state.halfFrameLabSecondCanvas)
+        : state.halfFrameLabSecondCanvas;
+
+      if (slot2Canvas) {
+        const slot2Zoom = state.halfFrameLabSecondFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(rightX, pad, halfW, halfH);
+        ctx.clip();
+        ctx.translate(rightX, pad);
+        drawCroppedSource(ctx, slot2Canvas, halfW, halfH, 3 / 4, slot2Zoom);
+        ctx.restore();
+      } else {
+        ctx.save();
+        ctx.fillStyle = '#12151c';
+        ctx.fillRect(rightX, pad, halfW, halfH);
+        ctx.strokeStyle = 'rgba(245, 166, 35, 0.45)';
+        ctx.lineWidth = Math.max(1, Math.round(w * 0.0022));
+        ctx.setLineDash([Math.max(4, Math.round(w * 0.01)), Math.max(4, Math.round(w * 0.008))]);
+        const inset = Math.max(4, Math.round(halfW * 0.05));
+        ctx.strokeRect(rightX + inset, pad + inset, halfW - inset * 2, halfH - inset * 2);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#f5a623';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const fs = Math.max(11, Math.round(halfW * 0.09));
+        ctx.font = `700 ${fs}px monospace`;
+        ctx.fillText('2/2', rightX + halfW / 2, pad + halfH * 0.44);
+        ctx.fillStyle = '#9ca3af';
+        ctx.font = `600 ${Math.max(9, Math.round(fs * 0.72))}px sans-serif`;
+        ctx.fillText('+ Photo 2', rightX + halfW / 2, pad + halfH * 0.56);
+        ctx.restore();
+      }
+      return c;
+    }
+
+    drawCroppedSource(ctx, srcCanvas, w, h, ratio, zoom);
     return c;
   }
 
@@ -4874,11 +5289,7 @@
     applyLabZoomTransform(false);
   }
 
-  function loadSourceCanvas(srcCanvas, exifData = null, opts = {}) {
-    state.fullSourceCanvas = srcCanvas;
-    state.sourceIsDiptych = !!opts.isDiptych || !!opts.preserveAspect;
-    state.exif = exifData;
-
+  function makeScaledPreviewCanvas(srcCanvas) {
     const maxDim = window.matchMedia('(max-width: 700px)').matches ? 680 : 860;
     const scale = Math.min(1, maxDim / Math.max(srcCanvas.width, srcCanvas.height));
     const pw = Math.max(100, Math.round(srcCanvas.width * scale));
@@ -4887,6 +5298,57 @@
     prevC.width = pw; prevC.height = ph;
     const pCtx = prevC.getContext('2d', { willReadFrequently: true });
     pCtx.drawImage(srcCanvas, 0, 0, pw, ph);
+    return prevC;
+  }
+
+  function loadHalfFrameSecondCanvas(srcCanvas, opts = {}) {
+    state.halfFrameLabSecondCanvas = srcCanvas;
+    state.halfFrameLabSecondPreviewCanvas = srcCanvas ? makeScaledPreviewCanvas(srcCanvas) : null;
+    state.halfFrameLabSecondSampleId = opts.sampleId !== undefined ? opts.sampleId : null;
+    state.halfFrameLabSecondFromCameraRoll = !!opts.fromCameraRoll;
+    state.halfFrameTargetSlot = 1;
+    labRenderDirty = true;
+    syncAllUI();
+    renderPreview(!!opts.forcePreviewRender);
+  }
+
+  function swapHalfFrameLabSlots() {
+    if (!state.halfFrameLabSecondCanvas) return;
+    const tmpFull = state.fullSourceCanvas;
+    const tmpPrev = state.previewSourceCanvas;
+    const tmpSample = state.activeSampleId;
+    const tmpRoll = state.sourceFromCameraRoll;
+
+    state.fullSourceCanvas = state.halfFrameLabSecondCanvas;
+    state.previewSourceCanvas = state.halfFrameLabSecondPreviewCanvas || makeScaledPreviewCanvas(state.halfFrameLabSecondCanvas);
+    state.activeSampleId = state.halfFrameLabSecondSampleId;
+    state.sourceFromCameraRoll = state.halfFrameLabSecondFromCameraRoll;
+
+    state.halfFrameLabSecondCanvas = tmpFull;
+    state.halfFrameLabSecondPreviewCanvas = tmpPrev || makeScaledPreviewCanvas(tmpFull);
+    state.halfFrameLabSecondSampleId = tmpSample;
+    state.halfFrameLabSecondFromCameraRoll = tmpRoll;
+
+    previewSourceVersion += 1;
+    labRenderDirty = true;
+    renderSampleStrip();
+    syncAllUI();
+    renderPreview(true);
+  }
+
+  function loadSourceCanvas(srcCanvas, exifData = null, opts = {}) {
+    state.fullSourceCanvas = srcCanvas;
+    state.sourceIsDiptych = !!opts.isDiptych || !!opts.preserveAspect;
+    state.sourceFromCameraRoll = !!opts.fromCameraRoll;
+    if (opts.isDiptych) {
+      state.halfFrameLabSecondCanvas = null;
+      state.halfFrameLabSecondPreviewCanvas = null;
+      state.halfFrameLabSecondSampleId = null;
+      state.halfFrameLabSecondFromCameraRoll = false;
+    }
+    state.exif = exifData;
+
+    const prevC = makeScaledPreviewCanvas(srcCanvas);
 
     // Quick 16-pt luminance sample for telephoto shutter-shake risk estimation
     try {
@@ -4969,7 +5431,8 @@
 
       const lensShort = shortLensLabel(lens);
       const formatLbl = getBodyFormatLabel(body, lens);
-      document.getElementById('liveGearBadge').innerHTML = `${escapeHtml(body.name)} (${escapeHtml(formatLbl)}) — ${escapeHtml(lensShort)} — <strong>${escapeHtml(film.name)}</strong>`;
+      const liveBadge = document.getElementById('liveGearBadge');
+      if (liveBadge) liveBadge.innerHTML = `${escapeHtml(body.name)} (${escapeHtml(formatLbl)}) — ${escapeHtml(lensShort)} — <strong>${escapeHtml(film.name)}</strong>`;
       output.bitmap?.close();
     } catch (error) { console.error('Preview rendering failed', error); }
   }
@@ -5181,19 +5644,52 @@
   }
 
   const TWEAK_FRAME_LABELS = { 'none': 'Off', '35mm-sprocket': '35mm', 'darkroom-white': 'Border', 'polaroid': 'Polaroid' };
+  const TWEAK_FRAME_OPTIONS = [
+    { id: 'none', label: 'Off' },
+    { id: '35mm-sprocket', label: '35mm' },
+    { id: 'darkroom-white', label: 'Border' },
+    { id: 'polaroid', label: 'Polaroid' }
+  ];
+  let tweakDrawerMode = 'adjust';
+
+  function resetSingleTweak(key) {
+    const { lens, film } = getSelectedGear();
+    if (key === 'strength') state.strength = 100;
+    else if (key === 'exposure') state.exposure = 0;
+    else if (key === 'warmth') state.warmth = 0;
+    else if (key === 'grain') state.grain = film.grainBase;
+    else if (key === 'halation') state.halation = film.halationBase;
+    else if (key === 'bloom') state.bloom = lens.bloomBase;
+    else if (key === 'vignette') state.vignette = lens.vignetteBase;
+    else if (key === 'leakAmt') { state.leakType = 'none'; state.leakAmt = 0; }
+    renderTweaksDock();
+    renderPreview();
+  }
+
   function renderTweaksDock() {
     const drawer = document.getElementById('tweakDrawer');
     const isDrawerOpen = drawer.classList.contains('open');
+    const isFrameMode = isDrawerOpen && tweakDrawerMode === 'frame';
+    const isAdjustMode = isDrawerOpen && tweakDrawerMode !== 'frame';
     const def = TWEAK_DEFS.find(d => d.key === state.activeTweakKey) || TWEAK_DEFS[0];
 
-    document.getElementById('activeTweakTitle').textContent = `${def.label}: ${def.fmt(state[def.key])}`;
+    const frameStrip = document.getElementById('tweakFrameStrip');
+    const subStrip = document.getElementById('tweakSubStrip');
+    const headerRow = document.getElementById('tweakHeaderRow');
     const slider = document.getElementById('activeTweakSlider');
+
+    if (frameStrip) frameStrip.classList.toggle('open', isFrameMode);
+    if (subStrip) subStrip.style.display = isFrameMode ? 'none' : '';
+    if (headerRow) headerRow.style.display = isFrameMode ? 'none' : '';
+    if (slider) slider.style.display = isFrameMode ? 'none' : '';
+
+    document.getElementById('activeTweakTitle').textContent = `${def.label}: ${def.fmt(state[def.key])}`;
     slider.min = def.min;
     slider.max = def.max;
     slider.value = state[def.key];
 
     const lsel = document.getElementById('leakTypeSelect');
-    if (def.key === 'leakAmt') {
+    if (def.key === 'leakAmt' && !isFrameMode) {
       lsel.style.display = 'inline-block';
       if (lsel.childElementCount === 0) {
         lsel.innerHTML = LEAK_TYPES.map(lt => `<option value="${lt.id}">Leak: ${lt.name}</option>`).join('');
@@ -5203,9 +5699,31 @@
       lsel.style.display = 'none';
     }
 
+    if (frameStrip && !frameStrip.dataset.built) {
+      frameStrip.dataset.built = '1';
+      frameStrip.innerHTML = '';
+      TWEAK_FRAME_OPTIONS.forEach(opt => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.dataset.frameId = opt.id;
+        chip.className = 'tweak-frame-chip';
+        chip.textContent = opt.label;
+        chip.addEventListener('click', () => {
+          state.frameType = opt.id;
+          syncAllUI();
+          renderPreview();
+        });
+        frameStrip.appendChild(chip);
+      });
+    }
+    if (frameStrip) {
+      frameStrip.querySelectorAll('.tweak-frame-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.frameId === state.frameType);
+      });
+    }
+
     // Build the 3 equal horizontal pills (Frame · Date · Adjust) + 8 sub-controls inside Adjust drawer
     const strip = document.getElementById('tweakPillsStrip');
-    const subStrip = document.getElementById('tweakSubStrip');
     if (!strip.dataset.built) {
       strip.dataset.built = '1';
       strip.innerHTML = '';
@@ -5216,10 +5734,13 @@
       framePill.className = 'tweak-pill';
       framePill.innerHTML = `<span>Frame</span><span class="tweak-pill-val"></span>`;
       framePill.addEventListener('click', () => {
-        const order = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'];
-        state.frameType = order[(order.indexOf(state.frameType) + 1) % order.length];
-        syncAllUI();
-        renderPreview();
+        if (drawer.classList.contains('open') && tweakDrawerMode === 'frame') {
+          drawer.classList.remove('open');
+        } else {
+          tweakDrawerMode = 'frame';
+          drawer.classList.add('open');
+        }
+        renderTweaksDock();
       });
       strip.appendChild(framePill);
 
@@ -5241,7 +5762,12 @@
       adjustPill.className = 'tweak-pill';
       adjustPill.innerHTML = `<span>Adjust</span><span class="tweak-pill-val"></span>`;
       adjustPill.addEventListener('click', () => {
-        drawer.classList.toggle('open');
+        if (drawer.classList.contains('open') && tweakDrawerMode === 'adjust') {
+          drawer.classList.remove('open');
+        } else {
+          tweakDrawerMode = 'adjust';
+          drawer.classList.add('open');
+        }
         renderTweaksDock();
       });
       strip.appendChild(adjustPill);
@@ -5255,8 +5781,10 @@
         sub.type = 'button';
         sub.dataset.subId = t.key;
         sub.className = 'tweak-sub-pill';
+        sub.title = `${t.label} (double-tap to reset)`;
         sub.innerHTML = `<span>${t.short || t.label}</span><span class="tweak-sub-val"></span>`;
         sub.addEventListener('click', () => {
+          tweakDrawerMode = 'adjust';
           state.activeTweakKey = t.key;
           if (t.key === 'leakAmt' && state.leakType === 'none') {
             state.leakType = 'amber-edge';
@@ -5265,6 +5793,11 @@
           }
           drawer.classList.add('open');
           renderTweaksDock();
+        });
+        sub.addEventListener('dblclick', e => {
+          e.preventDefault();
+          resetSingleTweak(t.key);
+          showToast(`↺ Reset ${t.label}`);
         });
         subStrip.appendChild(sub);
       });
@@ -5284,7 +5817,7 @@
     const isDateOn = state.dateStamp !== 'off';
     const frameBtn = strip.querySelector('[data-pill-id="frame"]');
     if (frameBtn) {
-      frameBtn.classList.toggle('active', state.frameType !== 'none');
+      frameBtn.classList.toggle('active', isFrameMode || state.frameType !== 'none');
       frameBtn.lastElementChild.textContent = TWEAK_FRAME_LABELS[state.frameType] || 'Off';
     }
     const dateBtn = strip.querySelector('[data-pill-id="date"]');
@@ -5294,8 +5827,8 @@
     }
     const adjustBtn = strip.querySelector('[data-pill-id="adjust"]');
     if (adjustBtn) {
-      adjustBtn.classList.toggle('active', isDrawerOpen || adjustedCount > 0);
-      adjustBtn.lastElementChild.textContent = isDrawerOpen
+      adjustBtn.classList.toggle('active', isAdjustMode || adjustedCount > 0);
+      adjustBtn.lastElementChild.textContent = isAdjustMode
         ? `${def.short || def.label} ${def.fmt(state[def.key])}`
         : (adjustedCount > 0 ? `${adjustedCount} tuned` : 'Tune');
     }
@@ -5361,9 +5894,12 @@
   function renderSampleStrip() {
     const strip = document.getElementById('sampleStrip');
     strip.innerHTML = '';
+    const activeSample = (state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2)
+      ? state.halfFrameLabSecondSampleId
+      : state.activeSampleId;
     SAMPLES.forEach(s => {
       const item = document.createElement('button');
-      item.className = `sample-thumb ${state.activeSampleId === s.id ? 'active' : ''}`;
+      item.className = `sample-thumb ${activeSample === s.id ? 'active' : ''}`;
       const img = document.createElement('img');
       img.src = s.src;
       img.alt = s.title;
@@ -5376,6 +5912,14 @@
           await ensureSampleLoaded(s);
         } catch (err) {
           showToast(`Could not load sample: ${s.title}`);
+          return;
+        }
+        const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+        if (isSlot2) {
+          loadHalfFrameSecondCanvas(s.canvas, { sampleId: s.id, fromCameraRoll: false, forcePreviewRender: true });
+          renderSampleStrip();
+          document.getElementById('sampleSheetBackdrop').classList.remove('open');
+          showToast(`🎞️ Photo 2/2: ${s.title}`);
           return;
         }
         state.activeSampleId = s.id;
@@ -6125,9 +6669,51 @@
   initLensBarrelWidget(document.getElementById('camLensBarrel'));
   initLensBarrelWidget(document.getElementById('pickerLensBarrel'));
 
+  function renderHalfFrameLabUI() {
+    const isHfLab = state.bodyId === 'half-frame' && !state.sourceIsDiptych;
+    const is2F = !!state.hfDiptychMode;
+    const bar = document.getElementById('hfLabBar');
+    if (bar) bar.classList.toggle('visible', isHfLab);
+
+    const slot1Btn = document.getElementById('btnHfLabSlot1');
+    const swapBtn = document.getElementById('btnHfLabSwap');
+    const slot2Btn = document.getElementById('btnHfLabSlot2');
+    const modeBtn = document.getElementById('btnHfLabModeToggle');
+
+    if (slot1Btn) {
+      slot1Btn.style.display = is2F ? '' : 'none';
+      const s1Title = SAMPLES.find(s => s.id === state.activeSampleId)?.title;
+      slot1Btn.textContent = s1Title ? `1/2 ${s1Title}` : '1/2 Photo 1';
+    }
+    if (swapBtn) {
+      swapBtn.style.display = is2F ? '' : 'none';
+      swapBtn.disabled = !state.halfFrameLabSecondCanvas;
+    }
+    if (slot2Btn) {
+      slot2Btn.style.display = is2F ? '' : 'none';
+      const has2 = !!state.halfFrameLabSecondCanvas;
+      slot2Btn.classList.toggle('has-photo', has2);
+      slot2Btn.classList.toggle('needs-photo', !has2);
+      const s2Title = SAMPLES.find(s => s.id === state.halfFrameLabSecondSampleId)?.title;
+      slot2Btn.textContent = has2 ? (s2Title ? `2/2 ${s2Title}` : '2/2 Photo 2 ✓') : '+ 2/2 Photo 2';
+    }
+    if (modeBtn) {
+      modeBtn.classList.toggle('active', is2F);
+      modeBtn.textContent = is2F ? '2F · 2-in-1' : '1F · Single';
+    }
+
+    const targetBar = document.getElementById('hfSampleTargetBar');
+    if (targetBar) {
+      targetBar.classList.toggle('visible', isHfLab && is2F);
+      document.getElementById('btnSampleTarget1')?.classList.toggle('active', state.halfFrameTargetSlot !== 2);
+      document.getElementById('btnSampleTarget2')?.classList.toggle('active', state.halfFrameTargetSlot === 2);
+    }
+  }
+
   function syncAllUI() {
     renderComboCards();
     syncLensBarrelWidgets();
+    renderHalfFrameLabUI();
     if (document.getElementById('comboSheetBackdrop')?.classList.contains('open')) {
       pickerDirty = false;
       renderComboPickerSheet();
@@ -6451,7 +7037,11 @@
       windBtn.classList.toggle('is-cocked', !needsWind);
     }
     if (windLbl) windLbl.textContent = needsWind ? 'WIND  lever' : 'READY';
-    if (shutterBtn) shutterBtn.classList.toggle('needs-wind', needsWind);
+    if (shutterBtn) {
+      shutterBtn.classList.toggle('needs-wind', needsWind);
+      shutterBtn.setAttribute('title', needsWind ? 'Tap to wind film' : 'Take photo');
+      shutterBtn.setAttribute('aria-label', needsWind ? 'Wind film' : 'Take photo');
+    }
 
     syncViewfinderFocusAid(body, lens);
     syncLensBarrelWidgets();
@@ -7387,13 +7977,7 @@
   async function captureCameraShot() {
     if (shutterBusy) return;
     if (state.camNeedsWind) {
-      const windBtn = document.getElementById('btnWindFilm');
-      if (windBtn) {
-        windBtn.classList.remove('needs-wind');
-        void windBtn.offsetWidth;
-        windBtn.classList.add('needs-wind');
-      }
-      showToast('🎞️ Gạt cần lên phim (WIND) ở góc phải trên để chụp tấm tiếp theo');
+      windFilmLever(true);
       return;
     }
     if (!state.camStream && !state.fullSourceCanvas && !SAMPLES[0]?.canvas) return;
@@ -7513,7 +8097,7 @@
           source.width = bitmap.width; source.height = bitmap.height;
           source.getContext('2d').drawImage(bitmap, 0, 0);
           bitmap.close();
-          loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, preserveAspect: true });
+          loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true });
           switchMainTab('darkroom');
           showToast(`Shot #${s.num} opened in Lab`);
         } catch (error) { showToast('Could not open the original photo'); }
@@ -7607,6 +8191,14 @@
         c.width = Math.round(img.naturalWidth * scale);
         c.height = Math.round(img.naturalHeight * scale);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+        if (isSlot2) {
+          loadHalfFrameSecondCanvas(c, { sampleId: null, fromCameraRoll: false, forcePreviewRender: true });
+          renderSampleStrip();
+          switchMainTab('darkroom');
+          showToast('🎞️ Photo 2/2 loaded into Half Frame');
+          return;
+        }
         state.activeSampleId = null;
         renderSampleStrip();
         loadSourceCanvas(c, exif);
@@ -7876,8 +8468,30 @@
     });
   });
   document.querySelectorAll('[data-open-combo]').forEach(btn => {
+    let swipeStartX = 0, swipeStartY = 0, swipeHandled = false;
+    btn.addEventListener('pointerdown', e => {
+      if (e.target.closest('.card-step-btn') || (e.button && e.button !== 0)) return;
+      swipeStartX = e.clientX;
+      swipeStartY = e.clientY;
+      swipeHandled = false;
+    });
+    btn.addEventListener('pointerup', e => {
+      if (e.target.closest('.card-step-btn') || !swipeStartX) return;
+      const dx = e.clientX - swipeStartX;
+      const dy = e.clientY - swipeStartY;
+      swipeStartX = 0;
+      if (Math.abs(dx) >= 24 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+        swipeHandled = true;
+        const kind = btn.dataset.openCombo;
+        const dir = dx < 0 ? 1 : -1;
+        if (kind === 'camera') stepBodyMode(dir);
+        else if (kind === 'lens') stepFocalOption(dir);
+        else if (kind === 'film') stepFilmStock(dir);
+      }
+    });
     btn.addEventListener('click', e => {
       if (e.target.closest('.card-step-btn')) return;
+      if (swipeHandled) { swipeHandled = false; return; }
       openComboPicker(btn.dataset.openCombo);
     });
     if (btn.tagName !== 'BUTTON') {
@@ -7893,7 +8507,7 @@
   document.getElementById('btnTabSaved').addEventListener('click', () => {
     setPickerTab(state.pickerTab === 'saved' ? 'camera' : 'saved');
   });
-  document.getElementById('btnRandomCombo').addEventListener('click', () => {
+  function triggerRandomCombo() {
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
     const mode = pick(VIEWFINDER_MODES);
     const rawLens = pick(getModeFocals(mode.id));
@@ -7924,7 +8538,9 @@
     renderPreview();
     scrollActiveTileIntoView(state.pickerTab);
     showToast(`🎲 ${mode.name} · ${shortLensLabel(resolved)} · ${film.name}`);
-  });
+  }
+  document.getElementById('btnRandomCombo')?.addEventListener('click', triggerRandomCombo);
+  document.getElementById('btnLabRandom')?.addEventListener('click', triggerRandomCombo);
 
   function encodeRecipePresetToken() {
     const payload = {
@@ -8000,7 +8616,7 @@
     }
   }
 
-  document.getElementById('btnShareCombo')?.addEventListener('click', async () => {
+  async function triggerShareCombo() {
     const token = encodeRecipePresetToken();
     const nextHash = `#preset=${token}`;
     const shareUrl = `${location.origin}${location.pathname}${nextHash}`;
@@ -8025,9 +8641,11 @@
       } catch (e) {}
     }
     showToast(copied ? '🔗 Recipe link copied!' : '🔗 Recipe link updated in URL');
-  });
+  }
+  document.getElementById('btnShareCombo')?.addEventListener('click', triggerShareCombo);
+  document.getElementById('btnLabShare')?.addEventListener('click', triggerShareCombo);
 
-  document.getElementById('liveGearBadge').addEventListener('click', () => {
+  document.getElementById('liveGearBadge')?.addEventListener('click', () => {
     if (comboSheet.classList.contains('open')) closeComboPicker();
     else openComboPicker('film');
   });
@@ -8092,7 +8710,37 @@
 
   // Bottom Sheets (Samples & Contact Sheet)
   const sampleSheet = document.getElementById('sampleSheetBackdrop');
-  document.getElementById('btnOpenSamples').addEventListener('click', () => sampleSheet.classList.add('open'));
+  function openSampleSheetForSlot(slotNum = 1) {
+    state.halfFrameTargetSlot = slotNum === 2 ? 2 : 1;
+    renderHalfFrameLabUI();
+    renderSampleStrip();
+    sampleSheet.classList.add('open');
+  }
+  document.getElementById('btnOpenSamples').addEventListener('click', () => {
+    const autoSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && !state.halfFrameLabSecondCanvas;
+    openSampleSheetForSlot(autoSlot2 ? 2 : 1);
+  });
+  document.getElementById('btnHfLabSlot1')?.addEventListener('click', () => openSampleSheetForSlot(1));
+  document.getElementById('btnHfLabSlot2')?.addEventListener('click', () => openSampleSheetForSlot(2));
+  document.getElementById('btnHfLabSwap')?.addEventListener('click', () => {
+    swapHalfFrameLabSlots();
+    showToast('⇄ Swapped Half Frame 1/2 & 2/2');
+  });
+  document.getElementById('btnHfLabModeToggle')?.addEventListener('click', () => {
+    state.hfDiptychMode = !state.hfDiptychMode;
+    if (!state.hfDiptychMode) clearPendingHalfFrame();
+    syncAllUI();
+    renderPreview(true);
+    scheduleSaveLocalAppState();
+    showToast(state.hfDiptychMode ? '🎞️ Half Frame 2F · 2-in-1' : '🎞️ Half Frame 1F · Single');
+  });
+  document.querySelectorAll('#hfSampleTargetBar [data-hf-slot]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.halfFrameTargetSlot = Number(btn.dataset.hfSlot) === 2 ? 2 : 1;
+      renderHalfFrameLabUI();
+      renderSampleStrip();
+    });
+  });
   document.getElementById('btnSheetOpenPhoto')?.addEventListener('click', () => {
     sampleSheet.classList.remove('open');
     fileInput.click();
@@ -8180,7 +8828,9 @@
   document.getElementById('btnVfDiptychToggle')?.addEventListener('click', () => {
     state.hfDiptychMode = !state.hfDiptychMode;
     if (!state.hfDiptychMode) clearPendingHalfFrame();
+    labRenderDirty = true;
     syncCameraHudUI();
+    renderHalfFrameLabUI();
     scheduleSaveLocalAppState();
     showToast(state.hfDiptychMode ? '🎞️ Half Frame 2F Diptych mode' : '🎞️ Half Frame 1F Single mode');
   });
