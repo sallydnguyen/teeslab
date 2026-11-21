@@ -9012,6 +9012,27 @@
   } catch (ignored) {}
 
   // Bootstrap
+  const APP_BUILD = '20261121-1542';
+  async function checkLiveBuildUpdate() {
+    try {
+      const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const meta = await res.json();
+      if (meta?.build && meta.build !== APP_BUILD) {
+        const reloadKey = `tees-lab-reloaded-${meta.build}`;
+        if (sessionStorage.getItem(reloadKey)) return;
+        sessionStorage.setItem(reloadKey, '1');
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter(k => k.startsWith('tees-lab-shell-')).map(k => caches.delete(k)));
+        }
+        const reg = await navigator.serviceWorker?.getRegistration?.();
+        await reg?.update?.().catch(() => {});
+        location.reload();
+      }
+    } catch (ignored) {}
+  }
+
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     const hadController = !!navigator.serviceWorker.controller;
     let refreshing = false;
@@ -9021,9 +9042,13 @@
     navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
       reg.update().catch(() => {});
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) reg.update().catch(() => {});
+        if (!document.hidden) {
+          reg.update().catch(() => {});
+          checkLiveBuildUpdate();
+        }
       });
     }).catch(() => {});
+    checkLiveBuildUpdate();
   }
   const hasUrlPreset = applyUrlPresetIfPresent();
   window.addEventListener('hashchange', () => {
