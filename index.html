@@ -6837,8 +6837,8 @@
     if (showFeedback) {
       const frame = Math.min((state.camShotCount || 0) + 1, state.camMaxShots);
       showToast(wasNeeded
-        ? `🎞️ Đã lên phim — Frame #${String(frame).padStart(2, '0')} sẵn sàng`
-        : `🎞️ Phim đã lên sẵn (Frame #${String(frame).padStart(2, '0')})`);
+        ? `🎞️ Film wound — Frame #${String(frame).padStart(2, '0')} ready`
+        : `🎞️ Film already cocked (Frame #${String(frame).padStart(2, '0')})`);
     }
   }
 
@@ -7969,7 +7969,7 @@
     renderContactSheet();
     showToast(opts.isDiptych
       ? `🎞️ 2F pair #${String(shotNumber).padStart(2, '0')} saved as one frame — WIND to continue`
-      : `🎞️ Shot #${String(shotNumber).padStart(2, '0')} saved — Gạt cần lên phim để chụp tiếp`);
+      : `🎞️ Shot #${String(shotNumber).padStart(2, '0')} saved — Wind film to continue`);
   }
 
   let cameraRollReady = Promise.resolve();
@@ -9012,7 +9012,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1542';
+  const APP_BUILD = '20261121-1549';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
