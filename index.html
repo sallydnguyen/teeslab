@@ -942,9 +942,9 @@
       display: block;
     }
     .cam-counter-slot {
-      min-width: 40px;
+      min-width: 44px;
       height: 22px;
-      padding: 0 6px;
+      padding: 0 5px;
       border-radius: 5px;
       background: linear-gradient(180deg, #78746a 0%, #9b968b 50%, #6e6a61 100%);
       border: 1.5px solid #26282e;
@@ -954,22 +954,72 @@
       justify-content: center;
       font-family: var(--mono);
       font-weight: 800;
-      font-size: 11px;
+      font-size: 10px;
       color: #161616;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
+    }
+    .cam-film-window {
+      height: 22px;
+      max-width: 112px;
+      padding: 0 6px 0 5px;
+      border-radius: 5px;
+      background: #0d1016;
+      border: 1px solid #2a303d;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .cam-film-window-bar {
+      width: 3px;
+      height: 12px;
+      border-radius: 2px;
+      background: var(--fuji);
+      flex-shrink: 0;
+    }
+    .cam-film-window-txt {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .cam-top-right {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+    }
+    .cam-autowind-btn {
+      height: 24px;
+      padding: 0 6px;
+      border-radius: 7px;
+      background: #14171f;
+      border: 1px solid #262b36;
+      color: #64748b;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.14s ease;
+    }
+    .cam-autowind-btn.active {
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.55);
+      background: rgba(22, 101, 52, 0.28);
     }
     .cam-wind-lever {
       height: 24px;
       padding: 0 7px 0 6px;
       border-radius: 7px;
-      background: linear-gradient(180deg, #1b1f29 0%, #11141c 100%);
-      border: 1px solid #2b313e;
-      color: #94a3b8;
+      background: linear-gradient(180deg, #161a22 0%, #0e1117 100%);
+      border: 1px solid #242934;
+      color: #8b95a5;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -980,12 +1030,12 @@
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: pan-y;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.5);
-      transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease, transform 0.12s ease, box-shadow 0.14s ease;
+      touch-action: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.45);
+      transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease, transform 0.14s ease, box-shadow 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 24px;
+      width: 22px;
       height: 14px;
       display: block;
       overflow: visible;
@@ -993,6 +1043,9 @@
     .cam-wind-lever .wind-arm {
       transform-origin: 6px 7px;
       transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cam-wind-lever.is-cocked {
+      opacity: 0.88;
     }
     .cam-wind-lever.is-cocked .wind-StatusDot {
       fill: #4ade80;
@@ -1004,7 +1057,15 @@
       box-shadow: 0 0 10px rgba(245, 166, 35, 0.55), inset 0 1px 0 rgba(255,255,255,0.55);
       animation: windPulse 1.15s ease-in-out infinite;
     }
-    .cam-wind-lever.needs-wind .wind-StatusDot {
+    .cam-wind-lever.needs-rewind {
+      color: #fff;
+      background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+      border-color: #fca5a5;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255,255,255,0.35);
+      animation: windPulse 1.05s ease-in-out infinite;
+    }
+    .cam-wind-lever.needs-wind .wind-StatusDot,
+    .cam-wind-lever.needs-rewind .wind-StatusDot {
       fill: #111;
     }
     .cam-wind-lever.needs-wind .wind-arm {
@@ -2115,10 +2176,22 @@
     .shutter-btn.needs-wind::after {
       display: none;
     }
-    .shutter-btn.needs-wind .shutter-wind-lbl {
+    .shutter-btn.needs-wind .shutter-wind-lbl,
+    .shutter-btn.needs-rewind .shutter-wind-lbl {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+    }
+    .shutter-btn.needs-rewind {
+      background: radial-gradient(circle at 38% 35%, #fca5a5 0%, #ef4444 70%, #b91c1c 100%);
+      outline-color: #fca5a5;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.55), 0 4px 14px rgba(0,0,0,0.82);
+    }
+    .shutter-btn.needs-rewind::after {
+      display: none;
+    }
+    .shutter-btn.needs-rewind .shutter-wind-lbl {
+      color: #fff;
     }
 
     .bottom-nav {
@@ -2950,7 +3023,11 @@
         <div class="cam-top-plate">
           <div class="cam-plate-left">
             <div class="cam-mini-logo" title="Tee's Lab"><img src="./logo.jpg" alt="Tee's Lab" /></div>
-            <div class="cam-counter-slot" id="camRollCounter" title="Frame counter">01</div>
+            <div class="cam-counter-slot" id="camRollCounter" title="Frame counter">01/36</div>
+            <button class="cam-film-window" id="camFilmWindow" type="button" title="Loaded film stock — tap to change">
+              <span class="cam-film-window-bar" id="camFilmWindowBar"></span>
+              <span class="cam-film-window-txt" id="camFilmWindowTxt">Pro 400H · 400</span>
+            </button>
           </div>
           <div class="cam-top-right">
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — swipe or tap to wind film" aria-label="Wind film">
@@ -2964,6 +3041,7 @@
               </svg>
               <span id="windLeverLabel">READY</span>
             </button>
+            <button class="cam-autowind-btn" id="btnAutoWind" type="button" title="Auto-wind film after each shot" aria-pressed="false">AUTO</button>
             <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M4.5 9.5h3.8L13 5.5v13l-4.7-4H4.5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -4481,6 +4559,8 @@
     camAELocked: false,
     camLockedEV: null,
     camNeedsWind: false,
+    camNeedsRewind: false,
+    camAutoWind: false,
     halfFrameFirstCanvas: null,
     halfFrameLabSecondCanvas: null,
     halfFrameLabSecondPreviewCanvas: null,
@@ -4503,11 +4583,12 @@
       state.camRollId = rollMeta.id || createRollId();
       state.camRollNumber = Math.max(1, Number(rollMeta.number) || 1);
       state.camShotCount = Math.max(0, Number(rollMeta.shotCount) || 0);
+      state.camNeedsRewind = !!rollMeta.needsRewind;
     }
   } catch (error) {}
   if (!state.camRollId) state.camRollId = createRollId();
   function saveCameraRollMeta() {
-    try { localStorage.setItem(CAMERA_ROLL_META_KEY, JSON.stringify({ id: state.camRollId, number: state.camRollNumber, shotCount: state.camShotCount })); }
+    try { localStorage.setItem(CAMERA_ROLL_META_KEY, JSON.stringify({ id: state.camRollId, number: state.camRollNumber, shotCount: state.camShotCount, needsRewind: !!state.camNeedsRewind })); }
     catch (error) {}
   }
 
@@ -4626,7 +4707,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -6824,12 +6905,61 @@
     } catch (e) {}
   }
 
+  function playFilmRewindSound() {
+    if (!state.camSound) return;
+    try {
+      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = state.audioCtx;
+      const play = () => {
+        const now = ctx.currentTime + 0.004;
+        for (let idx = 0; idx < 11; idx++) {
+          const offset = idx * 0.026;
+          const duration = 0.012;
+          const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+          const samples = buffer.getChannelData(0);
+          for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
+          const source = ctx.createBufferSource(); source.buffer = buffer;
+          const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 3400 - idx * 140; filter.Q.value = 2.0;
+          const gain = ctx.createGain(), start = now + offset;
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(0.18, start + 0.002);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+          source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+          source.start(start); source.stop(start + duration + 0.004);
+        }
+      };
+      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
+      else play();
+    } catch (e) {}
+  }
+
+  let autoWindTimer = 0;
   function windFilmLever(showFeedback = true) {
+    window.clearTimeout(autoWindTimer);
     const leverBtn = document.getElementById('btnWindFilm');
     if (leverBtn) {
       leverBtn.classList.add('winding');
       window.setTimeout(() => leverBtn.classList.remove('winding'), 240);
     }
+    try { navigator.vibrate?.(12); } catch (ignored) {}
+
+    if (state.camNeedsRewind) {
+      playFilmRewindSound();
+      const finishedRoll = state.camRollNumber;
+      state.camNeedsRewind = false;
+      state.camNeedsWind = false;
+      state.camRollNumber += 1;
+      state.camRollId = createRollId();
+      state.camShotCount = 0;
+      saveCameraRollMeta();
+      syncCameraHudUI();
+      if (showFeedback) {
+        showToast(`🎞️ Roll #${String(finishedRoll).padStart(2, '0')} rewound — Loaded Roll #${String(state.camRollNumber).padStart(2, '0')}`);
+      }
+      return;
+    }
+
     playFilmWindSound();
     const wasNeeded = !!state.camNeedsWind;
     state.camNeedsWind = false;
@@ -6934,10 +7064,28 @@
   }
 
   function syncCameraHudUI() {
-    const { body, lens } = getSelectedGear();
+    const { body, lens, film } = getSelectedGear();
     const frame = Math.min((state.camShotCount || 0) + 1, state.camMaxShots);
     const counterEl = document.getElementById('camRollCounter');
-    if (counterEl) counterEl.textContent = String(frame).padStart(2, '0');
+    if (counterEl) {
+      counterEl.textContent = state.camNeedsRewind
+        ? 'END'
+        : `${String(frame).padStart(2, '0')}/${state.camMaxShots}`;
+    }
+
+    const filmWinTxt = document.getElementById('camFilmWindowTxt');
+    const filmWinBar = document.getElementById('camFilmWindowBar');
+    if (filmWinTxt) filmWinTxt.textContent = `${film.name} · ${film.iso}`;
+    if (filmWinBar) {
+      const brandColors = { fuji: 'var(--fuji)', kodak: 'var(--kodak)', cinema: 'var(--cinema)', bw: '#9ca3af' };
+      filmWinBar.style.background = brandColors[film.brand] || 'var(--brass)';
+    }
+
+    const autoWindBtn = document.getElementById('btnAutoWind');
+    if (autoWindBtn) {
+      autoWindBtn.classList.toggle('active', !!state.camAutoWind);
+      autoWindBtn.setAttribute('aria-pressed', state.camAutoWind ? 'true' : 'false');
+    }
 
     const dateBtn = document.getElementById('btnVfDateToggle');
     if (dateBtn) {
@@ -7031,16 +7179,21 @@
     const windBtn = document.getElementById('btnWindFilm');
     const windLbl = document.getElementById('windLeverLabel');
     const shutterBtn = document.getElementById('btnShutter');
-    const needsWind = !!state.camNeedsWind;
+    const shutterWindLbl = shutterBtn?.querySelector('.shutter-wind-lbl');
+    const needsRewind = !!state.camNeedsRewind;
+    const needsWind = !needsRewind && !!state.camNeedsWind;
     if (windBtn) {
+      windBtn.classList.toggle('needs-rewind', needsRewind);
       windBtn.classList.toggle('needs-wind', needsWind);
-      windBtn.classList.toggle('is-cocked', !needsWind);
+      windBtn.classList.toggle('is-cocked', !needsWind && !needsRewind);
     }
-    if (windLbl) windLbl.textContent = needsWind ? 'WIND  lever' : 'READY';
+    if (windLbl) windLbl.textContent = needsRewind ? 'REWIND' : (needsWind ? 'WIND' : 'READY');
+    if (shutterWindLbl) shutterWindLbl.textContent = needsRewind ? 'REWIND ↺' : 'WIND ↻';
     if (shutterBtn) {
+      shutterBtn.classList.toggle('needs-rewind', needsRewind);
       shutterBtn.classList.toggle('needs-wind', needsWind);
-      shutterBtn.setAttribute('title', needsWind ? 'Tap to wind film' : 'Take photo');
-      shutterBtn.setAttribute('aria-label', needsWind ? 'Wind film' : 'Take photo');
+      shutterBtn.setAttribute('title', needsRewind ? 'Tap to rewind roll' : (needsWind ? 'Tap to wind film' : 'Take photo'));
+      shutterBtn.setAttribute('aria-label', needsRewind ? 'Rewind roll' : (needsWind ? 'Wind film' : 'Take photo'));
     }
 
     syncViewfinderFocusAid(body, lens);
@@ -7951,15 +8104,16 @@
     let persisted = true;
     try { await storeCameraRollShot(shot); } catch (error) { persisted = false; }
 
-    // Require manual film advance lever before next exposure
+    // Require manual film advance lever (or rewind at end of roll) before next exposure
     if (shotNumber >= state.camMaxShots) {
-      state.camRollNumber += 1;
-      state.camRollId = createRollId();
-      state.camShotCount = 0;
+      state.camShotCount = state.camMaxShots;
+      state.camNeedsRewind = true;
+      state.camNeedsWind = false;
     } else {
       state.camShotCount = shotNumber;
+      state.camNeedsRewind = false;
+      state.camNeedsWind = true;
     }
-    state.camNeedsWind = true;
     saveCameraRollMeta();
 
     state.camRollShots.unshift(persisted
@@ -7967,16 +8121,28 @@
       : shot);
     syncAllUI();
     renderContactSheet();
-    showToast(opts.isDiptych
-      ? `🎞️ 2F pair #${String(shotNumber).padStart(2, '0')} saved as one frame — WIND to continue`
-      : `🎞️ Shot #${String(shotNumber).padStart(2, '0')} saved — Wind film to continue`);
+    if (state.camNeedsRewind) {
+      showToast(`🎞️ Roll #${String(state.camRollNumber).padStart(2, '0')} complete (${state.camMaxShots}/${state.camMaxShots}) — Tap REWIND`);
+    } else if (state.camAutoWind) {
+      showToast(opts.isDiptych
+        ? `🎞️ 2F pair #${String(shotNumber).padStart(2, '0')} saved`
+        : `🎞️ Shot #${String(shotNumber).padStart(2, '0')} saved`);
+      window.clearTimeout(autoWindTimer);
+      autoWindTimer = window.setTimeout(() => {
+        if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+      }, 280);
+    } else {
+      showToast(opts.isDiptych
+        ? `🎞️ 2F pair #${String(shotNumber).padStart(2, '0')} saved as one frame — WIND to continue`
+        : `🎞️ Shot #${String(shotNumber).padStart(2, '0')} saved — Wind film to continue`);
+    }
   }
 
   let cameraRollReady = Promise.resolve();
   let shutterBusy = false;
   async function captureCameraShot() {
     if (shutterBusy) return;
-    if (state.camNeedsWind) {
+    if (state.camNeedsRewind || state.camNeedsWind) {
       windFilmLever(true);
       return;
     }
@@ -8026,9 +8192,17 @@
           const ghost = document.getElementById('vfHfGhostImg');
           if (ghost) ghost.src = halfC.toDataURL('image/jpeg', 0.72);
           syncCameraHudUI();
-          showToast(safelyStored
-            ? '🎞️ 1/2 saved safely — WIND to take frame 2/2'
-            : '🎞️ 1/2 captured — WIND to take frame 2/2 (keep app open until paired)');
+          if (state.camAutoWind) {
+            showToast('🎞️ 1/2 saved — Ready for frame 2/2');
+            window.clearTimeout(autoWindTimer);
+            autoWindTimer = window.setTimeout(() => {
+              if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+            }, 280);
+          } else {
+            showToast(safelyStored
+              ? '🎞️ 1/2 saved safely — WIND to take frame 2/2'
+              : '🎞️ 1/2 captured — WIND to take frame 2/2 (keep app open until paired)');
+          }
           return;
         }
 
@@ -8942,12 +9116,28 @@
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
 
-  // Film Advance Lever (tap or swipe left/right on #btnWindFilm)
+  // Film Advance Lever (tap or spring-back swipe on #btnWindFilm) + Auto-Wind + Film Window
+  document.getElementById('camFilmWindow')?.addEventListener('click', () => openComboPicker('film'));
+  document.getElementById('btnAutoWind')?.addEventListener('click', () => {
+    state.camAutoWind = !state.camAutoWind;
+    syncCameraHudUI();
+    scheduleSaveLocalAppState();
+    showToast(state.camAutoWind ? '⚡ Auto-Wind: ON' : '🖐️ Manual Film Wind: ON');
+    if (state.camAutoWind && state.camNeedsWind && !state.camNeedsRewind) {
+      windFilmLever(false);
+    }
+  });
+
   const windFilmBtn = document.getElementById('btnWindFilm');
   if (windFilmBtn) {
     let windPtrId = null;
     let windStartX = 0;
     let windSwiped = false;
+    const windArm = windFilmBtn.querySelector('.wind-arm');
+    const resetWindDragVisual = () => {
+      windFilmBtn.style.transform = '';
+      if (windArm) windArm.style.transform = '';
+    };
     windFilmBtn.addEventListener('pointerdown', e => {
       windPtrId = e.pointerId;
       windStartX = e.clientX;
@@ -8957,8 +9147,13 @@
     });
     windFilmBtn.addEventListener('pointermove', e => {
       if (windPtrId !== e.pointerId || windSwiped) return;
-      if (Math.abs(e.clientX - windStartX) >= 14) {
+      const dx = e.clientX - windStartX;
+      const clampedDx = Math.max(-4, Math.min(20, dx));
+      windFilmBtn.style.transform = `translateX(${(clampedDx * 0.35).toFixed(1)}px)`;
+      if (windArm) windArm.style.transform = `rotate(${(-10 - clampedDx * 1.4).toFixed(1)}deg)`;
+      if (Math.abs(dx) >= 16) {
         windSwiped = true;
+        resetWindDragVisual();
         windFilmLever(true);
       }
     });
@@ -8966,6 +9161,7 @@
       if (windPtrId !== e.pointerId) return;
       windPtrId = null;
       windFilmBtn.classList.remove('winding');
+      resetWindDragVisual();
       try { windFilmBtn.releasePointerCapture(e.pointerId); } catch (err) {}
     };
     windFilmBtn.addEventListener('pointerup', finishWindPtr);
@@ -9012,7 +9208,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1549';
+  const APP_BUILD = '20261121-1553';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
