@@ -1,6 +1,6 @@
 # Tee's Lab — 35mm Film Camera & Smart Phone Darkroom
 
-> 🌐 **Link sử dụng trực tuyến chính thức trên điện thoại:** **[https://nguyendang3103.github.io/teeslab/](https://nguyendang3103.github.io/teeslab/)**
+> 🌐 **Link sử dụng trực tuyến chính thức trên điện thoại:** **[https://sallydnguyen.github.io/teeslab/](https://sallydnguyen.github.io/teeslab/)**
 >
 > *(Mở bằng Safari trên iPhone hoặc Chrome trên Android rồi chọn **"Thêm vào màn hình chính"** để dùng như App độc lập với logo Tee's Lab).*
 
