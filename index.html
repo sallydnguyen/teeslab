@@ -6979,13 +6979,12 @@
   }
 
   function getCameraStageDimensions(body, lens) {
-    if (body.id === 'half-frame') return { w: 600, h: 400, ratio: 3 / 2 };
     const ratio = getBodyAspect(body, lens);
     if (ratio >= 1) {
       const w = 600;
       return { w, h: Math.max(240, Math.round(w / ratio)), ratio };
     }
-    const h = 400;
+    const h = 480;
     return { w: Math.max(240, Math.round(h * ratio)), h, ratio };
   }
 
@@ -7965,7 +7964,7 @@
         vfCanvas.height = targetH;
       }
 
-      const vfRatio = 3 / 2;
+      const vfRatio = stageDim.ratio;
       const vfZoom = body.id === 'rangefinder' ? 1.0 : (lens.cropZoom || 1.0);
       const vfConfig = {
         phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
@@ -8223,7 +8222,7 @@
       const capDim = getCameraCaptureDimensions(body, lens);
       const capC = document.createElement('canvas');
       capC.width = capDim.w; capC.height = capDim.h;
-      drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom);
+      drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom, body.id !== 'half-frame');
       const rawBlob = await canvasToJpegBlob(capC, 0.92);
       await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
     } catch (error) {
@@ -9208,7 +9207,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1553';
+  const APP_BUILD = '20261121-1556';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
