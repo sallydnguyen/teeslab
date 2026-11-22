@@ -1015,13 +1015,15 @@
     }
     .cam-wind-lever {
       height: 24px;
-      padding: 0 7px 0 6px;
+      min-width: 34px;
+      padding: 0 7px;
       border-radius: 7px;
-      background: linear-gradient(180deg, #161a22 0%, #0e1117 100%);
-      border: 1px solid #242934;
-      color: #8b95a5;
+      background: linear-gradient(180deg, #1b1f29 0%, #11141c 100%);
+      border: 1px solid #2b313e;
+      color: #cbd5e1;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       font-family: var(--mono);
       font-size: 9px;
@@ -1031,21 +1033,21 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.45);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.5);
       transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease, transform 0.14s ease, box-shadow 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 22px;
-      height: 14px;
+      width: 24px;
+      height: 15px;
       display: block;
       overflow: visible;
     }
     .cam-wind-lever .wind-arm {
-      transform-origin: 6px 7px;
+      transform-origin: 6px 7.5px;
       transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .cam-wind-lever.is-cocked {
-      opacity: 0.88;
+    .cam-wind-lever.is-cocked #windLeverLabel {
+      display: none;
     }
     .cam-wind-lever.is-cocked .wind-StatusDot {
       fill: #4ade80;
@@ -3039,7 +3041,7 @@
                   <circle cx="22.8" cy="5.8" r="1.4" fill="#0f131a"/>
                 </g>
               </svg>
-              <span id="windLeverLabel">READY</span>
+              <span id="windLeverLabel"></span>
             </button>
             <button class="cam-autowind-btn" id="btnAutoWind" type="button" title="Auto-wind film after each shot" aria-pressed="false">AUTO</button>
             <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
@@ -7186,7 +7188,7 @@
       windBtn.classList.toggle('needs-wind', needsWind);
       windBtn.classList.toggle('is-cocked', !needsWind && !needsRewind);
     }
-    if (windLbl) windLbl.textContent = needsRewind ? 'REWIND' : (needsWind ? 'WIND' : 'READY');
+    if (windLbl) windLbl.textContent = needsRewind ? 'REWIND' : (needsWind ? 'WIND' : '');
     if (shutterWindLbl) shutterWindLbl.textContent = needsRewind ? 'REWIND ↺' : 'WIND ↻';
     if (shutterBtn) {
       shutterBtn.classList.toggle('needs-rewind', needsRewind);
@@ -9207,7 +9209,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1556';
+  const APP_BUILD = '20261121-1600';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
