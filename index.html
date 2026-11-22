@@ -2836,6 +2836,18 @@
       opacity: 0.15;
       pointer-events: none;
     }
+    .lab-photo-nav {
+      width: 30px;
+      height: 44px;
+      font-size: 24px;
+      opacity: 0.72;
+    }
+    .lab-photo-nav.btn-prev { left: 6px; }
+    .lab-photo-nav.btn-next { right: 6px; }
+    .stage-photo-slot.is-zoomed .lab-photo-nav {
+      opacity: 0;
+      pointer-events: none;
+    }
     .photo-viewer-botbar {
       display: flex;
       justify-content: space-between;
@@ -3135,7 +3147,8 @@
     <!-- 2A. VIEW: LAB (DARKROOM) -->
     <main id="view-darkroom" class="view-section">
       <div class="stage-area" id="previewDropZone">
-        <div class="stage-photo-slot">
+        <div class="stage-photo-slot" id="stagePhotoSlot">
+          <button class="photo-viewer-nav lab-photo-nav btn-prev" id="btnLabPhotoPrev" type="button" title="Previous photo" aria-label="Previous photo">‹</button>
           <div class="stage-photo-wrap" id="stagePhotoWrap">
             <div class="canvas-stack" id="canvasStack" title="Hold photo to view Original">
               <canvas id="previewCanvas"></canvas>
@@ -3152,6 +3165,7 @@
               <button class="float-pill" id="btnToggleSplit" type="button">◧ Split</button>
             </div>
           </div>
+          <button class="photo-viewer-nav lab-photo-nav btn-next" id="btnLabPhotoNext" type="button" title="Next photo" aria-label="Next photo">›</button>
         </div>
 
         <div class="hf-lab-bar" id="hfLabBar">
@@ -5577,6 +5591,7 @@
     }
     canvasStack.classList.toggle('zoomed', labZoom > 1.05);
     canvasStack.classList.toggle('zoom-dragging', dragging);
+    document.getElementById('stagePhotoSlot')?.classList.toggle('is-zoomed', labZoom > 1.05);
     const zoomBtn = document.getElementById('btnToggleLabZoom');
     if (zoomBtn) {
       const zoomed = labZoom > 1.05;
@@ -8827,8 +8842,52 @@
     originalOverlayCanvas.style.clipPath = on ? 'inset(0 0 0 0)' : (state.splitMode ? `inset(0 ${100 - state.splitPos}% 0 0)` : 'inset(0 50% 0 0)');
   };
 
+  let labPhotoStepping = false;
+  async function stepLabPhoto(dir) {
+    if (labPhotoStepping) return;
+    labPhotoStepping = true;
+    try {
+      if (state.sourceFromCameraRoll && state.camRollShots.length > 1) {
+        const cur = Number.isInteger(viewerCurrentIndex) ? viewerCurrentIndex : 0;
+        const nextIdx = (cur + dir + state.camRollShots.length) % state.camRollShots.length;
+        viewerCurrentIndex = nextIdx;
+        const shot = state.camRollShots[nextIdx];
+        if (shot) {
+          await openShotInLab(shot);
+          showToast(`🎞️ Shot #${String(nextIdx + 1).padStart(2, '0')} / ${state.camRollShots.length}`);
+        }
+        return;
+      }
+      const curId = (state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2)
+        ? state.halfFrameLabSecondSampleId
+        : state.activeSampleId;
+      let idx = SAMPLES.findIndex(s => s.id === curId);
+      if (idx < 0) idx = dir > 0 ? -1 : 0;
+      const nextIdx = (idx + dir + SAMPLES.length) % SAMPLES.length;
+      const sample = SAMPLES[nextIdx];
+      await ensureSampleLoaded(sample);
+      const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+      if (isSlot2) {
+        loadHalfFrameSecondCanvas(sample.canvas, { sampleId: sample.id, fromCameraRoll: false, forcePreviewRender: true });
+      } else {
+        loadSourceCanvas(sample.canvas, null, { sampleId: sample.id, fromCameraRoll: false, forcePreviewRender: true });
+      }
+      showToast(`🖼️ ${sample.title} (${nextIdx + 1}/${SAMPLES.length})`);
+    } finally {
+      labPhotoStepping = false;
+    }
+  }
+  document.getElementById('btnLabPhotoPrev')?.addEventListener('click', e => {
+    e.stopPropagation();
+    stepLabPhoto(-1);
+  });
+  document.getElementById('btnLabPhotoNext')?.addEventListener('click', e => {
+    e.stopPropagation();
+    stepLabPhoto(1);
+  });
+
   const activeLabPointers = new Map();
-  let labPinchStartDist = 0, labPinchStartZoom = 1, labPanDrag = null;
+  let labPinchStartDist = 0, labPinchStartZoom = 1, labPanDrag = null, labSwipeTrack = null;
   canvasStack.addEventListener('pointerdown', e => {
     if (e.target.closest('#splitDivider') || (e.button && e.button !== 0)) return;
     try { canvasStack.setPointerCapture(e.pointerId); } catch {}
@@ -8836,13 +8895,16 @@
     if (activeLabPointers.size === 2) {
       setHold(false);
       labPanDrag = null;
+      labSwipeTrack = null;
       const pts = Array.from(activeLabPointers.values());
       labPinchStartDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
       labPinchStartZoom = labZoom;
     } else if (activeLabPointers.size === 1) {
       if (labZoom > 1.05) {
         labPanDrag = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, origPanX: labPanX, origPanY: labPanY };
+        labSwipeTrack = null;
       } else {
+        labSwipeTrack = !state.splitMode ? { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, triggered: false } : null;
         setHold(true);
       }
     }
@@ -8859,12 +8921,24 @@
       labPanX = labPanDrag.origPanX + (e.clientX - labPanDrag.startX);
       labPanY = labPanDrag.origPanY + (e.clientY - labPanDrag.startY);
       applyLabZoomTransform(true);
+    } else if (labSwipeTrack && labSwipeTrack.pointerId === e.pointerId && !labSwipeTrack.triggered && labZoom <= 1.05 && !state.splitMode) {
+      const dx = e.clientX - labSwipeTrack.startX;
+      const dy = e.clientY - labSwipeTrack.startY;
+      if (Math.abs(dx) > 12) setHold(false);
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        labSwipeTrack.triggered = true;
+        setHold(false);
+        stepLabPhoto(dx < 0 ? 1 : -1);
+      }
     }
   });
   const endLabPointer = e => {
     if (e?.pointerId !== undefined) activeLabPointers.delete(e.pointerId);
     else activeLabPointers.clear();
     if (activeLabPointers.size < 2) labPinchStartDist = 0;
+    if (labSwipeTrack && (e?.pointerId === undefined || labSwipeTrack.pointerId === e.pointerId)) {
+      labSwipeTrack = null;
+    }
     if (labPanDrag && (e?.pointerId === undefined || labPanDrag.pointerId === e.pointerId)) {
       labPanDrag = null;
       applyLabZoomTransform(false);
@@ -9738,7 +9812,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2225';
+  const APP_BUILD = '20261121-2232';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
