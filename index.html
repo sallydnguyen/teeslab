@@ -1022,6 +1022,57 @@
       align-items: center;
       gap: 5px;
     }
+    .cam-shutter-dial {
+      height: 32px;
+      padding: 0 7px 0 5px;
+      border-radius: 8px;
+      background: #14171f;
+      border: 1px solid #2a303d;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      transition: border-color 0.14s ease, background 0.14s ease, transform 0.1s ease;
+    }
+    .cam-shutter-dial:active { transform: scale(0.96); }
+    .cam-shutter-dial.is-manual {
+      border-color: rgba(245, 166, 35, 0.55);
+      background: linear-gradient(180deg, #1a1e28, #12151c);
+    }
+    .cam-shutter-dial svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+    }
+    .cam-shutter-dial .shutter-dial-rotor {
+      transform-origin: 12px 12px;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cam-shutter-dial-val {
+      min-width: 22px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      color: #4ade80;
+    }
+    .cam-shutter-dial.is-manual .cam-shutter-dial-val {
+      color: #f5a623;
+    }
+    .cam-shutter-dial.is-slow .cam-shutter-dial-val {
+      color: #fb923c;
+    }
     .cam-wind-lever.is-auto {
       color: #e2e8f0;
     }
@@ -1030,37 +1081,38 @@
       font-size: 8.5px;
       font-weight: 900;
       color: #4ade80;
-      margin-left: -2px;
+      margin-left: -1px;
       text-shadow: 0 0 6px rgba(74, 222, 128, 0.45);
     }
     .cam-wind-lever {
-      height: 34px;
-      min-width: 58px;
-      padding: 0 2px;
-      border: none;
-      background: transparent;
-      box-shadow: none;
+      height: 32px;
+      min-width: 64px;
+      padding: 0 7px;
+      border-radius: 8px;
+      background: #14171f;
+      border: 1px solid #2a303d;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
       color: #e2e8f0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 4px;
       font-family: var(--mono);
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 800;
       letter-spacing: 0.4px;
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      transition: color 0.14s ease, transform 0.14s ease, filter 0.14s ease;
+      transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease, filter 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 56px;
-      height: 28px;
+      width: 48px;
+      height: 24px;
       display: block;
       overflow: visible;
-      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8));
     }
     .cam-wind-lever .wind-arm {
       transform-origin: 12px 14px;
@@ -1074,16 +1126,14 @@
     }
     .cam-wind-lever.needs-wind {
       color: #fbbf24;
-      background: transparent;
-      border: none;
-      box-shadow: none;
+      background: rgba(245, 166, 35, 0.10);
+      border-color: rgba(245, 166, 35, 0.72);
       animation: windPulse 1.15s ease-in-out infinite;
     }
     .cam-wind-lever.needs-rewind {
       color: #ef4444;
-      background: transparent;
-      border: none;
-      box-shadow: none;
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.78);
       animation: windPulseRed 1.05s ease-in-out infinite;
     }
     .cam-wind-lever.needs-wind .wind-StatusDot {
@@ -1100,19 +1150,20 @@
       transform: rotate(-34deg);
     }
     @keyframes windPulse {
-      0%, 100% { filter: drop-shadow(0 0 3px rgba(245, 166, 35, 0.45)); }
-      50% { filter: drop-shadow(0 0 9px rgba(245, 166, 35, 0.95)); }
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(245, 166, 35, 0.35)); }
+      50% { filter: drop-shadow(0 0 7px rgba(245, 166, 35, 0.85)); }
     }
     @keyframes windPulseRed {
-      0%, 100% { filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.5)); }
-      50% { filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.95)); }
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4)); }
+      50% { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9)); }
     }
     .cam-sound-btn {
-      width: 34px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
       background: #14171f;
       border: 1px solid #2a303d;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
       color: #e2e8f0;
       display: inline-flex;
       align-items: center;
@@ -3277,6 +3328,35 @@
             <div class="cam-mini-logo" title="Tee's Lab"><img src="./logo.jpg" alt="Tee's Lab" /></div>
           </div>
           <div class="cam-top-right">
+            <button class="cam-shutter-dial" id="btnShutterSpeedDial" type="button" title="Shutter speed — tap/drag to adjust, hold for Auto (A)" aria-label="Shutter speed dial">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="shutterDialBezel" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#e2e8f0"/>
+                    <stop offset="45%" stop-color="#64748b"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                  </linearGradient>
+                  <radialGradient id="shutterDialFace" cx="40%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#2a3140"/>
+                    <stop offset="70%" stop-color="#141821"/>
+                    <stop offset="100%" stop-color="#0a0c10"/>
+                  </radialGradient>
+                </defs>
+                <!-- Fixed red/amber index pip at 12 o'clock -->
+                <path d="M12 0.7L13.3 2.7H10.7L12 0.7Z" fill="#f5a623"/>
+                <!-- Knurled metallic outer ring -->
+                <circle cx="12" cy="12" r="9.4" fill="url(#shutterDialBezel)" stroke="#0f172a" stroke-width="0.8"/>
+                <circle cx="12" cy="12" r="8.6" fill="none" stroke="#1e293b" stroke-width="1.3" stroke-dasharray="1.2 1.5"/>
+                <!-- Rotating dial face with engraved index notch and screw slot -->
+                <g class="shutter-dial-rotor" id="shutterDialRotor">
+                  <circle cx="12" cy="12" r="6.9" fill="url(#shutterDialFace)" stroke="#475569" stroke-width="0.65"/>
+                  <line x1="12" y1="5.6" x2="12" y2="8.4" stroke="#f8fafc" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="12" cy="12" r="2.2" fill="#1e293b" stroke="#64748b" stroke-width="0.6"/>
+                  <line x1="10.6" y1="12" x2="13.4" y2="12" stroke="#94a3b8" stroke-width="0.8" stroke-linecap="round"/>
+                </g>
+              </svg>
+              <span class="cam-shutter-dial-val" id="shutterDialVal">A</span>
+            </button>
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
               <svg viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
@@ -4854,6 +4934,7 @@
     camSound: true,
     camFlashOn: true,
     camExposureEV: 0,
+    camShutterSpeed: 'auto',
     camISO: null,
     camTrackCapabilities: null,
     camAppliedHardware: {},
@@ -5010,7 +5091,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -7158,10 +7239,13 @@
           source.start(start); source.stop(start + duration + 0.005);
         };
 
+        const slowDelayMap = { '15': 0.055, '8': 0.115, '4': 0.21, '1"': 0.42 };
+        const slowDelay = slowDelayMap[state.camShutterSpeed] || 0;
+
         noiseClick(0, 0.016, sound.clickFreq, 0.8, sound.clickLevel);
         noiseClick(sound.impactDelay, sound.impactDuration, sound.impactFreq, 0.55, sound.impactLevel);
-        noiseClick(sound.curtainDelay, 0.032, sound.curtainFreq, 1.1, sound.curtainLevel);
-        noiseClick(sound.returnDelay, 0.024, sound.returnFreq, 0.9, sound.returnLevel);
+        noiseClick(sound.curtainDelay + slowDelay, 0.032, sound.curtainFreq, 1.1, sound.curtainLevel);
+        noiseClick(sound.returnDelay + slowDelay, 0.024, sound.returnFreq, 0.9, sound.returnLevel);
 
         const resonance = ctx.createOscillator(), bodyGain = ctx.createGain();
         resonance.type = 'triangle';
@@ -7172,6 +7256,32 @@
         bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + sound.bodyTail);
         resonance.connect(bodyGain); bodyGain.connect(ctx.destination);
         resonance.start(now + 0.006); resonance.stop(now + sound.bodyTail + 0.005);
+      };
+      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
+      else play();
+    } catch (e) {}
+  }
+
+  function playShutterDialClickSound() {
+    if (!state.camSound) return;
+    try {
+      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = state.audioCtx;
+      const play = () => {
+        const now = ctx.currentTime + 0.002;
+        const duration = 0.009;
+        const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
+        const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+        const samples = buffer.getChannelData(0);
+        for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
+        const source = ctx.createBufferSource(); source.buffer = buffer;
+        const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 3900; filter.Q.value = 2.4;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.18, now + 0.0015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+        source.start(now); source.stop(now + duration + 0.004);
       };
       if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
       else play();
@@ -7316,10 +7426,17 @@
     return Math.max(0, Math.min(100, Math.round(base + getCameraIsoStops(film) * 10)));
   }
 
+  const CAMERA_SHUTTER_SPEEDS = ['auto', '1000', '500', '250', '125', '60', '30', '15', '8', '4', '1"'];
+  const SHUTTER_SPEED_STOPS = { auto: 0, '1000': -3, '500': -2, '250': -1, '125': 0, '60': 1, '30': 2, '15': 3, '8': 4, '4': 5, '1"': 6 };
+  function getShutterSpeedEV(speed = state.camShutterSpeed) {
+    const stops = SHUTTER_SPEED_STOPS[speed] ?? 0;
+    return stops * 0.45;
+  }
+
   function cameraExposureEV() {
     const { film } = getSelectedGear();
     const isoEv = state.camAppliedHardware?.iso ? 0 : getCameraIsoStops(film) * 0.45;
-    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : state.camExposureEV) + isoEv;
+    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : state.camExposureEV) + isoEv + getShutterSpeedEV();
   }
 
   function getCameraStageDimensions(body, lens) {
@@ -7382,7 +7499,7 @@
     }
 
     if (body.id === 'slr') {
-      const ev = Number(state.camExposureEV) || 0;
+      const ev = (Number(state.camExposureEV) || 0) + getShutterSpeedEV();
       const activeLed = ev >= 1.15 ? 'over2' : (ev >= 0.4 ? 'over1' : (ev <= -1.15 ? 'under2' : (ev <= -0.4 ? 'under1' : 'ok')));
       document.querySelectorAll('#vfSlrLedBar .vf-led-row').forEach(row => {
         row.classList.toggle('lit', row.dataset.led === activeLed);
@@ -7518,6 +7635,24 @@
     const facingSub = document.getElementById('bnavCamFacingSub');
     if (facingSub) facingSub.textContent = state.camFacing === 'user' ? 'Front' : 'Rear';
     document.querySelector('.bnav-btn[data-tab="camera"]')?.classList.toggle('is-front', state.camFacing === 'user');
+
+    const shutterDialBtn = document.getElementById('btnShutterSpeedDial');
+    const shutterDialVal = document.getElementById('shutterDialVal');
+    const shutterDialRotor = document.getElementById('shutterDialRotor');
+    const curSpeed = CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) ? state.camShutterSpeed : 'auto';
+    if (state.camShutterSpeed !== curSpeed) state.camShutterSpeed = curSpeed;
+    const speedIdx = CAMERA_SHUTTER_SPEEDS.indexOf(curSpeed);
+    const isManualSpeed = curSpeed !== 'auto';
+    const isSlowSpeed = curSpeed === '15' || curSpeed === '8' || curSpeed === '4' || curSpeed === '1"';
+    if (shutterDialBtn) {
+      shutterDialBtn.classList.toggle('is-manual', isManualSpeed);
+      shutterDialBtn.classList.toggle('is-slow', isSlowSpeed);
+      shutterDialBtn.title = isManualSpeed
+        ? `Shutter speed: ${curSpeed === '1"' ? '1s' : `1/${curSpeed}s`} — tap/drag to adjust, hold for Auto`
+        : 'Shutter speed: Auto (A) — tap/drag to set manual speed';
+    }
+    if (shutterDialVal) shutterDialVal.textContent = curSpeed === 'auto' ? 'A' : curSpeed;
+    if (shutterDialRotor) shutterDialRotor.style.transform = `rotate(${speedIdx * 30}deg)`;
 
     const windBtn = document.getElementById('btnWindFilm');
     const windLbl = document.getElementById('windLeverLabel');
@@ -9810,6 +9945,76 @@
   // Film Advance Lever (tap/swipe to wind, long-press to toggle Auto-Wind) + Film Window
   document.getElementById('camFilmWindow')?.addEventListener('click', () => openComboPicker('film'));
 
+  const shutterDialBtn = document.getElementById('btnShutterSpeedDial');
+  if (shutterDialBtn) {
+    let dialPtrId = null;
+    let dialStartX = 0;
+    let dialLastStepX = 0;
+    let dialDragged = false;
+    let dialLongPressed = false;
+    let dialLongTimer = 0;
+    const clearDialLong = () => {
+      window.clearTimeout(dialLongTimer);
+      dialLongTimer = 0;
+    };
+    const applyShutterStep = (delta) => {
+      const curIdx = Math.max(0, CAMERA_SHUTTER_SPEEDS.indexOf(state.camShutterSpeed));
+      const nextIdx = (curIdx + delta + CAMERA_SHUTTER_SPEEDS.length) % CAMERA_SHUTTER_SPEEDS.length;
+      state.camShutterSpeed = CAMERA_SHUTTER_SPEEDS[nextIdx];
+      playShutterDialClickSound();
+      try { navigator.vibrate?.(8); } catch (ignored) {}
+      syncCameraHudUI();
+      scheduleSaveLocalAppState();
+      const s = state.camShutterSpeed;
+      showToast(s === 'auto' ? '⏱️ Shutter: Auto (A)' : `⏱️ Shutter: ${s === '1"' ? '1s' : `1/${s}s`}`);
+    };
+    shutterDialBtn.addEventListener('pointerdown', e => {
+      dialPtrId = e.pointerId;
+      dialStartX = e.clientX;
+      dialLastStepX = e.clientX;
+      dialDragged = false;
+      dialLongPressed = false;
+      clearDialLong();
+      dialLongTimer = window.setTimeout(() => {
+        dialLongTimer = 0;
+        if (dialPtrId === null || dialDragged) return;
+        dialLongPressed = true;
+        state.camShutterSpeed = 'auto';
+        playShutterDialClickSound();
+        try { navigator.vibrate?.(16); } catch (ignored) {}
+        syncCameraHudUI();
+        scheduleSaveLocalAppState();
+        showToast('⏱️ Shutter: Auto (A)');
+      }, 450);
+      try { shutterDialBtn.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    shutterDialBtn.addEventListener('pointermove', e => {
+      if (dialPtrId !== e.pointerId || dialLongPressed) return;
+      const totalDx = e.clientX - dialStartX;
+      if (Math.abs(totalDx) >= 7) {
+        dialDragged = true;
+        clearDialLong();
+      }
+      const stepDx = e.clientX - dialLastStepX;
+      if (Math.abs(stepDx) >= 14) {
+        const steps = stepDx > 0 ? 1 : -1;
+        dialLastStepX = e.clientX;
+        applyShutterStep(steps);
+      }
+    });
+    const finishDialPtr = e => {
+      if (dialPtrId !== e.pointerId) return;
+      clearDialLong();
+      dialPtrId = null;
+      try { shutterDialBtn.releasePointerCapture(e.pointerId); } catch (err) {}
+      if (!dialDragged && !dialLongPressed && e.type === 'pointerup') {
+        applyShutterStep(1);
+      }
+    };
+    shutterDialBtn.addEventListener('pointerup', finishDialPtr);
+    shutterDialBtn.addEventListener('pointercancel', finishDialPtr);
+  }
+
   const windFilmBtn = document.getElementById('btnWindFilm');
   if (windFilmBtn) {
     let windPtrId = null;
@@ -9819,7 +10024,6 @@
     let windLongPressTimer = 0;
     const windArm = windFilmBtn.querySelector('.wind-arm');
     const resetWindDragVisual = () => {
-      windFilmBtn.style.transform = '';
       if (windArm) windArm.style.transform = '';
     };
     const clearLongPress = () => {
@@ -9853,7 +10057,6 @@
       const dx = e.clientX - windStartX;
       if (Math.abs(dx) >= 8) clearLongPress();
       const clampedDx = Math.max(-4, Math.min(20, dx));
-      windFilmBtn.style.transform = `translateX(${(clampedDx * 0.35).toFixed(1)}px)`;
       if (windArm) windArm.style.transform = `rotate(${(-10 - clampedDx * 1.4).toFixed(1)}deg)`;
       if (Math.abs(dx) >= 16) {
         windSwiped = true;
@@ -9937,7 +10140,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0328';
+  const APP_BUILD = '20261122-0345';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
