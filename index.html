@@ -1056,14 +1056,14 @@
       transition: color 0.14s ease, transform 0.14s ease, filter 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 38px;
+      width: 44px;
       height: 22px;
       display: block;
       overflow: visible;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+      filter: drop-shadow(0 1.5px 2.5px rgba(0,0,0,0.75));
     }
     .cam-wind-lever .wind-arm {
-      transform-origin: 6px 7px;
+      transform-origin: 9px 11px;
       transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .cam-wind-lever.is-cocked #windLeverLabel {
@@ -3262,13 +3262,39 @@
           </div>
           <div class="cam-top-right">
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
-              <svg viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="6" cy="7" r="4.2" fill="#181c26" stroke="currentColor" stroke-width="1.3"/>
-                <circle class="wind-StatusDot" cx="6" cy="7" r="1.7" fill="#4ade80"/>
+              <svg viewBox="0 0 44 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="windChrome" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f8fafc"/>
+                    <stop offset="35%" stop-color="#cbd5e1"/>
+                    <stop offset="75%" stop-color="#64748b"/>
+                    <stop offset="100%" stop-color="#94a3b8"/>
+                  </linearGradient>
+                  <linearGradient id="windHub" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#e2e8f0"/>
+                    <stop offset="50%" stop-color="#64748b"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                  </linearGradient>
+                  <linearGradient id="windTip" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#2d3340"/>
+                    <stop offset="50%" stop-color="#141820"/>
+                    <stop offset="100%" stop-color="#090b0f"/>
+                  </linearGradient>
+                </defs>
                 <g class="wind-arm">
-                  <path d="M8.5 6.3L21 3.2C23.2 2.7 25.5 3.8 25.8 5.6C26.1 7.2 24.4 8.5 22.1 8.4L9.2 7.8Z" fill="currentColor"/>
-                  <circle cx="22.8" cy="5.8" r="1.4" fill="#0f131a"/>
+                  <!-- Brushed chrome lever arm -->
+                  <path d="M12.5 8.8L28.5 6.4C30.2 6.1 31.6 7.2 31.6 9.0C31.6 10.8 30.2 12.1 28.4 12.2L12.5 13.2Z" fill="url(#windChrome)" stroke="#334155" stroke-width="0.6"/>
+                  <!-- Specular edge highlight on chrome arm -->
+                  <path d="M14 9.3L28 7.2" stroke="rgba(255,255,255,0.65)" stroke-width="0.7" stroke-linecap="round"/>
+                  <!-- Ergonomic black vulcanite thumb tip -->
+                  <path d="M27.8 5.6C31.5 4.4 36.8 4.2 39.8 6.0C41.8 7.2 42.3 9.7 41.2 11.6C39.8 13.8 35.8 14.3 31.2 13.3C29.0 12.8 27.6 11.4 27.6 9.2C27.6 7.5 27.5 6.3 27.8 5.6Z" fill="url(#windTip)" stroke="#475569" stroke-width="0.7"/>
+                  <!-- Grip ribs on thumb tip -->
+                  <path d="M33.2 6.3V11.8M35.5 6.2V12.0M37.8 6.6V11.8" stroke="#475569" stroke-width="0.75" stroke-linecap="round" opacity="0.75"/>
                 </g>
+                <!-- Mechanical spindle hub & collar -->
+                <circle cx="9" cy="11" r="7.2" fill="url(#windHub)" stroke="#1e293b" stroke-width="0.9"/>
+                <circle cx="9" cy="11" r="5.1" fill="#141821" stroke="#94a3b8" stroke-width="0.7"/>
+                <circle class="wind-StatusDot" cx="9" cy="11" r="2.1" fill="#4ade80"/>
               </svg>
               <span id="windLeverLabel"></span>
             </button>
@@ -9878,7 +9904,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0316';
+  const APP_BUILD = '20261122-0320';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
