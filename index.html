@@ -741,7 +741,7 @@
     }
     .lab-action-bar {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 0.9fr 1fr;
       gap: 6px;
       width: 100%;
     }
@@ -3244,6 +3244,7 @@
 
         <div class="lab-action-bar">
           <button class="btn-pill btn-ghost lab-action-btn" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
+          <button class="btn-pill btn-ghost lab-action-btn" id="btnRotatePhoto" type="button" title="Rotate photo 90°" aria-label="Rotate photo 90 degrees">↻ <span>Rotate</span></button>
           <button class="btn-pill btn-brass lab-action-btn" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
         </div>
       </div>
@@ -3520,7 +3521,7 @@
           <button class="clapper-col active" data-picker-tab="camera" type="button">
             <div class="clapper-col-head">
               <span class="clapper-col-lbl">BODY</span>
-              <span class="clapper-col-num" id="pickerBodyCount"><strong>01</strong>/6</span>
+              <span class="clapper-col-num" id="pickerBodyCount"><strong>01</strong>/5</span>
             </div>
             <div class="clapper-col-val" id="clapperBodyVal">SLR</div>
           </button>
@@ -3682,25 +3683,6 @@
       disposableCast: false
     },
     {
-      id: 'rangefinder',
-      name: 'Rangefinder',
-      formatLabel: '35mm · 3:2',
-      aspect: 3 / 2,
-      meta: 'Brightline frames + outside-the-frame',
-      defaultFocalId: '35mm',
-      recLenses: ['35mm', '50mm', '28mm'],
-      recFilms: ['kodak-trix-400', 'ilford-hp5', 'fuji-classic-chrome', 'kodak-portra-400'],
-      blackLift: 0.018,
-      contrast: 1.11,
-      highlightRolloff: 0.15,
-      bodyWarmth: 1,
-      bodyTint: 0,
-      grainScale: 1.0,
-      softFocus: 0,
-      vignetteBoost: 0,
-      disposableCast: false
-    },
-    {
       id: 'pns',
       name: 'Point & Shoot',
       formatLabel: '35mm · Compact AF',
@@ -3768,13 +3750,6 @@
       { id: '85mm', mm: 85, minF: 1.8, maxF: 16, focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Short tele · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.86, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 },
       { id: '135mm', mm: 135, minF: 2.8, maxF: 16, focalTag: '135mm', aperture: 'f/2.8', label: '135mm f/2.8', short: '135mm', tileSub: 'Med tele · Shake risk', meta: 'Medium tele · Distant candid portraits; strong compression, slow-shutter shake risk', cropZoom: 3.45, brightlinePct: 100, barrelDistort: 0, apertureEV: -0.06, dofStrength: 0.92, dofRadius: 0.30, shakeSens: 1.0, skinFlatter: 0.10, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 23, chromaticAb: 0.22, edgeSoft: 0.025 },
       { id: '35-70mm', mm: 50, minF: 3.5, maxF: 16, zoomMin: 35, zoomMax: 70, focalTag: '35–70', aperture: 'f/3.5–4.5', label: '35–70mm f/3.5–4.5', short: '35–70', tileSub: 'Zoom · Daylight travel', meta: 'Standard zoom · Travel & daytime events; smooth 35–70mm focal & f/3.5–4.5', cropZoom: 1.80, brightlinePct: 100, isZoom: true, zoomSteps: [35, 50, 70], barrelDistort: 0.01, apertureEV: -0.30, dofStrength: 0.14, dofRadius: 0.62, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 20, vignetteBase: 26, chromaticAb: 0.34, edgeSoft: 0.035 }
-    ],
-    rangefinder: [
-      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Deep focus', meta: 'Wide angle · Outer brightlines; compact, deep focus zone for street', cropZoom: 1.14, brightlinePct: 88, barrelDistort: 0.024, apertureEV: -0.05, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 20, vignetteBase: 22, chromaticAb: 0.28, edgeSoft: 0.025 },
-      { id: '35mm', mm: 35, minF: 2.0, maxF: 16, focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Mild wide · 35mm lines', meta: 'Mild wide · 35mm brightlines; street & full-body portrait, natural view', cropZoom: 1.42, brightlinePct: 70.4, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.22, dofRadius: 0.56, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 19, chromaticAb: 0.20, edgeSoft: 0.02 },
-      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focalTag: '50mm', aperture: 'f/1.4', label: '50mm f/1.4', short: '50mm', tileSub: 'Standard · Bright bokeh', meta: 'Standard · 50mm brightlines; bright f/1.4 low-light & shallow DOF bokeh', cropZoom: 2.03, brightlinePct: 49.3, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.58, dofRadius: 0.42, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 18, chromaticAb: 0.18, edgeSoft: 0.02 },
-      { id: '85mm', mm: 85, minF: 1.8, maxF: 16, focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Short tele · Creamy bokeh', meta: 'Short tele · 85mm brightlines; waist-up portrait & creamy bokeh', cropZoom: 2.75, brightlinePct: 35, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.85, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.02 },
-      { id: '135mm', mm: 135, minF: 2.8, maxF: 16, focalTag: '135mm', aperture: 'f/2.8', label: '135mm f/2.8', short: '135mm', tileSub: 'Med tele · Shake risk', meta: 'Medium tele · 135mm tele lines; distant candid, strong blur & shake risk in dark', cropZoom: 3.45, brightlinePct: 24, barrelDistort: 0, apertureEV: -0.06, dofStrength: 0.90, dofRadius: 0.30, shakeSens: 1.0, skinFlatter: 0.10, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.025 }
     ],
     pns: [
       { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp prime · Compact', meta: 'Classic 35mm f/2.8 prime · High micro-contrast, sharp center with flash falloff', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.22, dofRadius: 0.60, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
@@ -4872,7 +4847,7 @@
     if (VIEWFINDER_MODES.some(m => m.id === oldId)) return oldId;
     if (oldId === 'pocket-110') return 'pns';
     if (oldId === 'disposable') return 'pns';
-    if (oldId === 'leica-m6' || oldId === 'fuji-tx1') return 'rangefinder';
+    if (oldId === 'leica-m6' || oldId === 'fuji-tx1' || oldId === 'rangefinder') return 'slr';
     if (oldId === 'half-frame-single' || oldId === 'rollie-35' || oldId === 'contax-t2') return 'half-frame';
     if (oldId === 'hasselblad-500') return 'medium-format';
     return 'slr';
@@ -5728,6 +5703,31 @@
 
     syncAllUI();
     renderPreview(!!opts.forcePreviewRender);
+  }
+
+  function rotateLabCanvas90(canvas, clockwise = true) {
+    if (!canvas || !canvas.width || !canvas.height) return canvas;
+    const out = document.createElement('canvas');
+    out.width = canvas.height;
+    out.height = canvas.width;
+    const ctx = out.getContext('2d');
+    ctx.translate(out.width / 2, out.height / 2);
+    ctx.rotate(clockwise ? Math.PI / 2 : -Math.PI / 2);
+    ctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+    return out;
+  }
+
+  function rotateLabPhoto() {
+    if (!state.fullSourceCanvas) return;
+    const rotatedFull = rotateLabCanvas90(state.fullSourceCanvas, true);
+    state.fullSourceCanvas = rotatedFull;
+    state.previewSourceCanvas = makeScaledPreviewCanvas(rotatedFull);
+    state.previewSourceData = null;
+    previewSourceVersion += 1;
+    resetLabZoom();
+    labRenderDirty = true;
+    renderPreview(true);
+    try { navigator.vibrate?.(8); } catch (ignored) {}
   }
 
   let renderRaf = null;
@@ -9010,6 +9010,7 @@
   // File & Export
   const fileInput = document.getElementById('fileInput');
   fileInput.addEventListener('change', e => { if (e.target.files[0]) handleImageFile(e.target.files[0]); e.target.value = ''; });
+  document.getElementById('btnRotatePhoto')?.addEventListener('click', rotateLabPhoto);
   document.getElementById('btnExport').addEventListener('click', exportFullResolution);
 
   // Split, Lab 1×/2× Zoom, Pinch, Pan & Hold Original
@@ -10019,7 +10020,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0426';
+  const APP_BUILD = '20261122-0438';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
