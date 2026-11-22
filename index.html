@@ -7557,11 +7557,11 @@
       try {
         let stream;
         try {
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 1440 }, height: { ideal: 1920 } }, audio: false });
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 1080 }, height: { ideal: 1440 }, frameRate: { ideal: 24, max: 30 } }, audio: false });
         } catch (hiResErr) {
           const canRetryLoRes = hiResErr?.name === 'OverconstrainedError' || hiResErr?.name === 'ConstraintNotSatisfiedError';
           if (!canRetryLoRes) throw hiResErr;
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 960 }, height: { ideal: 1280 } }, audio: false });
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 720 }, height: { ideal: 960 }, frameRate: { ideal: 24, max: 30 } }, audio: false });
         }
         if (!document.getElementById('view-camera').classList.contains('active') || !state.camLiveEnabled) {
           stream.getTracks().forEach(track => track.stop());
@@ -8102,7 +8102,7 @@
         gl.uniform1f(ug.uIsBW, film.isBW ? 1 : 0);
         const bwW = film.bwWeights || [0.33, 0.5, 0.17];
         gl.uniform3f(ug.uBwWeights, bwW[0], bwW[1], bwW[2]);
-        gl.uniformMatrix3fv(ug.uFilmMatrix, false, new Float32Array([previewMatrix[0], previewMatrix[3], previewMatrix[6], previewMatrix[1], previewMatrix[4], previewMatrix[7], previewMatrix[2], previewMatrix[5], previewMatrix[8]]));
+        gl.uniformMatrix3fv(ug.uFilmMatrix, false, (window.__vfMat3Buf || (window.__vfMat3Buf = new Float32Array(9)), window.__vfMat3Buf[0] = previewMatrix[0], window.__vfMat3Buf[1] = previewMatrix[3], window.__vfMat3Buf[2] = previewMatrix[6], window.__vfMat3Buf[3] = previewMatrix[1], window.__vfMat3Buf[4] = previewMatrix[4], window.__vfMat3Buf[5] = previewMatrix[7], window.__vfMat3Buf[6] = previewMatrix[2], window.__vfMat3Buf[7] = previewMatrix[5], window.__vfMat3Buf[8] = previewMatrix[8], window.__vfMat3Buf));
         gl.uniform3f(ug.uShadowTint, sT[0] * filmTintMix, sT[1] * filmTintMix, sT[2] * filmTintMix);
         gl.uniform3f(ug.uMidTint, mT[0] * filmTintMix, mT[1] * filmTintMix, mT[2] * filmTintMix);
         gl.uniform3f(ug.uHighlightTint, hT[0] * filmTintMix, hT[1] * filmTintMix, hT[2] * filmTintMix);
@@ -8217,7 +8217,7 @@
 
       const gpu = getGpuCameraRenderer();
       const gpuReady = !!(gpu && gpu.isSupported());
-      if (hasLiveVideo && ts - last < (gpuReady ? 32 : 75)) return;
+      if (hasLiveVideo && ts - last < (gpuReady ? 42 : 90)) return;
       if (!gpuReady && cameraJobInFlight) return;
 
       const { phone, body, lens, film } = getSelectedGear();
@@ -8333,6 +8333,27 @@
   });
   window.addEventListener('pagehide', pauseCameraWhenHidden);
   window.addEventListener('beforeunload', pauseCameraWhenHidden);
+  let camIdleTimer = 0;
+  let camSleptByIdle = false;
+  function resetCameraIdleTimer() {
+    window.clearTimeout(camIdleTimer);
+    if (camSleptByIdle && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden) {
+      camSleptByIdle = false;
+      startCameraLoop();
+      if (state.camLiveEnabled) startRealCamera();
+    }
+    if (!document.getElementById('view-camera')?.classList.contains('active')) return;
+    camIdleTimer = window.setTimeout(() => {
+      if (state.camStream && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden) {
+        camSleptByIdle = true;
+        pauseCameraWhenHidden();
+        showToast('🔋 Camera paused (idle) — tap to resume');
+      }
+    }, 120000);
+  }
+  document.getElementById('view-camera')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
+  document.getElementById('btnShutter')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
+  resetCameraIdleTimer();
   window.addEventListener('resize', handleViewportResizeOrOrientation);
   window.addEventListener('orientationchange', handleViewportResizeOrOrientation);
   if (screen.orientation?.addEventListener) {
@@ -9840,7 +9861,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2342';
+  const APP_BUILD = '20261122-0125';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
