@@ -5716,8 +5716,8 @@
   const TWEAK_FRAME_LABELS = { 'none': 'Off', '35mm-sprocket': '35mm', 'darkroom-white': 'Border', 'polaroid': 'Polaroid' };
   const TWEAK_FRAME_OPTIONS = [
     { id: 'none', label: 'Off' },
-    { id: '35mm-sprocket', label: '35mm' },
     { id: 'darkroom-white', label: 'Border' },
+    { id: '35mm-sprocket', label: '35mm' },
     { id: 'polaroid', label: 'Polaroid' }
   ];
   let tweakDrawerMode = 'adjust';
@@ -9016,7 +9016,7 @@
     renderPreview();
   });
   document.getElementById('btnVfFrameToggle').addEventListener('click', () => {
-    const order = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'];
+    const order = ['none', 'darkroom-white', '35mm-sprocket', 'polaroid'];
     state.frameType = order[(order.indexOf(state.frameType) + 1) % order.length];
     syncAllUI();
     renderPreview();
@@ -9204,7 +9204,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1630';
+  const APP_BUILD = '20261121-1634';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
