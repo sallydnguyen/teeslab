@@ -3405,7 +3405,7 @@
             </div>
             <div class="vf-hud-meta-row">
               <div class="vf-hud-left">
-                <button class="vf-badge-btn" id="btnVfFrameToggle" type="button" title="Cycle film border">FRAME: OFF</button>
+                <button class="vf-badge-btn active" id="btnVfFrameToggle" type="button" title="Cycle film border">FRAME: BORDER</button>
                 <button class="vf-badge-btn active" id="btnVfFlashToggle" type="button" title="Toggle Flash" style="display:none;">⚡ FLASH</button>
               </div>
               <div class="vf-hud-center-actions">
@@ -4813,7 +4813,7 @@
     vignette: 20,
     leakType: 'none',
     leakAmt: 0,
-    frameType: 'none',
+    frameType: 'darkroom-white',
     dateStamp: 'off',
     hfDiptychMode: true,
 
@@ -5005,8 +5005,8 @@
       if (Object.prototype.hasOwnProperty.call(settings, key)) state[key] = settings[key];
     });
     state.phoneId = 'auto-detect';
-    state.frameType = 'none';
-    state.dateStamp = state.dateStamp && state.dateStamp !== 'off' ? 'exif-or-today' : 'off';
+    state.frameType = 'darkroom-white';
+    state.dateStamp = 'off';
     if (!localStorage.getItem('teeslab-half-frame-2f-default-v1')) {
       state.hfDiptychMode = true;
       localStorage.setItem('teeslab-half-frame-2f-default-v1', '1');
@@ -9408,7 +9408,7 @@
       state.vignette = Math.round(clamp(p.v, 0, 100, rawLens.vignetteBase || 20));
       state.leakType = LEAK_TYPES.some(lt => lt.id === p.lt) ? p.lt : 'none';
       state.leakAmt = Math.round(clamp(p.la, 0, 100, 0));
-      state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(p.fr) ? p.fr : 'none';
+      state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(p.fr) ? p.fr : 'darkroom-white';
       state.dateStamp = p.ds === 'on' ? 'exif-or-today' : 'off';
       if (p.fl !== undefined) state.camFlashOn = !!p.fl;
       if (p.hf !== undefined) state.hfDiptychMode = !!p.hf;
@@ -10019,7 +10019,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0422';
+  const APP_BUILD = '20261122-0426';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
