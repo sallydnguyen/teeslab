@@ -1186,7 +1186,7 @@
       z-index: 3;
     }
 
-    /* Corner finder brackets (shared by Half Frame, Pocket 110, Disposable) */
+    /* Corner finder brackets (shared by Half Frame, PnS, Disposable) */
     .vf-corner {
       position: absolute;
       width: 14px;
@@ -1198,7 +1198,6 @@
       transition: opacity 0.15s ease;
     }
     .vf-stage[data-vf-mode="half-frame"] .vf-corner,
-    .vf-stage[data-vf-mode="pocket-110"] .vf-corner,
     .vf-stage[data-vf-mode="pns"] .vf-corner,
     .vf-stage[data-vf-mode="disposable"] .vf-corner { opacity: 0.78; }
     .vf-corner.tl { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
@@ -1304,34 +1303,6 @@
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55), 0 0 12px rgba(34, 197, 94, 0.45);
     }
 
-    /* Pocket 110 (4:3) — Simple Subminiature Oval Target */
-    .vf-110-overlay {
-      position: absolute;
-      inset: 0;
-      display: none;
-      pointer-events: none;
-    }
-    .vf-stage[data-vf-mode="pocket-110"] .vf-110-overlay { display: block; }
-    .vf-110-reticle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 24px;
-      height: 18px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.55);
-    }
-    .vf-110-tag {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-family: var(--mono);
-      font-size: 8.5px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.58);
-      letter-spacing: 0.5px;
-    }
 
     /* Point & Shoot (PnS) 35mm — Optical Brightframe + Parallax Marks + Center AF Reticle + Status LEDs */
     .vf-pns-overlay, .vf-disp-overlay {
@@ -3149,15 +3120,8 @@
 
       <!-- COMPACT LAB CONTROL DOCK -->
       <div class="tool-dock">
-        <!-- Quick Frame · Date · Adjust Pills (Above Body · Lens · Film) -->
-        <div class="tweak-strip-row">
-          <div class="tweak-pills-wrap" id="tweakPillsStrip"></div>
-        </div>
-
-        <!-- Collapsible Adjust / Frame Drawer -->
+        <!-- Collapsible Adjust / Frame Drawer (Slider on top, Tweak buttons below) -->
         <div class="tweak-drawer" id="tweakDrawer">
-          <div class="tweak-frame-grid" id="tweakFrameStrip"></div>
-          <div class="tweak-sub-grid" id="tweakSubStrip"></div>
           <div class="tweak-header-row" id="tweakHeaderRow">
             <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 100%</span>
             <div style="display:flex;gap:6px;align-items:center;">
@@ -3167,6 +3131,13 @@
             </div>
           </div>
           <input type="range" id="activeTweakSlider" min="0" max="100" value="100" />
+          <div class="tweak-frame-grid" id="tweakFrameStrip"></div>
+          <div class="tweak-sub-grid" id="tweakSubStrip"></div>
+        </div>
+
+        <!-- Quick Frame · Date · Adjust Pills (Placed at the bottom of the 3 controls) -->
+        <div class="tweak-strip-row">
+          <div class="tweak-pills-wrap" id="tweakPillsStrip"></div>
         </div>
 
         <!-- 3-Card Combo Selector (BODY • LENS • FILM) -->
@@ -3292,11 +3263,6 @@
                 </div>
               </div>
 
-              <!-- Pocket 110: Subminiature Reticle -->
-              <div class="vf-110-overlay" aria-hidden="true">
-                <div class="vf-110-reticle"></div>
-                <span class="vf-110-tag">110</span>
-              </div>
 
               <!-- Point & Shoot (PnS) / Disposable: Brightframe + AF Reticle + Flash Status -->
               <div class="vf-pns-overlay vf-disp-overlay" aria-hidden="true">
@@ -3652,25 +3618,6 @@
       disposableCast: false
     },
     {
-      id: 'pocket-110',
-      name: 'Pocket 110',
-      formatLabel: '110 · 4:3',
-      aspect: 4 / 3,
-      meta: 'Heavy grain, soft focus & pocket vignette',
-      defaultFocalId: '24mm',
-      recLenses: ['24mm', '48mm'],
-      recFilms: ['kodak-gold-200', 'kodak-colorplus-200', 'kodak-ultramax-400', 'fuji-superia-400'],
-      blackLift: 0.055,
-      contrast: 1.03,
-      highlightRolloff: 0.14,
-      bodyWarmth: 4,
-      bodyTint: -2,
-      grainScale: 1.85,
-      softFocus: 0.45,
-      vignetteBoost: 16,
-      disposableCast: false
-    },
-    {
       id: 'pns',
       name: 'Point & Shoot',
       formatLabel: '35mm · Compact AF',
@@ -3731,10 +3678,6 @@
       { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Deep focus', meta: 'Wide portrait half-frame · Street & travel, deep focus zone', cropZoom: 1.0, barrelDistort: 0.024, apertureEV: -0.05, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 24, vignetteBase: 26, chromaticAb: 0.40, edgeSoft: 0.04 },
       { id: '35mm', mm: 35, minF: 2.0, maxF: 16, focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Mild wide · Natural', meta: 'Standard portrait half-frame · Street & full-body portrait, natural view', cropZoom: 1.25, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.20, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 23, chromaticAb: 0.32, edgeSoft: 0.03 },
       { id: '50mm', mm: 50, minF: 1.8, maxF: 16, focalTag: '50mm', aperture: 'f/1.8', label: '50mm f/1.8', short: '50mm', tileSub: 'Standard · Portrait bokeh', meta: 'Standard portrait half-frame · Half-body portrait, bright f/1.8 bokeh', cropZoom: 1.65, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.48, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 21, chromaticAb: 0.26, edgeSoft: 0.03 }
-    ],
-    'pocket-110': [
-      { id: '24mm', mm: 24, minF: 2.8, maxF: 16, focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', tileSub: 'Wide 110 plastic', meta: 'Ultra-wide 110 lens · Dramatic wide view with soft edges & distortion', cropZoom: 1.0, barrelDistort: 0.055, apertureEV: -0.08, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 3, coatingTint: -1, bloomBase: 30, vignetteBase: 32, chromaticAb: 0.65, edgeSoft: 0.09 },
-      { id: '48mm', mm: 48, minF: 3.5, maxF: 16, focalTag: '48mm', aperture: 'f/3.5', label: '48mm f/3.5', short: '48mm', tileSub: 'Tele 110 converter', meta: 'Standard 110 tele converter · Tighter portrait framing', cropZoom: 1.65, barrelDistort: 0, apertureEV: -0.18, dofStrength: 0.18, dofRadius: 0.55, shakeSens: 0, skinFlatter: 0, coatingWarmth: 4, coatingTint: -1, bloomBase: 32, vignetteBase: 28, chromaticAb: 0.55, edgeSoft: 0.08 }
     ],
     pns: [
       { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp prime · Compact', meta: 'Classic 35mm f/2.8 prime · High micro-contrast, sharp center with flash falloff', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.22, dofRadius: 0.60, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
@@ -4817,6 +4760,7 @@
 
   function migrateModeId(oldId) {
     if (VIEWFINDER_MODES.some(m => m.id === oldId)) return oldId;
+    if (oldId === 'pocket-110') return 'pns';
     if (oldId === 'disposable') return 'pns';
     if (oldId === 'leica-m6' || oldId === 'fuji-tx1') return 'rangefinder';
     if (oldId === 'half-frame-single' || oldId === 'rollie-35' || oldId === 'contax-t2') return 'half-frame';
@@ -7045,7 +6989,6 @@
     slr: { level: 1.32, clickFreq: 3600, clickLevel: 0.21, impactDelay: 0.003, impactDuration: 0.056, impactFreq: 980, impactLevel: 0.44, curtainDelay: 0.016, curtainFreq: 3100, curtainLevel: 0.28, returnDelay: 0.082, returnFreq: 3450, returnLevel: 0.17, bodyFreq: 138, bodyLevel: 0.11, bodyTail: 0.12 },
     rangefinder: { level: 1.02, clickFreq: 3150, clickLevel: 0.16, impactDelay: 0.007, impactDuration: 0.046, impactFreq: 720, impactLevel: 0.28, curtainDelay: 0.026, curtainFreq: 2150, curtainLevel: 0.19, returnDelay: 0.088, returnFreq: 2800, returnLevel: 0.11, bodyFreq: 122, bodyLevel: 0.07, bodyTail: 0.095 },
     'half-frame': { level: 1.00, clickFreq: 3950, clickLevel: 0.18, impactDelay: 0.003, impactDuration: 0.032, impactFreq: 1750, impactLevel: 0.24, curtainDelay: 0.013, curtainFreq: 3050, curtainLevel: 0.16, returnDelay: 0.060, returnFreq: 3600, returnLevel: 0.09, bodyFreq: 205, bodyLevel: 0.055, bodyTail: 0.062 },
-    'pocket-110': { level: 0.92, clickFreq: 4500, clickLevel: 0.20, impactDelay: 0.002, impactDuration: 0.022, impactFreq: 2400, impactLevel: 0.20, curtainDelay: 0.009, curtainFreq: 3700, curtainLevel: 0.14, returnDelay: 0.042, returnFreq: 4200, returnLevel: 0.07, bodyFreq: 280, bodyLevel: 0.03, bodyTail: 0.040 },
     pns: { level: 1.05, clickFreq: 3800, clickLevel: 0.22, impactDelay: 0.002, impactDuration: 0.026, impactFreq: 1800, impactLevel: 0.26, curtainDelay: 0.012, curtainFreq: 3200, curtainLevel: 0.18, returnDelay: 0.045, returnFreq: 3800, returnLevel: 0.10, bodyFreq: 220, bodyLevel: 0.06, bodyTail: 0.05 },
     disposable: { level: 0.98, clickFreq: 4800, clickLevel: 0.24, impactDelay: 0.001, impactDuration: 0.020, impactFreq: 2800, impactLevel: 0.22, curtainDelay: 0.008, curtainFreq: 4100, curtainLevel: 0.15, returnDelay: 0.038, returnFreq: 4400, returnLevel: 0.08, bodyFreq: 310, bodyLevel: 0.028, bodyTail: 0.038 },
     'medium-format': { level: 1.42, clickFreq: 2900, clickLevel: 0.20, impactDelay: 0.004, impactDuration: 0.072, impactFreq: 740, impactLevel: 0.50, curtainDelay: 0.020, curtainFreq: 2400, curtainLevel: 0.30, returnDelay: 0.098, returnFreq: 2650, returnLevel: 0.18, bodyFreq: 98, bodyLevel: 0.14, bodyTail: 0.15 }
@@ -9701,7 +9644,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1815';
+  const APP_BUILD = '20261121-1825';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
