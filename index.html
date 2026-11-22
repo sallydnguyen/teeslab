@@ -1112,55 +1112,95 @@
       justify-content: center;
       box-shadow: inset 0 0 18px rgba(0,0,0,0.85);
     }
-    /* Keep the live finder dominant; gear selection stays available in a compact deck. */
+    /* Camera 3-card combo deck with visual artwork for Body, Lens, Film */
     #camComboTrio {
-      gap: 4px;
+      gap: 5px;
       flex-shrink: 0;
     }
     #camComboTrio .combo-card {
-      min-height: 40px;
-      height: 40px;
-      padding: 4px 6px;
-      gap: 2px;
-      border-radius: 7px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      min-height: 52px;
+      height: auto;
+      padding: 4px 4px 4px;
+      gap: 1px;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 6px rgba(0,0,0,0.4);
     }
     #camComboTrio .combo-card-nav-row {
-      display: contents;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+      margin-top: 2px;
     }
-    #camComboTrio .combo-card-nav-row .combo-card-art,
+    #camComboTrio .combo-card-nav-row .combo-card-art {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 27px;
+      flex: 1;
+      min-width: 0;
+      margin-top: 0;
+    }
+    #camComboTrio .combo-card-nav-row .combo-card-art svg,
+    #camComboTrio .combo-card-nav-row .combo-card-art img {
+      height: 26px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.55)) drop-shadow(0 0 1px rgba(255,255,255,0.16));
+    }
     #camComboTrio .combo-card-caret {
       display: none;
     }
     #camComboTrio .card-step-btn {
-      position: absolute;
-      top: 50%;
-      width: 21px;
-      height: 24px;
+      position: static;
+      transform: none;
+      width: 24px;
+      height: 26px;
+      flex-shrink: 0;
       padding: 0;
       border-radius: 5px;
-      transform: translateY(-50%);
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 700;
       line-height: 1;
-      background: rgba(245, 166, 35, 0.08);
-      border-color: rgba(245, 166, 35, 0.28);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #2a303d;
+      color: #f5a623;
     }
-    #camComboTrio .card-step-btn[data-step-dir="-1"] { left: 3px; }
-    #camComboTrio .card-step-btn[data-step-dir="1"] { right: 3px; }
-    #camComboTrio .card-step-btn:active { transform: translateY(-50%) scale(0.94); }
+    #camComboTrio .card-step-btn:active {
+      transform: scale(0.94);
+      background: rgba(245, 166, 35, 0.2);
+      border-color: #f5a623;
+    }
     #camComboTrio .combo-card-tag {
-      font-size: 7px;
-      letter-spacing: 0.5px;
+      font-size: 7.5px;
+      letter-spacing: 0.65px;
     }
     #camComboTrio .combo-card-val {
-      font-size: 10px;
+      font-size: 10.5px;
       max-width: 100%;
     }
     @media (max-height: 700px) {
       #camComboTrio .combo-card {
-        min-height: 34px;
-        height: 34px;
-        padding: 3px 5px;
+        min-height: 46px;
+        padding: 3px 3px 3px;
+      }
+      #camComboTrio .combo-card-nav-row .combo-card-art {
+        height: 22px;
+      }
+      #camComboTrio .combo-card-nav-row .combo-card-art svg,
+      #camComboTrio .combo-card-nav-row .combo-card-art img {
+        height: 21px;
+      }
+      #camComboTrio .card-step-btn {
+        width: 20px;
+        height: 22px;
+        font-size: 12px;
       }
     }
     .vf-stage {
@@ -9644,7 +9684,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1835';
+  const APP_BUILD = '20261121-1850';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v72';
+const CACHE_NAME = 'tees-lab-shell-v73';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
