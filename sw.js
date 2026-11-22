@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v69';
+const CACHE_NAME = 'tees-lab-shell-v70';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -7,6 +7,7 @@ const CORE_FILES = [
   './assets/gear/bodies/rangefinder.webp',
   './assets/gear/bodies/half-frame.webp',
   './assets/gear/bodies/pocket-110.webp',
+  './assets/gear/bodies/pns.webp',
   './assets/gear/bodies/disposable.webp',
   './assets/gear/bodies/medium-format.webp'
 ];

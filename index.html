@@ -1199,6 +1199,7 @@
     }
     .vf-stage[data-vf-mode="half-frame"] .vf-corner,
     .vf-stage[data-vf-mode="pocket-110"] .vf-corner,
+    .vf-stage[data-vf-mode="pns"] .vf-corner,
     .vf-stage[data-vf-mode="disposable"] .vf-corner { opacity: 0.78; }
     .vf-corner.tl { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
     .vf-corner.tr { top: 10px; right: 10px; border-width: 1.5px 1.5px 0 0; }
@@ -1332,30 +1333,70 @@
       letter-spacing: 0.5px;
     }
 
-    /* Disposable 35mm — Plastic Finder + Parallax Ticks + Flash Status */
-    .vf-disp-overlay {
+    /* Point & Shoot (PnS) 35mm — Optical Brightframe + Parallax Marks + Center AF Reticle + Status LEDs */
+    .vf-pns-overlay, .vf-disp-overlay {
       position: absolute;
-      inset: 14px;
-      border: 1px dashed rgba(255, 255, 255, 0.25);
+      inset: 12px;
+      border: 1.5px solid rgba(255, 255, 255, 0.40);
+      border-radius: 2px;
       display: none;
       pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
     }
+    .vf-stage[data-vf-mode="pns"] .vf-pns-overlay,
     .vf-stage[data-vf-mode="disposable"] .vf-disp-overlay { display: block; }
-    .vf-disp-overlay::after {
+
+    .vf-pns-parallax-ticks {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      right: 10px;
+      height: 6px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.35);
+      pointer-events: none;
+    }
+    .vf-pns-af-bracket {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 28px;
+      height: 20px;
+      transform: translate(-50%, -50%);
+      border-left: 2px solid rgba(255, 255, 255, 0.75);
+      border-right: 2px solid rgba(255, 255, 255, 0.75);
+      pointer-events: none;
+    }
+    .vf-pns-af-bracket::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 14px;
-      height: 14px;
+      width: 4px;
+      height: 4px;
       transform: translate(-50%, -50%);
-      border: 1px solid rgba(255,255,255,0.42);
+      background: rgba(255, 255, 255, 0.65);
       border-radius: 50%;
     }
-    .vf-disp-flash-pip {
+    .vf-pns-status-bar {
       position: absolute;
       top: 6px;
       right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .vf-pns-af-pip {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.22);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.65);
+      opacity: 0.9;
+    }
+    .vf-pns-flash-pip, .vf-disp-flash-pip {
       font-family: var(--mono);
       font-size: 8.5px;
       font-weight: 800;
@@ -1367,7 +1408,7 @@
       opacity: 0;
       transition: opacity 0.14s ease;
     }
-    .vf-disp-flash-pip.on { opacity: 1; }
+    .vf-pns-flash-pip.on, .vf-disp-flash-pip.on { opacity: 1; }
 
     /* Medium Format 120 — Waist-Level Ground Glass Etched Grid */
     .vf-mf-overlay {
@@ -3257,9 +3298,14 @@
                 <span class="vf-110-tag">110</span>
               </div>
 
-              <!-- Disposable: Plastic Brightframe + Flash Pip -->
-              <div class="vf-disp-overlay" aria-hidden="true">
-                <span class="vf-disp-flash-pip on" id="vfDispFlashPip">⚡ READY</span>
+              <!-- Point & Shoot (PnS) / Disposable: Brightframe + AF Reticle + Flash Status -->
+              <div class="vf-pns-overlay vf-disp-overlay" aria-hidden="true">
+                <div class="vf-pns-parallax-ticks"></div>
+                <div class="vf-pns-af-bracket"></div>
+                <div class="vf-pns-status-bar">
+                  <span class="vf-pns-af-pip on" id="vfPnsAfPip">● AF</span>
+                  <span class="vf-pns-flash-pip on" id="vfDispFlashPip">⚡ FLASH</span>
+                </div>
               </div>
 
               <!-- Medium Format: Waist-Level Ground Glass Grid -->
@@ -3292,7 +3338,7 @@
             <div class="vf-hud-meta-row">
               <div class="vf-hud-left">
                 <button class="vf-badge-btn" id="btnVfFrameToggle" type="button" title="Cycle film border">FRAME: OFF</button>
-                <button class="vf-badge-btn active" id="btnVfFlashToggle" type="button" title="Toggle Disposable Flash" style="display:none;">⚡ FLASH</button>
+                <button class="vf-badge-btn active" id="btnVfFlashToggle" type="button" title="Toggle Flash" style="display:none;">⚡ FLASH</button>
               </div>
               <div class="vf-hud-center-actions">
                 <button class="vf-badge-btn af-active" id="btnVfAutoFocus" type="button" title="Auto Focus — tap to return to AF">AF</button>
@@ -3625,23 +3671,23 @@
       disposableCast: false
     },
     {
-      id: 'disposable',
-      name: 'Disposable',
-      formatLabel: '35mm · Flash Cam',
+      id: 'pns',
+      name: 'Point & Shoot',
+      formatLabel: '35mm · Compact AF',
       aspect: 3 / 2,
-      meta: 'Fixed 32mm lens + toggleable direct flash',
-      defaultFocalId: '32mm',
-      recLenses: ['32mm'],
-      recFilms: ['kodak-ultramax-400', 'fuji-superia-400', 'cinestill-800t', 'kodak-portra-800'],
-      blackLift: 0.032,
-      contrast: 1.09,
-      highlightRolloff: 0.14,
-      bodyWarmth: -2,
-      bodyTint: -5,
-      grainScale: 1.18,
-      softFocus: 0.12,
-      vignetteBoost: 10,
-      disposableCast: true
+      meta: 'Autofocus 35mm compact · Direct flash & motorized advance',
+      defaultFocalId: '35mm',
+      recLenses: ['35mm', '28mm', '38-80mm'],
+      recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-portra-400'],
+      blackLift: 0.020,
+      contrast: 1.12,
+      highlightRolloff: 0.16,
+      bodyWarmth: 1,
+      bodyTint: 0,
+      grainScale: 1.05,
+      softFocus: 0,
+      vignetteBoost: 6,
+      disposableCast: false
     },
     {
       id: 'medium-format',
@@ -3690,7 +3736,13 @@
       { id: '24mm', mm: 24, minF: 2.8, maxF: 16, focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', tileSub: 'Wide 110 plastic', meta: 'Ultra-wide 110 lens · Dramatic wide view with soft edges & distortion', cropZoom: 1.0, barrelDistort: 0.055, apertureEV: -0.08, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 3, coatingTint: -1, bloomBase: 30, vignetteBase: 32, chromaticAb: 0.65, edgeSoft: 0.09 },
       { id: '48mm', mm: 48, minF: 3.5, maxF: 16, focalTag: '48mm', aperture: 'f/3.5', label: '48mm f/3.5', short: '48mm', tileSub: 'Tele 110 converter', meta: 'Standard 110 tele converter · Tighter portrait framing', cropZoom: 1.65, barrelDistort: 0, apertureEV: -0.18, dofStrength: 0.18, dofRadius: 0.55, shakeSens: 0, skinFlatter: 0, coatingWarmth: 4, coatingTint: -1, bloomBase: 32, vignetteBase: 28, chromaticAb: 0.55, edgeSoft: 0.08 }
     ],
+    pns: [
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp prime · Compact', meta: 'Classic 35mm f/2.8 prime · High micro-contrast, sharp center with flash falloff', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.22, dofRadius: 0.60, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
+      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide street · Snap', meta: 'Wide 28mm prime · Dynamic street perspective, crisp edge-to-edge', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.12, dofRadius: 0.75, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
+      { id: '38-80mm', mm: 50, minF: 4.5, maxF: 16, focalTag: '38-80mm', aperture: 'f/4.5', label: '38–80mm Zoom', short: '38-80mm', tileSub: 'Versatile 90s zoom', meta: 'Classic 90s compact zoom · Street snapshot to portrait telephoto', cropZoom: 1.25, barrelDistort: 0.010, apertureEV: -0.10, dofStrength: 0.28, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 2, coatingTint: -1, bloomBase: 20, vignetteBase: 20, chromaticAb: 0.26, edgeSoft: 0.025 }
+    ],
     disposable: [
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp prime · Compact', meta: 'Classic 35mm f/2.8 prime · High micro-contrast, sharp center with flash falloff', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.22, dofRadius: 0.60, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
     ],
     'medium-format': [
@@ -4765,6 +4817,7 @@
 
   function migrateModeId(oldId) {
     if (VIEWFINDER_MODES.some(m => m.id === oldId)) return oldId;
+    if (oldId === 'disposable') return 'pns';
     if (oldId === 'leica-m6' || oldId === 'fuji-tx1') return 'rangefinder';
     if (oldId === 'half-frame-single' || oldId === 'rollie-35' || oldId === 'contax-t2') return 'half-frame';
     if (oldId === 'hasselblad-500') return 'medium-format';
@@ -5661,7 +5714,7 @@
         frameType,
         dateStampText: formatDateStamp(),
         frameNumberStr: '24A',
-        flashBurst: body.id === 'disposable' && state.camFlashOn
+        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'bitmap', coalesceKey: 'preview' });
       if (!output || requestVersion !== previewRequestVersion) { output?.bitmap?.close(); return; }
       const image = output.bitmap || output.canvas;
@@ -6993,6 +7046,7 @@
     rangefinder: { level: 1.02, clickFreq: 3150, clickLevel: 0.16, impactDelay: 0.007, impactDuration: 0.046, impactFreq: 720, impactLevel: 0.28, curtainDelay: 0.026, curtainFreq: 2150, curtainLevel: 0.19, returnDelay: 0.088, returnFreq: 2800, returnLevel: 0.11, bodyFreq: 122, bodyLevel: 0.07, bodyTail: 0.095 },
     'half-frame': { level: 1.00, clickFreq: 3950, clickLevel: 0.18, impactDelay: 0.003, impactDuration: 0.032, impactFreq: 1750, impactLevel: 0.24, curtainDelay: 0.013, curtainFreq: 3050, curtainLevel: 0.16, returnDelay: 0.060, returnFreq: 3600, returnLevel: 0.09, bodyFreq: 205, bodyLevel: 0.055, bodyTail: 0.062 },
     'pocket-110': { level: 0.92, clickFreq: 4500, clickLevel: 0.20, impactDelay: 0.002, impactDuration: 0.022, impactFreq: 2400, impactLevel: 0.20, curtainDelay: 0.009, curtainFreq: 3700, curtainLevel: 0.14, returnDelay: 0.042, returnFreq: 4200, returnLevel: 0.07, bodyFreq: 280, bodyLevel: 0.03, bodyTail: 0.040 },
+    pns: { level: 1.05, clickFreq: 3800, clickLevel: 0.22, impactDelay: 0.002, impactDuration: 0.026, impactFreq: 1800, impactLevel: 0.26, curtainDelay: 0.012, curtainFreq: 3200, curtainLevel: 0.18, returnDelay: 0.045, returnFreq: 3800, returnLevel: 0.10, bodyFreq: 220, bodyLevel: 0.06, bodyTail: 0.05 },
     disposable: { level: 0.98, clickFreq: 4800, clickLevel: 0.24, impactDelay: 0.001, impactDuration: 0.020, impactFreq: 2800, impactLevel: 0.22, curtainDelay: 0.008, curtainFreq: 4100, curtainLevel: 0.15, returnDelay: 0.038, returnFreq: 4400, returnLevel: 0.08, bodyFreq: 310, bodyLevel: 0.028, bodyTail: 0.038 },
     'medium-format': { level: 1.42, clickFreq: 2900, clickLevel: 0.20, impactDelay: 0.004, impactDuration: 0.072, impactFreq: 740, impactLevel: 0.50, curtainDelay: 0.020, curtainFreq: 2400, curtainLevel: 0.30, returnDelay: 0.098, returnFreq: 2650, returnLevel: 0.18, bodyFreq: 98, bodyLevel: 0.14, bodyTail: 0.15 }
   };
@@ -7062,6 +7116,30 @@
           source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
           source.start(start); source.stop(start + duration + 0.004);
         };
+
+        if (state.bodyId === 'pns') {
+          // Motorized electric gear whine for Point & Shoot
+          const motorOsc = ctx.createOscillator();
+          const motorGain = ctx.createGain();
+          const motorFilter = ctx.createBiquadFilter();
+          motorOsc.type = 'sawtooth';
+          motorOsc.frequency.setValueAtTime(440, now);
+          motorOsc.frequency.linearRampToValueAtTime(560, now + 0.07);
+          motorOsc.frequency.exponentialRampToValueAtTime(380, now + 0.22);
+          motorFilter.type = 'lowpass';
+          motorFilter.frequency.value = 1700;
+          motorGain.gain.setValueAtTime(0.0001, now);
+          motorGain.gain.exponentialRampToValueAtTime(0.11, now + 0.012);
+          motorGain.gain.setValueAtTime(0.11, now + 0.17);
+          motorGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+          motorOsc.connect(motorFilter); motorFilter.connect(motorGain); motorGain.connect(ctx.destination);
+          motorOsc.start(now); motorOsc.stop(now + 0.23);
+          const motorTicks = [0.03, 0.07, 0.11, 0.15, 0.19];
+          motorTicks.forEach(t => ratchetTick(t, 3200, 0.08));
+          ratchetTick(0.21, 4200, 0.22);
+          return;
+        }
+
         const steps = [0.00, 0.022, 0.044, 0.068, 0.095, 0.125, 0.160];
         steps.forEach((t, idx) => ratchetTick(t, 2400 + idx * 185, 0.16 + idx * 0.018));
         ratchetTick(0.205, 3950, 0.32);
@@ -7211,7 +7289,7 @@
       });
     }
 
-    if (body.id === 'disposable') {
+    if (body.id === 'pns' || body.id === 'disposable') {
       document.getElementById('vfDispFlashPip')?.classList.toggle('on', !!state.camFlashOn);
     }
     syncViewfinderFocusAid(body, lens);
@@ -7296,8 +7374,8 @@
 
     const flashBtn = document.getElementById('btnVfFlashToggle');
     if (flashBtn) {
-      const isDisp = state.bodyId === 'disposable';
-      flashBtn.style.display = isDisp ? '' : 'none';
+      const isFlashCam = state.bodyId === 'pns' || state.bodyId === 'disposable';
+      flashBtn.style.display = isFlashCam ? '' : 'none';
       flashBtn.classList.toggle('active', !!state.camFlashOn);
       flashBtn.textContent = state.camFlashOn ? '⚡ FLASH' : '⚡ OFF';
     }
@@ -8114,7 +8192,7 @@
         phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
         grainAmt: Math.round(film.grainBase * 0.65), halationAmt: Math.round(film.halationBase * 0.6),
         bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
-        dateStampText: '', frameNumberStr: '', flashBurst: body.id === 'disposable' && state.camFlashOn
+        dateStampText: '', frameNumberStr: '', flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       };
 
       if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
@@ -8234,7 +8312,7 @@
       phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
       grainAmt: film.grainBase, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
       leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, dateStampText: '', frameNumberStr: numStr,
-      flashBurst: body.id === 'disposable' && state.camFlashOn
+      flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
     }, { output: 'blob', quality: 0.92 });
     const photoBlob = processed.blob;
     const thumbnailBlob = await createShotThumbnail(photoBlob);
@@ -8643,7 +8721,7 @@
         phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: state.warmth,
         grainAmt: state.grain, halationAmt: state.halation, bloomAmt: state.bloom, vignetteAmt: state.vignette,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, dateStampText: formatDateStamp(), frameNumberStr: '36',
-        flashBurst: body.id === 'disposable' && state.camFlashOn
+        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'blob', quality: 0.94 });
       blob = output.blob;
     } catch (error) { showToast('❌ Could not process this image'); return; }
@@ -9442,7 +9520,7 @@
     state.camFlashOn = !state.camFlashOn;
     syncAllUI();
     renderPreview();
-    showToast(state.camFlashOn ? '⚡ Disposable Flash: ON' : '⚡ Disposable Flash: OFF');
+    showToast(state.camFlashOn ? '⚡ Flash: ON (Direct fill burst)' : '⚡ Flash: OFF');
   });
 
   document.getElementById('camSourceStatus')?.addEventListener('click', () => {
@@ -9623,7 +9701,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1745';
+  const APP_BUILD = '20261121-1815';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
