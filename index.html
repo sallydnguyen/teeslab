@@ -3244,7 +3244,7 @@
 
         <div class="lab-action-bar">
           <button class="btn-pill btn-ghost lab-action-btn" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
-          <button class="btn-pill btn-ghost lab-action-btn" id="btnRotatePhoto" type="button" title="Rotate photo 90°" aria-label="Rotate photo 90 degrees">↻ <span>Rotate</span></button>
+          <button class="btn-pill btn-ghost lab-action-btn" id="btnRotatePhoto" type="button" title="Rotate photo 90° counter-clockwise" aria-label="Rotate photo 90 degrees counter-clockwise">↺ <span>Rotate</span></button>
           <button class="btn-pill btn-brass lab-action-btn" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
         </div>
       </div>
@@ -5719,7 +5719,7 @@
 
   function rotateLabPhoto() {
     if (!state.fullSourceCanvas) return;
-    const rotatedFull = rotateLabCanvas90(state.fullSourceCanvas, true);
+    const rotatedFull = rotateLabCanvas90(state.fullSourceCanvas, false);
     state.fullSourceCanvas = rotatedFull;
     state.previewSourceCanvas = makeScaledPreviewCanvas(rotatedFull);
     state.previewSourceData = null;
@@ -10020,7 +10020,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0438';
+  const APP_BUILD = '20261122-0445';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
