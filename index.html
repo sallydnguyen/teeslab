@@ -943,7 +943,7 @@
 
     /* Minimal Camera Top Plate (Logo+Counter | Sound Toggle) */
     .cam-top-plate {
-      height: 28px;
+      height: 40px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -953,15 +953,15 @@
     .cam-plate-left {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
     .cam-mini-logo {
-      width: 22px;
-      height: 22px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       overflow: hidden;
       border: 1.5px solid rgba(34, 211, 238, 0.85);
-      box-shadow: 0 0 6px rgba(34, 211, 238, 0.42);
+      box-shadow: 0 0 8px rgba(34, 211, 238, 0.45), 0 0 16px rgba(34, 211, 238, 0.22);
       background: #05070a;
       flex-shrink: 0;
     }
@@ -1034,8 +1034,8 @@
       text-shadow: 0 0 6px rgba(74, 222, 128, 0.45);
     }
     .cam-wind-lever {
-      height: 28px;
-      min-width: 40px;
+      height: 34px;
+      min-width: 58px;
       padding: 0 2px;
       border: none;
       background: transparent;
@@ -1044,9 +1044,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 800;
       letter-spacing: 0.4px;
       cursor: pointer;
@@ -1056,14 +1056,14 @@
       transition: color 0.14s ease, transform 0.14s ease, filter 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 44px;
-      height: 22px;
+      width: 56px;
+      height: 28px;
       display: block;
       overflow: visible;
-      filter: drop-shadow(0 1.5px 2.5px rgba(0,0,0,0.75));
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
     }
     .cam-wind-lever .wind-arm {
-      transform-origin: 9px 11px;
+      transform-origin: 12px 14px;
       transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .cam-wind-lever.is-cocked #windLeverLabel {
@@ -1108,11 +1108,11 @@
       50% { filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.95)); }
     }
     .cam-sound-btn {
-      width: 26px;
-      height: 24px;
-      border-radius: 7px;
+      width: 34px;
+      height: 30px;
+      border-radius: 8px;
       background: #14171f;
-      border: 1px solid #262b36;
+      border: 1px solid #2a303d;
       color: #e2e8f0;
       display: inline-flex;
       align-items: center;
@@ -1120,8 +1120,8 @@
       transition: opacity 0.14s ease, border-color 0.14s ease, transform 0.1s ease;
     }
     .cam-sound-btn svg {
-      width: 15px;
-      height: 15px;
+      width: 18px;
+      height: 18px;
       display: block;
     }
     .cam-sound-btn .sound-slash { display: none; }
@@ -3278,39 +3278,46 @@
           </div>
           <div class="cam-top-right">
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
-              <svg viewBox="0 0 44 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <svg viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                   <linearGradient id="windChrome" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="#f8fafc"/>
-                    <stop offset="35%" stop-color="#cbd5e1"/>
-                    <stop offset="75%" stop-color="#64748b"/>
+                    <stop offset="28%" stop-color="#cbd5e1"/>
+                    <stop offset="68%" stop-color="#64748b"/>
                     <stop offset="100%" stop-color="#94a3b8"/>
                   </linearGradient>
                   <linearGradient id="windHub" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#e2e8f0"/>
-                    <stop offset="50%" stop-color="#64748b"/>
+                    <stop offset="0%" stop-color="#f1f5f9"/>
+                    <stop offset="45%" stop-color="#64748b"/>
                     <stop offset="100%" stop-color="#cbd5e1"/>
                   </linearGradient>
                   <linearGradient id="windTip" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#2d3340"/>
-                    <stop offset="50%" stop-color="#141820"/>
-                    <stop offset="100%" stop-color="#090b0f"/>
+                    <stop offset="0%" stop-color="#333947"/>
+                    <stop offset="45%" stop-color="#151922"/>
+                    <stop offset="100%" stop-color="#07090c"/>
                   </linearGradient>
                 </defs>
                 <g class="wind-arm">
-                  <!-- Brushed chrome lever arm -->
-                  <path d="M12.5 8.8L28.5 6.4C30.2 6.1 31.6 7.2 31.6 9.0C31.6 10.8 30.2 12.1 28.4 12.2L12.5 13.2Z" fill="url(#windChrome)" stroke="#334155" stroke-width="0.6"/>
-                  <!-- Specular edge highlight on chrome arm -->
-                  <path d="M14 9.3L28 7.2" stroke="rgba(255,255,255,0.65)" stroke-width="0.7" stroke-linecap="round"/>
-                  <!-- Ergonomic black vulcanite thumb tip -->
-                  <path d="M27.8 5.6C31.5 4.4 36.8 4.2 39.8 6.0C41.8 7.2 42.3 9.7 41.2 11.6C39.8 13.8 35.8 14.3 31.2 13.3C29.0 12.8 27.6 11.4 27.6 9.2C27.6 7.5 27.5 6.3 27.8 5.6Z" fill="url(#windTip)" stroke="#475569" stroke-width="0.7"/>
-                  <!-- Grip ribs on thumb tip -->
-                  <path d="M33.2 6.3V11.8M35.5 6.2V12.0M37.8 6.6V11.8" stroke="#475569" stroke-width="0.75" stroke-linecap="round" opacity="0.75"/>
+                  <!-- Stepped brushed-steel mechanical crank arm -->
+                  <path d="M16 11.2L36.5 8.1C38.6 7.8 40.3 9.2 40.3 11.4C40.3 13.7 38.6 15.2 36.3 15.4L16 16.8Z" fill="url(#windChrome)" stroke="#334155" stroke-width="0.75"/>
+                  <!-- Specular top bevel highlight -->
+                  <path d="M18 11.9L36 9.1" stroke="rgba(255,255,255,0.72)" stroke-width="0.85" stroke-linecap="round"/>
+                  <!-- Lower shadow chamfer -->
+                  <path d="M18 16.0L35.5 14.8" stroke="rgba(15,23,42,0.55)" stroke-width="0.7" stroke-linecap="round"/>
+                  <!-- Sculpted black vulcanite thumb pad -->
+                  <path d="M35.4 7.0C40.2 5.4 47.2 5.2 51.0 7.6C53.6 9.2 54.2 12.4 52.8 14.9C50.9 17.8 45.8 18.4 39.8 17.0C37.0 16.3 35.1 14.6 35.1 11.8C35.1 9.6 35.0 7.9 35.4 7.0Z" fill="url(#windTip)" stroke="#475569" stroke-width="0.85"/>
+                  <!-- Thumb pad inner highlight rim -->
+                  <path d="M37.5 8.2C41.8 6.9 47.4 6.9 50.4 8.8" stroke="rgba(255,255,255,0.22)" stroke-width="0.8" stroke-linecap="round"/>
+                  <!-- 4 tactile grip ribs -->
+                  <path d="M41.5 8.1V15.1M44.2 7.9V15.4M46.9 8.1V15.3M49.6 8.7V14.8" stroke="#64748b" stroke-width="0.9" stroke-linecap="round" opacity="0.75"/>
+                  <!-- Brass/steel pivot rivet at tip joint -->
+                  <circle cx="37.4" cy="11.7" r="1.4" fill="#94a3b8" stroke="#1e293b" stroke-width="0.6"/>
                 </g>
-                <!-- Mechanical spindle hub & collar -->
-                <circle cx="9" cy="11" r="7.2" fill="url(#windHub)" stroke="#1e293b" stroke-width="0.9"/>
-                <circle cx="9" cy="11" r="5.1" fill="#141821" stroke="#94a3b8" stroke-width="0.7"/>
-                <circle class="wind-StatusDot" cx="9" cy="11" r="2.1" fill="#4ade80"/>
+                <!-- Knurled spindle collar & winding cap -->
+                <circle cx="12" cy="14" r="9.6" fill="url(#windHub)" stroke="#1e293b" stroke-width="1"/>
+                <circle cx="12" cy="14" r="7.4" fill="none" stroke="#334155" stroke-width="1.1" stroke-dasharray="1.4 1.6"/>
+                <circle cx="12" cy="14" r="6.2" fill="#12161f" stroke="#94a3b8" stroke-width="0.8"/>
+                <circle class="wind-StatusDot" cx="12" cy="14" r="2.6" fill="#4ade80"/>
               </svg>
               <span id="windLeverLabel"></span>
             </button>
@@ -9930,7 +9937,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0325';
+  const APP_BUILD = '20261122-0328';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
