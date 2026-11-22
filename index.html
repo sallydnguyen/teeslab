@@ -3599,25 +3599,6 @@
       disposableCast: false
     },
     {
-      id: 'half-frame',
-      name: 'Half Frame',
-      formatLabel: '35mm · 2-in-1',
-      aspect: 3 / 4,
-      meta: '2 vertical 3:4 frames paired into 1 horizontal 3:2 shot',
-      defaultFocalId: '35mm',
-      recLenses: ['35mm', '28mm'],
-      recFilms: ['fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200', 'ilford-hp5'],
-      blackLift: 0.032,
-      contrast: 1.05,
-      highlightRolloff: 0.19,
-      bodyWarmth: 1,
-      bodyTint: 0,
-      grainScale: 1.28,
-      softFocus: 0,
-      vignetteBoost: 4,
-      disposableCast: false
-    },
-    {
       id: 'pns',
       name: 'Point & Shoot',
       formatLabel: '35mm · Compact AF',
@@ -3654,6 +3635,25 @@
       softFocus: 0,
       vignetteBoost: 0,
       disposableCast: false
+    },
+    {
+      id: 'half-frame',
+      name: 'Half Frame',
+      formatLabel: '35mm · 2-in-1',
+      aspect: 3 / 4,
+      meta: '2 vertical 3:4 frames paired into 1 horizontal 3:2 shot',
+      defaultFocalId: '35mm',
+      recLenses: ['35mm', '28mm'],
+      recFilms: ['fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200', 'ilford-hp5'],
+      blackLift: 0.032,
+      contrast: 1.05,
+      highlightRolloff: 0.19,
+      bodyWarmth: 1,
+      bodyTint: 0,
+      grainScale: 1.28,
+      softFocus: 0,
+      vignetteBoost: 4,
+      disposableCast: false
     }
   ];
 
@@ -3674,11 +3674,6 @@
       { id: '85mm', mm: 85, minF: 1.8, maxF: 16, focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Short tele · Creamy bokeh', meta: 'Short tele · 85mm brightlines; waist-up portrait & creamy bokeh', cropZoom: 2.75, brightlinePct: 35, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.85, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.02 },
       { id: '135mm', mm: 135, minF: 2.8, maxF: 16, focalTag: '135mm', aperture: 'f/2.8', label: '135mm f/2.8', short: '135mm', tileSub: 'Med tele · Shake risk', meta: 'Medium tele · 135mm tele lines; distant candid, strong blur & shake risk in dark', cropZoom: 3.45, brightlinePct: 24, barrelDistort: 0, apertureEV: -0.06, dofStrength: 0.90, dofRadius: 0.30, shakeSens: 1.0, skinFlatter: 0.10, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.025 }
     ],
-    'half-frame': [
-      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Deep focus', meta: 'Wide portrait half-frame · Street & travel, deep focus zone', cropZoom: 1.0, barrelDistort: 0.024, apertureEV: -0.05, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 24, vignetteBase: 26, chromaticAb: 0.40, edgeSoft: 0.04 },
-      { id: '35mm', mm: 35, minF: 2.0, maxF: 16, focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Mild wide · Natural', meta: 'Standard portrait half-frame · Street & full-body portrait, natural view', cropZoom: 1.25, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.20, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 23, chromaticAb: 0.32, edgeSoft: 0.03 },
-      { id: '50mm', mm: 50, minF: 1.8, maxF: 16, focalTag: '50mm', aperture: 'f/1.8', label: '50mm f/1.8', short: '50mm', tileSub: 'Standard · Portrait bokeh', meta: 'Standard portrait half-frame · Half-body portrait, bright f/1.8 bokeh', cropZoom: 1.65, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.48, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 21, chromaticAb: 0.26, edgeSoft: 0.03 }
-    ],
     pns: [
       { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp prime · Compact', meta: 'Classic 35mm f/2.8 prime · High micro-contrast, sharp center with flash falloff', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.22, dofRadius: 0.60, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
       { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide street · Snap', meta: 'Wide 28mm prime · Dynamic street perspective, crisp edge-to-edge', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.12, dofRadius: 0.75, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
@@ -3692,6 +3687,11 @@
       { id: '6x6', mm: 80, minF: 2.8, maxF: 16, isFormatLens: true, focalTag: '6×6', aperture: 'f/2.8', label: '6×6', short: '6×6', tileSub: 'Square 1:1 glass', meta: 'Square 1:1 ground glass · Fine grain & smooth medium-format bokeh', formatAspect: 1, formatLabel: '120 · 6×6', cropZoom: 1.0, barrelDistort: 0, apertureEV: 0.05, dofStrength: 0.35, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.12, edgeSoft: 0.01 },
       { id: '6x45', mm: 75, minF: 2.8, maxF: 16, isFormatLens: true, focalTag: '6×4.5', aperture: 'f/2.8', label: '6×4.5', short: '6×4.5', tileSub: 'Classic 4:3 frame', meta: 'Classic 4:3 medium format · Balanced portrait & travel rendering', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 1.12, barrelDistort: 0, apertureEV: 0.05, dofStrength: 0.35, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.12, edgeSoft: 0.01 },
       { id: '6x7', mm: 90, minF: 2.8, maxF: 16, isFormatLens: true, focalTag: '6×7', aperture: 'f/2.8', label: '6×7', short: '6×7', tileSub: 'Studio 7:6 frame', meta: 'Ideal 7:6 studio medium format · Deep tonality & soft bokeh', formatAspect: 7 / 6, formatLabel: '120 · 6×7', cropZoom: 1.06, barrelDistort: 0, apertureEV: 0.05, dofStrength: 0.42, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.12, edgeSoft: 0.01 }
+    ],
+    'half-frame': [
+      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Deep focus', meta: 'Wide portrait half-frame · Street & travel, deep focus zone', cropZoom: 1.0, barrelDistort: 0.024, apertureEV: -0.05, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 24, vignetteBase: 26, chromaticAb: 0.40, edgeSoft: 0.04 },
+      { id: '35mm', mm: 35, minF: 2.0, maxF: 16, focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Mild wide · Natural', meta: 'Standard portrait half-frame · Street & full-body portrait, natural view', cropZoom: 1.25, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.20, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 23, chromaticAb: 0.32, edgeSoft: 0.03 },
+      { id: '50mm', mm: 50, minF: 1.8, maxF: 16, focalTag: '50mm', aperture: 'f/1.8', label: '50mm f/1.8', short: '50mm', tileSub: 'Standard · Portrait bokeh', meta: 'Standard portrait half-frame · Half-body portrait, bright f/1.8 bokeh', cropZoom: 1.65, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.48, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 21, chromaticAb: 0.26, edgeSoft: 0.03 }
     ]
   };
 
@@ -9644,7 +9644,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1825';
+  const APP_BUILD = '20261121-1835';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
