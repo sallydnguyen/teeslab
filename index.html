@@ -110,6 +110,23 @@
       border-right: 1px solid #181c24;
       padding-top: env(safe-area-inset-top);
     }
+    /* iOS 26+ PWA: solid fixed top strip inside safe-area prevents system progressive top blur */
+    .ios-statusbar-shield {
+      display: none;
+    }
+    @supports (-webkit-touch-callout: none) {
+      .ios-statusbar-shield {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: max(8px, env(safe-area-inset-top, 0px));
+        background-color: #090b0e;
+        pointer-events: none;
+        z-index: 25;
+      }
+    }
     /* 1. COMPACT MOBILE TOPBAR */
     .topbar {
       height: 42px;
@@ -3106,6 +3123,7 @@
   </style>
 </head>
 <body>
+  <div class="ios-statusbar-shield" aria-hidden="true"></div>
   <div class="app-shell" data-active-tab="camera">
     <!-- 1. MINIMAL TOPBAR -->
     <header class="topbar">
@@ -9684,7 +9702,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1850';
+  const APP_BUILD = '20261121-2055';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
