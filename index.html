@@ -3343,7 +3343,7 @@
                 <button class="vf-badge-btn af-active" id="btnVfAutoFocus" type="button" title="Auto Focus — tap to return to AF">AF</button>
                 <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between primes & 35–70mm zoom" style="display:none;">35–70</button>
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
-                <span class="vf-badge-btn vf-control-support" id="camControlSupport" title="EV and ISO control status">EV APP · ISO FILM</span>
+                <button class="vf-badge-btn" id="btnVfIso" type="button" title="Adjust ISO (Push / Pull film)">ISO 400</button>
               </div>
             </div>
           </div>
@@ -4753,6 +4753,7 @@
     camSound: true,
     camFlashOn: true,
     camExposureEV: 0,
+    camISO: null,
     camTrackCapabilities: null,
     camAppliedHardware: {},
     camAELocked: false,
@@ -4908,7 +4909,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -6211,6 +6212,7 @@
 
   function selectFilmStock(filmId) {
     state.filmId = filmId;
+    state.camISO = null;
     const f = FILM_STOCKS.find(x => x.id === filmId);
     if (f) { state.grain = f.grainBase; state.halation = f.halationBase; }
     syncAllUI();
@@ -7194,8 +7196,24 @@
 
   function cameraTrack() { return state.camStream?.getVideoTracks?.()[0] || null; }
 
+  const CAMERA_ISO_STEPS = [50, 100, 200, 400, 800, 1600, 3200];
+  function getEffectiveCameraISO(film = getSelectedGear().film) {
+    const box = film?.iso || 400;
+    return Number.isFinite(state.camISO) && state.camISO > 0 ? state.camISO : box;
+  }
+  function getCameraIsoStops(film = getSelectedGear().film) {
+    const box = film?.iso || 400;
+    return Math.log2(getEffectiveCameraISO(film) / box);
+  }
+  function getEffectiveCameraGrain(film = getSelectedGear().film) {
+    const base = film?.grainBase ?? 30;
+    return Math.max(0, Math.min(100, Math.round(base + getCameraIsoStops(film) * 10)));
+  }
+
   function cameraExposureEV() {
-    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : state.camExposureEV);
+    const { film } = getSelectedGear();
+    const isoEv = state.camAppliedHardware?.iso ? 0 : getCameraIsoStops(film) * 0.45;
+    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : state.camExposureEV) + isoEv;
   }
 
   function getCameraStageDimensions(body, lens) {
@@ -7294,7 +7312,9 @@
 
     const filmWinTxt = document.getElementById('camFilmWindowTxt');
     const filmWinBar = document.getElementById('camFilmWindowBar');
-    if (filmWinTxt) filmWinTxt.textContent = `${film.name} · ${film.iso}`;
+    const effIso = getEffectiveCameraISO(film);
+    const isoTag = effIso !== film.iso ? `EI ${effIso}` : `${film.iso}`;
+    if (filmWinTxt) filmWinTxt.textContent = `${film.name} · ${isoTag}`;
     if (filmWinBar) {
       const brandColors = { fuji: 'var(--fuji)', kodak: 'var(--kodak)', cinema: 'var(--cinema)', bw: '#9ca3af' };
       filmWinBar.style.background = brandColors[film.brand] || 'var(--brass)';
@@ -7371,13 +7391,17 @@
     }
 
     const srcBtn = document.getElementById('camSourceStatus');
-    const controlStatus = document.getElementById('camControlSupport');
-    if (controlStatus) {
+    const isoBtn = document.getElementById('btnVfIso');
+    if (isoBtn) {
+      const { film } = getSelectedGear();
+      const effIso = getEffectiveCameraISO(film);
+      const isOverridden = effIso !== (film?.iso || 400);
+      isoBtn.textContent = `ISO ${effIso}`;
+      isoBtn.classList.toggle('active', isOverridden);
       const live = !!state.camStream?.getTracks().some(track => track.readyState === 'live');
-      controlStatus.textContent = 'EV/ISO';
-      controlStatus.title = live
-        ? `EV: ${state.camAppliedHardware.exposureCompensation ? 'phone camera' : 'app simulation'} · ISO: ${state.camAppliedHardware.iso ? 'phone camera' : 'film simulation'}`
-        : 'Simulated preview · EV and ISO are part of the film look';
+      isoBtn.title = live && state.camAppliedHardware?.iso
+        ? `ISO ${effIso} (phone camera) — tap to adjust`
+        : `ISO ${effIso} (${isOverridden ? 'Push/Pull simulation' : 'Box ISO'}) — tap to adjust`;
     }
     if (srcBtn) {
       const isLive = !!state.camStream?.getTracks().some(track => track.readyState === 'live');
@@ -7436,8 +7460,9 @@
       advanced.exposureCompensation = Math.max(min, Math.min(max, Number(state.camExposureEV) || 0));
     }
     const { lens, film } = getSelectedGear();
+    const effectiveISO = getEffectiveCameraISO(film);
     if (capabilities.iso && Number.isFinite(capabilities.iso.min) && Number.isFinite(capabilities.iso.max)) {
-      advanced.iso = Math.max(capabilities.iso.min, Math.min(capabilities.iso.max, film.iso));
+      advanced.iso = Math.max(capabilities.iso.min, Math.min(capabilities.iso.max, effectiveISO));
     }
     if (Array.isArray(capabilities.focusMode)) {
       if (lens.focusMode === 'mf' && capabilities.focusMode.includes('manual')) {
@@ -8145,7 +8170,7 @@
       const targetH = stageDim.h;
       const staticKey = hasLiveVideo
         ? ''
-        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
+        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
 
       if (!hasLiveVideo && staticKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
         return;
@@ -8166,7 +8191,7 @@
       const vfZoom = body.id === 'rangefinder' ? 1.0 : (lens.cropZoom || 1.0);
       const vfConfig = {
         phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
-        grainAmt: Math.round(film.grainBase * 0.65), halationAmt: Math.round(film.halationBase * 0.6),
+        grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.65), halationAmt: Math.round(film.halationBase * 0.6),
         bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
         dateStampText: '', frameNumberStr: '', flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       };
@@ -8286,7 +8311,7 @@
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
     const processed = await processFilmImage(cCtx.getImageData(0, 0, capW, capH), capW, capH, {
       phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
-      grainAmt: film.grainBase, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+      grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
       leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, dateStampText: '', frameNumberStr: numStr,
       flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
     }, { output: 'blob', quality: 0.92 });
@@ -9454,6 +9479,20 @@
     scheduleCameraSettingsApply();
     showToast('EV reset to 0.0');
   });
+  document.getElementById('btnVfIso')?.addEventListener('click', () => {
+    const { film } = getSelectedGear();
+    const boxIso = film?.iso || 400;
+    const steps = Array.from(new Set([boxIso, ...CAMERA_ISO_STEPS])).sort((a, b) => a - b);
+    const cur = getEffectiveCameraISO(film);
+    const idx = steps.indexOf(cur);
+    const next = steps[(idx + 1) % steps.length];
+    state.camISO = next === boxIso ? null : next;
+    syncCameraHudUI();
+    scheduleCameraSettingsApply();
+    const stops = getCameraIsoStops(film);
+    const stopTxt = Math.abs(stops) < 0.05 ? 'Box ISO' : `${stops > 0 ? 'Push +' : 'Pull '}${stops.toFixed(1)} EV`;
+    showToast(`🎞️ ISO ${next} (${stopTxt})`);
+  });
   document.getElementById('btnVfDateToggle')?.addEventListener('click', () => {
     state.dateStamp = state.dateStamp === 'off' ? 'exif-or-today' : 'off';
     cameraLastStaticKey = '';
@@ -9677,7 +9716,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2130';
+  const APP_BUILD = '20261121-2210';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
