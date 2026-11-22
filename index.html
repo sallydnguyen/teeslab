@@ -1022,57 +1022,6 @@
       align-items: center;
       gap: 5px;
     }
-    .cam-shutter-dial {
-      height: 32px;
-      padding: 0 7px 0 5px;
-      border-radius: 8px;
-      background: #14171f;
-      border: 1px solid #2a303d;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
-      color: #e2e8f0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.2px;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      transition: border-color 0.14s ease, background 0.14s ease, transform 0.1s ease;
-    }
-    .cam-shutter-dial:active { transform: scale(0.96); }
-    .cam-shutter-dial.is-manual {
-      border-color: rgba(245, 166, 35, 0.55);
-      background: linear-gradient(180deg, #1a1e28, #12151c);
-    }
-    .cam-shutter-dial svg {
-      width: 22px;
-      height: 22px;
-      display: block;
-      flex-shrink: 0;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
-    }
-    .cam-shutter-dial .shutter-dial-rotor {
-      transform-origin: 12px 12px;
-      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .cam-shutter-dial-val {
-      min-width: 22px;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      color: #4ade80;
-    }
-    .cam-shutter-dial.is-manual .cam-shutter-dial-val {
-      color: #f5a623;
-    }
-    .cam-shutter-dial.is-slow .cam-shutter-dial-val {
-      color: #fb923c;
-    }
     .cam-wind-lever.is-auto {
       color: #e2e8f0;
     }
@@ -1999,6 +1948,13 @@
     }
     .lens-barrel-ring[data-ring="aperture"] .lens-ring-tag {
       color: #f5a623;
+    }
+    .lens-barrel-ring[data-ring="shutter"] .lens-ring-tag {
+      color: #38bdf8;
+      cursor: pointer;
+    }
+    .lens-barrel-ring[data-ring="shutter"].is-auto .lens-ring-val {
+      color: #4ade80;
     }
     .lens-af-btn {
       cursor: pointer;
@@ -3328,34 +3284,12 @@
             <div class="cam-mini-logo" title="Tee's Lab"><img src="./logo.jpg" alt="Tee's Lab" /></div>
           </div>
           <div class="cam-top-right">
-            <button class="cam-shutter-dial" id="btnShutterSpeedDial" type="button" title="Shutter speed — tap/drag to adjust, hold for Auto (A)" aria-label="Shutter speed dial">
+            <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <defs>
-                  <linearGradient id="shutterDialBezel" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#e2e8f0"/>
-                    <stop offset="45%" stop-color="#64748b"/>
-                    <stop offset="100%" stop-color="#cbd5e1"/>
-                  </linearGradient>
-                  <radialGradient id="shutterDialFace" cx="40%" cy="35%" r="65%">
-                    <stop offset="0%" stop-color="#2a3140"/>
-                    <stop offset="70%" stop-color="#141821"/>
-                    <stop offset="100%" stop-color="#0a0c10"/>
-                  </radialGradient>
-                </defs>
-                <!-- Fixed red/amber index pip at 12 o'clock -->
-                <path d="M12 0.7L13.3 2.7H10.7L12 0.7Z" fill="#f5a623"/>
-                <!-- Knurled metallic outer ring -->
-                <circle cx="12" cy="12" r="9.4" fill="url(#shutterDialBezel)" stroke="#0f172a" stroke-width="0.8"/>
-                <circle cx="12" cy="12" r="8.6" fill="none" stroke="#1e293b" stroke-width="1.3" stroke-dasharray="1.2 1.5"/>
-                <!-- Rotating dial face with engraved index notch and screw slot -->
-                <g class="shutter-dial-rotor" id="shutterDialRotor">
-                  <circle cx="12" cy="12" r="6.9" fill="url(#shutterDialFace)" stroke="#475569" stroke-width="0.65"/>
-                  <line x1="12" y1="5.6" x2="12" y2="8.4" stroke="#f8fafc" stroke-width="1.5" stroke-linecap="round"/>
-                  <circle cx="12" cy="12" r="2.2" fill="#1e293b" stroke="#64748b" stroke-width="0.6"/>
-                  <line x1="10.6" y1="12" x2="13.4" y2="12" stroke="#94a3b8" stroke-width="0.8" stroke-linecap="round"/>
-                </g>
+                <path d="M4.5 9.5h3.8L13 5.5v13l-4.7-4H4.5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path class="sound-wave" d="M16.2 8.8a4.6 4.6 0 0 1 0 6.4M18.8 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path class="sound-slash" d="M4 4l16 16" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
-              <span class="cam-shutter-dial-val" id="shutterDialVal">A</span>
             </button>
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
               <svg viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -3400,13 +3334,6 @@
                 <circle class="wind-StatusDot" cx="12" cy="14" r="2.6" fill="#4ade80"/>
               </svg>
               <span id="windLeverLabel"></span>
-            </button>
-            <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M4.5 9.5h3.8L13 5.5v13l-4.7-4H4.5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-                <path class="sound-wave" d="M16.2 8.8a4.6 4.6 0 0 1 0 6.4M18.8 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                <path class="sound-slash" d="M4 4l16 16" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
             </button>
           </div>
         </div>
@@ -6705,6 +6632,56 @@
     };
   }
 
+  function buildShutterScaleSpec() {
+    const stepPx = 28;
+    const speeds = CAMERA_SHUTTER_SPEEDS;
+    const maxX = (speeds.length - 1) * stepPx;
+    const marks = speeds.map((s, idx) => ({
+      x: idx * stepPx,
+      label: s === 'auto' ? 'A' : s,
+      isMajor: true,
+      adrClass: s === 'auto' ? 'adr-cyan' : ((s === '15' || s === '8' || s === '4' || s === '1"') ? 'adr-warm' : '')
+    }));
+    const ticks = [];
+    for (let i = 0; i < speeds.length; i++) {
+      ticks.push({ x: i * stepPx, cls: 'major' });
+      if (i < speeds.length - 1) {
+        ticks.push({ x: (i + 0.5) * stepPx, cls: 'half' });
+      }
+    }
+    return {
+      modeKey: 'shutter-ring',
+      tag: 'SHUTTER',
+      locked: false,
+      minX: 0,
+      maxX,
+      marks,
+      ticks,
+      getCurX: () => {
+        const idx = CAMERA_SHUTTER_SPEEDS.indexOf(state.camShutterSpeed);
+        return (idx >= 0 ? idx : 0) * stepPx;
+      },
+      getMinDragX: () => 0,
+      getValText: () => {
+        const s = state.camShutterSpeed;
+        if (!s || s === 'auto') return 'A';
+        return s === '1"' ? '1s' : `1/${s}`;
+      },
+      applyX: (rawX, isRelease, prevDetent) => {
+        const cx = Math.max(0, Math.min(maxX, rawX));
+        const idx = Math.max(0, Math.min(speeds.length - 1, Math.round(cx / stepPx)));
+        const nextSpeed = speeds[idx];
+        const changedSpeed = state.camShutterSpeed !== nextSpeed;
+        state.camShutterSpeed = nextSpeed;
+        if (prevDetent !== undefined && prevDetent !== idx) {
+          playShutterDialClickSound();
+          try { navigator.vibrate?.(8); } catch (ignored) {}
+        }
+        return { changed: changedSpeed || isRelease, needsLayout: false, detent: idx };
+      }
+    };
+  }
+
   function syncViewfinderFocusAid(body, lens) {
     const inFocus = !!lens.inFocusPeak;
     const isMfOff = !lens.focusLocked && lens.focusMode === 'mf' && !inFocus;
@@ -6854,6 +6831,16 @@
         </div>
         <span class="lens-ring-val">f/1.4</span>
       </div>
+      <div class="lens-barrel-divider"></div>
+      <div class="lens-barrel-ring is-auto" data-ring="shutter">
+        <button type="button" class="lens-ring-tag" title="Shutter speed — tap to reset to Auto (A)">SHUTTER</button>
+        <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Shutter speed ring">
+          <div class="lens-ring-track"></div>
+          <div class="lens-ring-shade"></div>
+          <div class="lens-ring-index"></div>
+        </div>
+        <span class="lens-ring-val">A</span>
+      </div>
     `;
 
     const makeRingController = (ringKind) => {
@@ -6888,6 +6875,18 @@
             scheduleCameraSettingsApply();
             scheduleSaveLocalAppState();
             showToast('🖐️ Manual Focus (MF) — drag focus ring');
+          }
+        });
+      }
+      if (ringKind === 'shutter') {
+        tagEl.addEventListener('click', e => {
+          e.stopPropagation();
+          if (state.camShutterSpeed !== 'auto') {
+            state.camShutterSpeed = 'auto';
+            playShutterDialClickSound();
+            syncLensLiveUI(false);
+            scheduleSaveLocalAppState();
+            showToast('⏱️ Shutter: Auto (A)');
           }
         });
       }
@@ -6949,7 +6948,9 @@
           ? buildTopScaleSpec(body, resolvedLens)
           : (ringKind === 'focus'
             ? buildFocusScaleSpec(body, rawLens, resolvedLens)
-            : buildApertureScaleSpec(body, rawLens, resolvedLens));
+            : (ringKind === 'shutter'
+              ? buildShutterScaleSpec()
+              : buildApertureScaleSpec(body, rawLens, resolvedLens)));
 
         if (spec.modeKey !== builtModeKey) buildTrackDom(spec);
 
@@ -6958,6 +6959,10 @@
         const tx = vw * 0.5 - curX;
         track.style.transform = `translate3d(${tx.toFixed(2)}px, 0, 0)`;
         valEl.textContent = spec.getValText();
+
+        if (ringKind === 'shutter') {
+          row.classList.toggle('is-auto', !state.camShutterSpeed || state.camShutterSpeed === 'auto');
+        }
 
         if (ringKind === 'focus') {
           const isAf = !spec.locked && resolvedLens.focusMode === 'af';
@@ -7115,12 +7120,14 @@
     const focalCtrl = makeRingController('focal');
     const focusCtrl = makeRingController('focus');
     const apCtrl = makeRingController('aperture');
+    const shutterCtrl = makeRingController('shutter');
     barrelWidgets.push({
       el: container,
       sync: (body, rawLens, resolvedLens) => {
         focalCtrl.renderFrame(body, rawLens, resolvedLens);
         focusCtrl.renderFrame(body, rawLens, resolvedLens);
         apCtrl.renderFrame(body, rawLens, resolvedLens);
+        shutterCtrl.renderFrame(body, rawLens, resolvedLens);
       }
     });
   }
@@ -7635,24 +7642,6 @@
     const facingSub = document.getElementById('bnavCamFacingSub');
     if (facingSub) facingSub.textContent = state.camFacing === 'user' ? 'Front' : 'Rear';
     document.querySelector('.bnav-btn[data-tab="camera"]')?.classList.toggle('is-front', state.camFacing === 'user');
-
-    const shutterDialBtn = document.getElementById('btnShutterSpeedDial');
-    const shutterDialVal = document.getElementById('shutterDialVal');
-    const shutterDialRotor = document.getElementById('shutterDialRotor');
-    const curSpeed = CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) ? state.camShutterSpeed : 'auto';
-    if (state.camShutterSpeed !== curSpeed) state.camShutterSpeed = curSpeed;
-    const speedIdx = CAMERA_SHUTTER_SPEEDS.indexOf(curSpeed);
-    const isManualSpeed = curSpeed !== 'auto';
-    const isSlowSpeed = curSpeed === '15' || curSpeed === '8' || curSpeed === '4' || curSpeed === '1"';
-    if (shutterDialBtn) {
-      shutterDialBtn.classList.toggle('is-manual', isManualSpeed);
-      shutterDialBtn.classList.toggle('is-slow', isSlowSpeed);
-      shutterDialBtn.title = isManualSpeed
-        ? `Shutter speed: ${curSpeed === '1"' ? '1s' : `1/${curSpeed}s`} — tap/drag to adjust, hold for Auto`
-        : 'Shutter speed: Auto (A) — tap/drag to set manual speed';
-    }
-    if (shutterDialVal) shutterDialVal.textContent = curSpeed === 'auto' ? 'A' : curSpeed;
-    if (shutterDialRotor) shutterDialRotor.style.transform = `rotate(${speedIdx * 30}deg)`;
 
     const windBtn = document.getElementById('btnWindFilm');
     const windLbl = document.getElementById('windLeverLabel');
@@ -9945,76 +9934,6 @@
   // Film Advance Lever (tap/swipe to wind, long-press to toggle Auto-Wind) + Film Window
   document.getElementById('camFilmWindow')?.addEventListener('click', () => openComboPicker('film'));
 
-  const shutterDialBtn = document.getElementById('btnShutterSpeedDial');
-  if (shutterDialBtn) {
-    let dialPtrId = null;
-    let dialStartX = 0;
-    let dialLastStepX = 0;
-    let dialDragged = false;
-    let dialLongPressed = false;
-    let dialLongTimer = 0;
-    const clearDialLong = () => {
-      window.clearTimeout(dialLongTimer);
-      dialLongTimer = 0;
-    };
-    const applyShutterStep = (delta) => {
-      const curIdx = Math.max(0, CAMERA_SHUTTER_SPEEDS.indexOf(state.camShutterSpeed));
-      const nextIdx = (curIdx + delta + CAMERA_SHUTTER_SPEEDS.length) % CAMERA_SHUTTER_SPEEDS.length;
-      state.camShutterSpeed = CAMERA_SHUTTER_SPEEDS[nextIdx];
-      playShutterDialClickSound();
-      try { navigator.vibrate?.(8); } catch (ignored) {}
-      syncCameraHudUI();
-      scheduleSaveLocalAppState();
-      const s = state.camShutterSpeed;
-      showToast(s === 'auto' ? '⏱️ Shutter: Auto (A)' : `⏱️ Shutter: ${s === '1"' ? '1s' : `1/${s}s`}`);
-    };
-    shutterDialBtn.addEventListener('pointerdown', e => {
-      dialPtrId = e.pointerId;
-      dialStartX = e.clientX;
-      dialLastStepX = e.clientX;
-      dialDragged = false;
-      dialLongPressed = false;
-      clearDialLong();
-      dialLongTimer = window.setTimeout(() => {
-        dialLongTimer = 0;
-        if (dialPtrId === null || dialDragged) return;
-        dialLongPressed = true;
-        state.camShutterSpeed = 'auto';
-        playShutterDialClickSound();
-        try { navigator.vibrate?.(16); } catch (ignored) {}
-        syncCameraHudUI();
-        scheduleSaveLocalAppState();
-        showToast('⏱️ Shutter: Auto (A)');
-      }, 450);
-      try { shutterDialBtn.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-    shutterDialBtn.addEventListener('pointermove', e => {
-      if (dialPtrId !== e.pointerId || dialLongPressed) return;
-      const totalDx = e.clientX - dialStartX;
-      if (Math.abs(totalDx) >= 7) {
-        dialDragged = true;
-        clearDialLong();
-      }
-      const stepDx = e.clientX - dialLastStepX;
-      if (Math.abs(stepDx) >= 14) {
-        const steps = stepDx > 0 ? 1 : -1;
-        dialLastStepX = e.clientX;
-        applyShutterStep(steps);
-      }
-    });
-    const finishDialPtr = e => {
-      if (dialPtrId !== e.pointerId) return;
-      clearDialLong();
-      dialPtrId = null;
-      try { shutterDialBtn.releasePointerCapture(e.pointerId); } catch (err) {}
-      if (!dialDragged && !dialLongPressed && e.type === 'pointerup') {
-        applyShutterStep(1);
-      }
-    };
-    shutterDialBtn.addEventListener('pointerup', finishDialPtr);
-    shutterDialBtn.addEventListener('pointercancel', finishDialPtr);
-  }
-
   const windFilmBtn = document.getElementById('btnWindFilm');
   if (windFilmBtn) {
     let windPtrId = null;
@@ -10140,7 +10059,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0345';
+  const APP_BUILD = '20261122-0416';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
