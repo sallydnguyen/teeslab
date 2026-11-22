@@ -3374,7 +3374,6 @@
                 <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between primes & 35–70mm zoom" style="display:none;">35–70</button>
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
                 <button class="vf-badge-btn" id="btnVfIso" type="button" title="Adjust ISO (Push / Pull film)">ISO 400</button>
-                <button class="vf-badge-btn" id="btnVfEco" type="button" title="Battery Saver / Cool Mode — 15fps light preview, full quality on capture">ECO</button>
               </div>
             </div>
           </div>
@@ -4791,7 +4790,6 @@
     camFlashOn: true,
     camExposureEV: 0,
     camISO: null,
-    camEcoMode: false,
     camTrackCapabilities: null,
     camAppliedHardware: {},
     camAELocked: false,
@@ -4947,7 +4945,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camISO', 'camEcoMode', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -7446,11 +7444,6 @@
         ? `ISO ${effIso} (phone camera) — tap to adjust`
         : `ISO ${effIso} (${isOverridden ? 'Push/Pull simulation' : 'Box ISO'}) — tap to adjust`;
     }
-    const ecoBtn = document.getElementById('btnVfEco');
-    if (ecoBtn) {
-      ecoBtn.classList.toggle('af-active', !!state.camEcoMode);
-      ecoBtn.textContent = state.camEcoMode ? 'ECO ✓' : 'ECO';
-    }
     if (srcBtn) {
       const isLive = !!state.camStream?.getTracks().some(track => track.readyState === 'live');
       srcBtn.classList.toggle('live', isLive);
@@ -7564,20 +7557,19 @@
       try {
         let stream;
         try {
-          const eco = !!state.camEcoMode;
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode: state.camFacing,
-              width: { ideal: eco ? 720 : 1080 },
-              height: { ideal: eco ? 960 : 1440 },
-              frameRate: { ideal: eco ? 15 : 24, max: eco ? 24 : 30 }
+              width: { ideal: 1080 },
+              height: { ideal: 1440 },
+              frameRate: { ideal: 18, max: 24 }
             },
             audio: false
           });
         } catch (hiResErr) {
           const canRetryLoRes = hiResErr?.name === 'OverconstrainedError' || hiResErr?.name === 'ConstraintNotSatisfiedError';
           if (!canRetryLoRes) throw hiResErr;
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 720 }, height: { ideal: 960 }, frameRate: { ideal: 15, max: 24 } }, audio: false });
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 720 }, height: { ideal: 960 }, frameRate: { ideal: 18, max: 24 } }, audio: false });
         }
         if (!document.getElementById('view-camera').classList.contains('active') || !state.camLiveEnabled) {
           stream.getTracks().forEach(track => track.stop());
@@ -8233,8 +8225,7 @@
 
       const gpu = getGpuCameraRenderer();
       const gpuReady = !!(gpu && gpu.isSupported());
-      const eco = !!state.camEcoMode;
-      if (hasLiveVideo && ts - last < (gpuReady ? (eco ? 66 : 42) : (eco ? 130 : 90))) return;
+      if (hasLiveVideo && ts - last < (gpuReady ? 50 : 100)) return;
       if (!gpuReady && cameraJobInFlight) return;
 
       const { phone, body, lens, film } = getSelectedGear();
@@ -8243,7 +8234,7 @@
       const targetH = stageDim.h;
       const staticKey = hasLiveVideo
         ? ''
-        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${eco ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
+        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
 
       if (!hasLiveVideo && staticKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
         return;
@@ -8261,9 +8252,9 @@
       const vfConfig = {
         phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
         grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.65),
-        halationAmt: eco ? 0 : Math.round(film.halationBase * 0.6),
-        bloomAmt: eco ? 0 : lens.bloomBase,
-        ecoPreview: eco,
+        halationAmt: 0,
+        bloomAmt: 0,
+        ecoPreview: true,
         vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
         dateStampText: '', frameNumberStr: '', flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       };
@@ -8363,14 +8354,13 @@
       if (state.camLiveEnabled) startRealCamera();
     }
     if (!document.getElementById('view-camera')?.classList.contains('active')) return;
-    const idleMs = state.camEcoMode ? 45000 : 120000;
     camIdleTimer = window.setTimeout(() => {
       if (state.camStream && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden) {
         camSleptByIdle = true;
         pauseCameraWhenHidden();
         showToast('🔋 Camera paused (idle) — tap to resume');
       }
-    }, idleMs);
+    }, 60000);
   }
   document.getElementById('view-camera')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
   document.getElementById('btnShutter')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
@@ -9659,21 +9649,6 @@
     const stopTxt = Math.abs(stops) < 0.05 ? 'Box ISO' : `${stops > 0 ? 'Push +' : 'Pull '}${stops.toFixed(1)} EV`;
     showToast(`🎞️ ISO ${next} (${stopTxt})`);
   });
-  document.getElementById('btnVfEco')?.addEventListener('click', () => {
-    state.camEcoMode = !state.camEcoMode;
-    syncCameraHudUI();
-    scheduleSaveLocalAppState();
-    resetCameraIdleTimer();
-    const track = cameraTrack();
-    if (track?.applyConstraints) {
-      track.applyConstraints({
-        frameRate: { ideal: state.camEcoMode ? 15 : 24, max: state.camEcoMode ? 24 : 30 }
-      }).catch(() => {});
-    }
-    showToast(state.camEcoMode
-      ? '🔋 ECO ON — 15fps light preview (full quality on capture)'
-      : '⚡ ECO OFF — Full live optical preview');
-  });
   document.getElementById('btnVfDateToggle')?.addEventListener('click', () => {
     state.dateStamp = state.dateStamp === 'off' ? 'exif-or-today' : 'off';
     cameraLastStaticKey = '';
@@ -9897,7 +9872,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0142';
+  const APP_BUILD = '20261122-0308';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
