@@ -3121,9 +3121,7 @@
           </div>
 
           <div class="vf-top-hud">
-            <div class="vf-top-left">
-              <button class="vf-badge-btn" id="btnVfDateToggle" type="button" title="Toggle retro date stamp">DATE</button>
-            </div>
+            <div class="vf-top-left"></div>
             <div class="vf-ev-ruler-wrap" title="Exposure compensation">
               <div class="vf-ev-ticks"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div>
               <input id="camExposureControl" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure compensation" />
@@ -7914,10 +7912,9 @@
       const stageDim = getCameraStageDimensions(body, lens);
       const targetW = stageDim.w;
       const targetH = stageDim.h;
-      const dateStampText = formatDateStamp();
       const staticKey = hasLiveVideo
         ? ''
-        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${dateStampText}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
+        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${film.id}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
 
       if (!hasLiveVideo && staticKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
         return;
@@ -7940,7 +7937,7 @@
         phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
         grainAmt: Math.round(film.grainBase * 0.65), halationAmt: Math.round(film.halationBase * 0.6),
         bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
-        dateStampText, frameNumberStr: '', flashBurst: body.id === 'disposable' && state.camFlashOn
+        dateStampText: '', frameNumberStr: '', flashBurst: body.id === 'disposable' && state.camFlashOn
       };
 
       if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
@@ -7950,18 +7947,6 @@
         const rendered = gpu.render(tmp, hasLiveVideo, hasLiveVideo ? -1 : ++landscapeUploadVersion, targetW, targetH, vfRatio, 1, vfConfig);
         if (rendered) {
           vfCtx.drawImage(rendered, 0, 0);
-          if (dateStampText) {
-            vfCtx.save();
-            const minDim = Math.min(targetW, targetH);
-            const fs = Math.max(13, Math.round(minDim * 0.046));
-            vfCtx.font = `700 ${fs}px "Courier New", monospace`;
-            vfCtx.textAlign = 'right'; vfCtx.textBaseline = 'bottom';
-            vfCtx.shadowColor = 'rgba(255,45,0,0.9)'; vfCtx.shadowBlur = Math.max(4, Math.round(fs * 0.4));
-            vfCtx.fillStyle = '#ff6a1a';
-            const pad = Math.max(10, Math.round(minDim * 0.045));
-            vfCtx.fillText(dateStampText, targetW - pad, targetH - pad);
-            vfCtx.restore();
-          }
           if (!hasLiveVideo) cameraLastStaticKey = staticKey;
           return;
         }
@@ -8064,7 +8049,7 @@
     const processed = await processFilmImage(cCtx.getImageData(0, 0, capW, capH), capW, capH, {
       phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), warmth: state.warmth,
       grainAmt: film.grainBase, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
-      leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, dateStampText: formatDateStamp(), frameNumberStr: numStr,
+      leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, dateStampText: '', frameNumberStr: numStr,
       flashBurst: body.id === 'disposable' && state.camFlashOn
     }, { output: 'blob', quality: 0.92 });
     const photoBlob = processed.blob;
@@ -9024,7 +9009,7 @@
     scheduleCameraSettingsApply();
     showToast('EV reset to 0.0');
   });
-  document.getElementById('btnVfDateToggle').addEventListener('click', () => {
+  document.getElementById('btnVfDateToggle')?.addEventListener('click', () => {
     state.dateStamp = state.dateStamp === 'off' ? 'exif-or-today' : 'off';
     cameraLastStaticKey = '';
     syncAllUI();
@@ -9219,7 +9204,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1627';
+  const APP_BUILD = '20261121-1630';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
