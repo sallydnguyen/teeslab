@@ -8508,11 +8508,11 @@
 
   async function restoreCameraRoll() {
     try {
-      const ROLL3_RESET_KEY = 'tees-lab-roll3-reset-v1';
-      if (!localStorage.getItem(ROLL3_RESET_KEY)) {
-        localStorage.setItem(ROLL3_RESET_KEY, '1');
+      const ROLL1_RESET_KEY = 'tees-lab-roll1-reset-v2';
+      if (!localStorage.getItem(ROLL1_RESET_KEY)) {
+        localStorage.setItem(ROLL1_RESET_KEY, '1');
         await clearCameraRollStorage().catch(() => {});
-        state.camRollNumber = 3;
+        state.camRollNumber = 1;
         state.camShotCount = 0;
         state.camNeedsRewind = false;
         state.camNeedsWind = false;
@@ -8525,6 +8525,11 @@
       }
       const savedShots = await loadCameraRollFromStorage();
       state.camRollShots = savedShots.reverse();
+      if (state.camRollShots.length === 0) {
+        state.camRollNumber = 1;
+        state.camShotCount = 0;
+        saveCameraRollMeta();
+      }
       const pendingHalf = await loadPendingHalfFrame(state.camRollId).catch(() => null);
       if (pendingHalf) {
         state.bodyId = 'half-frame';
@@ -9475,10 +9480,16 @@
   });
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
     try { await clearCameraRollStorage(); } catch (error) { showToast('Could not reset roll photos'); return; }
-    state.camRollShots = []; state.camShotCount = 0; state.camNeedsWind = false; state.camNeedsRewind = false;
-    state.camRollId = createRollId(); saveCameraRollMeta();
-    renderContactSheet(); syncCameraHudUI();
-    showToast(`🎞️ Roll #${String(state.camRollNumber).padStart(2, '0')} reset to frame 1`);
+    state.camRollShots = [];
+    state.camShotCount = 0;
+    state.camNeedsWind = false;
+    state.camNeedsRewind = false;
+    state.camRollNumber = 1;
+    state.camRollId = createRollId();
+    saveCameraRollMeta();
+    renderContactSheet();
+    syncCameraHudUI();
+    showToast(`🎞️ Roll reset to Roll #01 (0/${state.camMaxShots})`);
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
 
@@ -9612,7 +9623,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1725';
+  const APP_BUILD = '20261121-1735';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
