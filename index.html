@@ -992,26 +992,16 @@
       align-items: center;
       gap: 5px;
     }
-    .cam-autowind-btn {
-      height: 24px;
-      padding: 0 6px;
-      border-radius: 7px;
-      background: #14171f;
-      border: 1px solid #262b36;
-      color: #64748b;
-      font-family: var(--mono);
-      font-size: 8.5px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.14s ease;
-    }
-    .cam-autowind-btn.active {
-      color: #4ade80;
+    .cam-wind-lever.is-auto {
       border-color: rgba(74, 222, 128, 0.55);
-      background: rgba(22, 101, 52, 0.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(74, 222, 128, 0.18);
+    }
+    .cam-wind-lever.is-auto::after {
+      content: "A";
+      font-size: 7.5px;
+      font-weight: 900;
+      color: #4ade80;
+      margin-left: -1px;
     }
     .cam-wind-lever {
       height: 24px;
@@ -3032,7 +3022,7 @@
             </button>
           </div>
           <div class="cam-top-right">
-            <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — swipe or tap to wind film" aria-label="Wind film">
+            <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
               <svg viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="6" cy="7" r="4.2" fill="#181c26" stroke="currentColor" stroke-width="1.3"/>
                 <circle class="wind-StatusDot" cx="6" cy="7" r="1.7" fill="#4ade80"/>
@@ -3043,7 +3033,6 @@
               </svg>
               <span id="windLeverLabel"></span>
             </button>
-            <button class="cam-autowind-btn" id="btnAutoWind" type="button" title="Auto-wind film after each shot" aria-pressed="false">AUTO</button>
             <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M4.5 9.5h3.8L13 5.5v13l-4.7-4H4.5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -3157,7 +3146,6 @@
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
                 <span class="vf-badge-btn vf-control-support" id="camControlSupport" title="EV and ISO control status">EV APP · ISO FILM</span>
               </div>
-              <button id="camSourceStatus" class="vf-source-status" type="button" title="Simulated sample preview — tap to enable live camera">Simulated</button>
             </div>
           </div>
 
@@ -3254,7 +3242,7 @@
           <button class="filter-chip" id="btnShareCombo" type="button" title="Copy shareable recipe link" style="padding:2px 7px;font-size:9.5px;">🔗</button>
         </div>
         <div class="picker-topbar-right">
-          <button class="btn-pill btn-brass" id="btnCloseComboSheet" type="button" style="height:24px;padding:0 10px;font-size:10.5px;">✓ Done</button>
+          <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:0.3px;">2× tap to apply</span>
         </div>
       </div>
 
@@ -7082,12 +7070,6 @@
       filmWinBar.style.background = brandColors[film.brand] || 'var(--brass)';
     }
 
-    const autoWindBtn = document.getElementById('btnAutoWind');
-    if (autoWindBtn) {
-      autoWindBtn.classList.toggle('active', !!state.camAutoWind);
-      autoWindBtn.setAttribute('aria-pressed', state.camAutoWind ? 'true' : 'false');
-    }
-
     const dateBtn = document.getElementById('btnVfDateToggle');
     if (dateBtn) {
       const on = state.dateStamp !== 'off';
@@ -7187,6 +7169,7 @@
       windBtn.classList.toggle('needs-rewind', needsRewind);
       windBtn.classList.toggle('needs-wind', needsWind);
       windBtn.classList.toggle('is-cocked', !needsWind && !needsRewind);
+      windBtn.classList.toggle('is-auto', !!state.camAutoWind);
     }
     if (windLbl) windLbl.textContent = needsRewind ? 'REWIND' : (needsWind ? 'WIND' : '');
     if (shutterWindLbl) shutterWindLbl.textContent = needsRewind ? 'REWIND ↺' : 'WIND ↻';
@@ -7278,13 +7261,19 @@
         try {
           if (navigator.permissions?.query) {
             const perm = await navigator.permissions.query({ name: 'camera' });
-            if (perm?.state === 'denied') {
+            if (perm?.state !== 'granted') {
               state.camLiveEnabled = false;
               if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
               return;
             }
+          } else {
+            state.camLiveEnabled = false;
+            return;
           }
-        } catch (ignored) {}
+        } catch (ignored) {
+          state.camLiveEnabled = false;
+          return;
+        }
       }
       state.camLiveEnabled = true;
       if (srcBtn) { srcBtn.textContent = 'Opening…'; srcBtn.classList.remove('live'); }
@@ -7316,9 +7305,6 @@
         state.camStream = null;
         camVideo.srcObject = null;
         if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
-        if (userInitiated && (e?.name === 'NotAllowedError' || e?.name === 'PermissionDeniedError' || e?.name === 'SecurityError')) {
-          showToast('📷 Bật Camera → Allow trong Website Settings để vào thẳng camera');
-        }
       }
     })();
     try {
@@ -8824,9 +8810,35 @@
     if (comboSheet.classList.contains('open')) closeComboPicker();
     else openComboPicker('film');
   });
-  document.getElementById('btnCloseComboSheet').addEventListener('click', closeComboPicker);
+  document.getElementById('btnCloseComboSheet')?.addEventListener('click', closeComboPicker);
+  {
+    let lastPickerTapTarget = null;
+    let lastPickerTapAt = 0;
+    comboSheet.addEventListener('click', e => {
+      const hit = e.target.closest('.picker-tile, .clapper-col, .recipe-chip .btn-use');
+      if (!hit) return;
+      const now = performance.now();
+      const targetId = hit.dataset.id || hit.dataset.pickerTab || hit.textContent;
+      if (lastPickerTapTarget === targetId && (now - lastPickerTapAt) <= 380) {
+        lastPickerTapTarget = null;
+        lastPickerTapAt = 0;
+        closeComboPicker();
+      } else {
+        lastPickerTapTarget = targetId;
+        lastPickerTapAt = now;
+      }
+    });
+    comboSheet.addEventListener('dblclick', e => {
+      if (e.target.closest('.picker-tile, .clapper-col, .recipe-chip .btn-use')) {
+        closeComboPicker();
+      }
+    });
+  }
   document.getElementById('previewDropZone').addEventListener('click', e => {
     if ((e.target === e.currentTarget || e.target.classList.contains('stage-photo-slot')) && comboSheet.classList.contains('open')) closeComboPicker();
+  });
+  document.getElementById('camVfBox')?.addEventListener('click', e => {
+    if (comboSheet.classList.contains('open') && !e.target.closest('button, input, .lens-barrel-dock')) closeComboPicker();
   });
 
   // Film brand filter pills inside Combo Picker
@@ -9075,7 +9087,7 @@
     showToast(state.camFlashOn ? '⚡ Disposable Flash: ON' : '⚡ Disposable Flash: OFF');
   });
 
-  document.getElementById('camSourceStatus').addEventListener('click', () => {
+  document.getElementById('camSourceStatus')?.addEventListener('click', () => {
     if (state.camLiveEnabled || state.camStream) {
       state.camLiveEnabled = false;
       stopRealCamera();
@@ -9110,45 +9122,58 @@
   });
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
     try { await clearCameraRollStorage(); } catch (error) { showToast('Could not clear saved roll photos'); return; }
-    state.camRollShots = []; state.camShotCount = 0; state.camNeedsWind = false;
+    state.camRollShots = []; state.camShotCount = 0; state.camNeedsWind = false; state.camNeedsRewind = false;
     state.camRollId = createRollId(); saveCameraRollMeta();
     renderContactSheet(); syncCameraHudUI();
     showToast('Roll photos cleared');
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
 
-  // Film Advance Lever (tap or spring-back swipe on #btnWindFilm) + Auto-Wind + Film Window
+  // Film Advance Lever (tap/swipe to wind, long-press to toggle Auto-Wind) + Film Window
   document.getElementById('camFilmWindow')?.addEventListener('click', () => openComboPicker('film'));
-  document.getElementById('btnAutoWind')?.addEventListener('click', () => {
-    state.camAutoWind = !state.camAutoWind;
-    syncCameraHudUI();
-    scheduleSaveLocalAppState();
-    showToast(state.camAutoWind ? '⚡ Auto-Wind: ON' : '🖐️ Manual Film Wind: ON');
-    if (state.camAutoWind && state.camNeedsWind && !state.camNeedsRewind) {
-      windFilmLever(false);
-    }
-  });
 
   const windFilmBtn = document.getElementById('btnWindFilm');
   if (windFilmBtn) {
     let windPtrId = null;
     let windStartX = 0;
     let windSwiped = false;
+    let windLongPressed = false;
+    let windLongPressTimer = 0;
     const windArm = windFilmBtn.querySelector('.wind-arm');
     const resetWindDragVisual = () => {
       windFilmBtn.style.transform = '';
       if (windArm) windArm.style.transform = '';
     };
+    const clearLongPress = () => {
+      window.clearTimeout(windLongPressTimer);
+      windLongPressTimer = 0;
+    };
     windFilmBtn.addEventListener('pointerdown', e => {
       windPtrId = e.pointerId;
       windStartX = e.clientX;
       windSwiped = false;
+      windLongPressed = false;
       windFilmBtn.classList.add('winding');
+      clearLongPress();
+      windLongPressTimer = window.setTimeout(() => {
+        windLongPressTimer = 0;
+        if (windPtrId === null || windSwiped) return;
+        windLongPressed = true;
+        state.camAutoWind = !state.camAutoWind;
+        try { navigator.vibrate?.(18); } catch (ignored) {}
+        syncCameraHudUI();
+        scheduleSaveLocalAppState();
+        showToast(state.camAutoWind ? '⚡ Auto-Wind: ON' : '🖐️ Manual Film Wind: ON');
+        if (state.camAutoWind && state.camNeedsWind && !state.camNeedsRewind) {
+          windFilmLever(false);
+        }
+      }, 460);
       try { windFilmBtn.setPointerCapture(e.pointerId); } catch (err) {}
     });
     windFilmBtn.addEventListener('pointermove', e => {
-      if (windPtrId !== e.pointerId || windSwiped) return;
+      if (windPtrId !== e.pointerId || windSwiped || windLongPressed) return;
       const dx = e.clientX - windStartX;
+      if (Math.abs(dx) >= 8) clearLongPress();
       const clampedDx = Math.max(-4, Math.min(20, dx));
       windFilmBtn.style.transform = `translateX(${(clampedDx * 0.35).toFixed(1)}px)`;
       if (windArm) windArm.style.transform = `rotate(${(-10 - clampedDx * 1.4).toFixed(1)}deg)`;
@@ -9160,6 +9185,7 @@
     });
     const finishWindPtr = e => {
       if (windPtrId !== e.pointerId) return;
+      clearLongPress();
       windPtrId = null;
       windFilmBtn.classList.remove('winding');
       resetWindDragVisual();
@@ -9167,8 +9193,10 @@
     };
     windFilmBtn.addEventListener('pointerup', finishWindPtr);
     windFilmBtn.addEventListener('pointercancel', finishWindPtr);
+    windFilmBtn.addEventListener('contextmenu', e => e.preventDefault());
     windFilmBtn.addEventListener('click', () => {
       if (windSwiped) { windSwiped = false; return; }
+      if (windLongPressed) { windLongPressed = false; return; }
       windFilmLever(true);
     });
   }
@@ -9209,7 +9237,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1600';
+  const APP_BUILD = '20261121-1616';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
