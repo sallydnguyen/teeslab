@@ -739,6 +739,19 @@
       flex-direction: column;
       gap: 5px;
     }
+    .lab-action-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+    }
+    .lab-action-btn {
+      width: 100%;
+      height: 30px;
+      justify-content: center;
+      font-size: 11.5px;
+      border-radius: 8px;
+    }
 
     /* Collapsible Slider Drawer inside Lab Dock */
     .tweak-drawer {
@@ -3116,8 +3129,6 @@
         <input type="file" id="fileInput" accept="image/*" hidden />
         <button class="btn-icon-top" id="btnLabRandom" type="button" title="Randomize combo" aria-label="Randomize combo">🎲</button>
         <button class="btn-icon-top" id="btnLabShare" type="button" title="Copy shareable recipe link" aria-label="Share combo">🔗</button>
-        <button class="btn-pill btn-ghost" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
-        <button class="btn-pill btn-brass" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
       </div>
     </header>
 
@@ -3207,6 +3218,11 @@
               <button class="card-step-btn" id="btnNextFilm" data-step-gear="film" data-step-dir="1" type="button" title="Next film" aria-label="Next film">›</button>
             </div>
           </div>
+        </div>
+
+        <div class="lab-action-bar">
+          <button class="btn-pill btn-ghost lab-action-btn" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
+          <button class="btn-pill btn-brass lab-action-btn" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
         </div>
       </div>
     </main>
@@ -9722,7 +9738,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2220';
+  const APP_BUILD = '20261121-2225';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
