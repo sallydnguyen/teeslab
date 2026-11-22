@@ -5692,9 +5692,13 @@
 
   let renderRaf = null;
   let previewRequestVersion = 0;
+  let renderTimer = 0;
   function scheduleRender() {
-    if (renderRaf) return;
-    renderRaf = requestAnimationFrame(() => { renderRaf = null; renderPreview(); });
+    if (renderRaf || renderTimer) return;
+    renderTimer = window.setTimeout(() => {
+      renderTimer = 0;
+      renderRaf = requestAnimationFrame(() => { renderRaf = null; renderPreview(); });
+    }, 36);
   }
 
   async function renderPreview(force = false) {
@@ -8190,16 +8194,31 @@
 
   function startCameraLoop() {
     if (state.camAnimId) return;
+    const viewCamEl = document.getElementById('view-camera');
     const tmp = document.createElement('canvas');
-    const tCtx = tmp.getContext('2d', { willReadFrequently: true }), vfCtx = vfCanvas.getContext('2d');
+    const tCtx = tmp.getContext('2d');
+    let cpuTmp = null, cpuCtx = null;
+    const vfCtx = vfCanvas.getContext('2d');
     let last = 0;
+    let lastStaticCheck = 0;
     let landscapeUploadVersion = 0;
     const loop = (ts) => {
       state.camAnimId = requestAnimationFrame(loop);
+      if (viewCamEl && !viewCamEl.classList.contains('active')) return;
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
       const src = hasLiveVideo ? camVideo : state.previewSourceCanvas;
       if (!src) return;
+
+      if (!hasLiveVideo && cameraLastStaticKey && ts - lastStaticCheck < 80) {
+        return;
+      }
+      lastStaticCheck = ts;
+
+      const gpu = getGpuCameraRenderer();
+      const gpuReady = !!(gpu && gpu.isSupported());
+      if (hasLiveVideo && ts - last < (gpuReady ? 32 : 75)) return;
+      if (!gpuReady && cameraJobInFlight) return;
 
       const { phone, body, lens, film } = getSelectedGear();
       const stageDim = getCameraStageDimensions(body, lens);
@@ -8213,10 +8232,6 @@
         return;
       }
 
-      const gpu = getGpuCameraRenderer();
-      const gpuReady = !!(gpu && gpu.isSupported());
-      if (hasLiveVideo && ts - last < (gpuReady ? 16 : 55)) return;
-      if (!gpuReady && cameraJobInFlight) return;
       last = ts;
 
       if (vfCanvas.width !== targetW || vfCanvas.height !== targetH) {
@@ -8233,10 +8248,9 @@
         dateStampText: '', frameNumberStr: '', flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       };
 
-      if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
-      drawCameraFrameSource(tCtx, src, targetW, targetH, vfZoom);
-
       if (gpuReady) {
+        if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
+        drawCameraFrameSource(tCtx, src, targetW, targetH, vfZoom);
         const rendered = gpu.render(tmp, hasLiveVideo, hasLiveVideo ? -1 : ++landscapeUploadVersion, targetW, targetH, vfRatio, 1, vfConfig);
         if (rendered) {
           vfCtx.drawImage(rendered, 0, 0);
@@ -8245,10 +8259,17 @@
         }
       }
 
+      if (!cpuTmp) {
+        cpuTmp = document.createElement('canvas');
+        cpuCtx = cpuTmp.getContext('2d', { willReadFrequently: true });
+      }
+      if (cpuTmp.width !== targetW || cpuTmp.height !== targetH) { cpuTmp.width = targetW; cpuTmp.height = targetH; }
+      drawCameraFrameSource(cpuCtx, src, targetW, targetH, vfZoom);
+
       cameraJobInFlight = true;
       if (!hasLiveVideo) cameraLastStaticKey = staticKey;
       const version = ++cameraPreviewFrameVersion;
-      processFilmImage(tCtx.getImageData(0, 0, targetW, targetH), targetW, targetH, vfConfig, { output: 'bitmap', coalesceKey: 'camera-preview' }).then(output => {
+      processFilmImage(cpuCtx.getImageData(0, 0, targetW, targetH), targetW, targetH, vfConfig, { output: 'bitmap', coalesceKey: 'camera-preview' }).then(output => {
         if (!output || version !== cameraPreviewFrameVersion) { output?.bitmap?.close(); return; }
         vfCtx.drawImage(output.bitmap || output.canvas, 0, 0);
         output.bitmap?.close();
@@ -9292,10 +9313,17 @@
     if (state.leakType !== 'none' && state.leakAmt === 0) state.leakAmt = 45;
     renderTweaksDock(); renderPreview();
   });
-  document.getElementById('activeTweakSlider').addEventListener('input', (e) => {
-    state[state.activeTweakKey] = Number(e.target.value);
-    renderTweaksDock();
+  const activeTweakSliderEl = document.getElementById('activeTweakSlider');
+  activeTweakSliderEl.addEventListener('input', (e) => {
+    const val = Number(e.target.value);
+    state[state.activeTweakKey] = val;
+    const def = TWEAK_DEFS.find(d => d.key === state.activeTweakKey) || TWEAK_DEFS[0];
+    const titleEl = document.getElementById('activeTweakTitle');
+    if (titleEl && def) titleEl.textContent = `${def.label}: ${def.fmt(val)}`;
     scheduleRender();
+  });
+  activeTweakSliderEl.addEventListener('change', () => {
+    renderTweaksDock();
   });
   document.getElementById('btnResetTweaks').addEventListener('click', () => {
     const { lens, film } = getSelectedGear();
@@ -9812,7 +9840,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2232';
+  const APP_BUILD = '20261121-2342';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
