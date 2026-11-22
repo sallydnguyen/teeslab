@@ -2639,6 +2639,162 @@
       font-size: 10px;
     }
 
+    /* Full-Screen Camera Roll Photo Viewer */
+    .photo-viewer-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 7, 10, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .photo-viewer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .photo-viewer-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .photo-viewer-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px 8px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .photo-viewer-info {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .photo-viewer-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: #f3f4f6;
+      letter-spacing: 0.3px;
+    }
+    .photo-viewer-counter {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .photo-viewer-close {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e5e7eb;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .photo-viewer-close:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .photo-viewer-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: none;
+    }
+    .photo-viewer-img-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      will-change: transform, opacity;
+    }
+    .photo-viewer-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+    }
+    .photo-viewer-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 54px;
+      background: rgba(20, 24, 32, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e5e7eb;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .photo-viewer-nav:active {
+      background: rgba(245, 166, 35, 0.3);
+      color: #f5a623;
+    }
+    .photo-viewer-nav.btn-prev {
+      left: 8px;
+      border-radius: 8px 4px 4px 8px;
+    }
+    .photo-viewer-nav.btn-next {
+      right: 8px;
+      border-radius: 4px 8px 8px 4px;
+    }
+    .photo-viewer-nav:disabled {
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .photo-viewer-botbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(14, 16, 21, 0.95);
+      border-top: 1px solid #232732;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .photo-viewer-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #f5a623;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+    .photo-viewer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
     select { color-scheme: dark; }
 
     /* Toast */
@@ -3346,6 +3502,33 @@
           </div>
         </div>
         <div class="contact-grid-2" id="contactSheetGrid"></div>
+      </div>
+    </div>
+
+    <!-- FULL-SCREEN CAMERA ROLL PHOTO VIEWER -->
+    <div class="photo-viewer-backdrop" id="photoViewerBackdrop" style="display:none;">
+      <div class="photo-viewer-container" id="photoViewerContainer">
+        <div class="photo-viewer-topbar">
+          <div class="photo-viewer-info">
+            <span class="photo-viewer-title" id="photoViewerTitle">Roll #01 · Shot #01</span>
+            <span class="photo-viewer-counter" id="photoViewerCounter">1 / 1</span>
+          </div>
+          <button class="photo-viewer-close" id="btnClosePhotoViewer" type="button" title="Close viewer">✕</button>
+        </div>
+        <div class="photo-viewer-stage" id="photoViewerStage">
+          <button class="photo-viewer-nav btn-prev" id="btnViewerPrev" type="button" aria-label="Previous photo">‹</button>
+          <div class="photo-viewer-img-wrap" id="photoViewerImgWrap">
+            <img id="photoViewerImg" class="photo-viewer-img" alt="Camera roll photo" />
+          </div>
+          <button class="photo-viewer-nav btn-next" id="btnViewerNext" type="button" aria-label="Next photo">›</button>
+        </div>
+        <div class="photo-viewer-botbar">
+          <div class="photo-viewer-tag" id="photoViewerFilmTag">🎞️ Film photo</div>
+          <div class="photo-viewer-actions">
+            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">🧪 Edit in Lab</button>
+            <button class="btn-pill btn-brass" id="btnViewerSave" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">💾 Save</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -8190,6 +8373,106 @@
     }
   }
 
+  async function openShotInLab(s) {
+    try {
+      const files = s.rawBlob ? s : await loadCameraRollFiles(s.id);
+      if (!files?.rawBlob) throw new Error('Original photo is unavailable');
+      closePhotoViewer();
+      document.getElementById('contactSheetBackdrop').classList.remove('open');
+      const bitmap = await createImageBitmap(files.rawBlob);
+      const source = document.createElement('canvas');
+      source.width = bitmap.width; source.height = bitmap.height;
+      source.getContext('2d').drawImage(bitmap, 0, 0);
+      bitmap.close();
+      loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true });
+      switchMainTab('darkroom');
+      showToast(`Shot #${s.num} opened in Lab`);
+    } catch (error) { showToast('Could not open the original photo'); }
+  }
+
+  let viewerCurrentIndex = 0;
+  let viewerActiveShotId = null;
+  let viewerBlobUrl = null;
+
+  function revokeViewerBlobUrl() {
+    if (viewerBlobUrl) {
+      URL.revokeObjectURL(viewerBlobUrl);
+      viewerBlobUrl = null;
+    }
+  }
+
+  function openPhotoViewer(index = 0) {
+    if (!state.camRollShots || state.camRollShots.length === 0) return;
+    const modal = document.getElementById('photoViewerBackdrop');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('open'));
+    viewerShowShot(index);
+  }
+
+  function closePhotoViewer() {
+    const modal = document.getElementById('photoViewerBackdrop');
+    if (!modal) return;
+    modal.classList.remove('open');
+    setTimeout(() => {
+      if (!modal.classList.contains('open')) {
+        modal.style.display = 'none';
+        revokeViewerBlobUrl();
+      }
+    }, 200);
+  }
+
+  async function viewerShowShot(index, direction = null) {
+    if (index < 0) index = 0;
+    if (index >= state.camRollShots.length) index = state.camRollShots.length - 1;
+    viewerCurrentIndex = index;
+    const s = state.camRollShots[index];
+    if (!s) return;
+    viewerActiveShotId = s.id;
+
+    const imgWrap = document.getElementById('photoViewerImgWrap');
+    const imgEl = document.getElementById('photoViewerImg');
+    const titleEl = document.getElementById('photoViewerTitle');
+    const counterEl = document.getElementById('photoViewerCounter');
+    const tagEl = document.getElementById('photoViewerFilmTag');
+    const prevBtn = document.getElementById('btnViewerPrev');
+    const nextBtn = document.getElementById('btnViewerNext');
+
+    if (titleEl) titleEl.textContent = `Roll #${s.rollNumber || 1} · Shot #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
+    if (counterEl) counterEl.textContent = `${index + 1} / ${state.camRollShots.length}`;
+    if (tagEl) tagEl.textContent = s.filmName ? `🎞️ ${s.filmName}` : '🎞️ Film photo';
+    if (prevBtn) prevBtn.disabled = (index <= 0);
+    if (nextBtn) nextBtn.disabled = (index >= state.camRollShots.length - 1);
+
+    revokeViewerBlobUrl();
+    if (s.photoBlob) {
+      viewerBlobUrl = URL.createObjectURL(s.photoBlob);
+      imgEl.src = viewerBlobUrl;
+    } else if (s.thumbnailBlob) {
+      viewerBlobUrl = URL.createObjectURL(s.thumbnailBlob);
+      imgEl.src = viewerBlobUrl;
+      loadCameraRollFiles(s.id).then(files => {
+        if (viewerActiveShotId === s.id && files?.photoBlob) {
+          revokeViewerBlobUrl();
+          viewerBlobUrl = URL.createObjectURL(files.photoBlob);
+          imgEl.src = viewerBlobUrl;
+        }
+      }).catch(() => {});
+    }
+
+    if (imgWrap) {
+      imgWrap.style.transition = 'none';
+      imgWrap.style.transform = direction === 'next'
+        ? 'translateX(40px)'
+        : (direction === 'prev' ? 'translateX(-40px)' : 'scale(0.97)');
+      imgWrap.style.opacity = '0.35';
+      imgWrap.offsetHeight;
+      imgWrap.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease';
+      imgWrap.style.transform = 'translateX(0) scale(1)';
+      imgWrap.style.opacity = '1';
+    }
+  }
+
   const cameraThumbUrls = new Set();
   function renderContactSheet() {
     cameraThumbUrls.forEach(url => URL.revokeObjectURL(url));
@@ -8201,36 +8484,23 @@
       return;
     }
     grid.innerHTML = '';
-    state.camRollShots.forEach(s => {
+    state.camRollShots.forEach((s, idx) => {
       const card = document.createElement('div');
       card.className = 'shot-card';
       const thumbnailUrl = URL.createObjectURL(s.thumbnailBlob);
       cameraThumbUrls.add(thumbnailUrl);
       card.innerHTML = `
-        <img src="${thumbnailUrl}" alt="Shot ${s.num}" />
+        <img src="${thumbnailUrl}" alt="Shot ${s.num}" style="cursor:pointer;" />
         <div class="shot-foot">
           <span>R${s.rollNumber || 1} · #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}</span>
           <div style="display:flex;gap:4px;">
-            <button class="btn-pill btn-ghost btn-edit" style="height:24px;padding:0 7px;font-size:10.5px;">Lab</button>
+            <button class="btn-pill btn-ghost btn-view-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">View</button>
             <button class="btn-pill btn-brass btn-save-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">Save</button>
           </div>
         </div>
       `;
-      card.querySelector('.btn-edit').addEventListener('click', async () => {
-        try {
-          const files = s.rawBlob ? s : await loadCameraRollFiles(s.id);
-          if (!files?.rawBlob) throw new Error('Original photo is unavailable');
-          document.getElementById('contactSheetBackdrop').classList.remove('open');
-          const bitmap = await createImageBitmap(files.rawBlob);
-          const source = document.createElement('canvas');
-          source.width = bitmap.width; source.height = bitmap.height;
-          source.getContext('2d').drawImage(bitmap, 0, 0);
-          bitmap.close();
-          loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true });
-          switchMainTab('darkroom');
-          showToast(`Shot #${s.num} opened in Lab`);
-        } catch (error) { showToast('Could not open the original photo'); }
-      });
+      card.querySelector('img').addEventListener('click', () => openPhotoViewer(idx));
+      card.querySelector('.btn-view-shot').addEventListener('click', () => openPhotoViewer(idx));
       card.querySelector('.btn-save-shot').addEventListener('click', () => saveRollPhoto(s));
       grid.appendChild(card);
     });
@@ -8908,6 +9178,106 @@
   document.getElementById('btnCloseContactSheet').addEventListener('click', () => contactSheet.classList.remove('open'));
   contactSheet.addEventListener('click', e => { if (e.target === contactSheet) contactSheet.classList.remove('open'); });
 
+  // Photo Viewer Controls & Touch Swipe
+  const photoViewerEl = document.getElementById('photoViewerBackdrop');
+  const photoViewerStageEl = document.getElementById('photoViewerStage');
+  document.getElementById('btnClosePhotoViewer')?.addEventListener('click', closePhotoViewer);
+  document.getElementById('btnViewerPrev')?.addEventListener('click', () => {
+    if (viewerCurrentIndex > 0) viewerShowShot(viewerCurrentIndex - 1, 'prev');
+  });
+  document.getElementById('btnViewerNext')?.addEventListener('click', () => {
+    if (viewerCurrentIndex < state.camRollShots.length - 1) viewerShowShot(viewerCurrentIndex + 1, 'next');
+  });
+  document.getElementById('btnViewerOpenLab')?.addEventListener('click', async () => {
+    const s = state.camRollShots[viewerCurrentIndex];
+    if (s) await openShotInLab(s);
+  });
+  document.getElementById('btnViewerSave')?.addEventListener('click', () => {
+    const s = state.camRollShots[viewerCurrentIndex];
+    if (s) saveRollPhoto(s);
+  });
+  photoViewerEl?.addEventListener('click', e => {
+    if (e.target.id === 'photoViewerBackdrop' || e.target.id === 'photoViewerContainer' || e.target.id === 'photoViewerImgWrap') {
+      closePhotoViewer();
+    }
+  });
+
+  // Swipe gestures on photo viewer stage
+  let vSwipeStartX = 0, vSwipeStartY = 0, vSwipeCurrentX = 0, vSwipeStartTime = 0, vIsSwiping = false;
+  if (photoViewerStageEl) {
+    photoViewerStageEl.addEventListener('pointerdown', e => {
+      if (e.target.closest('button')) return;
+      vIsSwiping = true;
+      vSwipeStartX = e.clientX;
+      vSwipeStartY = e.clientY;
+      vSwipeCurrentX = e.clientX;
+      vSwipeStartTime = Date.now();
+      try { photoViewerStageEl.setPointerCapture(e.pointerId); } catch {}
+      const imgWrap = document.getElementById('photoViewerImgWrap');
+      if (imgWrap) imgWrap.style.transition = 'none';
+    });
+
+    photoViewerStageEl.addEventListener('pointermove', e => {
+      if (!vIsSwiping) return;
+      vSwipeCurrentX = e.clientX;
+      const dx = vSwipeCurrentX - vSwipeStartX;
+      const dy = e.clientY - vSwipeStartY;
+      if (Math.abs(dx) > Math.abs(dy) * 0.7) {
+        const imgWrap = document.getElementById('photoViewerImgWrap');
+        if (imgWrap) {
+          let appliedDx = dx;
+          if ((viewerCurrentIndex <= 0 && dx > 0) || (viewerCurrentIndex >= state.camRollShots.length - 1 && dx < 0)) {
+            appliedDx = dx * 0.28;
+          }
+          imgWrap.style.transform = `translateX(${appliedDx}px)`;
+        }
+      }
+    });
+
+    const endViewerSwipe = (e) => {
+      if (!vIsSwiping) return;
+      vIsSwiping = false;
+      const dx = vSwipeCurrentX - vSwipeStartX;
+      const dy = (e.clientY || vSwipeStartY) - vSwipeStartY;
+      const elapsed = Math.max(1, Date.now() - vSwipeStartTime);
+      const velocity = Math.abs(dx) / elapsed;
+      const isHorizontal = Math.abs(dx) > Math.abs(dy) * 0.7;
+      const imgWrap = document.getElementById('photoViewerImgWrap');
+      const threshold = 36;
+
+      if (isHorizontal && (dx < -threshold || (dx < -16 && velocity > 0.3))) {
+        if (viewerCurrentIndex < state.camRollShots.length - 1) {
+          if (imgWrap) {
+            imgWrap.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
+            imgWrap.style.transform = 'translateX(-60px)';
+            imgWrap.style.opacity = '0.2';
+          }
+          setTimeout(() => viewerShowShot(viewerCurrentIndex + 1, 'next'), 160);
+          return;
+        }
+      } else if (isHorizontal && (dx > threshold || (dx > 16 && velocity > 0.3))) {
+        if (viewerCurrentIndex > 0) {
+          if (imgWrap) {
+            imgWrap.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
+            imgWrap.style.transform = 'translateX(60px)';
+            imgWrap.style.opacity = '0.2';
+          }
+          setTimeout(() => viewerShowShot(viewerCurrentIndex - 1, 'prev'), 160);
+          return;
+        }
+      }
+
+      if (imgWrap) {
+        imgWrap.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease';
+        imgWrap.style.transform = 'translateX(0)';
+        imgWrap.style.opacity = '1';
+      }
+    };
+
+    photoViewerStageEl.addEventListener('pointerup', endViewerSwipe);
+    photoViewerStageEl.addEventListener('pointercancel', endViewerSwipe);
+  }
+
   // Tap-to-Focus & Spot AE Metering on #vfStage
   const vfStageEl = document.getElementById('vfStage');
   const vfFocusReticle = document.getElementById('vfFocusReticle');
@@ -9175,12 +9545,34 @@
     if (document.getElementById('comboSheetBackdrop')?.classList.contains('open')) return false;
     if (document.getElementById('sampleSheetBackdrop')?.classList.contains('open')) return false;
     if (document.getElementById('contactSheetBackdrop')?.classList.contains('open')) return false;
+    if (document.getElementById('photoViewerBackdrop')?.classList.contains('open')) return false;
     return true;
   }
   window.addEventListener('keydown', e => {
     if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
+
+    const viewerModal = document.getElementById('photoViewerBackdrop');
+    if (viewerModal && viewerModal.classList.contains('open')) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closePhotoViewer();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (viewerCurrentIndex > 0) viewerShowShot(viewerCurrentIndex - 1, 'prev');
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (viewerCurrentIndex < state.camRollShots.length - 1) viewerShowShot(viewerCurrentIndex + 1, 'next');
+        return;
+      }
+      return;
+    }
+
     if (!isCameraTabOpenForHardwareShutter()) return;
     const k = e.key;
     const c = e.code;
@@ -9205,7 +9597,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1652';
+  const APP_BUILD = '20261121-1715';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
