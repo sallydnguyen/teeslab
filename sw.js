@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v76';
+const CACHE_NAME = 'tees-lab-shell-v77';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -35,7 +35,13 @@ const WARM_FILES = [
   './assets/samples/neon-street.jpg',
   './assets/samples/forest.jpg',
   './assets/samples/portrait.jpg',
-  './assets/samples/ocean.jpg'
+  './assets/samples/ocean.jpg',
+  './assets/samples/tokyo-alley.jpg',
+  './assets/samples/mountains.jpg',
+  './assets/samples/architecture.jpg',
+  './assets/samples/flower.jpg',
+  './assets/samples/venice.jpg',
+  './assets/samples/night-car.jpg'
 ];
 
 self.addEventListener('install', event => {

@@ -3874,7 +3874,13 @@
       { id: 'neon-night', title: 'Neon night', src: './assets/samples/neon-street.jpg' },
       { id: 'emerald-forest', title: 'Forest', src: './assets/samples/forest.jpg' },
       { id: 'portrait-window', title: 'Portrait', src: './assets/samples/portrait.jpg' },
-      { id: 'ocean-breeze', title: 'Ocean', src: './assets/samples/ocean.jpg' }
+      { id: 'ocean-breeze', title: 'Ocean', src: './assets/samples/ocean.jpg' },
+      { id: 'tokyo-alley', title: 'Tokyo alley', src: './assets/samples/tokyo-alley.jpg' },
+      { id: 'alpine-peaks', title: 'Alpine peaks', src: './assets/samples/mountains.jpg' },
+      { id: 'modern-arch', title: 'Architecture', src: './assets/samples/architecture.jpg' },
+      { id: 'botanical-bloom', title: 'Botanical', src: './assets/samples/flower.jpg' },
+      { id: 'venice-harbor', title: 'Venice', src: './assets/samples/venice.jpg' },
+      { id: 'midnight-car', title: 'Midnight car', src: './assets/samples/night-car.jpg' }
     ];
     return scenes.map(scene => ({
       ...scene,
@@ -9716,7 +9722,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2210';
+  const APP_BUILD = '20261121-2220';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
