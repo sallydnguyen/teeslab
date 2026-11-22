@@ -1683,20 +1683,16 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.85);
     }
 
-    /* EV Ruler Overlay on Viewfinder Top */
-    .vf-top-hud {
-      position: absolute;
-      top: 8px;
-      left: 10px;
-      right: 10px;
+    /* EV Ruler Row inside Bottom Viewfinder HUD (one-handed reach) */
+    .vf-ev-row {
+      width: 100%;
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 4px;
-      z-index: 6;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       pointer-events: none;
     }
-    .vf-top-left {
+    .vf-ev-actions {
       display: flex;
       align-items: center;
       gap: 4px;
@@ -1753,25 +1749,12 @@
       flex-direction: column;
       align-items: center;
       flex: 1 1 auto;
-      width: 148px;
+      width: 168px;
       min-width: 56px;
-      max-width: 148px;
+      max-width: 168px;
       padding: 2px 6px 4px;
       border-radius: 6px;
       background: rgba(8, 10, 14, 0.72);
-    }
-    .vf-stage[data-vf-mode="half-frame"] ~ .vf-top-hud {
-      left: 6px;
-      right: 6px;
-      top: 6px;
-    }
-    .vf-stage[data-vf-mode="half-frame"] ~ .vf-top-hud .vf-badge-btn {
-      font-size: 8.5px;
-      padding: 2px 4px;
-    }
-    .vf-stage[data-vf-mode="half-frame"] ~ .vf-top-hud .vf-badge-btn svg {
-      width: 9px;
-      height: 9px;
     }
     .vf-stage[data-vf-mode="half-frame"] ~ .vf-bottom-hud {
       left: 6px;
@@ -2986,16 +2969,10 @@
 
     /* Compact HUD badges on narrow 375px SE viewports across all vertical frames */
     @media (max-width: 385px) {
-      .vf-top-hud {
-        left: 6px;
-        right: 6px;
-        top: 6px;
-      }
       .vf-bottom-hud {
         left: 6px;
         right: 6px;
       }
-      .vf-top-hud .vf-badge-btn,
       .vf-bottom-hud .vf-badge-btn,
       .vf-bottom-hud .vf-source-status {
         font-size: 8.5px;
@@ -3346,19 +3323,17 @@
             </div>
           </div>
 
-          <div class="vf-top-hud">
-            <div class="vf-top-left"></div>
-            <div class="vf-ev-ruler-wrap" title="Exposure compensation">
-              <div class="vf-ev-ticks"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div>
-              <input id="camExposureControl" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure compensation" />
-            </div>
-            <div style="display:flex;align-items:center;gap:4px;pointer-events:auto;">
-              <button class="vf-badge-btn" id="btnVfAeLock" type="button" title="Toggle AE Lock">AE-L</button>
-              <button class="vf-badge-btn" id="camExposureValue" type="button" title="Tap to reset EV">0.0</button>
-            </div>
-          </div>
-
           <div class="vf-bottom-hud">
+            <div class="vf-ev-row">
+              <div class="vf-ev-ruler-wrap" title="Exposure compensation">
+                <div class="vf-ev-ticks"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div>
+                <input id="camExposureControl" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure compensation" />
+              </div>
+              <div class="vf-ev-actions">
+                <button class="vf-badge-btn" id="btnVfAeLock" type="button" title="Toggle AE Lock">AE-L</button>
+                <button class="vf-badge-btn" id="camExposureValue" type="button" title="Tap to reset EV">0.0</button>
+              </div>
+            </div>
             <div class="vf-hud-meta-row">
               <div class="vf-hud-left">
                 <button class="vf-badge-btn" id="btnVfFrameToggle" type="button" title="Cycle film border">FRAME: OFF</button>
@@ -7256,8 +7231,8 @@
     if (bw > 20 && bh > 20) {
       const topHud = box.querySelector('.vf-top-hud');
       const botHud = box.querySelector('.vf-bottom-hud');
-      const topReserve = topHud ? (topHud.offsetHeight + 12) : 34;
-      const botReserve = botHud ? (botHud.offsetHeight + 10) : 76;
+      const topReserve = topHud ? (topHud.offsetHeight + 12) : 8;
+      const botReserve = botHud ? (botHud.offsetHeight + 10) : 82;
       const availH = Math.max(120, bh - topReserve - botReserve);
       let w = bw;
       let h = w / targetRatio;
@@ -9702,7 +9677,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-2055';
+  const APP_BUILD = '20261121-2130';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
