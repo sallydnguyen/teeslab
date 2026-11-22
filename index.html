@@ -5168,21 +5168,15 @@
     targetCtx.drawImage(source, sx, sy, sw, sh, 0, 0, outW, outH);
   }
 
-  // Rotate the sensor image only when needed to match the selected camera format.
-  function drawCameraFrameSource(targetCtx, source, outW, outH, zoomFactor = 1.0, autoRotate = true) {
+  // Scale and center the sensor image to cover the target frame canvas
+  function drawCameraFrameSource(targetCtx, source, outW, outH, zoomFactor = 1.0) {
     const srcW = source.videoWidth || source.width || outW;
     const srcH = source.videoHeight || source.height || outH;
-    const sourcePortrait = srcH > srcW;
-    const framePortrait = outH > outW;
-    const rotate = autoRotate && sourcePortrait !== framePortrait && Math.abs(srcW - srcH) > 2;
-    const orientedW = rotate ? srcH : srcW;
-    const orientedH = rotate ? srcW : srcH;
-    const scale = Math.max(outW / orientedW, outH / orientedH) * Math.max(1, zoomFactor || 1);
+    const scale = Math.max(outW / srcW, outH / srcH) * Math.max(1, zoomFactor || 1);
     targetCtx.save();
     targetCtx.setTransform(1, 0, 0, 1, 0, 0);
     targetCtx.clearRect(0, 0, outW, outH);
     targetCtx.translate(outW / 2, outH / 2);
-    if (rotate) targetCtx.rotate(Math.PI / 2);
     targetCtx.scale(scale, scale);
     targetCtx.drawImage(source, -srcW / 2, -srcH / 2);
     targetCtx.restore();
@@ -7941,7 +7935,7 @@
       };
 
       if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
-      drawCameraFrameSource(tCtx, src, targetW, targetH, vfZoom, body.id !== 'half-frame');
+      drawCameraFrameSource(tCtx, src, targetW, targetH, vfZoom);
 
       if (gpuReady) {
         const rendered = gpu.render(tmp, hasLiveVideo, hasLiveVideo ? -1 : ++landscapeUploadVersion, targetW, targetH, vfRatio, 1, vfConfig);
@@ -8044,6 +8038,13 @@
     const capC = document.createElement('canvas'); capC.width = capW; capC.height = capH;
     const cCtx = capC.getContext('2d');
     cCtx.drawImage(rawBitmap, 0, 0, capW, capH); rawBitmap.close();
+    try {
+      const liveC = document.createElement('canvas');
+      liveC.width = capW;
+      liveC.height = capH;
+      liveC.getContext('2d').drawImage(capC, 0, 0);
+      loadSourceCanvas(liveC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true });
+    } catch (ignored) {}
     const { phone, body, lens, film } = getSelectedGear();
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
     const processed = await processFilmImage(cCtx.getImageData(0, 0, capW, capH), capW, capH, {
@@ -8136,7 +8137,7 @@
       if (body.id === 'half-frame' && state.hfDiptychMode) {
         const halfC = document.createElement('canvas');
         halfC.width = 600; halfC.height = 800;
-        drawCameraFrameSource(halfC.getContext('2d'), src, 600, 800, capZoom, false);
+        drawCameraFrameSource(halfC.getContext('2d'), src, 600, 800, capZoom);
 
         if (!state.halfFrameFirstCanvas) {
           state.halfFrameFirstCanvas = halfC;
@@ -8177,7 +8178,7 @@
       const capDim = getCameraCaptureDimensions(body, lens);
       const capC = document.createElement('canvas');
       capC.width = capDim.w; capC.height = capDim.h;
-      drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom, body.id !== 'half-frame');
+      drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom);
       const rawBlob = await canvasToJpegBlob(capC, 0.92);
       await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
     } catch (error) {
@@ -9204,7 +9205,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1637';
+  const APP_BUILD = '20261121-1652';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
