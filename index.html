@@ -8137,8 +8137,8 @@
         gl.uniform1f(ug.uFilmSat, previewSaturation);
         drawQuad(pGrade, fboBase.fbo, w, h);
 
-        const dofStr = opts.ecoPreview ? 0 : (lens.dofStrength || 0);
-        const mfDefocus = opts.ecoPreview ? 0 : (lens.mfDefocus || 0);
+        const dofStr = cfg.ecoPreview ? 0 : (lens.dofStrength || 0);
+        const mfDefocus = cfg.ecoPreview ? 0 : (lens.mfDefocus || 0);
         if (dofStr > 0.04 || mfDefocus > 0.015) {
           gl.useProgram(pExtract.prog);
           gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboBase.tex);
@@ -9897,7 +9897,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0130';
+  const APP_BUILD = '20261122-0142';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
