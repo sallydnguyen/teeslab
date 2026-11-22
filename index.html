@@ -1106,32 +1106,6 @@
       0%, 100% { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4)); }
       50% { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9)); }
     }
-    .cam-sound-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #14171f;
-      border: 1px solid #2a303d;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
-      color: #e2e8f0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.14s ease, border-color 0.14s ease, transform 0.1s ease;
-    }
-    .cam-sound-btn svg {
-      width: 18px;
-      height: 18px;
-      display: block;
-    }
-    .cam-sound-btn .sound-slash { display: none; }
-    .cam-sound-btn.muted {
-      color: #64748b;
-      border-color: #1d212a;
-    }
-    .cam-sound-btn.muted .sound-wave { opacity: 0.25; }
-    .cam-sound-btn.muted .sound-slash { display: inline; }
-    .cam-sound-btn:active { transform: scale(0.93); }
 
     /* Viewfinder Box & Mode-Specific Stages */
     .cam-vf-box {
@@ -3284,13 +3258,6 @@
             <div class="cam-mini-logo" title="Tee's Lab"><img src="./logo.jpg" alt="Tee's Lab" /></div>
           </div>
           <div class="cam-top-right">
-            <button class="cam-sound-btn" id="btnToggleSound" type="button" title="Shutter sound: ON" aria-pressed="true" aria-label="Toggle shutter sound">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M4.5 9.5h3.8L13 5.5v13l-4.7-4H4.5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-                <path class="sound-wave" d="M16.2 8.8a4.6 4.6 0 0 1 0 6.4M18.8 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                <path class="sound-slash" d="M4 4l16 16" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </button>
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
               <svg viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
@@ -5018,7 +4985,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camSound', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -9909,13 +9876,6 @@
       showToast(`${nextLabel} (Simulated)`);
     }
   }
-  const soundBtnEl = document.getElementById('btnToggleSound');
-  soundBtnEl.addEventListener('click', () => {
-    state.camSound = !state.camSound;
-    soundBtnEl.classList.toggle('muted', !state.camSound);
-    soundBtnEl.setAttribute('aria-pressed', state.camSound ? 'true' : 'false');
-    soundBtnEl.setAttribute('title', state.camSound ? 'Shutter sound: ON' : 'Shutter sound: Muted');
-  });
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
     try { await clearCameraRollStorage(); } catch (error) { showToast('Could not reset roll photos'); return; }
     state.camRollShots = [];
@@ -10059,7 +10019,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0416';
+  const APP_BUILD = '20261122-0422';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
