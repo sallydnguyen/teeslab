@@ -4717,6 +4717,7 @@
       if (Object.prototype.hasOwnProperty.call(settings, key)) state[key] = settings[key];
     });
     state.phoneId = 'auto-detect';
+    state.frameType = 'none';
     state.dateStamp = state.dateStamp && state.dateStamp !== 'off' ? 'exif-or-today' : 'off';
     if (!localStorage.getItem('teeslab-half-frame-2f-default-v1')) {
       state.hfDiptychMode = true;
@@ -7254,26 +7255,7 @@
       if (!navigator.mediaDevices?.getUserMedia) {
         state.camLiveEnabled = false;
         if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
-        if (userInitiated) showToast('🎞️ Live camera not supported — using sample viewfinder');
         return;
-      }
-      if (!userInitiated) {
-        try {
-          if (navigator.permissions?.query) {
-            const perm = await navigator.permissions.query({ name: 'camera' });
-            if (perm?.state !== 'granted') {
-              state.camLiveEnabled = false;
-              if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
-              return;
-            }
-          } else {
-            state.camLiveEnabled = false;
-            return;
-          }
-        } catch (ignored) {
-          state.camLiveEnabled = false;
-          return;
-        }
       }
       state.camLiveEnabled = true;
       if (srcBtn) { srcBtn.textContent = 'Opening…'; srcBtn.classList.remove('live'); }
@@ -9237,7 +9219,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1616';
+  const APP_BUILD = '20261121-1627';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
