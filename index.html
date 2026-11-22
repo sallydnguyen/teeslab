@@ -3497,7 +3497,7 @@
         <div class="sheet-head">
           <span>🎞️ Camera Roll</span>
           <div style="display:flex;gap:6px;">
-            <button class="btn-pill btn-ghost" id="btnClearRollShots" style="height:26px;font-size:11px;">🗑️ Clear</button>
+            <button class="btn-pill btn-ghost" id="btnClearRollShots" style="height:26px;font-size:11px;">🔄 Reset Roll</button>
             <button class="btn-pill btn-ghost" id="btnCloseContactSheet" style="height:26px;">✕</button>
           </div>
         </div>
@@ -8508,6 +8508,21 @@
 
   async function restoreCameraRoll() {
     try {
+      const ROLL3_RESET_KEY = 'tees-lab-roll3-reset-v1';
+      if (!localStorage.getItem(ROLL3_RESET_KEY)) {
+        localStorage.setItem(ROLL3_RESET_KEY, '1');
+        await clearCameraRollStorage().catch(() => {});
+        state.camRollNumber = 3;
+        state.camShotCount = 0;
+        state.camNeedsRewind = false;
+        state.camNeedsWind = false;
+        state.camRollId = createRollId();
+        saveCameraRollMeta();
+        state.camRollShots = [];
+        renderContactSheet();
+        syncCameraHudUI();
+        return;
+      }
       const savedShots = await loadCameraRollFromStorage();
       state.camRollShots = savedShots.reverse();
       const pendingHalf = await loadPendingHalfFrame(state.camRollId).catch(() => null);
@@ -9459,11 +9474,11 @@
     soundBtnEl.setAttribute('title', state.camSound ? 'Shutter sound: ON' : 'Shutter sound: Muted');
   });
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
-    try { await clearCameraRollStorage(); } catch (error) { showToast('Could not clear saved roll photos'); return; }
+    try { await clearCameraRollStorage(); } catch (error) { showToast('Could not reset roll photos'); return; }
     state.camRollShots = []; state.camShotCount = 0; state.camNeedsWind = false; state.camNeedsRewind = false;
     state.camRollId = createRollId(); saveCameraRollMeta();
     renderContactSheet(); syncCameraHudUI();
-    showToast('Roll photos cleared');
+    showToast(`🎞️ Roll #${String(state.camRollNumber).padStart(2, '0')} reset to frame 1`);
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
 
@@ -9597,7 +9612,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261121-1715';
+  const APP_BUILD = '20261121-1725';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
