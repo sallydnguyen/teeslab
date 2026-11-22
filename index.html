@@ -1702,6 +1702,27 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.85);
     }
 
+    /* Top-left Viewfinder Overlay (Frame Counter + Loaded Film Stock) */
+    .vf-top-hud {
+      position: absolute;
+      top: 7px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      z-index: 6;
+      pointer-events: none;
+    }
+    .vf-top-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+      min-width: 0;
+    }
+
     /* EV Ruler Row inside Bottom Viewfinder HUD (one-handed reach) */
     .vf-ev-row {
       width: 100%;
@@ -3254,11 +3275,6 @@
         <div class="cam-top-plate">
           <div class="cam-plate-left">
             <div class="cam-mini-logo" title="Tee's Lab"><img src="./logo.jpg" alt="Tee's Lab" /></div>
-            <div class="cam-counter-slot" id="camRollCounter" title="Frame counter">01/36</div>
-            <button class="cam-film-window" id="camFilmWindow" type="button" title="Loaded film stock — tap to change">
-              <span class="cam-film-window-bar" id="camFilmWindowBar"></span>
-              <span class="cam-film-window-txt" id="camFilmWindowTxt">Pro 400H · 400</span>
-            </button>
           </div>
           <div class="cam-top-right">
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
@@ -3382,6 +3398,16 @@
               </div>
 
               <div class="vf-focus-reticle" id="vfFocusReticle"></div>
+            </div>
+          </div>
+
+          <div class="vf-top-hud">
+            <div class="vf-top-left">
+              <div class="cam-counter-slot" id="camRollCounter" title="Frame counter">01/36</div>
+              <button class="cam-film-window" id="camFilmWindow" type="button" title="Loaded film stock — tap to change">
+                <span class="cam-film-window-bar" id="camFilmWindowBar"></span>
+                <span class="cam-film-window-txt" id="camFilmWindowTxt">Pro 400H · 400</span>
+              </button>
             </div>
           </div>
 
@@ -9904,7 +9930,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-0320';
+  const APP_BUILD = '20261122-0325';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
