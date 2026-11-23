@@ -4643,7 +4643,7 @@
       aspect: 3 / 2,
       meta: 'Autofocus 35mm compact · Direct flash & motorized advance',
       defaultFocalId: '35mm',
-      recLenses: ['35mm', '38mm', '28mm'],
+      recLenses: ['35mm', '28mm'],
       recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-portra-400'],
       blackLift: 0.020,
       contrast: 1.12,
@@ -4697,35 +4697,25 @@
 
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
-      { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', tileSub: 'Ultra-wide · Edge curve', meta: 'Ultra-wide · Landscape, architecture; slight edge barrel distortion', cropZoom: 1.0, brightlinePct: 100, barrelDistort: 0.068, apertureEV: -0.05, dofStrength: 0.34, dofRadius: 0.56, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 18, vignetteBase: 28, chromaticAb: 0.45, edgeSoft: 0.045 },
-      { id: '28mm', mm: 28, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Deep focus', meta: 'Wide angle · Street, travel, everyday; subtle wide-open separation', cropZoom: 1.14, brightlinePct: 100, barrelDistort: 0.024, apertureEV: -0.05, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 20, vignetteBase: 24, chromaticAb: 0.34, edgeSoft: 0.03 },
-      { id: '35mm', mm: 35, minF: 2.0, maxF: 22, focusProfile: 'standard', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Mild wide · Natural', meta: 'Mild wide · Street & full-body portrait; natural separation at f/2', cropZoom: 1.38, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.66, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 20, chromaticAb: 0.24, edgeSoft: 0.02 },
+      { id: '35mm', mm: 35, minF: 2.0, maxF: 22, focusProfile: 'standard', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Wide · Street & cafe', meta: 'Wide-normal · Street, indoor cafes & full-body portrait; natural separation at f/2', cropZoom: 1.38, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.66, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 20, chromaticAb: 0.24, edgeSoft: 0.02 },
       { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: '50mm f/1.4', short: '50mm', tileSub: 'Standard · Bright bokeh', meta: 'Standard · Half-body portrait & all genres; bright f/1.4 low-light & bokeh', cropZoom: 1.80, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 19, chromaticAb: 0.20, edgeSoft: 0.02 },
-      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Short tele · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 },
-      { id: '135mm', mm: 135, minF: 2.8, maxF: 22, focusProfile: 'tele', focalTag: '135mm', aperture: 'f/2.8', label: '135mm f/2.8', short: '135mm', tileSub: 'Med tele · Shake risk', meta: 'Medium tele · Distant candid portraits; strong compression, slow-shutter shake risk', cropZoom: 3.45, brightlinePct: 100, barrelDistort: 0, apertureEV: -0.06, dofStrength: 0.98, dofRadius: 0.26, shakeSens: 1.0, skinFlatter: 0.10, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 23, chromaticAb: 0.22, edgeSoft: 0.025 },
-      { id: '35-70mm', mm: 50, minF: 3.5, zoomMaxMinF: 4.5, maxF: 22, zoomMin: 35, zoomMax: 70, focusProfile: 'zoom', focalTag: '35–70', aperture: 'f/3.5–4.5', label: '35–70mm f/3.5–4.5', short: '35–70', tileSub: 'Zoom · Daylight travel', meta: 'Standard zoom · Travel & daytime events; smooth 35–70mm focal & f/3.5–4.5', cropZoom: 1.80, brightlinePct: 100, isZoom: true, zoomSteps: [35, 50, 70], barrelDistort: 0.01, apertureEV: -0.30, dofStrength: 0.48, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 20, vignetteBase: 26, chromaticAb: 0.34, edgeSoft: 0.035 }
+      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 }
     ],
     pns: [
-      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'GR1 wide · Street snap', meta: 'Wide 28mm f/2.8 compact prime (Ricoh GR1 style) · Dynamic street perspective', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
-      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Mju II · Sharp compact', meta: 'Classic 35mm f/2.8 prime (Olympus Mju II / Yashica T4) · Crisp everyday & flash', cropZoom: 1.18, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.50, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
-      { id: '38mm', mm: 38, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '38mm', aperture: 'f/2.8', label: '38mm f/2.8', short: '38mm', tileSub: 'Contax T2 · Sonnar', meta: 'Iconic 38mm f/2.8 Sonnar (Contax T2 style) · Rich contrast & flattering portraits', cropZoom: 1.32, barrelDistort: 0.004, apertureEV: 0.08, dofStrength: 0.62, dofRadius: 0.43, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 2, coatingTint: 0, bloomBase: 18, vignetteBase: 18, chromaticAb: 0.14, edgeSoft: 0.012 },
-      { id: '38-80mm', mm: 50, minF: 4.5, zoomMaxMinF: 8.0, maxF: 22, zoomMin: 38, zoomMax: 80, focusProfile: 'zoom', focalTag: '38–80', aperture: 'f/4.5–8', label: '38–80mm Zoom', short: '38-80mm', tileSub: '90s compact zoom', meta: 'Classic 90s compact zoom · Smooth 38–80mm focal & f/4.5–8 variable aperture', cropZoom: 1.45, isZoom: true, zoomSteps: [38, 55, 80], barrelDistort: 0.010, apertureEV: -0.10, dofStrength: 0.46, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 2, coatingTint: -1, bloomBase: 20, vignetteBase: 20, chromaticAb: 0.26, edgeSoft: 0.025 },
-      { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', tileSub: 'Fixed · Disposable', meta: 'Fixed 32mm plastic lens · Deep focus disposable-style snap with direct flash', cropZoom: 1.12, barrelDistort: 0.024, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -3, bloomBase: 26, vignetteBase: 26, chromaticAb: 0.52, edgeSoft: 0.055 }
+      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Street snap', meta: 'Wide 28mm f/2.8 compact prime (Ricoh GR1 style) · Dynamic street perspective', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp · Everyday AF', meta: 'Classic 35mm f/2.8 prime (Olympus Mju II / Yashica T4) · Crisp everyday & flash', cropZoom: 1.18, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.50, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 }
     ],
     disposable: [
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
     ],
     'medium-format': [
-      { id: '50mm-66', mm: 50, minF: 4.0, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '50mm', aperture: 'f/4', label: '50mm f/4 (6×6)', short: '50mm 6×6', tileSub: '6×6 Distagon · 1:1', meta: 'Hasselblad 50mm f/4 Distagon (28mm eq) · Wide architectural & environmental 6×6', formatAspect: 1, formatLabel: '120 · 6×6', cropZoom: 1.0, barrelDistort: 0.008, apertureEV: 0.0, dofStrength: 0.58, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 15, vignetteBase: 16, chromaticAb: 0.14, edgeSoft: 0.012 },
       { id: '6x6', mm: 80, minF: 2.8, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '80mm', aperture: 'f/2.8', label: '80mm f/2.8 (6×6)', short: '80mm 6×6', tileSub: '6×6 Planar · 1:1', meta: 'Hasselblad / Rolleiflex 80mm f/2.8 Planar · Classic 1:1 square & creamy bokeh', formatAspect: 1, formatLabel: '120 · 6×6', cropZoom: 1.18, barrelDistort: 0, apertureEV: 0.05, dofStrength: 0.80, dofRadius: 0.37, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.12, edgeSoft: 0.01 },
       { id: '6x45', mm: 80, minF: 2.0, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '80mm', aperture: 'f/2', label: '80mm f/2 (6×4.5)', short: '80mm 645', tileSub: '6×4.5 · Contax f/2', meta: 'Contax 645 80mm f/2 Planar · Iconic 4:3 editorial portrait depth & glow', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 1.24, barrelDistort: 0, apertureEV: 0.12, dofStrength: 0.88, dofRadius: 0.33, shakeSens: 0, skinFlatter: 0.11, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.11, edgeSoft: 0.01 },
       { id: '6x7', mm: 105, minF: 2.4, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '105mm', aperture: 'f/2.4', label: '105mm f/2.4 (6×7)', short: '105mm 6×7', tileSub: '6×7 · Pentax f/2.4', meta: 'Pentax 67 105mm f/2.4 Takumar · Signature 7:6 studio compression & 3D pop', formatAspect: 7 / 6, formatLabel: '120 · 6×7', cropZoom: 1.38, barrelDistort: 0, apertureEV: 0.08, dofStrength: 0.94, dofRadius: 0.30, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.01 }
     ],
     'half-frame': [
-      { id: '22mm', mm: 22, minF: 9.5, maxF: 9.5, isFixedAperture: true, focusProfile: 'fixed', focalTag: '22mm', aperture: 'f/9.5', label: '22mm f/9.5', short: '22mm', tileSub: 'Fixed · Ektar H35', meta: '22mm f/9.5 (~32mm eq) · Fixed-focus half-frame snap with dreamy lo-fi edges', cropZoom: 1.0, barrelDistort: 0.028, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 26, vignetteBase: 28, chromaticAb: 0.48, edgeSoft: 0.05 },
       { id: '28mm', mm: 28, minF: 3.5, maxF: 16, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/3.5', label: '28mm f/3.5', short: '28mm', tileSub: 'Pen EE · ~40mm eq', meta: '28mm f/3.5 (~40mm eq) · Compact Pen EE / Demi everyday street diptychs', cropZoom: 1.14, barrelDistort: 0.016, apertureEV: -0.05, dofStrength: 0.36, dofRadius: 0.55, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 22, vignetteBase: 24, chromaticAb: 0.36, edgeSoft: 0.035 },
-      { id: '38mm', mm: 38, minF: 1.8, maxF: 16, focusProfile: 'standard', focalTag: '38mm', aperture: 'f/1.8', label: '38mm f/1.8', short: '38mm', tileSub: 'Pen F · ~55mm eq', meta: 'Olympus F.Zuiko 38mm f/1.8 (~55mm eq) · Classic Pen F standard bright prime', cropZoom: 1.38, barrelDistort: 0, apertureEV: 0.14, dofStrength: 0.68, dofRadius: 0.42, shakeSens: 0, skinFlatter: 0.05, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 22, chromaticAb: 0.28, edgeSoft: 0.028 },
-      { id: '60mm', mm: 60, minF: 1.5, maxF: 16, focusProfile: 'portrait', focalTag: '60mm', aperture: 'f/1.5', label: '60mm f/1.5', short: '60mm', tileSub: 'Pen F · ~85mm eq', meta: 'Olympus G.Zuiko 60mm f/1.5 (~85mm eq) · Legendary half-frame portrait bokeh', cropZoom: 1.85, barrelDistort: 0, apertureEV: 0.22, dofStrength: 0.88, dofRadius: 0.32, shakeSens: 0, skinFlatter: 0.12, coatingWarmth: 2, coatingTint: 0, bloomBase: 26, vignetteBase: 21, chromaticAb: 0.24, edgeSoft: 0.025 }
+      { id: '38mm', mm: 38, minF: 1.8, maxF: 16, focusProfile: 'standard', focalTag: '38mm', aperture: 'f/1.8', label: '38mm f/1.8', short: '38mm', tileSub: 'Pen F · ~55mm eq', meta: 'Olympus F.Zuiko 38mm f/1.8 (~55mm eq) · Classic Pen F standard bright prime', cropZoom: 1.38, barrelDistort: 0, apertureEV: 0.14, dofStrength: 0.68, dofRadius: 0.42, shakeSens: 0, skinFlatter: 0.05, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 22, chromaticAb: 0.28, edgeSoft: 0.028 }
     ]
   };
 
@@ -6126,9 +6116,13 @@
   function migrateFocalId(modeId, oldFocal) {
     const list = FOCAL_OPTIONS_BY_MODE[modeId] || FOCAL_OPTIONS_BY_MODE.slr;
     if (list.some(f => f.id === oldFocal)) return oldFocal;
-    if (modeId === 'half-frame') {
-      if (oldFocal === '35mm') return '38mm';
-      if (oldFocal === '50mm') return '60mm';
+    if (modeId === 'slr') {
+      if (oldFocal === '24mm' || oldFocal === '28mm') return '35mm';
+      if (oldFocal === '135mm') return '85mm';
+      if (oldFocal === '35-70mm') return '50mm';
+    } else if (modeId === 'half-frame') {
+      if (oldFocal === '22mm') return '28mm';
+      if (oldFocal === '35mm' || oldFocal === '50mm' || oldFocal === '60mm') return '38mm';
     }
     return VIEWFINDER_MODES.find(m => m.id === modeId)?.defaultFocalId || list[0].id;
   }
@@ -8605,9 +8599,9 @@
 
     const zoomBtn = document.getElementById('btnVfZoomModeToggle');
     if (zoomBtn) {
-      const isSlr = body.id === 'slr';
-      zoomBtn.style.display = isSlr ? '' : 'none';
-      if (isSlr) zoomBtn.classList.toggle('active', !!lens.isZoom);
+      const hasZoom = getModeFocals(body.id).some(f => f.isZoom);
+      zoomBtn.style.display = (body.id === 'slr' && hasZoom) ? '' : 'none';
+      if (hasZoom) zoomBtn.classList.toggle('active', !!lens.isZoom);
     }
     if (typeof startCameraLoop === 'function' && document.getElementById('view-camera')?.classList.contains('active')) {
       startCameraLoop();
@@ -9511,9 +9505,9 @@
 
     const zoomModeBtn = document.getElementById('btnVfZoomModeToggle');
     if (zoomModeBtn) {
-      const isSlr = body.id === 'slr';
-      zoomModeBtn.style.display = isSlr ? '' : 'none';
-      if (isSlr) zoomModeBtn.classList.toggle('active', !!lens.isZoom);
+      const hasZoom = getModeFocals(body.id).some(f => f.isZoom);
+      zoomModeBtn.style.display = (body.id === 'slr' && hasZoom) ? '' : 'none';
+      if (hasZoom) zoomModeBtn.classList.toggle('active', !!lens.isZoom);
     }
 
     const isHalfFrame = body.id === 'half-frame';
