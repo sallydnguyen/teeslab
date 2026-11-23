@@ -11602,15 +11602,11 @@
         <button class="shot-del-btn" type="button" title="Delete ${shotLabel}" aria-label="Delete ${shotLabel}">🗑</button>
         <div class="shot-foot">
           <span>${shotLabel}</span>
-          <div style="display:flex;gap:4px;">
-            <button class="btn-pill btn-ghost btn-view-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">View</button>
-            <button class="btn-pill btn-brass btn-save-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">Save</button>
-          </div>
+          <button class="btn-pill btn-brass btn-save-shot" type="button" style="height:24px;padding:0 9px;font-size:10.5px;">Save</button>
         </div>
       `;
       card.querySelector('img').addEventListener('click', () => openPhotoViewer(idx));
       card.querySelector('.shot-del-btn').addEventListener('click', e => { e.stopPropagation(); deleteRollShot(s); });
-      card.querySelector('.btn-view-shot').addEventListener('click', () => openPhotoViewer(idx));
       card.querySelector('.btn-save-shot').addEventListener('click', () => saveRollPhoto(s));
       grid.appendChild(card);
     });
