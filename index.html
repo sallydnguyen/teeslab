@@ -1319,7 +1319,10 @@
       align-items: center;
       justify-content: center;
     }
-    #cameraViewfinderCanvas {
+    #cameraViewfinderCanvas,
+    .vf-gl-canvas {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -9814,11 +9817,11 @@
     const ratio = getBodyAspect(body, lens);
     const isLive = !!(state.camStream && camVideo.readyState >= 2);
     if (ratio >= 1) {
-      const w = isLive ? 480 : 600;
-      return { w, h: Math.max(240, Math.round(w / ratio)), ratio };
+      const w = isLive ? 400 : 600;
+      return { w, h: Math.max(220, Math.round(w / ratio)), ratio };
     }
-    const h = isLive ? 384 : 480;
-    return { w: Math.max(240, Math.round(h * ratio)), h, ratio };
+    const h = isLive ? 320 : 480;
+    return { w: Math.max(220, Math.round(h * ratio)), h, ratio };
   }
 
   function getCameraCaptureDimensions(body, lens, src = null) {
@@ -10141,10 +10144,10 @@
     const land = isCameraViewportLandscape();
     return {
       facingMode: state.camFacing,
-      width: { ideal: land ? (hiRes ? 2048 : 1280) : (hiRes ? 1536 : 960) },
-      height: { ideal: land ? (hiRes ? 1536 : 960) : (hiRes ? 2048 : 1280) },
+      width: { ideal: land ? (hiRes ? 1440 : 960) : (hiRes ? 1080 : 720) },
+      height: { ideal: land ? (hiRes ? 1080 : 720) : (hiRes ? 1440 : 960) },
       aspectRatio: { ideal: land ? (4 / 3) : (3 / 4) },
-      frameRate: { ideal: 15, max: 20 }
+      frameRate: { ideal: 12, max: 15 }
     };
   }
 
@@ -10210,16 +10213,21 @@
 
   function createWebGLCameraRenderer() {
     const glCanvas = document.createElement('canvas');
+    glCanvas.className = 'vf-gl-canvas';
+    glCanvas.style.display = 'none';
     let gl = null;
     try {
       gl = glCanvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false, powerPreference: 'low-power' });
     } catch (e) { gl = null; }
     if (!gl) return null;
+    vfCanvas?.parentNode?.insertBefore(glCanvas, vfCanvas);
 
     let lost = false;
     glCanvas.addEventListener('webglcontextlost', e => {
       e.preventDefault();
       lost = true;
+      glCanvas.style.display = 'none';
+      if (vfCanvas) vfCanvas.style.display = 'block';
     }, false);
     glCanvas.addEventListener('webglcontextrestored', () => {
       lost = false;
@@ -10852,11 +10860,15 @@
         gl.uniform1f(ug.uFilmSat, previewSaturation);
         drawQuad(pGrade, fboBase.fbo, w, h);
 
-        const dofStr = lens.dofStrength || 0;
+        const rawDofStr = lens.dofStrength || 0;
         const mfDefocus = lens.mfDefocus || 0;
+        const ecoLive = !!cfg.ecoPreview;
+        const runLiveDof = ecoLive ? (rawDofStr > 0.35 || mfDefocus > 0.04) : (rawDofStr > 0.04 || mfDefocus > 0.015);
+        const dofStr = runLiveDof ? rawDofStr : 0;
+        const effMfDefocus = runLiveDof ? mfDefocus : 0;
         const focusCX = Number.isFinite(lens.focusCenterX) ? lens.focusCenterX : 0.5;
         const focusCY = Number.isFinite(lens.focusCenterY) ? lens.focusCenterY : 0.48;
-        if (dofStr > 0.04 || mfDefocus > 0.015) {
+        if (runLiveDof) {
           gl.activeTexture(gl.TEXTURE0);
           gl.bindTexture(gl.TEXTURE_2D, fboBase.tex);
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
@@ -10869,7 +10881,7 @@
           gl.uniform1f(pBokeh.u.uAspect, w / Math.max(1, h));
           gl.uniform1f(pBokeh.u.uDofStr, dofStr);
           gl.uniform1f(pBokeh.u.uDofRad, lens.dofRadius ?? 0.42);
-          gl.uniform1f(pBokeh.u.uMfDefocus, mfDefocus);
+          gl.uniform1f(pBokeh.u.uMfDefocus, effMfDefocus);
           drawQuad(pBokeh, fboDof.fbo, curHw, curHh);
 
           gl.bindTexture(gl.TEXTURE_2D, fboBase.tex);
@@ -10912,7 +10924,7 @@
         gl.uniform1f(uc.uAspect, w / Math.max(1, h));
         gl.uniform1f(uc.uDofStr, dofStr);
         gl.uniform1f(uc.uDofRad, lens.dofRadius ?? 0.42);
-        gl.uniform1f(uc.uMfDefocus, mfDefocus);
+        gl.uniform1f(uc.uMfDefocus, effMfDefocus);
         gl.uniform1f(uc.uHalGain, halationAmt > 0 ? (halationAmt / 100) * 1.15 * str : 0);
         gl.uniform1f(uc.uBloomGain, bloomAmt > 0 ? (bloomAmt / 100) * 0.55 : 0);
         gl.uniform1f(uc.uFlashBurst, flashBurst ? 1 : 0);
@@ -10934,17 +10946,28 @@
     return gpuCameraRenderer || null;
   }
 
+  function isCameraObscuredByOverlay() {
+    return !!(
+      document.getElementById('contactSheetBackdrop')?.classList.contains('open') ||
+      document.getElementById('photoViewerBackdrop')?.classList.contains('open') ||
+      document.getElementById('exportSheetBackdrop')?.classList.contains('open') ||
+      document.getElementById('sampleSheetBackdrop')?.classList.contains('open') ||
+      document.querySelector('.sheet-backdrop.open, .modal-backdrop.open')
+    );
+  }
+
   function startCameraLoop() {
     if (state.camAnimId) return;
     const viewCamEl = document.getElementById('view-camera');
     let cpuTmp = null, cpuCtx = null;
-    const vfCtx = vfCanvas.getContext('2d');
+    let vfCtx = null;
     let last = 0;
     let lastVideoTime = -1;
     let lastLiveKey = '';
     const loop = (ts) => {
       state.camAnimId = null;
       if (viewCamEl && !viewCamEl.classList.contains('active')) return;
+      if (document.hidden || isCameraObscuredByOverlay()) return;
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
       const src = hasLiveVideo ? camVideo : state.previewSourceCanvas;
@@ -10954,7 +10977,7 @@
       const gpuReady = !!(gpu && gpu.isSupported());
 
       if (hasLiveVideo) {
-        const interval = gpuReady ? 64 : 120;
+        const interval = gpuReady ? 80 : 140;
         const elapsed = ts - last;
         const token = (state.camLoopToken = (state.camLoopToken || 0) + 1);
         window.clearTimeout(state.camLoopTimer);
@@ -10972,7 +10995,7 @@
           state.camLoopTimer = 0;
           if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
           state.camAnimId = requestAnimationFrame(loop);
-        }, gpuReady ? 50 : 105);
+        }, gpuReady ? 68 : 125);
         if (!gpuReady && cameraJobInFlight) return;
       }
 
@@ -11017,11 +11040,17 @@
       if (gpuReady) {
         const rendered = gpu.render(src, hasLiveVideo, hasLiveVideo ? -1 : previewSourceVersion, targetW, targetH, vfRatio, vfZoom, vfConfig);
         if (rendered) {
-          vfCtx.drawImage(rendered, 0, 0);
+          if (rendered.style.display !== 'block') rendered.style.display = 'block';
+          if (vfCanvas.style.display !== 'none') vfCanvas.style.display = 'none';
           if (!hasLiveVideo) cameraLastStaticKey = stateKey;
           return;
         }
       }
+
+      const glEl = vfCanvas.parentNode?.querySelector('.vf-gl-canvas');
+      if (glEl && glEl.style.display !== 'none') glEl.style.display = 'none';
+      if (vfCanvas.style.display !== 'block') vfCanvas.style.display = 'block';
+      if (!vfCtx) vfCtx = vfCanvas.getContext('2d');
 
       if (!cpuTmp) {
         cpuTmp = document.createElement('canvas');
@@ -11047,7 +11076,10 @@
   }
 
   function stopCameraLoop() {
-    if (state.camAnimId) { cancelAnimationFrame(state.camAnimId); state.camAnimId = null; }
+    state.camLoopToken = (state.camLoopToken || 0) + 1;
+    if (state.camLoopTimer) { window.clearTimeout(state.camLoopTimer); state.camLoopTimer = 0; }
+    if (state.camAnimId && state.camAnimId !== -1) cancelAnimationFrame(state.camAnimId);
+    state.camAnimId = null;
     cameraJobInFlight = false;
   }
 
@@ -11092,8 +11124,8 @@
       }
       try {
         await track.applyConstraints({
-          width: { ideal: wantLandscape ? 2048 : 1536 },
-          height: { ideal: wantLandscape ? 1536 : 2048 },
+          width: { ideal: wantLandscape ? 1440 : 1080 },
+          height: { ideal: wantLandscape ? 1080 : 1440 },
           aspectRatio: { ideal: wantLandscape ? (4 / 3) : (3 / 4) }
         });
       } catch (ignored) {}
@@ -11148,7 +11180,7 @@
         pauseCameraWhenHidden();
         showToast('🔋 Camera paused (idle) — tap to resume');
       }
-    }, 45000);
+    }, 30000);
   }
   document.getElementById('view-camera')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
   document.getElementById('btnShutter')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
@@ -11468,10 +11500,17 @@
     applyViewerZoomTransform(false);
   }
 
+  function resumeCameraLoopIfVisible() {
+    if (document.getElementById('view-camera')?.classList.contains('active') && !document.hidden && !isCameraObscuredByOverlay()) {
+      startCameraLoop();
+    }
+  }
+
   function openPhotoViewer(index = 0) {
     if (!state.camRollShots || state.camRollShots.length === 0) return;
     const modal = document.getElementById('photoViewerBackdrop');
     if (!modal) return;
+    stopCameraLoop();
     resetViewerZoom();
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('open'));
@@ -11487,6 +11526,7 @@
         modal.style.display = 'none';
         resetViewerZoom();
         revokeViewerBlobUrl();
+        resumeCameraLoopIfVisible();
       }
     }, 200);
   }
@@ -13090,8 +13130,10 @@
   function closeSampleSheet() {
     sampleSheet.classList.remove('open');
     state.sampleSheetTargetMode = 'primary';
+    resumeCameraLoopIfVisible();
   }
   function openSampleSheetForSlot(slotNum = 1) {
+    stopCameraLoop();
     state.sampleSheetTargetMode = 'primary';
     state.halfFrameTargetSlot = slotNum === 2 ? 2 : 1;
     const titleEl = document.getElementById('sampleSheetTitle');
@@ -13176,11 +13218,20 @@
 
   const contactSheet = document.getElementById('contactSheetBackdrop');
   document.getElementById('btnOpenContactSheet').addEventListener('click', () => {
+    stopCameraLoop();
     contactSheet.classList.add('open');
     prewarmCameraRollBlobs(8);
   });
-  document.getElementById('btnCloseContactSheet').addEventListener('click', () => contactSheet.classList.remove('open'));
-  contactSheet.addEventListener('click', e => { if (e.target === contactSheet) contactSheet.classList.remove('open'); });
+  document.getElementById('btnCloseContactSheet').addEventListener('click', () => {
+    contactSheet.classList.remove('open');
+    resumeCameraLoopIfVisible();
+  });
+  contactSheet.addEventListener('click', e => {
+    if (e.target === contactSheet) {
+      contactSheet.classList.remove('open');
+      resumeCameraLoopIfVisible();
+    }
+  });
 
   // Photo Viewer Controls & Touch Swipe
   const photoViewerEl = document.getElementById('photoViewerBackdrop');
