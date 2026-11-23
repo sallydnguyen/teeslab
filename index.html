@@ -741,7 +741,7 @@
     }
     .lab-action-bar {
       display: grid;
-      grid-template-columns: 1fr 0.9fr 1fr;
+      grid-template-columns: 1fr 0.85fr 0.85fr 1fr;
       gap: 6px;
       width: 100%;
     }
@@ -1302,6 +1302,108 @@
       font-size: 10px;
       line-height: 1;
       padding: 0 2px;
+    }
+
+    .vf-mx-ghost {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.42;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .vf-mx-ghost.visible { display: block; }
+    .vf-mx-bar {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(10, 12, 16, 0.88);
+      border: 1px solid rgba(245, 166, 35, 0.78);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #f5a623;
+      pointer-events: auto;
+      z-index: 6;
+    }
+    .vf-mx-bar.visible { display: flex; }
+    .vf-mx-bar button {
+      border: 0;
+      background: transparent;
+      color: #f87171;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+
+    .mx-lab-bar {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 10px;
+      background: rgba(14, 17, 23, 0.92);
+      border: 1px solid rgba(245, 166, 35, 0.4);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .mx-lab-bar.visible { display: flex; }
+    .mx-blend-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+    .mx-blend-slider {
+      flex: 1;
+      min-width: 54px;
+      accent-color: #f5a623;
+      height: 16px;
+      cursor: pointer;
+    }
+    .mx-blend-val {
+      min-width: 30px;
+      text-align: right;
+      color: #f5a623;
+    }
+    .mx-clear-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text-dim);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mx-clear-btn:hover { color: #f87171; border-color: rgba(248, 113, 113, 0.5); }
+    .lab-action-btn.active {
+      border-color: rgba(245, 166, 35, 0.8);
+      color: #f5a623;
+      background: rgba(245, 166, 35, 0.12);
     }
 
     /* Tap-to-Focus / AE Reticle */
@@ -3631,6 +3733,16 @@
           </div>
           <button class="hf-mode-pill active" id="btnHfLabModeToggle" type="button" title="Toggle 2-in-1 Half Frame diptych or single frame">2F · 2-in-1</button>
         </div>
+        <div class="mx-lab-bar" id="mxLabBar">
+          <button class="hf-slot-btn has-photo" id="btnMxLabPick" type="button" title="Replace Double Exposure Layer 2" style="flex:0 0 auto;max-width:118px;padding:0 8px;">🎞️ 2× Photo 2</button>
+          <div class="mx-blend-wrap" title="Adjust Layer 2 exposure mix">
+            <span>Mix</span>
+            <input class="mx-blend-slider" id="mxBlendSlider" type="range" min="20" max="80" step="1" value="50" />
+            <span class="mx-blend-val" id="mxBlendVal">50%</span>
+          </div>
+          <button class="hf-swap-btn" id="btnMxLabSwap" type="button" title="Swap Layer 1 & Layer 2" aria-label="Swap Double Exposure layers">⇄</button>
+          <button class="mx-clear-btn" id="btnMxLabClear" type="button" title="Remove Double Exposure Layer 2" aria-label="Remove Double Exposure Layer 2">✕</button>
+        </div>
       </div>
 
       <!-- COMPACT LAB CONTROL DOCK -->
@@ -3691,6 +3803,7 @@
 
         <div class="lab-action-bar">
           <button class="btn-pill btn-ghost lab-action-btn" id="btnOpenSamples" type="button" title="Add Photo" aria-label="Add Photo">🖼️ <span>Photo</span></button>
+          <button class="btn-pill btn-ghost lab-action-btn" id="btnLabDoubleExp" type="button" title="Double Exposure — overlay a 2nd photo" aria-label="Double Exposure">🎞️ <span>2×</span></button>
           <button class="btn-pill btn-ghost lab-action-btn" id="btnRotatePhoto" type="button" title="Rotate photo 90° counter-clockwise" aria-label="Rotate photo 90 degrees counter-clockwise">↺ <span>Rotate</span></button>
           <button class="btn-pill btn-brass lab-action-btn" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
         </div>
@@ -3832,6 +3945,11 @@
                   <button type="button" id="btnCancelHalfFrame" title="Discard first half">✕</button>
                 </div>
               </div>
+              <img class="vf-mx-ghost" id="vfMxGhostImg" alt="" aria-hidden="true" />
+              <div class="vf-mx-bar" id="vfMxBar">
+                <span id="vfMxLabel">2× · 1/2</span>
+                <button type="button" id="btnCancelDoubleExp" title="Discard Double Exposure 1/2">✕</button>
+              </div>
 
 
               <!-- Point & Shoot (PnS) / Disposable: Brightframe + AF Reticle + Flash Status -->
@@ -3888,6 +4006,7 @@
                 <button class="vf-badge-btn af-active" id="btnVfAutoFocus" type="button" title="Auto Focus — tap to return to AF">AF</button>
                 <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between primes & 35–70mm zoom" style="display:none;">35–70</button>
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
+                <button class="vf-badge-btn" id="btnVfDoubleExpToggle" type="button" title="Double Exposure (2×) — expose twice on one frame">2×</button>
                 <button class="vf-badge-btn" id="btnVfIso" type="button" title="Adjust ISO (Push / Pull film)">ISO 400</button>
               </div>
             </div>
@@ -4068,7 +4187,7 @@
     <div class="sheet-backdrop" id="sampleSheetBackdrop">
       <div class="sheet-card">
         <div class="sheet-head">
-          <span>🖼️ Add Photo</span>
+          <span id="sampleSheetTitle">🖼️ Add Photo</span>
           <button class="btn-pill btn-ghost" id="btnCloseSampleSheet" style="height:26px;">✕</button>
         </div>
         <div class="hf-sample-target-bar" id="hfSampleTargetBar">
@@ -5543,6 +5662,14 @@
     camNeedsWind: false,
     camNeedsRewind: false,
     camAutoWind: false,
+    doubleExpMode: false,
+    doubleExpFirstCanvas: null,
+    labDoubleExpCanvas: null,
+    labDoubleExpPreviewCanvas: null,
+    labDoubleExpSampleId: null,
+    labDoubleExpFromCameraRoll: false,
+    labDoubleExpMix: 50,
+    sampleSheetTargetMode: 'primary',
     halfFrameFirstCanvas: null,
     halfFrameLabSecondCanvas: null,
     halfFrameLabSecondPreviewCanvas: null,
@@ -6398,6 +6525,15 @@
     }
 
     drawCroppedSource(ctx, srcCanvas, w, h, ratio, zoom);
+    const isPreview = srcCanvas === state.previewSourceCanvas;
+    const mxSrc = isPreview ? (state.labDoubleExpPreviewCanvas || state.labDoubleExpCanvas) : state.labDoubleExpCanvas;
+    if (mxSrc) {
+      const mxC = document.createElement('canvas');
+      mxC.width = w; mxC.height = h;
+      const mxZoom = state.labDoubleExpFromCameraRoll ? 1.0 : zoom;
+      drawCroppedSource(mxC.getContext('2d'), mxSrc, w, h, ratio, mxZoom);
+      blendDoubleExposureCanvas(c, mxC, state.labDoubleExpMix, true);
+    }
     return c;
   }
 
@@ -6475,6 +6611,123 @@
     return prevC;
   }
 
+  const MX_SQ_LUT = Float32Array.from({ length: 256 }, (_, i) => (i / 255) * (i / 255));
+  const MX_SQRT_LUT = Uint8Array.from({ length: 4096 }, (_, i) => Math.min(255, Math.round(Math.sqrt(i / 4095) * 255)));
+
+  function blendDoubleExposureCanvas(canvasA, canvasB, mixPct = 50, inPlace = false) {
+    if (!canvasA || !canvasB) return canvasA || canvasB || null;
+    const w = Math.max(1, canvasA.width);
+    const h = Math.max(1, canvasA.height);
+    let out = canvasA;
+    if (!inPlace) {
+      out = document.createElement('canvas');
+      out.width = w;
+      out.height = h;
+      out.getContext('2d').drawImage(canvasA, 0, 0, w, h);
+    }
+    const oCtx = out.getContext('2d', { willReadFrequently: true });
+    const imgA = oCtx.getImageData(0, 0, w, h);
+
+    let bCanvas = canvasB;
+    if (canvasB.width !== w || canvasB.height !== h) {
+      bCanvas = document.createElement('canvas');
+      bCanvas.width = w;
+      bCanvas.height = h;
+      const bCtx = bCanvas.getContext('2d', { willReadFrequently: true });
+      const srcRatio = canvasB.width / Math.max(1, canvasB.height);
+      const dstRatio = w / Math.max(1, h);
+      let sw = canvasB.width, sh = canvasB.height, sx = 0, sy = 0;
+      if (srcRatio > dstRatio) {
+        sw = Math.max(1, Math.round(canvasB.height * dstRatio));
+        sx = Math.max(0, Math.round((canvasB.width - sw) * 0.5));
+      } else {
+        sh = Math.max(1, Math.round(canvasB.width / dstRatio));
+        sy = Math.max(0, Math.round((canvasB.height - sh) * 0.5));
+      }
+      bCtx.drawImage(canvasB, sx, sy, sw, sh, 0, 0, w, h);
+    }
+    const imgB = bCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h);
+    const dA = imgA.data;
+    const dB = imgB.data;
+
+    const p = Math.max(0.15, Math.min(0.85, (Number(mixPct) || 50) / 100));
+    const wA = (1 - p) * 1.62;
+    const wB = p * 1.62;
+
+    for (let i = 0, len = dA.length; i < len; i += 4) {
+      const eR = wA * MX_SQ_LUT[dA[i]] + wB * MX_SQ_LUT[dB[i]];
+      const eG = wA * MX_SQ_LUT[dA[i + 1]] + wB * MX_SQ_LUT[dB[i + 1]];
+      const eB = wA * MX_SQ_LUT[dA[i + 2]] + wB * MX_SQ_LUT[dB[i + 2]];
+
+      const lR = eR / (1 + 0.40 * eR);
+      const lG = eG / (1 + 0.40 * eG);
+      const lB = eB / (1 + 0.40 * eB);
+
+      dA[i]     = MX_SQRT_LUT[lR >= 1 ? 4095 : Math.round(lR * 4095)];
+      dA[i + 1] = MX_SQRT_LUT[lG >= 1 ? 4095 : Math.round(lG * 4095)];
+      dA[i + 2] = MX_SQRT_LUT[lB >= 1 ? 4095 : Math.round(lB * 4095)];
+      dA[i + 3] = 255;
+    }
+    oCtx.putImageData(imgA, 0, 0);
+    return out;
+  }
+
+  function clearPendingDoubleExp() {
+    state.doubleExpFirstCanvas = null;
+    const ghost = document.getElementById('vfMxGhostImg');
+    if (ghost) {
+      ghost.removeAttribute('src');
+      ghost.classList.remove('visible');
+    }
+  }
+
+  function loadLabDoubleExpCanvas(srcCanvas, opts = {}) {
+    state.labDoubleExpCanvas = srcCanvas || null;
+    state.labDoubleExpPreviewCanvas = srcCanvas ? makeScaledPreviewCanvas(srcCanvas) : null;
+    state.labDoubleExpSampleId = opts.sampleId !== undefined ? opts.sampleId : null;
+    state.labDoubleExpFromCameraRoll = !!opts.fromCameraRoll;
+    previewSourceVersion += 1;
+    labRenderDirty = true;
+    syncAllUI();
+    renderPreview(!!opts.forcePreviewRender);
+  }
+
+  function clearLabDoubleExp() {
+    state.labDoubleExpCanvas = null;
+    state.labDoubleExpPreviewCanvas = null;
+    state.labDoubleExpSampleId = null;
+    state.labDoubleExpFromCameraRoll = false;
+    previewSourceVersion += 1;
+    labRenderDirty = true;
+    renderSampleStrip();
+    syncAllUI();
+    renderPreview(true);
+  }
+
+  function swapLabDoubleExpLayers() {
+    if (!state.labDoubleExpCanvas || !state.fullSourceCanvas) return;
+    const tmpFull = state.fullSourceCanvas;
+    const tmpPrev = state.previewSourceCanvas;
+    const tmpSample = state.activeSampleId;
+    const tmpRoll = state.sourceFromCameraRoll;
+
+    state.fullSourceCanvas = state.labDoubleExpCanvas;
+    state.previewSourceCanvas = state.labDoubleExpPreviewCanvas || makeScaledPreviewCanvas(state.labDoubleExpCanvas);
+    state.activeSampleId = state.labDoubleExpSampleId;
+    state.sourceFromCameraRoll = state.labDoubleExpFromCameraRoll;
+
+    state.labDoubleExpCanvas = tmpFull;
+    state.labDoubleExpPreviewCanvas = tmpPrev || makeScaledPreviewCanvas(tmpFull);
+    state.labDoubleExpSampleId = tmpSample;
+    state.labDoubleExpFromCameraRoll = tmpRoll;
+
+    previewSourceVersion += 1;
+    labRenderDirty = true;
+    renderSampleStrip();
+    syncAllUI();
+    renderPreview(true);
+  }
+
   function loadHalfFrameSecondCanvas(srcCanvas, opts = {}) {
     state.halfFrameLabSecondCanvas = srcCanvas;
     state.halfFrameLabSecondPreviewCanvas = srcCanvas ? makeScaledPreviewCanvas(srcCanvas) : null;
@@ -6519,6 +6772,10 @@
       state.halfFrameLabSecondPreviewCanvas = null;
       state.halfFrameLabSecondSampleId = null;
       state.halfFrameLabSecondFromCameraRoll = false;
+      state.labDoubleExpCanvas = null;
+      state.labDoubleExpPreviewCanvas = null;
+      state.labDoubleExpSampleId = null;
+      state.labDoubleExpFromCameraRoll = false;
     }
     state.exif = exifData;
 
@@ -7102,9 +7359,11 @@
   function renderSampleStrip() {
     const strip = document.getElementById('sampleStrip');
     strip.innerHTML = '';
-    const activeSample = (state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2)
-      ? state.halfFrameLabSecondSampleId
-      : state.activeSampleId;
+    const isMx2 = state.sampleSheetTargetMode === 'mx2';
+    const isHf2 = !isMx2 && state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+    const activeSample = isMx2
+      ? state.labDoubleExpSampleId
+      : (isHf2 ? state.halfFrameLabSecondSampleId : state.activeSampleId);
     SAMPLES.forEach(s => {
       const item = document.createElement('button');
       item.className = `sample-thumb ${activeSample === s.id ? 'active' : ''}`;
@@ -7120,6 +7379,14 @@
           await ensureSampleLoaded(s);
         } catch (err) {
           showToast(`Could not load sample: ${s.title}`);
+          return;
+        }
+        if (state.sampleSheetTargetMode === 'mx2') {
+          state.sampleSheetTargetMode = 'primary';
+          loadLabDoubleExpCanvas(s.canvas, { sampleId: s.id, fromCameraRoll: false, forcePreviewRender: true });
+          renderSampleStrip();
+          document.getElementById('sampleSheetBackdrop').classList.remove('open');
+          showToast(`🎞️ 2× Layer 2: ${s.title}`);
           return;
         }
         const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
@@ -8117,16 +8384,35 @@
 
     const targetBar = document.getElementById('hfSampleTargetBar');
     if (targetBar) {
-      targetBar.classList.toggle('visible', isHfLab && is2F);
+      targetBar.classList.toggle('visible', isHfLab && is2F && state.sampleSheetTargetMode !== 'mx2');
       document.getElementById('btnSampleTarget1')?.classList.toggle('active', state.halfFrameTargetSlot !== 2);
       document.getElementById('btnSampleTarget2')?.classList.toggle('active', state.halfFrameTargetSlot === 2);
     }
+  }
+
+  function renderDoubleExpLabUI() {
+    const hasLayer2 = !!state.labDoubleExpCanvas;
+    const bar = document.getElementById('mxLabBar');
+    if (bar) bar.classList.toggle('visible', hasLayer2);
+    const btnLabMx = document.getElementById('btnLabDoubleExp');
+    if (btnLabMx) btnLabMx.classList.toggle('active', hasLayer2);
+    const pickBtn = document.getElementById('btnMxLabPick');
+    if (pickBtn) {
+      const sTitle = SAMPLES.find(s => s.id === state.labDoubleExpSampleId)?.title;
+      pickBtn.textContent = sTitle ? `🎞️ 2× ${sTitle}` : '🎞️ 2× Photo 2';
+    }
+    const slider = document.getElementById('mxBlendSlider');
+    const valEl = document.getElementById('mxBlendVal');
+    const mixVal = Math.max(20, Math.min(80, Number(state.labDoubleExpMix) || 50));
+    if (slider) slider.value = mixVal;
+    if (valEl) valEl.textContent = `${mixVal}%`;
   }
 
   function syncAllUI() {
     renderComboCards();
     syncLensBarrelWidgets();
     renderHalfFrameLabUI();
+    renderDoubleExpLabUI();
     if (document.getElementById('comboSheetBackdrop')?.classList.contains('open')) {
       pickerDirty = false;
       renderComboPickerSheet();
@@ -8593,6 +8879,22 @@
       hfGhost.classList.toggle('visible', hasFirstHalf && !state.hfDiptychMode);
     }
     if (hfCancel) hfCancel.style.display = hasFirstHalf ? '' : 'none';
+
+    const mxBtn = document.getElementById('btnVfDoubleExpToggle');
+    const hasMxFirst = !!(state.doubleExpMode && state.doubleExpFirstCanvas);
+    if (mxBtn) {
+      mxBtn.classList.toggle('active', !!state.doubleExpMode);
+      mxBtn.textContent = hasMxFirst ? '2×·2' : '2×';
+      mxBtn.title = hasMxFirst
+        ? 'Double Exposure 2× — waiting for shot 2/2 (tap to cancel)'
+        : 'Double Exposure (2×) — expose twice on one frame';
+    }
+    const mxGhost = document.getElementById('vfMxGhostImg');
+    const mxBar = document.getElementById('vfMxBar');
+    const mxLabel = document.getElementById('vfMxLabel');
+    if (mxGhost) mxGhost.classList.toggle('visible', hasMxFirst);
+    if (mxBar) mxBar.classList.toggle('visible', !!state.doubleExpMode);
+    if (mxLabel) mxLabel.textContent = hasMxFirst ? '2× · 2/2 READY' : '2× · 1/2';
 
     const flashBtn = document.getElementById('btnVfFlashToggle');
     if (flashBtn) {
@@ -9871,6 +10173,23 @@
       const capC = document.createElement('canvas');
       capC.width = capDim.w; capC.height = capDim.h;
       drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom);
+
+      if (state.doubleExpMode) {
+        if (!state.doubleExpFirstCanvas) {
+          state.doubleExpFirstCanvas = capC;
+          const mxGhost = document.getElementById('vfMxGhostImg');
+          if (mxGhost) mxGhost.src = capC.toDataURL('image/jpeg', 0.72);
+          syncCameraHudUI();
+          showToast('🎞️ 2× Shot 1/2 captured — Compose shot 2/2');
+          return;
+        }
+        const blendedC = blendDoubleExposureCanvas(state.doubleExpFirstCanvas, capC, 50);
+        clearPendingDoubleExp();
+        const rawBlob = await canvasToJpegBlob(blendedC, 0.92);
+        await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
+        return;
+      }
+
       const rawBlob = await canvasToJpegBlob(capC, 0.92);
       await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
     } catch (error) {
@@ -10099,7 +10418,7 @@
       if (state.camStream) stopRealCamera();
       if (tabId === 'darkroom') {
         if (tweaksDirty) { tweaksDirty = false; renderTweaksDock(); }
-        if (labRenderDirty) renderPreview(true);
+        if (labRenderDirty || !lastLabSourceMeta) renderPreview(true);
       }
     }
   }
@@ -10118,6 +10437,14 @@
         c.width = Math.round(img.naturalWidth * scale);
         c.height = Math.round(img.naturalHeight * scale);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        if (state.sampleSheetTargetMode === 'mx2') {
+          state.sampleSheetTargetMode = 'primary';
+          loadLabDoubleExpCanvas(c, { sampleId: null, fromCameraRoll: false, forcePreviewRender: true });
+          renderSampleStrip();
+          switchMainTab('darkroom');
+          showToast('🎞️ 2× Layer 2 loaded');
+          return;
+        }
         const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
         if (isSlot2) {
           loadHalfFrameSecondCanvas(c, { sampleId: null, fromCameraRoll: false, forcePreviewRender: true });
@@ -10126,6 +10453,7 @@
           showToast('🎞️ Photo 2/2 loaded into Half Frame');
           return;
         }
+        state.sampleSheetTargetMode = 'primary';
         state.activeSampleId = null;
         renderSampleStrip();
         loadSourceCanvas(c, exif);
@@ -10739,8 +11067,23 @@
 
   // Bottom Sheets (Samples & Contact Sheet)
   const sampleSheet = document.getElementById('sampleSheetBackdrop');
+  function closeSampleSheet() {
+    sampleSheet.classList.remove('open');
+    state.sampleSheetTargetMode = 'primary';
+  }
   function openSampleSheetForSlot(slotNum = 1) {
+    state.sampleSheetTargetMode = 'primary';
     state.halfFrameTargetSlot = slotNum === 2 ? 2 : 1;
+    const titleEl = document.getElementById('sampleSheetTitle');
+    if (titleEl) titleEl.textContent = '🖼️ Add Photo';
+    renderHalfFrameLabUI();
+    renderSampleStrip();
+    sampleSheet.classList.add('open');
+  }
+  function openSampleSheetForDoubleExp() {
+    state.sampleSheetTargetMode = 'mx2';
+    const titleEl = document.getElementById('sampleSheetTitle');
+    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Choose 2nd Photo';
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
@@ -10748,6 +11091,22 @@
   document.getElementById('btnOpenSamples').addEventListener('click', () => {
     const autoSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && !state.halfFrameLabSecondCanvas;
     openSampleSheetForSlot(autoSlot2 ? 2 : 1);
+  });
+  document.getElementById('btnLabDoubleExp')?.addEventListener('click', () => openSampleSheetForDoubleExp());
+  document.getElementById('btnMxLabPick')?.addEventListener('click', () => openSampleSheetForDoubleExp());
+  document.getElementById('mxBlendSlider')?.addEventListener('input', e => {
+    state.labDoubleExpMix = Math.max(20, Math.min(80, Number(e.target.value) || 50));
+    const valEl = document.getElementById('mxBlendVal');
+    if (valEl) valEl.textContent = `${state.labDoubleExpMix}%`;
+    scheduleRender();
+  });
+  document.getElementById('btnMxLabSwap')?.addEventListener('click', () => {
+    swapLabDoubleExpLayers();
+    showToast('⇄ Swapped Double Exposure layers');
+  });
+  document.getElementById('btnMxLabClear')?.addEventListener('click', () => {
+    clearLabDoubleExp();
+    showToast('🎞️ Removed Double Exposure layer');
   });
   document.getElementById('btnHfLabSlot1')?.addEventListener('click', () => openSampleSheetForSlot(1));
   document.getElementById('btnHfLabSlot2')?.addEventListener('click', () => openSampleSheetForSlot(2));
@@ -10774,8 +11133,8 @@
     sampleSheet.classList.remove('open');
     fileInput.click();
   });
-  document.getElementById('btnCloseSampleSheet').addEventListener('click', () => sampleSheet.classList.remove('open'));
-  sampleSheet.addEventListener('click', e => { if (e.target === sampleSheet) sampleSheet.classList.remove('open'); });
+  document.getElementById('btnCloseSampleSheet').addEventListener('click', closeSampleSheet);
+  sampleSheet.addEventListener('click', e => { if (e.target === sampleSheet) closeSampleSheet(); });
 
   const contactSheet = document.getElementById('contactSheetBackdrop');
   document.getElementById('btnOpenContactSheet').addEventListener('click', () => contactSheet.classList.add('open'));
@@ -10886,7 +11245,7 @@
   const vfStageEl = document.getElementById('vfStage');
   const vfFocusReticle = document.getElementById('vfFocusReticle');
   vfStageEl?.addEventListener('click', e => {
-    if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar')) return;
+    if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar, .vf-mx-bar')) return;
     const rect = vfStageEl.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
     const nx = Math.max(0.06, Math.min(0.94, (e.clientX - rect.left) / rect.width));
@@ -10957,7 +11316,12 @@
 
   document.getElementById('btnVfDiptychToggle')?.addEventListener('click', () => {
     state.hfDiptychMode = !state.hfDiptychMode;
-    if (!state.hfDiptychMode) clearPendingHalfFrame();
+    if (!state.hfDiptychMode) {
+      clearPendingHalfFrame();
+    } else if (state.doubleExpMode) {
+      state.doubleExpMode = false;
+      clearPendingDoubleExp();
+    }
     labRenderDirty = true;
     syncCameraHudUI();
     renderHalfFrameLabUI();
@@ -10968,6 +11332,27 @@
     clearPendingHalfFrame();
     syncCameraHudUI();
     showToast('Half frame #1 discarded');
+  });
+  document.getElementById('btnVfDoubleExpToggle')?.addEventListener('click', () => {
+    state.doubleExpMode = !state.doubleExpMode;
+    if (state.doubleExpMode) {
+      if (state.bodyId === 'half-frame' && state.hfDiptychMode) {
+        state.hfDiptychMode = false;
+        clearPendingHalfFrame();
+      }
+      showToast('🎞️ 2× Double Exposure ON — Take shot 1/2');
+    } else {
+      clearPendingDoubleExp();
+      showToast('🎞️ 2× Double Exposure OFF');
+    }
+    syncCameraHudUI();
+    renderHalfFrameLabUI();
+    scheduleSaveLocalAppState();
+  });
+  document.getElementById('btnCancelDoubleExp')?.addEventListener('click', () => {
+    clearPendingDoubleExp();
+    syncCameraHudUI();
+    showToast('Double exposure shot 1/2 discarded');
   });
 
   // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, SLR 35-70mm Zoom Toggle, Disposable Flash)
