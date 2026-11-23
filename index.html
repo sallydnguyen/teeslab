@@ -1313,39 +1313,92 @@
       z-index: 3;
     }
 
-    /* Corner finder brackets (shared by Half Frame, PnS, Disposable) */
+    /* Corner finder brackets (SLR ground-glass matte; PnS & Half Frame use dedicated brightframe corners) */
     .vf-corner {
       position: absolute;
       width: 14px;
       height: 14px;
-      border-color: rgba(255,255,255,0.72);
+      border-color: rgba(255,255,255,0.86);
       border-style: solid;
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.88));
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.15s ease;
     }
-    .vf-stage[data-vf-mode="half-frame"] .vf-corner,
-    .vf-stage[data-vf-mode="pns"] .vf-corner,
-    .vf-stage[data-vf-mode="disposable"] .vf-corner { opacity: 0.78; }
-    .vf-corner.tl { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
-    .vf-corner.tr { top: 10px; right: 10px; border-width: 1.5px 1.5px 0 0; }
-    .vf-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 1.5px 1.5px; }
-    .vf-corner.br { bottom: 10px; right: 10px; border-width: 0 1.5px 1.5px 0; }
+    .vf-stage[data-vf-mode="slr"] .vf-corner { opacity: 0.92; }
+    .vf-stage[data-vf-mode="disposable"] .vf-corner { opacity: 0.85; }
+    .vf-corner.tl { top: 8px; left: 8px; border-width: 1.8px 0 0 1.8px; }
+    .vf-corner.tr { top: 8px; right: 8px; border-width: 1.8px 1.8px 0 0; }
+    .vf-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1.8px 1.8px; }
+    .vf-corner.br { bottom: 8px; right: 8px; border-width: 0 1.8px 1.8px 0; }
 
-    /* Half Frame 3:4 — Vertical Half-Frame Portrait Guide */
+    /* Half Frame 3:4 — Clean Vertical Amber Brightframe + Horizon Ticks + Center Portrait Reticle */
     .vf-hfs-overlay {
       position: absolute;
-      inset: 6px;
-      border: 1px solid rgba(245, 166, 35, 0.36);
+      inset: 10px;
+      border: 1px solid rgba(251, 191, 36, 0.34);
+      border-radius: 3px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.25);
       display: none;
       pointer-events: none;
     }
     .vf-stage[data-vf-mode="half-frame"] .vf-hfs-overlay { display: block; }
+    .vf-hfs-corner {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-color: rgba(251, 191, 36, 0.96);
+      border-style: solid;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9));
+    }
+    .vf-hfs-corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 2px; }
+    .vf-hfs-corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-top-right-radius: 2px; }
+    .vf-hfs-corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-bottom-left-radius: 2px; }
+    .vf-hfs-corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 2px; }
+    .vf-hfs-horizon {
+      position: absolute;
+      top: 50%;
+      width: 8px;
+      height: 1.5px;
+      background: rgba(251, 191, 36, 0.85);
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.85);
+      transform: translateY(-50%);
+    }
+    .vf-hfs-horizon.l { left: -1px; }
+    .vf-hfs-horizon.r { right: -1px; }
+    .vf-hfs-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 38px;
+      transform: translate(-50%, -50%);
+      border-radius: 6px;
+      border: 1.5px solid rgba(251, 191, 36, 0.78);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.48), inset 0 0 0 1px rgba(0, 0, 0, 0.32);
+      transition: border-color 0.14s ease, box-shadow 0.14s ease;
+    }
+    .vf-hfs-reticle::before,
+    .vf-hfs-reticle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: rgba(251, 191, 36, 0.9);
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.85);
+      transform: translate(-50%, -50%);
+    }
+    .vf-hfs-reticle::before { width: 8px; height: 1.5px; }
+    .vf-hfs-reticle::after { width: 1.5px; height: 8px; }
+    .vf-hfs-reticle.in-focus {
+      border-color: rgba(74, 222, 128, 0.88);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 8px rgba(74, 222, 128, 0.25);
+    }
     .vf-hf-ghost {
       display: none;
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 8px;
+      left: 8px;
       width: 44px;
       aspect-ratio: 3 / 4;
       object-fit: cover;
@@ -1576,54 +1629,85 @@
     }
 
 
-    /* Point & Shoot (PnS) 35mm — Optical Brightframe + Parallax Marks + Center AF Reticle + Status LEDs */
+    /* Point & Shoot (PnS) 35mm — Optical Brightframe + Parallax Corner Marks + Center AF Target + Status LEDs */
     .vf-pns-overlay, .vf-disp-overlay {
       position: absolute;
-      inset: 12px;
-      border: 1.5px solid rgba(255, 255, 255, 0.40);
-      border-radius: 2px;
+      inset: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 3px;
       display: none;
       pointer-events: none;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
+      outline: 400px solid rgba(0, 0, 0, 0.20);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.24);
     }
     .vf-stage[data-vf-mode="pns"] .vf-pns-overlay,
     .vf-stage[data-vf-mode="disposable"] .vf-disp-overlay { display: block; }
+    .vf-pns-corner {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: rgba(255, 255, 255, 0.94);
+      border-style: solid;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9));
+    }
+    .vf-pns-corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 2px; }
+    .vf-pns-corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-top-right-radius: 2px; }
+    .vf-pns-corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-bottom-left-radius: 2px; }
+    .vf-pns-corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 2px; }
 
     .vf-pns-parallax-ticks {
       position: absolute;
-      top: 8px;
-      left: 10px;
-      right: 10px;
-      height: 6px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.35);
+      top: 10px;
+      left: 8px;
+      right: 8px;
+      height: 8px;
       pointer-events: none;
     }
+    .vf-pns-parallax-ticks::before,
+    .vf-pns-parallax-ticks::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 14px;
+      height: 7px;
+      border-top: 1.5px solid rgba(255, 255, 255, 0.72);
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.85));
+    }
+    .vf-pns-parallax-ticks::before { left: 0; border-left: 1.5px solid rgba(255, 255, 255, 0.72); }
+    .vf-pns-parallax-ticks::after { right: 0; border-right: 1.5px solid rgba(255, 255, 255, 0.72); }
+
     .vf-pns-af-bracket {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 28px;
-      height: 20px;
+      width: 36px;
+      height: 26px;
       transform: translate(-50%, -50%);
-      border-left: 2px solid rgba(255, 255, 255, 0.75);
-      border-right: 2px solid rgba(255, 255, 255, 0.75);
+      border-left: 2px solid rgba(255, 255, 255, 0.9);
+      border-right: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 3px;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.9));
       pointer-events: none;
+      transition: border-color 0.14s ease;
     }
+    .vf-pns-af-bracket.in-focus {
+      border-color: rgba(74, 222, 128, 0.92);
+    }
+    .vf-pns-af-bracket::before,
     .vf-pns-af-bracket::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 4px;
-      height: 4px;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.65);
-      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
     }
+    .vf-pns-af-bracket::before { width: 8px; height: 1.5px; }
+    .vf-pns-af-bracket::after { width: 1.5px; height: 8px; }
     .vf-pns-status-bar {
       position: absolute;
-      top: 6px;
-      right: 8px;
+      bottom: 8px;
+      right: 10px;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -1632,28 +1716,30 @@
       font-family: var(--mono);
       font-size: 8.5px;
       font-weight: 800;
-      padding: 1px 5px;
-      border-radius: 4px;
-      background: rgba(16, 185, 129, 0.22);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.65);
-      opacity: 0.9;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: rgba(8, 12, 16, 0.82);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.68);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+      opacity: 0.96;
     }
     .vf-pns-flash-pip, .vf-disp-flash-pip {
       font-family: var(--mono);
       font-size: 8.5px;
       font-weight: 800;
-      padding: 1px 5px;
-      border-radius: 4px;
-      background: rgba(245, 166, 35, 0.22);
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: rgba(14, 12, 8, 0.84);
       color: #fbbf24;
-      border: 1px solid rgba(245, 166, 35, 0.65);
+      border: 1px solid rgba(245, 166, 35, 0.72);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
       opacity: 0;
       transition: opacity 0.14s ease;
     }
     .vf-pns-flash-pip.on, .vf-disp-flash-pip.on { opacity: 1; }
 
-    /* Medium Format 120 — Waist-Level Ground Glass Etched Grid */
+    /* Medium Format 120 — Waist-Level Ground Glass Etched Grid + High-Contrast Magnifier Loupe */
     .vf-mf-overlay {
       position: absolute;
       inset: 0;
@@ -1663,24 +1749,39 @@
     .vf-stage[data-vf-mode="medium-format"] .vf-mf-overlay { display: block; }
     .vf-mf-frame {
       position: absolute;
-      inset: 6px;
-      border: 1px solid rgba(255,255,255,0.34);
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,0.44);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.42), inset 0 0 22px rgba(0,0,0,0.22);
     }
+    .vf-mf-corner {
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      border-color: rgba(255, 255, 255, 0.92);
+      border-style: solid;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.88));
+    }
+    .vf-mf-corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .vf-mf-corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .vf-mf-corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .vf-mf-corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
     .vf-mf-grid-h1, .vf-mf-grid-h2 {
       position: absolute;
-      left: 6px;
-      right: 6px;
+      left: 8px;
+      right: 8px;
       height: 1px;
-      background: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.30);
+      box-shadow: 0 0 1px rgba(0,0,0,0.65);
     }
     .vf-mf-grid-h1 { top: 33.33%; }
     .vf-mf-grid-h2 { top: 66.66%; }
     .vf-mf-grid-v1, .vf-mf-grid-v2 {
       position: absolute;
-      top: 6px;
-      bottom: 6px;
+      top: 8px;
+      bottom: 8px;
       width: 1px;
-      background: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.30);
+      box-shadow: 0 0 1px rgba(0,0,0,0.65);
     }
     .vf-mf-grid-v1 { left: 33.33%; }
     .vf-mf-grid-v2 { left: 66.66%; }
@@ -1688,26 +1789,47 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.48);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.28);
+      border: 1.5px solid rgba(255,255,255,0.78);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(0,0,0,0.45);
+      transition: border-color 0.14s ease, box-shadow 0.14s ease;
     }
+    .vf-mf-loupe.in-focus {
+      border-color: rgba(74, 222, 128, 0.85);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 0 10px rgba(74, 222, 128, 0.25);
+    }
+    .vf-mf-loupe::before,
     .vf-mf-loupe::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 6px;
-      height: 6px;
       transform: translate(-50%, -50%);
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.68);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 0 2px rgba(0,0,0,0.85);
+    }
+    .vf-mf-loupe::before { width: 12px; height: 1.5px; }
+    .vf-mf-loupe::after { width: 1.5px; height: 12px; }
+    .vf-mf-format-tag {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: rgba(8, 10, 14, 0.8);
+      color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
     }
 
-    /* SLR 3:2 — Split-Prism Focusing Circle + Classic LED Exposure Meter */
+    /* SLR 3:2 — High-Contrast Matte Screen + Split-Prism Circle + Readable LED Exposure Meter */
     .vf-slr-overlay {
       position: absolute;
       inset: 0;
@@ -1717,42 +1839,55 @@
     .vf-stage[data-vf-mode="slr"] .vf-slr-overlay { display: block; }
     .vf-slr-matte {
       position: absolute;
-      inset: 6px;
-      border: 1px solid rgba(255,255,255,0.22);
+      inset: 8px;
+      border: 1px solid rgba(255,255,255,0.28);
       border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.32), inset 0 0 20px rgba(0,0,0,0.22);
     }
+    .vf-slr-tick {
+      position: absolute;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 0 2px rgba(0,0,0,0.85);
+    }
+    .vf-slr-tick.t, .vf-slr-tick.b { left: 50%; width: 1.5px; height: 7px; transform: translateX(-50%); }
+    .vf-slr-tick.t { top: 0; }
+    .vf-slr-tick.b { bottom: 0; }
+    .vf-slr-tick.l, .vf-slr-tick.r { top: 50%; height: 1.5px; width: 7px; transform: translateY(-50%); }
+    .vf-slr-tick.l { left: 0; }
+    .vf-slr-tick.r { right: 0; }
     .vf-slr-focus-ring {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 66px;
-      height: 66px;
+      width: 72px;
+      height: 72px;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.45);
-      box-shadow: 0 0 0 10px rgba(0,0,0,0.06) inset;
+      border: 1.5px solid rgba(255,255,255,0.78);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.62), inset 0 0 0 1px rgba(0,0,0,0.45);
       transition: border-color 0.14s ease, box-shadow 0.14s ease;
     }
     .vf-slr-focus-ring.in-focus {
-      border-color: rgba(74, 222, 128, 0.72);
-      box-shadow: 0 0 0 10px rgba(0,0,0,0.06) inset, 0 0 10px rgba(74, 222, 128, 0.25);
+      border-color: rgba(74, 222, 128, 0.88);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.65), 0 0 12px rgba(74, 222, 128, 0.28);
     }
     .vf-slr-microprism {
       position: absolute;
-      inset: 7px;
+      inset: 8px;
       border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,0.42);
-      background: radial-gradient(circle, transparent 58%, rgba(255,255,255,0.06) 59%, transparent 62%);
+      border: 1px dashed rgba(255,255,255,0.58);
+      background: radial-gradient(circle, transparent 58%, rgba(255,255,255,0.08) 59%, transparent 62%);
       transition: border-color 0.14s ease;
     }
     .vf-slr-focus-ring.mf-off .vf-slr-microprism {
-      border-color: rgba(245, 166, 35, 0.76);
+      border-color: rgba(251, 191, 36, 0.9);
     }
     .vf-slr-split {
       position: absolute;
-      inset: 14px;
+      inset: 16px;
       border-radius: 50%;
-      border: 1.2px solid rgba(255,255,255,0.72);
+      border: 1.5px solid rgba(255,255,255,0.88);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.65);
       overflow: hidden;
     }
     .vf-slr-split::after {
@@ -1761,17 +1896,17 @@
       left: 0;
       right: 0;
       top: 50%;
-      height: 1px;
-      background: rgba(255,255,255,0.85);
-      box-shadow: 0 0 3px rgba(0,0,0,0.75);
+      height: 1.5px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 0 3px rgba(0,0,0,0.85);
     }
     .vf-slr-split-half {
       position: absolute;
       left: 50%;
-      width: 2px;
+      width: 2.5px;
       height: 50%;
-      background: rgba(255,255,255,0.58);
-      box-shadow: 0 0 2px rgba(0,0,0,0.8);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.75);
       transition: transform 0.08s ease-out, opacity 0.12s ease;
     }
     .vf-slr-split-half.top {
@@ -1783,42 +1918,47 @@
       transform: translateX(calc(-50% + var(--split-shift, 0px)));
     }
     .vf-slr-focus-ring.in-focus .vf-slr-split-half {
-      background: rgba(74, 222, 128, 0.72);
+      background: #4ade80;
+    }
+    .vf-slr-focus-ring.mf-off .vf-slr-split-half {
+      background: #fbbf24;
     }
     .vf-slr-led-bar {
       position: absolute;
-      right: 10px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      padding: 6px 5px;
+      padding: 7px 6px;
       border-radius: 10px;
-      background: rgba(8, 10, 14, 0.82);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(7, 9, 13, 0.86);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.55);
     }
     .vf-led-row {
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       font-family: var(--mono);
-      font-size: 8px;
+      font-size: 8.5px;
       font-weight: 800;
-      color: rgba(255,255,255,0.42);
+      color: rgba(255,255,255,0.62);
     }
     .vf-led-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.16);
-      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.20);
+      border: 1px solid rgba(255,255,255,0.32);
       transition: all 0.12s ease;
     }
-    .vf-led-row.lit.over .vf-led-dot { background: #ef4444; border-color: #fca5a5; box-shadow: 0 0 6px #ef4444; }
-    .vf-led-row.lit.ok .vf-led-dot { background: #22c55e; border-color: #86efac; box-shadow: 0 0 7px #22c55e; }
-    .vf-led-row.lit.under .vf-led-dot { background: #f59e0b; border-color: #fde68a; box-shadow: 0 0 6px #f59e0b; }
+    .vf-led-row.lit.over .vf-led-dot { background: #ef4444; border-color: #fca5a5; box-shadow: 0 0 7px #ef4444; }
+    .vf-led-row.lit.ok .vf-led-dot { background: #22c55e; border-color: #86efac; box-shadow: 0 0 8px #22c55e; }
+    .vf-led-row.lit.under .vf-led-dot { background: #f59e0b; border-color: #fde68a; box-shadow: 0 0 7px #f59e0b; }
     .vf-led-row.lit { color: #fff; }
 
     /* Rangefinder 3:2 — Wide Field + Outside-the-frame + Resizing Brightlines */
@@ -4200,9 +4340,14 @@
               <div class="vf-corner bl"></div>
               <div class="vf-corner br"></div>
 
-              <!-- SLR: Center Split-Prism Circle + Classic LED Meter -->
+              <!-- SLR: Ground Glass Corners + Center Split-Prism Circle + LED Exposure Meter -->
               <div class="vf-slr-overlay">
-                <div class="vf-slr-matte"></div>
+                <div class="vf-slr-matte">
+                  <span class="vf-slr-tick t"></span>
+                  <span class="vf-slr-tick b"></span>
+                  <span class="vf-slr-tick l"></span>
+                  <span class="vf-slr-tick r"></span>
+                </div>
                 <div class="vf-slr-focus-ring in-focus" id="vfSlrFocusRing">
                   <div class="vf-slr-microprism"></div>
                   <div class="vf-slr-split">
@@ -4231,8 +4376,15 @@
                 </div>
               </div>
 
-              <!-- Half Frame: 3:4 Portrait Guide + Optional 2F Diptych Ghost -->
+              <!-- Half Frame: 3:4 Portrait Brightframe + Horizon Ticks + 2F Diptych Ghost -->
               <div class="vf-hfs-overlay" aria-hidden="true">
+                <span class="vf-hfs-corner tl"></span>
+                <span class="vf-hfs-corner tr"></span>
+                <span class="vf-hfs-corner bl"></span>
+                <span class="vf-hfs-corner br"></span>
+                <span class="vf-hfs-horizon l"></span>
+                <span class="vf-hfs-horizon r"></span>
+                <div class="vf-hfs-reticle" id="vfHfsReticle"></div>
                 <img class="vf-hf-ghost" id="vfHfGhostImg" alt="" />
                 <div class="vf-hf-diptych-bar" id="vfHfDiptychBar">
                   <span id="vfHfHalfLabel">1/2</span>
@@ -4247,24 +4399,34 @@
               </div>
 
 
-              <!-- Point & Shoot (PnS) / Disposable: Brightframe + AF Reticle + Flash Status -->
+              <!-- Point & Shoot (PnS) / Disposable: Optical Brightframe + Parallax Ticks + AF Target + LED Status -->
               <div class="vf-pns-overlay vf-disp-overlay" aria-hidden="true">
+                <span class="vf-pns-corner tl"></span>
+                <span class="vf-pns-corner tr"></span>
+                <span class="vf-pns-corner bl"></span>
+                <span class="vf-pns-corner br"></span>
                 <div class="vf-pns-parallax-ticks"></div>
-                <div class="vf-pns-af-bracket"></div>
+                <div class="vf-pns-af-bracket in-focus" id="vfPnsAfBracket"></div>
                 <div class="vf-pns-status-bar">
                   <span class="vf-pns-af-pip on" id="vfPnsAfPip">● AF</span>
                   <span class="vf-pns-flash-pip on" id="vfDispFlashPip">⚡ FLASH</span>
                 </div>
               </div>
 
-              <!-- Medium Format: Waist-Level Ground Glass Grid -->
+              <!-- Medium Format: Waist-Level Ground Glass Grid + Loupe + Format Readout -->
               <div class="vf-mf-overlay" aria-hidden="true">
-                <div class="vf-mf-frame"></div>
+                <div class="vf-mf-frame">
+                  <span class="vf-mf-corner tl"></span>
+                  <span class="vf-mf-corner tr"></span>
+                  <span class="vf-mf-corner bl"></span>
+                  <span class="vf-mf-corner br"></span>
+                </div>
                 <div class="vf-mf-grid-h1"></div>
                 <div class="vf-mf-grid-h2"></div>
                 <div class="vf-mf-grid-v1"></div>
                 <div class="vf-mf-grid-v2"></div>
-                <div class="vf-mf-loupe"></div>
+                <div class="vf-mf-loupe in-focus" id="vfMfLoupe"></div>
+                <span class="vf-mf-format-tag" id="vfMfFormatTag">120 · 6×6</span>
               </div>
 
               <div class="vf-focus-reticle" id="vfFocusReticle"></div>
@@ -4333,7 +4495,7 @@
           </div>
           <div class="combo-card" role="button" tabindex="0" data-open-combo="lens">
             <span class="combo-card-tag">LENS</span>
-            <span class="combo-card-val" id="camCardLensName">50mm f/1.4</span>
+            <span class="combo-card-val" id="camCardLensName">50mm f/3.5</span>
             <span class="combo-card-caret">▾</span>
             <div class="combo-card-nav-row">
               <button class="card-step-btn" data-step-gear="lens" data-step-dir="-1" type="button" title="Previous lens" aria-label="Previous lens">‹</button>
@@ -8540,6 +8702,20 @@
       rfPatch.style.setProperty('--rf-shift', `${(clampedErr * 6).toFixed(2)}px`);
     }
 
+    const mfLoupe = document.getElementById('vfMfLoupe');
+    if (mfLoupe) mfLoupe.classList.toggle('in-focus', inFocus);
+
+    const mfFmt = document.getElementById('vfMfFormatTag');
+    if (mfFmt && body?.id === 'medium-format') {
+      mfFmt.textContent = getBodyFormatLabel(body, lens);
+    }
+
+    const pnsBracket = document.getElementById('vfPnsAfBracket');
+    if (pnsBracket) pnsBracket.classList.toggle('in-focus', inFocus);
+
+    const hfsReticle = document.getElementById('vfHfsReticle');
+    if (hfsReticle) hfsReticle.classList.toggle('in-focus', inFocus);
+
     const afBtn = document.getElementById('btnVfAutoFocus');
     if (afBtn) {
       afBtn.style.display = lens.focusLocked ? 'none' : '';
@@ -8655,6 +8831,16 @@
         <span class="lens-ring-val">50mm</span>
       </div>
       <div class="lens-barrel-divider focal-divider" style="display:none;"></div>
+      <div class="lens-barrel-ring" data-ring="aperture">
+        <span class="lens-ring-tag">APERTURE</span>
+        <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Lens aperture ring">
+          <div class="lens-ring-track"></div>
+          <div class="lens-ring-shade"></div>
+          <div class="lens-ring-index"></div>
+        </div>
+        <span class="lens-ring-val">f/3.5</span>
+      </div>
+      <div class="lens-barrel-divider"></div>
       <div class="lens-barrel-ring is-af in-focus" data-ring="focus">
         <button type="button" class="lens-ring-tag lens-af-btn is-af" title="Auto Focus — tap to return to AF">AF</button>
         <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Manual focus distance ring">
@@ -8664,16 +8850,6 @@
           <div class="lens-ring-index"></div>
         </div>
         <span class="lens-ring-val" title="Tap to switch to Manual Focus">AF 1.2m</span>
-      </div>
-      <div class="lens-barrel-divider"></div>
-      <div class="lens-barrel-ring" data-ring="aperture">
-        <span class="lens-ring-tag">APERTURE</span>
-        <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Lens aperture ring">
-          <div class="lens-ring-track"></div>
-          <div class="lens-ring-shade"></div>
-          <div class="lens-ring-index"></div>
-        </div>
-        <span class="lens-ring-val">f/1.4</span>
       </div>
       <div class="lens-barrel-divider"></div>
       <div class="lens-barrel-ring is-auto" data-ring="shutter">
