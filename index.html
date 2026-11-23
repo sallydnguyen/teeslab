@@ -3344,6 +3344,7 @@
       align-items: center;
       justify-content: center;
       padding: 6px 12px;
+      touch-action: none;
       will-change: transform, opacity;
     }
     .photo-viewer-img {
@@ -3352,6 +3353,21 @@
       object-fit: contain;
       border-radius: 6px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+      touch-action: none;
+      transform-origin: center center;
+      transition: transform 0.14s ease-out;
+      will-change: transform;
+    }
+    .photo-viewer-stage.zoom-dragging .photo-viewer-img {
+      transition: none;
+      cursor: grab;
+    }
+    .photo-viewer-stage.is-zoomed .photo-viewer-img {
+      cursor: grab;
+    }
+    .photo-viewer-stage.is-zoomed .photo-viewer-nav {
+      opacity: 0;
       pointer-events: none;
     }
     .photo-viewer-nav {
@@ -4149,7 +4165,6 @@
               <div class="hold-badge" id="holdCompareBadge">ORIGINAL</div>
             </div>
             <div class="canvas-float-tools" id="canvasFloatTools">
-              <button class="float-pill" id="btnToggleLabZoom" type="button" title="Toggle 2× zoom">🔍 1×</button>
               <button class="float-pill" id="btnToggleSplit" type="button">◧ Split</button>
               <button class="float-pill" id="btnToggleLabOriginal" type="button" title="Switch between Original photo and Film edit">👁️ Original</button>
               <button class="float-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Camera Roll" aria-label="Delete photo from Camera Roll" style="display:none;">🗑 Delete</button>
@@ -7370,7 +7385,7 @@
   let sceneMeanLum = 0.5;
   let labZoom = 1, labPanX = 0, labPanY = 0;
   function applyLabZoomTransform(dragging = false) {
-    labZoom = Math.max(1, Math.min(3, Number(labZoom) || 1));
+    labZoom = Math.max(1, Math.min(4, Number(labZoom) || 1));
     const cw = canvasStack.clientWidth || 300;
     const ch = canvasStack.clientHeight || 200;
     const maxX = Math.max(0, (cw * (labZoom - 1)) / 2);
@@ -7386,12 +7401,6 @@
     canvasStack.classList.toggle('zoomed', labZoom > 1.05);
     canvasStack.classList.toggle('zoom-dragging', dragging);
     document.getElementById('stagePhotoSlot')?.classList.toggle('is-zoomed', labZoom > 1.05);
-    const zoomBtn = document.getElementById('btnToggleLabZoom');
-    if (zoomBtn) {
-      const zoomed = labZoom > 1.05;
-      zoomBtn.classList.toggle('active', zoomed);
-      zoomBtn.textContent = zoomed ? `🔍 ${Number.isInteger(labZoom) ? labZoom : labZoom.toFixed(1)}×` : '🔍 1×';
-    }
   }
   function resetLabZoom() {
     labZoom = 1; labPanX = 0; labPanY = 0;
@@ -11361,10 +11370,39 @@
     }
   }
 
+  let viewerZoom = 1, viewerPanX = 0, viewerPanY = 0;
+  function applyViewerZoomTransform(dragging = false) {
+    viewerZoom = Math.max(1, Math.min(4, Number(viewerZoom) || 1));
+    const stageEl = document.getElementById('photoViewerStage');
+    const imgEl = document.getElementById('photoViewerImg');
+    if (!stageEl || !imgEl) return;
+    const iw = imgEl.clientWidth || stageEl.clientWidth || 300;
+    const ih = imgEl.clientHeight || stageEl.clientHeight || 200;
+    const sw = stageEl.clientWidth || iw;
+    const sh = stageEl.clientHeight || ih;
+    const maxX = Math.max(0, (iw * viewerZoom - sw) * 0.5 + 24);
+    const maxY = Math.max(0, (ih * viewerZoom - sh) * 0.5 + 24);
+    if (viewerZoom <= 1.02) {
+      viewerZoom = 1; viewerPanX = 0; viewerPanY = 0;
+      imgEl.style.transform = '';
+    } else {
+      viewerPanX = Math.max(-maxX, Math.min(maxX, viewerPanX));
+      viewerPanY = Math.max(-maxY, Math.min(maxY, viewerPanY));
+      imgEl.style.transform = `translate3d(${viewerPanX.toFixed(1)}px, ${viewerPanY.toFixed(1)}px, 0) scale(${viewerZoom.toFixed(3)})`;
+    }
+    stageEl.classList.toggle('is-zoomed', viewerZoom > 1.05);
+    stageEl.classList.toggle('zoom-dragging', dragging);
+  }
+  function resetViewerZoom() {
+    viewerZoom = 1; viewerPanX = 0; viewerPanY = 0;
+    applyViewerZoomTransform(false);
+  }
+
   function openPhotoViewer(index = 0) {
     if (!state.camRollShots || state.camRollShots.length === 0) return;
     const modal = document.getElementById('photoViewerBackdrop');
     if (!modal) return;
+    resetViewerZoom();
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('open'));
     viewerShowShot(index);
@@ -11377,6 +11415,7 @@
     setTimeout(() => {
       if (!modal.classList.contains('open')) {
         modal.style.display = 'none';
+        resetViewerZoom();
         revokeViewerBlobUrl();
       }
     }, 200);
@@ -11386,6 +11425,7 @@
     if (index < 0) index = 0;
     if (index >= state.camRollShots.length) index = state.camRollShots.length - 1;
     viewerCurrentIndex = index;
+    resetViewerZoom();
     const s = state.camRollShots[index];
     if (!s) return;
     viewerActiveShotId = s.id;
@@ -12147,15 +12187,7 @@
     showToast(state.labOriginalMode ? '👁️ Viewing original unedited photo' : '🎞️ Returned to film edit');
   });
 
-  // Split, Lab 1×/2× Zoom, Pinch, Pan & Hold Original
-  document.getElementById('btnToggleLabZoom')?.addEventListener('click', () => {
-    if (labZoom > 1.05) {
-      resetLabZoom();
-    } else {
-      labZoom = 2;
-      applyLabZoomTransform(false);
-    }
-  });
+  // Split, Pinch, Pan, Wheel Zoom & Hold Original
   document.getElementById('btnToggleSplit').addEventListener('click', (e) => {
     state.splitMode = !state.splitMode;
     if (state.splitMode) ensureOriginalOverlay();
@@ -12236,7 +12268,8 @@
   });
 
   const activeLabPointers = new Map();
-  let labPinchStartDist = 0, labPinchStartZoom = 1, labPanDrag = null, labSwipeTrack = null;
+  let labPinchStartDist = 0, labPinchStartZoom = 1, labPinchStartMidX = 0, labPinchStartMidY = 0, labPinchStartPanX = 0, labPinchStartPanY = 0;
+  let labPanDrag = null, labSwipeTrack = null;
   canvasStack.addEventListener('pointerdown', e => {
     if (e.target.closest('#splitDivider') || (e.button && e.button !== 0)) return;
     try { canvasStack.setPointerCapture(e.pointerId); } catch {}
@@ -12248,6 +12281,10 @@
       const pts = Array.from(activeLabPointers.values());
       labPinchStartDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
       labPinchStartZoom = labZoom;
+      labPinchStartMidX = (pts[0].x + pts[1].x) * 0.5;
+      labPinchStartMidY = (pts[0].y + pts[1].y) * 0.5;
+      labPinchStartPanX = labPanX;
+      labPinchStartPanY = labPanY;
     } else if (activeLabPointers.size === 1) {
       if (labZoom > 1.05) {
         labPanDrag = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, origPanX: labPanX, origPanY: labPanY };
@@ -12264,7 +12301,11 @@
     if (activeLabPointers.size === 2 && labPinchStartDist > 0) {
       const pts = Array.from(activeLabPointers.values());
       const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-      labZoom = Math.max(1, Math.min(3, labPinchStartZoom * (dist / labPinchStartDist)));
+      const midX = (pts[0].x + pts[1].x) * 0.5;
+      const midY = (pts[0].y + pts[1].y) * 0.5;
+      labZoom = Math.max(1, Math.min(4, labPinchStartZoom * (dist / labPinchStartDist)));
+      labPanX = labPinchStartPanX + (midX - labPinchStartMidX);
+      labPanY = labPinchStartPanY + (midY - labPinchStartMidY);
       applyLabZoomTransform(true);
     } else if (labPanDrag && labPanDrag.pointerId === e.pointerId && labZoom > 1.05) {
       labPanX = labPanDrag.origPanX + (e.clientX - labPanDrag.startX);
@@ -12294,10 +12335,26 @@
     }
     if (activeLabPointers.size === 0) setHold(false);
   };
+  canvasStack.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = canvasStack.getBoundingClientRect();
+    const prevZ = labZoom;
+    const nextZ = Math.max(1, Math.min(4, prevZ * Math.exp(-e.deltaY * 0.004)));
+    if (Math.abs(nextZ - prevZ) < 0.001) return;
+    if (nextZ > 1.02) {
+      const cx = rect.left + rect.width * 0.5;
+      const cy = rect.top + rect.height * 0.5;
+      const ratio = nextZ / prevZ;
+      labPanX = labPanX * ratio + (e.clientX - cx) * (1 - ratio);
+      labPanY = labPanY * ratio + (e.clientY - cy) * (1 - ratio);
+    }
+    labZoom = nextZ;
+    applyLabZoomTransform(false);
+  }, { passive: false });
   canvasStack.addEventListener('dblclick', e => {
     if (e.target.closest('#splitDivider')) return;
     if (labZoom > 1.05) resetLabZoom();
-    else { labZoom = 2; applyLabZoomTransform(false); }
+    else { labZoom = 2.2; applyLabZoomTransform(false); }
   });
   canvasStack.addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('pointerup', endLabPointer);
@@ -12925,49 +12982,109 @@
     const s = state.camRollShots[viewerCurrentIndex];
     if (s) saveRollPhoto(s);
   });
+  let viewerGestureBlockCloseUntil = 0;
   photoViewerEl?.addEventListener('click', e => {
+    if (Date.now() < viewerGestureBlockCloseUntil || viewerZoom > 1.05) return;
     if (e.target.id === 'photoViewerBackdrop' || e.target.id === 'photoViewerContainer' || e.target.id === 'photoViewerImgWrap') {
       closePhotoViewer();
     }
   });
 
-  // Swipe gestures on photo viewer stage
+  // Manual Pinch Zoom, Pan, Wheel Zoom, Double-Tap & Swipe gestures on photo viewer stage
+  const activeViewerPointers = new Map();
+  let viewerPinchStartDist = 0, viewerPinchStartZoom = 1, viewerPinchStartMidX = 0, viewerPinchStartMidY = 0, viewerPinchStartPanX = 0, viewerPinchStartPanY = 0;
+  let viewerPanDrag = null;
   let vSwipeStartX = 0, vSwipeStartY = 0, vSwipeCurrentX = 0, vSwipeStartTime = 0, vIsSwiping = false;
   if (photoViewerStageEl) {
     photoViewerStageEl.addEventListener('pointerdown', e => {
-      if (e.target.closest('button')) return;
-      vIsSwiping = true;
-      vSwipeStartX = e.clientX;
-      vSwipeStartY = e.clientY;
-      vSwipeCurrentX = e.clientX;
-      vSwipeStartTime = Date.now();
+      if (e.target.closest('button') || (e.button && e.button !== 0)) return;
       try { photoViewerStageEl.setPointerCapture(e.pointerId); } catch {}
+      activeViewerPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       const imgWrap = document.getElementById('photoViewerImgWrap');
-      if (imgWrap) imgWrap.style.transition = 'none';
-    });
-
-    photoViewerStageEl.addEventListener('pointermove', e => {
-      if (!vIsSwiping) return;
-      vSwipeCurrentX = e.clientX;
-      const dx = vSwipeCurrentX - vSwipeStartX;
-      const dy = e.clientY - vSwipeStartY;
-      if (Math.abs(dx) > Math.abs(dy) * 0.7) {
-        const imgWrap = document.getElementById('photoViewerImgWrap');
-        if (imgWrap) {
-          let appliedDx = dx;
-          if ((viewerCurrentIndex <= 0 && dx > 0) || (viewerCurrentIndex >= state.camRollShots.length - 1 && dx < 0)) {
-            appliedDx = dx * 0.28;
-          }
-          imgWrap.style.transform = `translateX(${appliedDx}px)`;
+      if (activeViewerPointers.size === 2) {
+        vIsSwiping = false;
+        viewerPanDrag = null;
+        if (imgWrap) { imgWrap.style.transition = ''; imgWrap.style.transform = ''; imgWrap.style.opacity = '1'; }
+        const pts = Array.from(activeViewerPointers.values());
+        viewerPinchStartDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        viewerPinchStartZoom = viewerZoom;
+        viewerPinchStartMidX = (pts[0].x + pts[1].x) * 0.5;
+        viewerPinchStartMidY = (pts[0].y + pts[1].y) * 0.5;
+        viewerPinchStartPanX = viewerPanX;
+        viewerPinchStartPanY = viewerPanY;
+        viewerGestureBlockCloseUntil = Date.now() + 450;
+      } else if (activeViewerPointers.size === 1) {
+        if (viewerZoom > 1.05) {
+          vIsSwiping = false;
+          viewerPanDrag = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, origPanX: viewerPanX, origPanY: viewerPanY, moved: false };
+        } else {
+          vIsSwiping = true;
+          vSwipeStartX = e.clientX;
+          vSwipeStartY = e.clientY;
+          vSwipeCurrentX = e.clientX;
+          vSwipeStartTime = Date.now();
+          if (imgWrap) imgWrap.style.transition = 'none';
         }
       }
     });
 
-    const endViewerSwipe = (e) => {
+    photoViewerStageEl.addEventListener('pointermove', e => {
+      if (!activeViewerPointers.has(e.pointerId)) return;
+      activeViewerPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activeViewerPointers.size === 2 && viewerPinchStartDist > 0) {
+        const pts = Array.from(activeViewerPointers.values());
+        const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        const midX = (pts[0].x + pts[1].x) * 0.5;
+        const midY = (pts[0].y + pts[1].y) * 0.5;
+        viewerZoom = Math.max(1, Math.min(4, viewerPinchStartZoom * (dist / viewerPinchStartDist)));
+        viewerPanX = viewerPinchStartPanX + (midX - viewerPinchStartMidX);
+        viewerPanY = viewerPinchStartPanY + (midY - viewerPinchStartMidY);
+        applyViewerZoomTransform(true);
+        viewerGestureBlockCloseUntil = Date.now() + 450;
+      } else if (viewerPanDrag && viewerPanDrag.pointerId === e.pointerId && viewerZoom > 1.05) {
+        const dx = e.clientX - viewerPanDrag.startX;
+        const dy = e.clientY - viewerPanDrag.startY;
+        if (Math.hypot(dx, dy) > 4) {
+          viewerPanDrag.moved = true;
+          viewerGestureBlockCloseUntil = Date.now() + 450;
+        }
+        viewerPanX = viewerPanDrag.origPanX + dx;
+        viewerPanY = viewerPanDrag.origPanY + dy;
+        applyViewerZoomTransform(true);
+      } else if (vIsSwiping && viewerZoom <= 1.05) {
+        vSwipeCurrentX = e.clientX;
+        const dx = vSwipeCurrentX - vSwipeStartX;
+        const dy = e.clientY - vSwipeStartY;
+        if (Math.abs(dx) > 6) viewerGestureBlockCloseUntil = Date.now() + 350;
+        if (Math.abs(dx) > Math.abs(dy) * 0.7) {
+          const imgWrap = document.getElementById('photoViewerImgWrap');
+          if (imgWrap) {
+            let appliedDx = dx;
+            if ((viewerCurrentIndex <= 0 && dx > 0) || (viewerCurrentIndex >= state.camRollShots.length - 1 && dx < 0)) {
+              appliedDx = dx * 0.28;
+            }
+            imgWrap.style.transform = `translateX(${appliedDx}px)`;
+          }
+        }
+      }
+    });
+
+    const endViewerPointer = (e) => {
+      if (e?.pointerId !== undefined) activeViewerPointers.delete(e.pointerId);
+      else activeViewerPointers.clear();
+      if (activeViewerPointers.size < 2) viewerPinchStartDist = 0;
+
+      if (viewerPanDrag && (e?.pointerId === undefined || viewerPanDrag.pointerId === e.pointerId)) {
+        if (viewerPanDrag.moved) viewerGestureBlockCloseUntil = Date.now() + 350;
+        viewerPanDrag = null;
+        applyViewerZoomTransform(false);
+        return;
+      }
+
       if (!vIsSwiping) return;
       vIsSwiping = false;
       const dx = vSwipeCurrentX - vSwipeStartX;
-      const dy = (e.clientY || vSwipeStartY) - vSwipeStartY;
+      const dy = (e?.clientY || vSwipeStartY) - vSwipeStartY;
       const elapsed = Math.max(1, Date.now() - vSwipeStartTime);
       const velocity = Math.abs(dx) / elapsed;
       const isHorizontal = Math.abs(dx) > Math.abs(dy) * 0.7;
@@ -12975,6 +13092,7 @@
       const threshold = 36;
 
       if (isHorizontal && (dx < -threshold || (dx < -16 && velocity > 0.3))) {
+        viewerGestureBlockCloseUntil = Date.now() + 350;
         if (viewerCurrentIndex < state.camRollShots.length - 1) {
           if (imgWrap) {
             imgWrap.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
@@ -12985,6 +13103,7 @@
           return;
         }
       } else if (isHorizontal && (dx > threshold || (dx > 16 && velocity > 0.3))) {
+        viewerGestureBlockCloseUntil = Date.now() + 350;
         if (viewerCurrentIndex > 0) {
           if (imgWrap) {
             imgWrap.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
@@ -13003,8 +13122,41 @@
       }
     };
 
-    photoViewerStageEl.addEventListener('pointerup', endViewerSwipe);
-    photoViewerStageEl.addEventListener('pointercancel', endViewerSwipe);
+    photoViewerStageEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      const rect = photoViewerStageEl.getBoundingClientRect();
+      const prevZ = viewerZoom;
+      const nextZ = Math.max(1, Math.min(4, prevZ * Math.exp(-e.deltaY * 0.004)));
+      if (Math.abs(nextZ - prevZ) < 0.001) return;
+      if (nextZ > 1.02) {
+        const cx = rect.left + rect.width * 0.5;
+        const cy = rect.top + rect.height * 0.5;
+        const ratio = nextZ / prevZ;
+        viewerPanX = viewerPanX * ratio + (e.clientX - cx) * (1 - ratio);
+        viewerPanY = viewerPanY * ratio + (e.clientY - cy) * (1 - ratio);
+      }
+      viewerZoom = nextZ;
+      applyViewerZoomTransform(false);
+    }, { passive: false });
+
+    photoViewerStageEl.addEventListener('dblclick', e => {
+      if (e.target.closest('button')) return;
+      viewerGestureBlockCloseUntil = Date.now() + 350;
+      if (viewerZoom > 1.05) {
+        resetViewerZoom();
+      } else {
+        const rect = photoViewerStageEl.getBoundingClientRect();
+        const cx = rect.left + rect.width * 0.5;
+        const cy = rect.top + rect.height * 0.5;
+        viewerZoom = 2.2;
+        viewerPanX = (cx - e.clientX) * 0.8;
+        viewerPanY = (cy - e.clientY) * 0.8;
+        applyViewerZoomTransform(false);
+      }
+    });
+
+    photoViewerStageEl.addEventListener('pointerup', endViewerPointer);
+    photoViewerStageEl.addEventListener('pointercancel', endViewerPointer);
   }
 
   // Tap-to-Focus & Spot AE Metering on #vfStage
