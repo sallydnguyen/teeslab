@@ -1034,37 +1034,38 @@
       text-shadow: 0 0 6px rgba(74, 222, 128, 0.45);
     }
     .cam-wind-lever {
-      height: 32px;
-      min-width: 64px;
-      padding: 0 7px;
-      border-radius: 8px;
-      background: #14171f;
-      border: 1px solid #2a303d;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.45);
+      height: 36px;
+      min-width: 72px;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
       color: #e2e8f0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
       font-family: var(--mono);
       font-size: 9px;
       font-weight: 800;
       letter-spacing: 0.4px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease, filter 0.14s ease;
+      transition: color 0.14s ease, filter 0.14s ease;
     }
     .cam-wind-lever svg {
-      width: 48px;
-      height: 24px;
+      width: 72px;
+      height: 32px;
       display: block;
       overflow: visible;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8));
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.88));
     }
     .cam-wind-lever .wind-arm {
-      transform-origin: 12px 14px;
+      transform-origin: 15px 18px;
       transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .cam-wind-lever.is-cocked #windLeverLabel {
@@ -1075,14 +1076,14 @@
     }
     .cam-wind-lever.needs-wind {
       color: #fbbf24;
-      background: rgba(245, 166, 35, 0.10);
-      border-color: rgba(245, 166, 35, 0.72);
+      background: transparent;
+      border: none;
       animation: windPulse 1.15s ease-in-out infinite;
     }
     .cam-wind-lever.needs-rewind {
       color: #ef4444;
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.78);
+      background: transparent;
+      border: none;
       animation: windPulseRed 1.05s ease-in-out infinite;
     }
     .cam-wind-lever.needs-wind .wind-StatusDot {
@@ -3205,13 +3206,13 @@
         margin: 5px 6px 0 0;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .cam-wind-lever {
-        height: 28px;
-        min-width: 56px;
-        padding: 0 5px;
+        height: 32px;
+        min-width: 66px;
+        padding: 0;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .cam-wind-lever svg {
-        width: 44px;
-        height: 22px;
+        width: 66px;
+        height: 30px;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel {
         grid-column: 1;
@@ -3438,7 +3439,7 @@
       .app-shell[data-active-tab="camera"]:not(.picker-open) .vf-top-hud {
         top: 5px;
         left: 6px;
-        right: 76px;
+        right: 88px;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .vf-bottom-hud {
         bottom: 5px;
@@ -3654,46 +3655,74 @@
           </div>
           <div class="cam-top-right">
             <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
-              <svg viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <svg viewBox="0 0 84 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
-                  <linearGradient id="windChrome" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="inoxArm" x1="16" y1="9" x2="54" y2="23" gradientUnits="userSpaceOnUse">
                     <stop offset="0%" stop-color="#f8fafc"/>
+                    <stop offset="18%" stop-color="#cbd5e1"/>
+                    <stop offset="44%" stop-color="#f1f5f9"/>
+                    <stop offset="68%" stop-color="#7a8596"/>
+                    <stop offset="86%" stop-color="#dce3ec"/>
+                    <stop offset="100%" stop-color="#586374"/>
+                  </linearGradient>
+                  <linearGradient id="inoxArmVert" x1="0" y1="8" x2="0" y2="24" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+                    <stop offset="32%" stop-color="#cbd5e1" stop-opacity="0.35"/>
+                    <stop offset="70%" stop-color="#334155" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#94a3b8" stop-opacity="0.3"/>
+                  </linearGradient>
+                  <linearGradient id="inoxPaddle" x1="48" y1="5" x2="78" y2="23" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="22%" stop-color="#d5dde7"/>
+                    <stop offset="48%" stop-color="#8b96a7"/>
+                    <stop offset="72%" stop-color="#eef2f6"/>
+                    <stop offset="100%" stop-color="#647082"/>
+                  </linearGradient>
+                  <linearGradient id="inoxHubOuter" x1="4" y1="6" x2="26" y2="30" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ffffff"/>
                     <stop offset="28%" stop-color="#cbd5e1"/>
-                    <stop offset="68%" stop-color="#64748b"/>
-                    <stop offset="100%" stop-color="#94a3b8"/>
+                    <stop offset="56%" stop-color="#64748b"/>
+                    <stop offset="82%" stop-color="#e2e8f0"/>
+                    <stop offset="100%" stop-color="#475569"/>
                   </linearGradient>
-                  <linearGradient id="windHub" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#f1f5f9"/>
-                    <stop offset="45%" stop-color="#64748b"/>
-                    <stop offset="100%" stop-color="#cbd5e1"/>
-                  </linearGradient>
-                  <linearGradient id="windTip" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#333947"/>
-                    <stop offset="45%" stop-color="#151922"/>
-                    <stop offset="100%" stop-color="#07090c"/>
+                  <linearGradient id="inoxHubInner" x1="8" y1="10" x2="22" y2="26" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#e2e8f0"/>
+                    <stop offset="45%" stop-color="#94a3b8"/>
+                    <stop offset="100%" stop-color="#475569"/>
                   </linearGradient>
                 </defs>
                 <g class="wind-arm">
-                  <!-- Stepped brushed-steel mechanical crank arm -->
-                  <path d="M16 11.2L36.5 8.1C38.6 7.8 40.3 9.2 40.3 11.4C40.3 13.7 38.6 15.2 36.3 15.4L16 16.8Z" fill="url(#windChrome)" stroke="#334155" stroke-width="0.75"/>
-                  <!-- Specular top bevel highlight -->
-                  <path d="M18 11.9L36 9.1" stroke="rgba(255,255,255,0.72)" stroke-width="0.85" stroke-linecap="round"/>
-                  <!-- Lower shadow chamfer -->
-                  <path d="M18 16.0L35.5 14.8" stroke="rgba(15,23,42,0.55)" stroke-width="0.7" stroke-linecap="round"/>
-                  <!-- Sculpted black vulcanite thumb pad -->
-                  <path d="M35.4 7.0C40.2 5.4 47.2 5.2 51.0 7.6C53.6 9.2 54.2 12.4 52.8 14.9C50.9 17.8 45.8 18.4 39.8 17.0C37.0 16.3 35.1 14.6 35.1 11.8C35.1 9.6 35.0 7.9 35.4 7.0Z" fill="url(#windTip)" stroke="#475569" stroke-width="0.85"/>
-                  <!-- Thumb pad inner highlight rim -->
-                  <path d="M37.5 8.2C41.8 6.9 47.4 6.9 50.4 8.8" stroke="rgba(255,255,255,0.22)" stroke-width="0.8" stroke-linecap="round"/>
-                  <!-- 4 tactile grip ribs -->
-                  <path d="M41.5 8.1V15.1M44.2 7.9V15.4M46.9 8.1V15.3M49.6 8.7V14.8" stroke="#64748b" stroke-width="0.9" stroke-linecap="round" opacity="0.75"/>
-                  <!-- Brass/steel pivot rivet at tip joint -->
-                  <circle cx="37.4" cy="11.7" r="1.4" fill="#94a3b8" stroke="#1e293b" stroke-width="0.6"/>
+                  <!-- Machined brushed-inox crank arm -->
+                  <path d="M18 13.8L52.2 9.4C55.4 9.0 57.6 11.1 57.6 14.3C57.6 17.5 55.2 19.6 51.8 19.9L18 22.0Z" fill="url(#inoxArm)" stroke="#334155" stroke-width="0.85"/>
+                  <path d="M18 13.8L52.2 9.4C55.4 9.0 57.6 11.1 57.6 14.3C57.6 17.5 55.2 19.6 51.8 19.9L18 22.0Z" fill="url(#inoxArmVert)"/>
+                  <!-- Top polished chamfer & lower shadow bevel -->
+                  <path d="M23.5 14.2L51.5 10.6" stroke="rgba(255,255,255,0.92)" stroke-width="1" stroke-linecap="round"/>
+                  <path d="M24 20.6L51.2 18.8" stroke="rgba(15,23,42,0.55)" stroke-width="0.9" stroke-linecap="round"/>
+                  <path d="M26 17.2L49 14.9" stroke="rgba(255,255,255,0.32)" stroke-width="0.6" stroke-linecap="round"/>
+
+                  <!-- All-stainless sculpted vintage thumb paddle (Nikon/Leica style) -->
+                  <path d="M49.2 8.2C56.2 5.7 68.5 5.4 75.8 8.3C80.2 10.0 81.8 14.4 79.8 18.2C77.5 22.3 69.2 23.4 58.6 21.5C53.2 20.6 49.0 18.1 48.9 14.2C48.8 11.5 48.8 9.2 49.2 8.2Z" fill="url(#inoxPaddle)" stroke="#334155" stroke-width="0.95"/>
+                  <!-- Polished inner bevel rim -->
+                  <path d="M51.4 9.4C57.8 7.3 68.4 7.1 74.6 9.5C77.6 10.7 78.9 13.4 77.9 16.0" stroke="rgba(255,255,255,0.82)" stroke-width="0.95" stroke-linecap="round"/>
+                  <path d="M52.0 18.5C58.6 20.6 69.0 21.3 75.5 18.8" stroke="rgba(15,23,42,0.45)" stroke-width="0.85" stroke-linecap="round"/>
+
+                  <!-- Precision machined knurled inox grip grooves (dark groove + bright ridge) -->
+                  <path d="M58.0 8.6V19.6M61.8 8.3V20.0M65.6 8.3V20.2M69.4 8.6V20.0M73.2 9.4V19.4" stroke="#334155" stroke-width="1.05" stroke-linecap="round" opacity="0.72"/>
+                  <path d="M58.9 8.7V19.5M62.7 8.4V19.9M66.5 8.4V20.1M70.3 8.7V19.9M74.1 9.5V19.3" stroke="rgba(255,255,255,0.78)" stroke-width="0.8" stroke-linecap="round"/>
+
+                  <!-- Flush stainless pivot rivet -->
+                  <circle cx="52.6" cy="14.4" r="2.2" fill="url(#inoxHubInner)" stroke="#334155" stroke-width="0.75"/>
+                  <circle cx="52.1" cy="13.9" r="0.75" fill="#ffffff" opacity="0.8"/>
                 </g>
-                <!-- Knurled spindle collar & winding cap -->
-                <circle cx="12" cy="14" r="9.6" fill="url(#windHub)" stroke="#1e293b" stroke-width="1"/>
-                <circle cx="12" cy="14" r="7.4" fill="none" stroke="#334155" stroke-width="1.1" stroke-dasharray="1.4 1.6"/>
-                <circle cx="12" cy="14" r="6.2" fill="#12161f" stroke="#94a3b8" stroke-width="0.8"/>
-                <circle class="wind-StatusDot" cx="12" cy="14" r="2.6" fill="#4ade80"/>
+
+                <!-- Turned stainless-steel spindle collar & spanner cap -->
+                <circle cx="15" cy="18" r="12.2" fill="url(#inoxHubOuter)" stroke="#1e293b" stroke-width="1"/>
+                <circle cx="15" cy="18" r="10.2" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="0.8"/>
+                <circle cx="15" cy="18" r="9.4" fill="none" stroke="#475569" stroke-width="1.2" stroke-dasharray="1.3 1.5"/>
+                <circle cx="15" cy="18" r="7.5" fill="url(#inoxHubInner)" stroke="#334155" stroke-width="0.85"/>
+                <circle cx="15" cy="18" r="5.6" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="0.7"/>
+                <path d="M10.8 18H19.2" stroke="#334155" stroke-width="1.1" stroke-linecap="round" opacity="0.55"/>
+                <circle class="wind-StatusDot" cx="15" cy="18" r="2.2" fill="#4ade80" stroke="#0f172a" stroke-width="0.55"/>
               </svg>
               <span id="windLeverLabel"></span>
             </button>
@@ -10722,7 +10751,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1733';
+  const APP_BUILD = '20261122-1736';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
