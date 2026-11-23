@@ -7252,6 +7252,7 @@
 
   function getLabTargetDimensions(srcCanvas, maxDim, maxPixels = 0) {
     const { body, lens } = getSelectedGear();
+    const isUserUploaded = !state.activeSampleId && !state.sourceFromCameraRoll;
     if (state.sourceIsDiptych) {
       const s = Math.min(1, maxDim / Math.max(srcCanvas.width, srcCanvas.height));
       return {
@@ -7270,7 +7271,20 @@
         w = Math.max(240, Math.round(w * s));
         h = Math.max(160, Math.round(w * (840 / 1260)));
       }
-      return { w, h, ratio: 3 / 2, zoom: state.sourceFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0), isHalfFramePair: true };
+      return { w, h, ratio: 3 / 2, zoom: (state.sourceFromCameraRoll || isUserUploaded) ? 1.0 : (lens.cropZoom || 1.0), isHalfFramePair: true };
+    }
+    if (isUserUploaded) {
+      const srcW = srcCanvas.videoWidth || srcCanvas.width || maxDim;
+      const srcH = srcCanvas.videoHeight || srcCanvas.height || maxDim;
+      const s = Math.min(1, maxDim / Math.max(1, Math.max(srcW, srcH)));
+      let w = Math.max(120, Math.round(srcW * s));
+      let h = Math.max(120, Math.round(srcH * s));
+      if (maxPixels > 0 && w * h > maxPixels) {
+        const ps = Math.sqrt(maxPixels / (w * h));
+        w = Math.max(120, Math.round(w * ps));
+        h = Math.max(120, Math.round(h * ps));
+      }
+      return { w, h, ratio: srcW / Math.max(1, srcH), zoom: 1.0 };
     }
     let ratio = getBodyAspect(body, lens);
     if (ratio > 1 && srcCanvas.height > srcCanvas.width) {
@@ -7335,7 +7349,7 @@
         : state.halfFrameLabSecondCanvas;
 
       if (slot2Canvas) {
-        const slot2Zoom = state.halfFrameLabSecondFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0);
+        const slot2Zoom = (state.halfFrameLabSecondFromCameraRoll || !state.halfFrameLabSecondSampleId) ? 1.0 : (lens.cropZoom || 1.0);
         ctx.save();
         ctx.beginPath();
         ctx.rect(rightX, pad, halfW, halfH);
@@ -7375,7 +7389,7 @@
         ? (labMxScratchCanvas || (labMxScratchCanvas = document.createElement('canvas')))
         : document.createElement('canvas');
       if (mxC.width !== w || mxC.height !== h) { mxC.width = w; mxC.height = h; }
-      const mxZoom = state.labDoubleExpFromCameraRoll ? 1.0 : zoom;
+      const mxZoom = (state.labDoubleExpFromCameraRoll || !state.labDoubleExpSampleId) ? 1.0 : zoom;
       drawCroppedSource(mxC.getContext('2d'), mxSrc, w, h, ratio, mxZoom);
       if (!skipDoubleExpBlend) {
         blendDoubleExposureCanvas(c, mxC, state.labDoubleExpMix, true);
