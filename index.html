@@ -936,27 +936,12 @@
       text-overflow: ellipsis;
       margin-top: 1px;
     }
-    .export-toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      background: #14171f;
-      border: 1px solid #242a37;
-      border-radius: 9px;
-      padding: 8px 10px;
-      margin-bottom: 10px;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #e5e7eb;
-      cursor: pointer;
-    }
     .export-caption-box {
       background: #14171f;
       border: 1px solid #242a37;
       border-radius: 9px;
       padding: 7px 10px 8px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .export-caption-lbl {
       display: block;
@@ -4783,10 +4768,6 @@
           <label class="export-caption-lbl" for="exportCaptionInput">Photo Caption / Title (optional)</label>
           <input type="text" id="exportCaptionInput" class="export-caption-input" maxlength="160" placeholder="Add a caption or name for Photos…" autocomplete="off" />
         </div>
-        <label class="export-toggle-row" for="chkFilmInfoStamp">
-          <span>🏷️ Print film info footer on photo (EXIF always embedded)</span>
-          <input type="checkbox" id="chkFilmInfoStamp" style="accent-color:#f5a623;width:16px;height:16px;" />
-        </label>
         <div style="display:grid;grid-template-columns:1fr 1.35fr;gap:8px;">
           <button class="btn-pill btn-ghost" id="btnCopyFilmInfo" type="button" style="height:36px;justify-content:center;font-size:12px;">📋 Copy Info</button>
           <button class="btn-pill btn-brass" id="btnConfirmExport" type="button" style="height:36px;justify-content:center;font-size:12.5px;">💾 Save Photo</button>
@@ -6265,7 +6246,6 @@
     leakAmt: 0,
     frameType: 'darkroom-white',
     dateStamp: 'off',
-    filmInfoStamp: false,
     exportCaption: '',
     hfDiptychMode: true,
     activeTab: 'camera',
@@ -6477,7 +6457,7 @@
     return Number(Math.max(minF, Math.min(maxF, lens.defaultAperture || DEFAULT_LENS_APERTURE)).toFixed(2));
   }
   let apPinnedWideOpen = false;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'filmInfoStamp', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -6499,12 +6479,6 @@
     state.phoneId = 'auto-detect';
     state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
     state.dateStamp = settings.dateStamp === 'exif-or-today' ? 'exif-or-today' : 'off';
-    if (!localStorage.getItem('teeslab-exif-no-visual-stamp-v1')) {
-      state.filmInfoStamp = false;
-      localStorage.setItem('teeslab-exif-no-visual-stamp-v1', '1');
-    } else {
-      state.filmInfoStamp = Object.prototype.hasOwnProperty.call(settings, 'filmInfoStamp') ? !!settings.filmInfoStamp : false;
-    }
     state.activeTab = settings.activeTab === 'darkroom' ? 'darkroom' : 'camera';
     if (!localStorage.getItem('teeslab-half-frame-2f-default-v1')) {
       state.hfDiptychMode = true;
@@ -6556,7 +6530,7 @@
       });
     }
     try {
-      snapshot.settings = { ...settings, hfDiptychMode: state.hfDiptychMode, frameType: state.frameType, dateStamp: state.dateStamp, filmInfoStamp: state.filmInfoStamp, activeTab: state.activeTab };
+      snapshot.settings = { ...settings, hfDiptychMode: state.hfDiptychMode, frameType: state.frameType, dateStamp: state.dateStamp, activeTab: state.activeTab };
       localStorage.setItem(APP_STATE_KEY, JSON.stringify(snapshot));
       localStorage.setItem('tees_lab_recipes_v1', JSON.stringify(state.recipes));
     } catch (e) {}
@@ -12014,48 +11988,6 @@
     };
   }
 
-  function appendFilmInfoFooterCanvas(photoCanvas, spec) {
-    const w = photoCanvas.width, h = photoCanvas.height;
-    const barH = Math.max(38, Math.round(h * 0.044));
-    const out = document.createElement('canvas');
-    out.width = w;
-    out.height = h + barH;
-    const ctx = out.getContext('2d');
-    const isPaperFrame = state.frameType === 'darkroom-white' || state.frameType === 'polaroid';
-    ctx.fillStyle = isPaperFrame ? '#f7f3e9' : '#0d0f14';
-    ctx.fillRect(0, 0, w, out.height);
-    ctx.drawImage(photoCanvas, 0, 0);
-
-    ctx.strokeStyle = isPaperFrame ? 'rgba(92, 83, 70, 0.20)' : 'rgba(255, 255, 255, 0.12)';
-    ctx.lineWidth = Math.max(1, Math.round(barH * 0.025));
-    ctx.beginPath();
-    ctx.moveTo(0, h + 0.5);
-    ctx.lineTo(w, h + 0.5);
-    ctx.stroke();
-
-    const padX = Math.max(16, Math.round(w * 0.022));
-    const fontSize = Math.max(11, Math.round(barH * 0.34));
-    const cy = h + Math.round(barH * 0.52);
-    const dotR = Math.max(3, Math.round(fontSize * 0.28));
-    const brandColors = { fuji: '#22c55e', kodak: '#f5a623', cinema: '#38bdf8', bw: '#9ca3af' };
-    ctx.fillStyle = spec.isOrig ? '#94a3b8' : (brandColors[spec.film.brand] || '#f5a623');
-    ctx.beginPath();
-    ctx.arc(padX + dotR, cy, dotR, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.font = `700 ${fontSize}px "SF Mono", Menlo, Consolas, monospace`;
-    ctx.fillStyle = isPaperFrame ? '#3c362e' : '#f1f5f9';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    ctx.fillText(spec.footerLeft, padX + dotR * 2 + Math.round(fontSize * 0.5), cy);
-
-    ctx.font = `600 ${Math.round(fontSize * 0.92)}px "SF Mono", Menlo, Consolas, monospace`;
-    ctx.fillStyle = isPaperFrame ? '#6b6256' : '#9ca3af';
-    ctx.textAlign = 'right';
-    ctx.fillText(spec.footerRight, w - padX, cy);
-    return out;
-  }
-
   async function injectExifIntoJpegBlob(blob, spec) {
     try {
       const buf = await blob.arrayBuffer();
@@ -12259,7 +12191,7 @@
 
   function getExportCacheKey() {
     const { body, lens, film } = getSelectedGear();
-    return `${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.activeF || 3.5).toFixed(2)}|${film.id}|${state.strength}|${state.exposure}|${state.warmth}|${state.grain}|${state.leakType}|${state.leakAmt}|${state.frameType}|${state.dateStamp}|${state.filmInfoStamp ? 1 : 0}|${state.labOriginalMode ? 1 : 0}|${labFrameSeed}`;
+    return `${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.activeF || 3.5).toFixed(2)}|${film.id}|${state.strength}|${state.exposure}|${state.warmth}|${state.grain}|${state.leakType}|${state.leakAmt}|${state.frameType}|${state.dateStamp}|${state.labOriginalMode ? 1 : 0}|${labFrameSeed}`;
   }
 
   async function buildPreparedExportPayload() {
@@ -12271,8 +12203,7 @@
     const spec = buildFilmInfoSpec();
     let baseBlob;
     if (state.labOriginalMode) {
-      const outCanvas = state.filmInfoStamp ? appendFilmInfoFooterCanvas(src, spec) : src;
-      baseBlob = await canvasToJpegBlob(outCanvas, 0.94);
+      baseBlob = await canvasToJpegBlob(src, 0.94);
     } else {
       const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
       let mixImageData = null;
@@ -12286,17 +12217,8 @@
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: state.filmInfoStamp ? 'bitmap' : 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
-      if (state.filmInfoStamp) {
-        const renderedImg = output?.bitmap || output?.canvas;
-        if (renderedImg) {
-          const stamped = appendFilmInfoFooterCanvas(renderedImg, spec);
-          baseBlob = await canvasToJpegBlob(stamped, 0.94);
-        }
-        output?.bitmap?.close?.();
-      } else {
-        baseBlob = output?.blob;
-      }
+      }, { output: 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+      baseBlob = output?.blob;
     }
     if (!baseBlob) return null;
     const filmSlug = state.labOriginalMode ? 'original' : film.id;
@@ -12367,8 +12289,6 @@
     }
     const capEl = document.getElementById('exportCaptionInput');
     if (capEl) capEl.value = state.exportCaption || '';
-    const chk = document.getElementById('chkFilmInfoStamp');
-    if (chk) chk.checked = !!state.filmInfoStamp;
     document.getElementById('exportSheetBackdrop')?.classList.add('open');
     triggerPreparedExportPrepare();
   }
@@ -12466,14 +12386,6 @@
   document.getElementById('exportCaptionInput')?.addEventListener('input', e => {
     state.exportCaption = String(e.target.value || '').slice(0, 160);
     if (document.getElementById('exportSheetBackdrop')?.classList.contains('open') && preparedExportCache?.baseBlob) {
-      triggerPreparedExportPrepare();
-    }
-  });
-  document.getElementById('chkFilmInfoStamp')?.addEventListener('change', e => {
-    state.filmInfoStamp = !!e.target.checked;
-    preparedExportCache = null;
-    scheduleSaveLocalAppState();
-    if (document.getElementById('exportSheetBackdrop')?.classList.contains('open')) {
       triggerPreparedExportPrepare();
     }
   });
