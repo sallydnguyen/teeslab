@@ -3162,7 +3162,7 @@
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .cam-wrap {
         display: grid;
-        grid-template-columns: clamp(206px, 27%, 248px) 1fr;
+        grid-template-columns: clamp(214px, 28%, 256px) 1fr;
         grid-template-rows: 30px 1fr auto;
         align-items: stretch;
         gap: 4px 8px;
@@ -3210,22 +3210,186 @@
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel {
         grid-column: 1;
         grid-row: 2;
-        align-self: center;
+        align-self: stretch;
+        height: 100%;
+        min-height: 150px;
         margin-bottom: 0;
+        flex-direction: row;
+        align-items: stretch;
       }
-      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring {
-        height: 28px;
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-divider {
+        width: 1px;
+        height: auto;
+        background: linear-gradient(180deg, #11151d, #3c4353 50%, #11151d);
       }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring,
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring[data-ring="focal"] {
-        height: 24px;
+        flex: 1 1 0;
+        min-width: 0;
+        height: 100%;
+        flex-direction: column;
+        align-items: stretch;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-tag {
-        width: 48px;
-        font-size: 7px;
+        width: 100%;
+        height: 21px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 6.5px;
+        letter-spacing: 0.2px;
+        padding: 0 2px;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-viewport {
+        flex: 1 1 0;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        cursor: ns-resize;
+        background: linear-gradient(90deg, #141820 0%, #0d1016 55%, #161a23 100%);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-track {
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: auto;
+        width: auto;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-knurl-band {
+        top: -240px;
+        bottom: -240px;
+        left: auto;
+        right: auto;
+        width: 3.5px;
+        height: auto;
+        background: repeating-linear-gradient(180deg, rgba(255,255,255,0.22) 0 1px, rgba(0,0,0,0.75) 1px 4px);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-knurl-band.top {
+        left: 0;
+        border-bottom: none;
+        border-right: 1px solid rgba(255,255,255,0.06);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-knurl-band.bot {
+        right: 0;
+        border-top: none;
+        border-left: 1px solid rgba(0,0,0,0.65);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-lock-curtain {
+        left: 3.5px;
+        right: 3.5px;
+        top: -240px;
+        bottom: auto;
+        width: auto;
+        border-right: none;
+        border-bottom: 1.5px solid rgba(239, 68, 68, 0.72);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-dof-bracket {
+        left: 4px;
+        top: 50%;
+        width: 4.5px;
+        height: 24px;
+        max-width: none;
+        max-height: calc(100% - 8px);
+        transform: translateY(-50%);
+        border-left: 1px solid rgba(245, 166, 35, 0.55);
+        border-right: none;
+        border-top: 1.5px solid #f5a623;
+        border-bottom: 1.5px solid #f5a623;
+        background: linear-gradient(90deg, rgba(245, 166, 35, 0.24), transparent);
+        transition: height 0.08s ease-out, border-color 0.14s ease, opacity 0.14s ease;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-dof-bracket.is-af {
+        border-color: rgba(74, 222, 128, 0.85);
+        border-left-color: rgba(74, 222, 128, 0.45);
+        background: linear-gradient(90deg, rgba(74, 222, 128, 0.2), transparent);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-tick {
+        left: auto;
+        right: 4px;
+        bottom: auto;
+        width: 4px;
+        height: 1px;
+        transform: translateY(-0.5px);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-tick.half {
+        width: 5.5px;
+        height: 1px;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-tick.major {
+        width: 7px;
+        height: 1px;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-mark {
+        left: 45%;
+        transform: translate(-50%, -50%);
+        font-size: 9px;
+        padding: 1px 0;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-mark.minor {
+        font-size: 7.5px;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-shade {
+        background: linear-gradient(
+          180deg,
+          rgba(6, 8, 12, 0.92) 0%,
+          rgba(6, 8, 12, 0.36) 14%,
+          transparent 30%,
+          transparent 70%,
+          rgba(6, 8, 12, 0.36) 86%,
+          rgba(6, 8, 12, 0.92) 100%
+        );
+        box-shadow: inset 2px 0 4px rgba(0,0,0,0.65), inset -2px 0 4px rgba(0,0,0,0.65);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-index {
+        top: 50%;
+        bottom: auto;
+        left: 0;
+        right: 0;
+        width: auto;
+        height: 1.5px;
+        transform: translateY(-50%);
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-index::before {
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        border-top: 3.5px solid transparent;
+        border-bottom: 3.5px solid transparent;
+        border-left: 3.5px solid #f5a623;
+        border-right: none;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring[data-ring="focus"].is-af .lens-ring-index::before {
+        border-top-color: transparent;
+        border-left-color: #4ade80;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-index::after {
+        top: 50%;
+        bottom: auto;
+        left: auto;
+        right: 0;
+        transform: translateY(-50%);
+        border-top: 3.5px solid transparent;
+        border-bottom: 3.5px solid transparent;
+        border-right: 3.5px solid #f5a623;
+        border-left: none;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring[data-ring="focus"].is-af .lens-ring-index::after {
+        border-bottom-color: transparent;
+        border-right-color: #4ade80;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-ring-val {
-        width: 48px;
-        font-size: 9px;
+        width: 100%;
+        height: 22px;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        font-size: 8px;
+        letter-spacing: -0.35px;
+        padding: 0 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring[data-ring="shutter"] .lens-ring-val {
+        font-size: 7.5px;
+        letter-spacing: -0.45px;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camComboTrio {
         grid-column: 1;
@@ -7196,10 +7360,13 @@
       const dofBracketEl = row.querySelector('.lens-dof-bracket');
       let spec = null;
       let builtModeKey = '';
+      let builtVertical = null;
       let curtainEl = null;
       let markEls = [];
       let tickEls = [];
       let dragState = null;
+
+      const isVertical = () => getComputedStyle(row).flexDirection === 'column';
 
       if (ringKind === 'focus') {
         tagEl.addEventListener('click', e => {
@@ -7234,12 +7401,21 @@
         });
       }
 
-      const buildTrackDom = (nextSpec) => {
+      const buildTrackDom = (nextSpec, vert) => {
         builtModeKey = nextSpec.modeKey;
+        builtVertical = vert;
         row.dataset.locked = nextSpec.locked ? '1' : '0';
+        row.dataset.orient = vert ? 'vertical' : 'horizontal';
         tagEl.textContent = nextSpec.tag;
         viewport.setAttribute('aria-disabled', nextSpec.locked ? 'true' : 'false');
-        track.style.width = `${Math.max(40, Math.ceil(nextSpec.maxX))}px`;
+        viewport.setAttribute('aria-orientation', vert ? 'vertical' : 'horizontal');
+        if (vert) {
+          track.style.width = '';
+          track.style.height = `${Math.max(40, Math.ceil(nextSpec.maxX))}px`;
+        } else {
+          track.style.height = '';
+          track.style.width = `${Math.max(40, Math.ceil(nextSpec.maxX))}px`;
+        }
         track.innerHTML = '';
 
         const knurlTop = document.createElement('div');
@@ -7259,7 +7435,8 @@
         tickEls = nextSpec.ticks.map(t => {
           const el = document.createElement('span');
           el.className = `lens-tick${t.cls ? ' ' + t.cls : ''}`;
-          el.style.left = `${t.x.toFixed(2)}px`;
+          if (vert) el.style.top = `${t.x.toFixed(2)}px`;
+          else el.style.left = `${t.x.toFixed(2)}px`;
           if (t.stopVal !== undefined) el.dataset.stop = String(t.stopVal);
           track.appendChild(el);
           return el;
@@ -7268,7 +7445,8 @@
         markEls = nextSpec.marks.map(m => {
           const el = document.createElement('span');
           el.className = `lens-mark${m.isMinor ? ' minor' : ''}${m.adrClass ? ' ' + m.adrClass : ''}`;
-          el.style.left = `${m.x.toFixed(2)}px`;
+          if (vert) el.style.top = `${m.x.toFixed(2)}px`;
+          else el.style.left = `${m.x.toFixed(2)}px`;
           el.textContent = m.label;
           el.dataset.x = String(m.x);
           if (m.stopVal !== undefined) el.dataset.stop = String(m.stopVal);
@@ -7295,12 +7473,19 @@
               ? buildShutterScaleSpec()
               : buildApertureScaleSpec(body, rawLens, resolvedLens)));
 
-        if (spec.modeKey !== builtModeKey) buildTrackDom(spec);
+        const vert = isVertical();
+        if (spec.modeKey !== builtModeKey || vert !== builtVertical) buildTrackDom(spec, vert);
 
         const curX = spec.getCurX();
-        const vw = viewport.clientWidth || 180;
-        const tx = vw * 0.5 - curX;
-        track.style.transform = `translate3d(${tx.toFixed(2)}px, 0, 0)`;
+        if (vert) {
+          const vh = viewport.clientHeight || 180;
+          const ty = vh * 0.5 - curX;
+          track.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
+        } else {
+          const vw = viewport.clientWidth || 180;
+          const tx = vw * 0.5 - curX;
+          track.style.transform = `translate3d(${tx.toFixed(2)}px, 0, 0)`;
+        }
         valEl.textContent = spec.getValText();
 
         if (ringKind === 'shutter') {
@@ -7320,7 +7505,16 @@
           if (dofBracketEl) {
             dofBracketEl.classList.toggle('hidden', !!spec.locked);
             dofBracketEl.classList.toggle('is-af', isAf);
-            if (!spec.locked) dofBracketEl.style.width = `${resolvedLens.dofWidthPx || 24}px`;
+            if (!spec.locked) {
+              const dofPx = `${resolvedLens.dofWidthPx || 24}px`;
+              if (vert) {
+                dofBracketEl.style.height = dofPx;
+                dofBracketEl.style.width = '';
+              } else {
+                dofBracketEl.style.width = dofPx;
+                dofBracketEl.style.height = '';
+              }
+            }
           }
         }
 
@@ -7329,7 +7523,14 @@
           const isOpen = curMinF > 1.42;
           curtainEl.classList.toggle('open', isOpen);
           if (isOpen) {
-            curtainEl.style.width = `${(240 + fToTrackX(curMinF)).toFixed(1)}px`;
+            const lenPx = `${(240 + fToTrackX(curMinF)).toFixed(1)}px`;
+            if (vert) {
+              curtainEl.style.height = lenPx;
+              curtainEl.style.width = '';
+            } else {
+              curtainEl.style.width = lenPx;
+              curtainEl.style.height = '';
+            }
           }
         }
         tickEls.forEach(el => {
@@ -7352,11 +7553,14 @@
         if (state.camSound && state.audioCtx?.state === 'suspended') {
           state.audioCtx.resume().catch(() => {});
         }
+        const vert = isVertical();
+        const clientPos = vert ? e.clientY : e.clientX;
         const curX = spec.getCurX();
         dragState = {
           pointerId: e.pointerId,
-          startClientX: e.clientX,
-          lastClientX: e.clientX,
+          vertical: vert,
+          startClientPos: clientPos,
+          lastClientPos: clientPos,
           startX: curX,
           moved: false,
           lastDetent: undefined
@@ -7367,11 +7571,12 @@
 
       viewport.addEventListener('pointermove', e => {
         if (!dragState || dragState.pointerId !== e.pointerId || !spec || spec.locked) return;
-        dragState.lastClientX = e.clientX;
-        const dx = e.clientX - dragState.startClientX;
-        if (!dragState.moved && Math.abs(dx) >= 4) dragState.moved = true;
+        const clientPos = dragState.vertical ? e.clientY : e.clientX;
+        dragState.lastClientPos = clientPos;
+        const dPos = clientPos - dragState.startClientPos;
+        if (!dragState.moved && Math.abs(dPos) >= 4) dragState.moved = true;
         if (!dragState.moved) return;
-        const targetX = dragState.startX - dx;
+        const targetX = dragState.startX - dPos;
         const res = spec.applyX(targetX, false, dragState.lastDetent);
         dragState.lastDetent = res.detent;
         if (res.changed) syncLensLiveUI(res.needsLayout);
@@ -7385,10 +7590,12 @@
         try { viewport.releasePointerCapture(e.pointerId); } catch {}
         if (!spec || spec.locked) return;
 
-        if (!ds.moved && e.clientX !== undefined) {
+        const clientPos = ds.vertical ? e.clientY : e.clientX;
+        if (!ds.moved && clientPos !== undefined) {
           const rect = viewport.getBoundingClientRect();
-          const localX = e.clientX - rect.left;
-          const offsetFromCenter = localX - rect.width * 0.5;
+          const localPos = ds.vertical ? (clientPos - rect.top) : (clientPos - rect.left);
+          const span = ds.vertical ? rect.height : rect.width;
+          const offsetFromCenter = localPos - span * 0.5;
           if (Math.abs(offsetFromCenter) > 8) {
             let jumpX = ds.startX + offsetFromCenter;
             const minDragX = spec.getMinDragX ? spec.getMinDragX() : spec.minX;
@@ -7408,9 +7615,9 @@
           return;
         }
 
-        const endX = (e.type === 'pointercancel' || (e.clientX === 0 && ds.lastClientX !== 0)) ? ds.lastClientX : (e.clientX ?? ds.lastClientX);
-        const dx = endX - ds.startClientX;
-        const res = spec.applyX(ds.startX - dx, true, ds.lastDetent);
+        const endPos = (e.type === 'pointercancel' || (clientPos === 0 && ds.lastClientPos !== 0)) ? ds.lastClientPos : (clientPos ?? ds.lastClientPos);
+        const dPos = endPos - ds.startClientPos;
+        const res = spec.applyX(ds.startX - dPos, true, ds.lastDetent);
         syncLensLiveUI(res.needsLayout);
         scheduleCameraSettingsApply();
         scheduleSaveLocalAppState();
@@ -7423,7 +7630,10 @@
         if (!spec || spec.locked) return;
         e.preventDefault();
         if (ringKind === 'focus') track.classList.remove('snap-af');
-        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        const vert = isVertical();
+        const delta = vert
+          ? (Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX)
+          : (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY);
         const stepX = Math.max(-24, Math.min(24, delta * 0.4));
         const res = spec.applyX(spec.getCurX() + stepX, true, undefined);
         if (res.changed) {
@@ -7435,10 +7645,10 @@
 
       viewport.addEventListener('keydown', e => {
         if (!spec || spec.locked) return;
-        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
         e.preventDefault();
         if (ringKind === 'focus') track.classList.remove('snap-af');
-        const step = e.key === 'ArrowRight' ? 12 : -12;
+        const step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 12 : -12;
         const res = spec.applyX(spec.getCurX() + step, true, undefined);
         if (res.changed) {
           syncLensLiveUI(res.needsLayout);
@@ -7449,7 +7659,7 @@
 
       if (typeof ResizeObserver !== 'undefined') {
         const ro = new ResizeObserver(() => {
-          if (viewport.clientWidth > 0 && spec) {
+          if ((viewport.clientWidth > 0 || viewport.clientHeight > 0) && spec) {
             const { body, lens } = getSelectedGear();
             const rawFocals = getModeFocals(body.id);
             const rawLens = rawFocals.find(f => f.id === state.lensId) || rawFocals[0];
@@ -10469,7 +10679,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1610';
+  const APP_BUILD = '20261122-1635';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
