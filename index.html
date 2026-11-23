@@ -3180,7 +3180,13 @@
       width: 30px;
       height: 44px;
       font-size: 24px;
-      opacity: 0.72;
+      opacity: 0.78;
+      z-index: 6;
+    }
+    .lab-photo-nav:hover {
+      opacity: 1;
+      background: rgba(16, 20, 28, 0.94);
+      border-color: rgba(245, 166, 35, 0.45);
     }
     .lab-photo-nav.btn-prev { left: 6px; }
     .lab-photo-nav.btn-next { right: 6px; }
@@ -7061,7 +7067,7 @@
     state.halfFrameLabSecondPreviewCanvas = srcCanvas ? makeScaledPreviewCanvas(srcCanvas) : null;
     state.halfFrameLabSecondSampleId = opts.sampleId !== undefined ? opts.sampleId : null;
     state.halfFrameLabSecondFromCameraRoll = !!opts.fromCameraRoll;
-    state.halfFrameTargetSlot = 1;
+    if (!opts.keepTargetSlot) state.halfFrameTargetSlot = 1;
     labRenderDirty = true;
     syncAllUI();
     renderPreview(!!opts.forcePreviewRender);
@@ -7096,6 +7102,8 @@
     state.sourceIsDiptych = !!opts.isDiptych || !!opts.preserveAspect;
     state.sourceFromCameraRoll = !!opts.fromCameraRoll;
     state.activeRollShotId = opts.fromCameraRoll ? (opts.rollShotId || null) : null;
+    if (opts.sampleId !== undefined) state.activeSampleId = opts.sampleId;
+    else if (opts.fromCameraRoll) state.activeSampleId = null;
     if (opts.isDiptych) {
       state.halfFrameLabSecondCanvas = null;
       state.halfFrameLabSecondPreviewCanvas = null;
@@ -11343,30 +11351,30 @@
     labPhotoStepping = true;
     try {
       if (state.sourceFromCameraRoll && state.camRollShots.length > 1) {
-        const cur = Number.isInteger(viewerCurrentIndex) ? viewerCurrentIndex : 0;
+        const activeIdx = state.activeRollShotId ? state.camRollShots.findIndex(item => item.id === state.activeRollShotId) : -1;
+        const cur = activeIdx >= 0 ? activeIdx : (Number.isInteger(viewerCurrentIndex) ? viewerCurrentIndex : 0);
         const nextIdx = (cur + dir + state.camRollShots.length) % state.camRollShots.length;
         viewerCurrentIndex = nextIdx;
         const shot = state.camRollShots[nextIdx];
         if (shot) {
-          await openShotInLab(shot);
+          await openShotInLab(shot, { silent: true, forcePreviewRender: true });
           showToast(`🎞️ Shot #${String(nextIdx + 1).padStart(2, '0')} / ${state.camRollShots.length}`);
         }
         return;
       }
-      const curId = (state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2)
-        ? state.halfFrameLabSecondSampleId
-        : state.activeSampleId;
+      const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+      const curId = isSlot2 ? state.halfFrameLabSecondSampleId : state.activeSampleId;
       let idx = SAMPLES.findIndex(s => s.id === curId);
       if (idx < 0) idx = dir > 0 ? -1 : 0;
       const nextIdx = (idx + dir + SAMPLES.length) % SAMPLES.length;
       const sample = SAMPLES[nextIdx];
       await ensureSampleLoaded(sample);
-      const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
       if (isSlot2) {
-        loadHalfFrameSecondCanvas(sample.canvas, { sampleId: sample.id, fromCameraRoll: false, forcePreviewRender: true });
+        loadHalfFrameSecondCanvas(sample.canvas, { sampleId: sample.id, fromCameraRoll: false, forcePreviewRender: true, keepTargetSlot: true });
       } else {
         loadSourceCanvas(sample.canvas, null, { sampleId: sample.id, fromCameraRoll: false, forcePreviewRender: true });
       }
+      renderSampleStrip();
       showToast(`🖼️ ${sample.title} (${nextIdx + 1}/${SAMPLES.length})`);
     } finally {
       labPhotoStepping = false;
@@ -12496,6 +12504,15 @@
         return;
       }
       return;
+    }
+
+    if (document.getElementById('view-darkroom')?.classList.contains('active')
+        && !document.getElementById('comboSheetBackdrop')?.classList.contains('open')
+        && !document.getElementById('sampleSheetBackdrop')?.classList.contains('open')
+        && !document.getElementById('contactSheetBackdrop')?.classList.contains('open')
+        && !document.getElementById('filmGuideBackdrop')?.classList.contains('open')) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); stepLabPhoto(-1); return; }
+      if (e.key === 'ArrowRight') { e.preventDefault(); stepLabPhoto(1); return; }
     }
 
     if (!isCameraTabOpenForHardwareShutter()) return;
