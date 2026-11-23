@@ -3796,7 +3796,7 @@
             <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 100%</span>
             <div style="display:flex;gap:6px;align-items:center;">
               <select class="dark-select" id="leakTypeSelect" style="display:none;padding:2px 6px;font-size:10px;"></select>
-              <button class="filter-chip" id="btnEditPickMx" type="button" style="display:none;padding:2px 7px;font-size:9.5px;color:#f5a623;border-color:rgba(245,166,35,0.45);">🎞️ Chọn film</button>
+              <button class="filter-chip" id="btnEditPickMx" type="button" style="display:none;padding:2px 7px;font-size:9.5px;color:#f5a623;border-color:rgba(245,166,35,0.45);">🎞️ Pick film</button>
               <button class="filter-chip" id="btnEditSwapMx" type="button" style="display:none;padding:2px 6px;font-size:9.5px;" title="Swap Double Exposure layers">⇄</button>
               <button class="filter-chip" id="btnResetTweaks" style="padding:2px 8px;font-size:9.5px;">↺ Reset</button>
               <button class="filter-chip" id="btnCloseTweakDrawer" style="padding:2px 7px;font-size:9.5px;">✕</button>
@@ -3993,7 +3993,7 @@
               <img class="vf-mx-ghost" id="vfMxGhostImg" alt="" aria-hidden="true" />
               <div class="vf-mx-bar" id="vfMxBar">
                 <span id="vfMxLabel">2× · 1/2</span>
-                <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Chọn film đã chụp làm nền 1/2" style="display:none;">🎞️ Roll</button>
+                <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Pick a Camera Roll shot as base frame 1/2" style="display:none;">🎞️ Roll</button>
                 <button type="button" id="btnCancelDoubleExp" title="Discard Double Exposure 1/2">✕</button>
               </div>
 
@@ -4249,7 +4249,7 @@
         <button class="btn-pill btn-brass" id="btnSheetOpenPhoto" type="button" style="width:100%;height:36px;font-size:12.5px;border-radius:10px;margin-bottom:10px;">➕ Choose Photo from Library</button>
         <div id="rollSamplesSection" style="display:none;margin-bottom:10px;">
           <div style="font-size:10.5px;color:#f5a623;margin-bottom:6px;font-weight:700;display:flex;align-items:center;justify-content:space-between;">
-            <span>🎞️ Film đã chụp (Camera Roll)</span>
+            <span>🎞️ Captured Film (Camera Roll)</span>
             <span id="rollSamplesCount" style="font-family:var(--mono);font-size:9.5px;color:var(--text-muted);"></span>
           </div>
           <div class="sample-grid-3" id="rollSampleStrip"></div>
@@ -4428,20 +4428,20 @@
 
 
   const FILM_STOCKS = [
-    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel, xanh ngọc', iso: 400, canisterColor: 'linear-gradient(180deg,#10b981,#e5e7eb,#059669)', edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-11,15,13], midTint: [-4,6,5], highlightTint: [7,7,4], foliageShift: {gBoost:8,bShift:18,rShift:-16,satScale:0.86}, skyShift: {cyanBoost:18,bDepth:-6}, redHueShift: 6, skinWarmth: 2, vibrance: -0.08, skinProtect: 0.78, saturation: 0.89, contrast: 0.94, blackLift: 0.044, grainBase: 26, grainSize: 1.12, halationBase: 12, isBW: false },
-    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Xanh Nhật đặc trưng', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-14,17,9], midTint: [5,1,8], highlightTint: [9,5,-2], foliageShift: {gBoost:18,bShift:14,rShift:-18,satScale:1.05}, skyShift: {cyanBoost:14,bDepth:6}, redHueShift: 10, skinWarmth: 1, vibrance: 0.04, skinProtect: 0.66, saturation: 1.04, contrast: 1.06, blackLift: 0.026, grainBase: 36, grainSize: 1.2, halationBase: 16, isBW: false },
-    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Tạp chí trầm cổ', iso: 200, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-11,5,10], midTint: [-3,2,-2], highlightTint: [11,7,-5], foliageShift: {gBoost:-10,bShift:10,rShift:8,satScale:0.70}, skyShift: {cyanBoost:22,bDepth:-14}, redHueShift: -8, skinWarmth: 2, vibrance: -0.14, skinProtect: 0.62, saturation: 0.78, contrast: 1.15, blackLift: 0.022, grainBase: 26, grainSize: 1.05, halationBase: 10, isBW: false },
+    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, canisterColor: 'linear-gradient(180deg,#10b981,#e5e7eb,#059669)', edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-11,15,13], midTint: [-4,6,5], highlightTint: [7,7,4], foliageShift: {gBoost:8,bShift:18,rShift:-16,satScale:0.86}, skyShift: {cyanBoost:18,bDepth:-6}, redHueShift: 6, skinWarmth: 2, vibrance: -0.08, skinProtect: 0.78, saturation: 0.89, contrast: 0.94, blackLift: 0.044, grainBase: 26, grainSize: 1.12, halationBase: 12, isBW: false },
+    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-14,17,9], midTint: [5,1,8], highlightTint: [9,5,-2], foliageShift: {gBoost:18,bShift:14,rShift:-18,satScale:1.05}, skyShift: {cyanBoost:14,bDepth:6}, redHueShift: 10, skinWarmth: 1, vibrance: 0.04, skinProtect: 0.66, saturation: 1.04, contrast: 1.06, blackLift: 0.026, grainBase: 36, grainSize: 1.2, halationBase: 16, isBW: false },
+    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-11,5,10], midTint: [-3,2,-2], highlightTint: [11,7,-5], foliageShift: {gBoost:-10,bShift:10,rShift:8,satScale:0.70}, skyShift: {cyanBoost:22,bDepth:-14}, redHueShift: -8, skinWarmth: 2, vibrance: -0.14, skinProtect: 0.62, saturation: 0.78, contrast: 1.15, blackLift: 0.022, grainBase: 26, grainSize: 1.05, halationBase: 10, isBW: false },
 
-    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Da kem ấm mịn', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [11,6,-7], highlightTint: [16,11,-6], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:10,bDepth:-6}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.88, saturation: 0.93, contrast: 0.95, blackLift: 0.040, grainBase: 25, grainSize: 1.05, halationBase: 18, isBW: false },
-    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Hoàng hôn rực ấm', iso: 800, canisterColor: 'linear-gradient(180deg,#ea580c,#fbbf24,#78350f)', edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,2,-4], midTint: [11,5,-7], highlightTint: [14,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:4,bDepth:6}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.84, saturation: 1.05, contrast: 1.07, blackLift: 0.032, grainBase: 40, grainSize: 1.25, halationBase: 28, isBW: false },
-    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Ấm vàng cam · Golden hour', iso: 200, canisterColor: 'linear-gradient(180deg,#fbbf24,#a855f7,#dc2626)', edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [2,4,-3], midTint: [11,5,-9], highlightTint: [16,8,-9], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.84, saturation: 1.10, contrast: 1.06, blackLift: 0.026, grainBase: 30, grainSize: 1.12, halationBase: 22, isBW: false },
-    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Vàng dịu vintage · Tương phản cao', iso: 200, canisterColor: 'linear-gradient(180deg,#eab308,#dc2626,#7c2d12)', edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [6,5,-5], highlightTint: [10,8,-4], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:0}, redHueShift: -5, skinWarmth: 4, vibrance: -0.08, skinProtect: 0.84, saturation: 0.90, contrast: 1.13, blackLift: 0.024, grainBase: 36, grainSize: 1.18, halationBase: 14, isBW: false },
-    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Trời xanh nắng gắt', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-6,-1,14], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:18}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.74, saturation: 1.10, contrast: 1.12, blackLift: 0.022, grainBase: 40, grainSize: 1.22, halationBase: 20, isBW: false },
-    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Đậm sâu siêu mịn', iso: 100, canisterColor: 'linear-gradient(180deg,#dc2626,#f59e0b,#111827)', edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [4,-5,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -6, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.56, saturation: 1.18, contrast: 1.17, blackLift: 0.010, grainBase: 14, grainSize: 0.85, halationBase: 14, isBW: false },
+    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [11,6,-7], highlightTint: [16,11,-6], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:10,bDepth:-6}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.88, saturation: 0.93, contrast: 0.95, blackLift: 0.040, grainBase: 25, grainSize: 1.05, halationBase: 18, isBW: false },
+    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, canisterColor: 'linear-gradient(180deg,#ea580c,#fbbf24,#78350f)', edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,2,-4], midTint: [11,5,-7], highlightTint: [14,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:4,bDepth:6}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.84, saturation: 1.05, contrast: 1.07, blackLift: 0.032, grainBase: 40, grainSize: 1.25, halationBase: 28, isBW: false },
+    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, canisterColor: 'linear-gradient(180deg,#fbbf24,#a855f7,#dc2626)', edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [2,4,-3], midTint: [11,5,-9], highlightTint: [16,8,-9], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.84, saturation: 1.10, contrast: 1.06, blackLift: 0.026, grainBase: 30, grainSize: 1.12, halationBase: 22, isBW: false },
+    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, canisterColor: 'linear-gradient(180deg,#eab308,#dc2626,#7c2d12)', edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [6,5,-5], highlightTint: [10,8,-4], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:0}, redHueShift: -5, skinWarmth: 4, vibrance: -0.08, skinProtect: 0.84, saturation: 0.90, contrast: 1.13, blackLift: 0.024, grainBase: 36, grainSize: 1.18, halationBase: 14, isBW: false },
+    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-6,-1,14], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:18}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.74, saturation: 1.10, contrast: 1.12, blackLift: 0.022, grainBase: 40, grainSize: 1.22, halationBase: 20, isBW: false },
+    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, canisterColor: 'linear-gradient(180deg,#dc2626,#f59e0b,#111827)', edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [4,-5,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -6, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.56, saturation: 1.18, contrast: 1.17, blackLift: 0.010, grainBase: 14, grainSize: 0.85, halationBase: 14, isBW: false },
 
-    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Đêm Teal & Quầng đỏ', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-20,10,24], midTint: [-11,5,16], highlightTint: [16,4,-8], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.64, saturation: 1.01, contrast: 1.09, blackLift: 0.032, grainBase: 38, grainSize: 1.2, halationBase: 72, isBW: false },
+    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-20,10,24], midTint: [-11,5,16], highlightTint: [16,4,-8], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.64, saturation: 1.01, contrast: 1.09, blackLift: 0.032, grainBase: 38, grainSize: 1.2, halationBase: 72, isBW: false },
 
-    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Đen trắng phóng sự', iso: 400, canisterColor: 'linear-gradient(180deg,#111827,#10b981,#e5e7eb)', edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.14, blackLift: 0.042, grainBase: 44, grainSize: 1.25, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] }
+    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, canisterColor: 'linear-gradient(180deg,#111827,#10b981,#e5e7eb)', edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.14, blackLift: 0.042, grainBase: 44, grainSize: 1.25, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] }
   ];
 
   const FILM_SUBTITLES_EN = {
@@ -7270,7 +7270,7 @@
     const editSwapMxBtn = document.getElementById('btnEditSwapMx');
     if (editPickMxBtn) {
       editPickMxBtn.style.display = (def.key === 'labDoubleExpMix' && !isFrameMode) ? '' : 'none';
-      editPickMxBtn.textContent = state.labDoubleExpCanvas ? '🎞️ Đổi film' : '🎞️ Chọn film';
+      editPickMxBtn.textContent = state.labDoubleExpCanvas ? '🎞️ Change film' : '🎞️ Pick film';
     }
     if (editSwapMxBtn) {
       editSwapMxBtn.style.display = (def.key === 'labDoubleExpMix' && !isFrameMode && !!state.labDoubleExpCanvas) ? '' : 'none';
@@ -7500,7 +7500,7 @@
       return;
     }
     sec.style.display = '';
-    if (countEl) countEl.textContent = `${shots.length} tấm`;
+    if (countEl) countEl.textContent = `${shots.length} ${shots.length === 1 ? 'shot' : 'shots'}`;
     strip.innerHTML = '';
     const isMx2 = state.sampleSheetTargetMode === 'mx2';
     shots.forEach(s => {
@@ -7531,7 +7531,7 @@
             document.getElementById('sampleSheetBackdrop').classList.remove('open');
             syncCameraHudUI();
             switchMainTab('camera');
-            showToast(`🎞️ Đã chọn nền ${lblText} — Chụp tiếp tấm 2/2`);
+            showToast(`🎞️ Base 1/2 loaded (${lblText}) — Take shot 2/2`);
             return;
           }
           if (state.sampleSheetTargetMode === 'mx2') {
@@ -7540,7 +7540,7 @@
             loadLabDoubleExpCanvas(c, { sampleId: null, rollShotId: s.id, rollLabel: lblText, fromCameraRoll: true, forcePreviewRender: true });
             renderSampleStrip();
             document.getElementById('sampleSheetBackdrop').classList.remove('open');
-            showToast(`🎞️ 2× Chồng ${lblText}`);
+            showToast(`🎞️ 2× Layer 2: ${lblText}`);
             return;
           }
           const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
@@ -7555,9 +7555,9 @@
           renderSampleStrip();
           loadSourceCanvas(c, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, frameSeed: s.frameSeed, forcePreviewRender: true });
           document.getElementById('sampleSheetBackdrop').classList.remove('open');
-          showToast(`Đã mở ${lblText}`);
+          showToast(`Opened ${lblText}`);
         } catch (err) {
-          showToast('Không thể đọc ảnh từ Camera Roll');
+          showToast('Could not load photo from Camera Roll');
         }
       });
       strip.appendChild(item);
@@ -7601,7 +7601,7 @@
           document.getElementById('sampleSheetBackdrop').classList.remove('open');
           syncCameraHudUI();
           switchMainTab('camera');
-          showToast(`🎞️ Đã chọn nền ${s.title} — Chụp tiếp tấm 2/2`);
+          showToast(`🎞️ Base 1/2 loaded (${s.title}) — Take shot 2/2`);
           return;
         }
         if (state.sampleSheetTargetMode === 'mx2') {
@@ -10828,7 +10828,7 @@
           if (mxGhost) mxGhost.src = c.toDataURL('image/jpeg', 0.72);
           syncCameraHudUI();
           switchMainTab('camera');
-          showToast('🎞️ Đã nạp nền 1/2 — Chụp tiếp tấm 2/2');
+          showToast('🎞️ Base 1/2 loaded — Take shot 2/2');
           return;
         }
         if (state.sampleSheetTargetMode === 'mx2') {
@@ -11501,7 +11501,7 @@
   function openSampleSheetForDoubleExp() {
     state.sampleSheetTargetMode = 'mx2';
     const titleEl = document.getElementById('sampleSheetTitle');
-    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Chọn film chồng';
+    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Choose Layer 2';
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
@@ -11509,7 +11509,7 @@
   function openSampleSheetForCameraDoubleExp() {
     state.sampleSheetTargetMode = 'cam-mx1';
     const titleEl = document.getElementById('sampleSheetTitle');
-    if (titleEl) titleEl.textContent = '🎞️ Chụp chồng film · Chọn nền 1/2';
+    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Choose Base 1/2';
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
@@ -11771,7 +11771,7 @@
   });
   document.getElementById('btnVfDoubleExpToggle')?.addEventListener('click', () => {
     if (!state.doubleExpMode && state.camNeedsRewind) {
-      showToast('🎞️ Hết cuộn — Hãy Save All hoặc Rewind trước');
+      showToast('🎞️ Roll full — Save All or Rewind first');
       return;
     }
     state.doubleExpMode = !state.doubleExpMode;
@@ -11783,10 +11783,10 @@
       if (state.camNeedsWind && !state.camNeedsRewind) {
         windFilmLever(false);
       }
-      showToast('🎞️ Chồng film 2× BẬT — Chụp 2 lần liên tiếp hoặc chọn 🎞️ Roll');
+      showToast('🎞️ Double Exposure 2× ON — Take 2 shots or pick from 🎞️ Roll');
     } else {
       clearPendingDoubleExp();
-      showToast('🎞️ Chồng film 2× TẮT');
+      showToast('🎞️ Double Exposure 2× OFF');
     }
     syncCameraHudUI();
     renderHalfFrameLabUI();
@@ -11798,7 +11798,7 @@
   document.getElementById('btnCancelDoubleExp')?.addEventListener('click', () => {
     clearPendingDoubleExp();
     syncCameraHudUI();
-    showToast('Đã hủy tấm nền 1/2');
+    showToast('Double exposure shot 1/2 discarded');
   });
 
   // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, SLR 35-70mm Zoom Toggle, Disposable Flash)
