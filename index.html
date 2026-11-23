@@ -3541,23 +3541,23 @@
         border-top: none;
         border-left: 1px solid #1b1f27;
       }
-      .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-group-lab {
+      .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-group-cam {
         grid-row: 1;
         align-self: start;
         width: 100%;
-        height: auto;
-        flex-direction: column;
+        height: 40px;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-shutter {
         grid-row: 2;
         align-self: center;
         margin: 0;
       }
-      .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-group-cam {
+      .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-group-lab {
         grid-row: 3;
         align-self: end;
         width: 100%;
-        height: 40px;
+        height: auto;
+        flex-direction: column;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .bnav-roll-btn {
         width: 100%;
@@ -10886,7 +10886,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1758';
+  const APP_BUILD = '20261122-1759';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
