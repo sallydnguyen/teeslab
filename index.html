@@ -1406,6 +1406,40 @@
       background: rgba(245, 166, 35, 0.12);
     }
 
+    .vf-roll-done-bar {
+      display: none;
+      position: absolute;
+      top: 42px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100% - 16px);
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 10px;
+      background: rgba(10, 12, 16, 0.92);
+      border: 1px solid rgba(245, 166, 35, 0.72);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+      pointer-events: auto;
+      z-index: 9;
+      white-space: nowrap;
+    }
+    .vf-roll-done-bar.visible { display: inline-flex; }
+    .vf-roll-done-lbl {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      color: #f5a623;
+      padding-right: 2px;
+    }
+    .vf-roll-done-btn {
+      height: 24px;
+      padding: 0 8px;
+      font-size: 10.5px;
+      border-radius: 7px;
+      flex-shrink: 0;
+    }
+
     /* Tap-to-Focus / AE Reticle */
     .vf-focus-reticle {
       position: absolute;
@@ -3986,6 +4020,12 @@
             </div>
           </div>
 
+          <div class="vf-roll-done-bar" id="vfRollDoneBar">
+            <span class="vf-roll-done-lbl" id="vfRollDoneLabel">🎞️ Roll #01 full</span>
+            <button class="btn-pill btn-brass vf-roll-done-btn" id="btnVfSaveAllRoll" type="button">💾 Save All</button>
+            <button class="btn-pill btn-ghost vf-roll-done-btn" id="btnVfRewindRoll" type="button" title="Rewind and load next roll">↺ Rewind</button>
+          </div>
+
           <div class="vf-bottom-hud">
             <div class="vf-ev-row">
               <div class="vf-ev-ruler-wrap" title="Exposure compensation">
@@ -4206,6 +4246,7 @@
         <div class="sheet-head">
           <span>🎞️ Camera Roll</span>
           <div style="display:flex;gap:6px;">
+            <button class="btn-pill btn-brass" id="btnSaveAllRollShots" type="button" style="height:26px;font-size:11px;display:none;">💾 Save All</button>
             <button class="btn-pill btn-ghost" id="btnClearRollShots" style="height:26px;font-size:11px;">🔄 Reset Roll</button>
             <button class="btn-pill btn-ghost" id="btnCloseContactSheet" style="height:26px;">✕</button>
           </div>
@@ -5661,6 +5702,7 @@
     camLockedEV: null,
     camNeedsWind: false,
     camNeedsRewind: false,
+    lastCompletedRollId: null,
     camAutoWind: false,
     doubleExpMode: false,
     doubleExpFirstCanvas: null,
@@ -7225,7 +7267,7 @@
       adjustPill.type = 'button';
       adjustPill.dataset.pillId = 'adjust';
       adjustPill.className = 'tweak-pill';
-      adjustPill.innerHTML = `<span>Adjust</span><span class="tweak-pill-val"></span>`;
+      adjustPill.innerHTML = `<span>Edit</span><span class="tweak-pill-val"></span>`;
       adjustPill.addEventListener('click', () => {
         if (drawer.classList.contains('open') && tweakDrawerMode === 'adjust') {
           drawer.classList.remove('open');
@@ -8618,6 +8660,7 @@
     if (state.camNeedsRewind) {
       playFilmRewindSound();
       const finishedRoll = state.camRollNumber;
+      state.lastCompletedRollId = state.camRollId;
       state.camNeedsRewind = false;
       state.camNeedsWind = false;
       state.camRollNumber += 1;
@@ -8964,6 +9007,7 @@
 
     syncViewfinderFocusAid(body, lens);
     syncLensBarrelWidgets();
+    updateSaveAllUI();
     layoutViewfinderStage();
     if (typeof startCameraLoop === 'function' && document.getElementById('view-camera')?.classList.contains('active')) {
       startCameraLoop();
@@ -10300,6 +10344,59 @@
     }
   }
 
+  function getCompletedRollShots() {
+    if (!state.camRollShots || state.camRollShots.length === 0) return [];
+    let rollShots = [];
+    if (state.camNeedsRewind || state.camShotCount >= state.camMaxShots) {
+      rollShots = state.camRollShots.filter(s => s.rollId ? s.rollId === state.camRollId : s.rollNumber === state.camRollNumber);
+      if (rollShots.length === 0) {
+        rollShots = state.camRollShots.filter(s => s.rollNumber === state.camRollNumber);
+      }
+    } else if (state.lastCompletedRollId) {
+      rollShots = state.camRollShots.filter(s => s.rollId === state.lastCompletedRollId);
+    }
+    if (rollShots.length === 0) {
+      const counts = new Map();
+      for (const s of state.camRollShots) {
+        const key = s.rollId || `n-${s.rollNumber || 1}`;
+        if (!counts.has(key)) counts.set(key, []);
+        counts.get(key).push(s);
+      }
+      for (const list of counts.values()) {
+        if (list.length >= state.camMaxShots) {
+          rollShots = list;
+          break;
+        }
+      }
+    }
+    return rollShots.slice().sort((a, b) => (a.num || 0) - (b.num || 0) || (a.createdAt || 0) - (b.createdAt || 0));
+  }
+
+  let saveAllBusy = false;
+  function updateSaveAllUI() {
+    const shots = getCompletedRollShots();
+    const rollDoneBar = document.getElementById('vfRollDoneBar');
+    const rollDoneLbl = document.getElementById('vfRollDoneLabel');
+    const vfSaveBtn = document.getElementById('btnVfSaveAllRoll');
+    const sheetSaveBtn = document.getElementById('btnSaveAllRollShots');
+    if (rollDoneBar) rollDoneBar.classList.toggle('visible', !!state.camNeedsRewind);
+    if (rollDoneLbl) {
+      const rollNum = state.camNeedsRewind ? state.camRollNumber : (shots[0]?.rollNumber || state.camRollNumber);
+      rollDoneLbl.textContent = `🎞️ Roll #${String(rollNum).padStart(2, '0')} full (${shots.length}/${state.camMaxShots})`;
+    }
+    if (vfSaveBtn && !saveAllBusy) {
+      vfSaveBtn.disabled = shots.length === 0;
+      vfSaveBtn.textContent = shots.length > 0 ? `💾 Save All (${shots.length})` : '💾 Save All';
+    }
+    if (sheetSaveBtn) {
+      sheetSaveBtn.style.display = shots.length > 0 ? '' : 'none';
+      if (!saveAllBusy) {
+        sheetSaveBtn.disabled = false;
+        sheetSaveBtn.textContent = `💾 Save All (${shots.length})`;
+      }
+    }
+  }
+
   const cameraThumbUrls = new Set();
   function renderContactSheet() {
     cameraThumbUrls.forEach(url => URL.revokeObjectURL(url));
@@ -10308,6 +10405,7 @@
     const grid = document.getElementById('contactSheetGrid');
     if (state.camRollShots.length === 0) {
       grid.innerHTML = `<div style="grid-column:1/-1;color:var(--text-muted);font-size:11.5px;padding:12px 0;">No photos on this roll yet. Tap the shutter in Camera to shoot!</div>`;
+      updateSaveAllUI();
       return;
     }
     grid.innerHTML = '';
@@ -10331,6 +10429,7 @@
       card.querySelector('.btn-save-shot').addEventListener('click', () => saveRollPhoto(s));
       grid.appendChild(card);
     });
+    updateSaveAllUI();
   }
 
   async function restoreCameraRoll() {
@@ -10391,6 +10490,62 @@
     } catch (error) {
       if (error?.name === 'AbortError') { showToast('Save cancelled'); return; }
       showToast('Could not save this photo');
+    }
+  }
+
+  async function saveAllRollShots() {
+    if (saveAllBusy) return;
+    const shots = getCompletedRollShots();
+    if (shots.length === 0) {
+      showToast('No completed roll photos to save');
+      return;
+    }
+    saveAllBusy = true;
+    const vfSaveBtn = document.getElementById('btnVfSaveAllRoll');
+    const sheetSaveBtn = document.getElementById('btnSaveAllRollShots');
+    [vfSaveBtn, sheetSaveBtn].forEach(b => { if (b) { b.disabled = true; b.textContent = '⏳ Preparing…'; } });
+    try {
+      const items = [];
+      for (const s of shots) {
+        const files = s.photoBlob ? s : await loadCameraRollFiles(s.id);
+        const blob = files?.photoBlob;
+        if (!blob) continue;
+        const rollNum = s.rollNumber || 1;
+        const filename = `tees-lab-roll-${rollNum}-shot-${String(s.num).padStart(2, '0')}.jpg`;
+        items.push({ blob, filename, file: new File([blob], filename, { type: 'image/jpeg' }) });
+      }
+      if (items.length === 0) throw new Error('Processed roll photos are unavailable');
+
+      const shareFiles = items.map(it => it.file);
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: shareFiles })) {
+        try {
+          showToast(`Choose “Save ${shareFiles.length} Images” to save roll to Photos`);
+          await navigator.share({ files: shareFiles, title: `Tee's Lab Roll #${shots[0]?.rollNumber || 1}` });
+          return;
+        } catch (err) {
+          if (err?.name === 'AbortError') { showToast('Save cancelled'); return; }
+        }
+      }
+
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i];
+        const txt = `⏳ ${i + 1}/${items.length}`;
+        [vfSaveBtn, sheetSaveBtn].forEach(b => { if (b) b.textContent = txt; });
+        const url = URL.createObjectURL(it.blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = it.filename;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        if (i < items.length - 1) await new Promise(r => setTimeout(r, 110));
+      }
+      const rollNum = shots[0]?.rollNumber || state.camRollNumber;
+      showToast(`✅ Saved all ${items.length} photos from Roll #${String(rollNum).padStart(2, '0')}`);
+    } catch (error) {
+      showToast('Could not save roll photos');
+    } finally {
+      saveAllBusy = false;
+      updateSaveAllUI();
     }
   }
 
@@ -11245,7 +11400,7 @@
   const vfStageEl = document.getElementById('vfStage');
   const vfFocusReticle = document.getElementById('vfFocusReticle');
   vfStageEl?.addEventListener('click', e => {
-    if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar, .vf-mx-bar')) return;
+    if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar, .vf-mx-bar, .vf-roll-done-bar')) return;
     const rect = vfStageEl.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
     const nx = Math.max(0.06, Math.min(0.94, (e.clientX - rect.left) / rect.width));
@@ -11455,12 +11610,18 @@
       showToast(`${nextLabel} (Simulated)`);
     }
   }
+  document.getElementById('btnSaveAllRollShots')?.addEventListener('click', () => saveAllRollShots());
+  document.getElementById('btnVfSaveAllRoll')?.addEventListener('click', () => saveAllRollShots());
+  document.getElementById('btnVfRewindRoll')?.addEventListener('click', () => {
+    if (state.camNeedsRewind) windFilmLever(true);
+  });
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
     try { await clearCameraRollStorage(); } catch (error) { showToast('Could not reset roll photos'); return; }
     state.camRollShots = [];
     state.camShotCount = 0;
     state.camNeedsWind = false;
     state.camNeedsRewind = false;
+    state.lastCompletedRollId = null;
     state.camRollNumber = 1;
     state.camRollId = createRollId();
     saveCameraRollMeta();
