@@ -5548,18 +5548,24 @@
       const workerCode = `
         const GRAIN_SIZE = ${GRAIN_SIZE};
         let GRAIN_TILE = null;
+        const MX_SQ_LUT = Float32Array.from({ length: 256 }, (_, i) => (i / 255) * (i / 255));
+        const MX_SQRT_LUT = Uint8Array.from({ length: 4096 }, (_, i) => Math.min(255, Math.round(Math.sqrt(i / 4095) * 255)));
         ${clamp255.toString()}
         ${buildToneLUT.toString()}
         ${fastBoxBlurRGB.toString()}
         ${frameSeedRng.toString()}
         ${getFramePlacement.toString()}
         ${roundRect.toString()}
+        ${blendDoubleExposureBuffers.toString()}
         ${workerProcess}
         self.onmessage = async event => {
           const message = event.data;
           if (message.type === 'init') { GRAIN_TILE = new Float32Array(message.grainTile); self.postMessage({ type: 'ready' }); return; }
           try {
             const pixels = new Uint8ClampedArray(message.pixels);
+            if (message.mixPixels) {
+              blendDoubleExposureBuffers(pixels, new Uint8ClampedArray(message.mixPixels), message.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
+            }
             const result = processFilmCanvas(new ImageData(pixels, message.width, message.height), message.width, message.height, message.config);
             if (message.output === 'blob') {
               const blob = await result.convertToBlob({ type: 'image/jpeg', quality: message.quality || 0.94 });
@@ -5622,6 +5628,9 @@
   }
 
   async function runFilmJobFallback(job) {
+    if (job.mixImageData?.data?.byteLength) {
+      blendDoubleExposureBuffers(job.imageData.data, job.mixImageData.data, job.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
+    }
     const canvas = processFilmCanvas(job.imageData, job.width, job.height, job.config);
     if (job.output === 'blob') return { blob: await canvasToJpegBlob(canvas, job.quality || 0.94) };
     return { canvas };
@@ -5633,9 +5642,17 @@
     filmWorkerActiveJob = job;
     try {
       const data = job.imageData.data;
-      const canZeroCopy = !!job.coalesceKey && data.byteOffset === 0 && data.byteLength === data.buffer.byteLength;
+      const canZeroCopy = !!(job.coalesceKey || job.transferBuffers) && data.byteOffset === 0 && data.byteLength === data.buffer.byteLength;
       const pixels = canZeroCopy ? data.buffer : data.slice().buffer;
-      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, config: job.config, output: job.output, quality: job.quality }, [pixels]);
+      const transfer = [pixels];
+      let mixPixels = null;
+      if (job.mixImageData?.data?.byteLength) {
+        const mData = job.mixImageData.data;
+        const canZeroCopyMix = !!(job.coalesceKey || job.transferBuffers) && mData.byteOffset === 0 && mData.byteLength === mData.buffer.byteLength;
+        mixPixels = canZeroCopyMix ? mData.buffer : mData.slice().buffer;
+        transfer.push(mixPixels);
+      }
+      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, mixPixels, mixPct: job.mixPct ?? 50, config: job.config, output: job.output, quality: job.quality }, transfer);
     } catch (error) {
       filmWorkerActiveJob = null;
       if (job.imageData?.data?.byteLength) runFilmJobFallback(job).then(job.resolve, job.reject).finally(pumpFilmWorker);
@@ -5643,11 +5660,11 @@
     }
   }
 
-  function processFilmImage(imageData, width, height, config, { output = 'bitmap', quality = 0.94, coalesceKey = null } = {}) {
+  function processFilmImage(imageData, width, height, config, { output = 'bitmap', quality = 0.94, coalesceKey = null, mixImageData = null, mixPct = 50, transferBuffers = false } = {}) {
     createFilmWorker();
-    if (!filmWorker) return runFilmJobFallback({ imageData, width, height, config, output, quality });
+    if (!filmWorker) return runFilmJobFallback({ imageData, width, height, config, output, quality, mixImageData, mixPct });
     return new Promise((resolve, reject) => {
-      const job = { id: ++filmWorkerJobId, imageData, width, height, config, output, quality, coalesceKey, resolve, reject };
+      const job = { id: ++filmWorkerJobId, imageData, width, height, config, output, quality, coalesceKey, mixImageData, mixPct, transferBuffers, resolve, reject };
       if (coalesceKey) {
         const queuedAt = filmWorkerQueue.findIndex(item => item.coalesceKey === coalesceKey);
         if (queuedAt >= 0) { filmWorkerQueue[queuedAt].resolve(null); filmWorkerQueue.splice(queuedAt, 1); }
@@ -6523,7 +6540,8 @@
   }
 
   let labCropCanvas = null;
-  function buildLabCroppedCanvas(srcCanvas, maxDim, reuseScratch = false, maxPixels = 0) {
+  let labMxScratchCanvas = null;
+  function buildLabCroppedCanvas(srcCanvas, maxDim, reuseScratch = false, maxPixels = 0, skipDoubleExpBlend = false) {
     const { w, h, ratio, zoom, isHalfFramePair } = getLabTargetDimensions(srcCanvas, maxDim, maxPixels);
     const c = reuseScratch ? (labCropCanvas || (labCropCanvas = document.createElement('canvas'))) : document.createElement('canvas');
     if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
@@ -6588,11 +6606,15 @@
     const isPreview = srcCanvas === state.previewSourceCanvas;
     const mxSrc = isPreview ? (state.labDoubleExpPreviewCanvas || state.labDoubleExpCanvas) : state.labDoubleExpCanvas;
     if (mxSrc) {
-      const mxC = document.createElement('canvas');
-      mxC.width = w; mxC.height = h;
+      const mxC = (reuseScratch || skipDoubleExpBlend)
+        ? (labMxScratchCanvas || (labMxScratchCanvas = document.createElement('canvas')))
+        : document.createElement('canvas');
+      if (mxC.width !== w || mxC.height !== h) { mxC.width = w; mxC.height = h; }
       const mxZoom = state.labDoubleExpFromCameraRoll ? 1.0 : zoom;
       drawCroppedSource(mxC.getContext('2d'), mxSrc, w, h, ratio, mxZoom);
-      blendDoubleExposureCanvas(c, mxC, state.labDoubleExpMix, true);
+      if (!skipDoubleExpBlend) {
+        blendDoubleExposureCanvas(c, mxC, state.labDoubleExpMix, true);
+      }
     }
     return c;
   }
@@ -6674,6 +6696,27 @@
   const MX_SQ_LUT = Float32Array.from({ length: 256 }, (_, i) => (i / 255) * (i / 255));
   const MX_SQRT_LUT = Uint8Array.from({ length: 4096 }, (_, i) => Math.min(255, Math.round(Math.sqrt(i / 4095) * 255)));
 
+  function blendDoubleExposureBuffers(dA, dB, mixPct = 50, sqLut = MX_SQ_LUT, sqrtLut = MX_SQRT_LUT) {
+    const p = Math.max(0.15, Math.min(0.85, (Number(mixPct) || 50) / 100));
+    const wA = (1 - p) * 1.62;
+    const wB = p * 1.62;
+
+    for (let i = 0, len = dA.length; i < len; i += 4) {
+      const eR = wA * sqLut[dA[i]] + wB * sqLut[dB[i]];
+      const eG = wA * sqLut[dA[i + 1]] + wB * sqLut[dB[i + 1]];
+      const eB = wA * sqLut[dA[i + 2]] + wB * sqLut[dB[i + 2]];
+
+      const lR = eR / (1 + 0.40 * eR);
+      const lG = eG / (1 + 0.40 * eG);
+      const lB = eB / (1 + 0.40 * eB);
+
+      dA[i]     = sqrtLut[lR >= 1 ? 4095 : ((lR * 4095 + 0.5) | 0)];
+      dA[i + 1] = sqrtLut[lG >= 1 ? 4095 : ((lG * 4095 + 0.5) | 0)];
+      dA[i + 2] = sqrtLut[lB >= 1 ? 4095 : ((lB * 4095 + 0.5) | 0)];
+      dA[i + 3] = 255;
+    }
+  }
+
   function blendDoubleExposureCanvas(canvasA, canvasB, mixPct = 50, inPlace = false) {
     if (!canvasA || !canvasB) return canvasA || canvasB || null;
     const w = Math.max(1, canvasA.width);
@@ -6707,27 +6750,7 @@
       bCtx.drawImage(canvasB, sx, sy, sw, sh, 0, 0, w, h);
     }
     const imgB = bCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h);
-    const dA = imgA.data;
-    const dB = imgB.data;
-
-    const p = Math.max(0.15, Math.min(0.85, (Number(mixPct) || 50) / 100));
-    const wA = (1 - p) * 1.62;
-    const wB = p * 1.62;
-
-    for (let i = 0, len = dA.length; i < len; i += 4) {
-      const eR = wA * MX_SQ_LUT[dA[i]] + wB * MX_SQ_LUT[dB[i]];
-      const eG = wA * MX_SQ_LUT[dA[i + 1]] + wB * MX_SQ_LUT[dB[i + 1]];
-      const eB = wA * MX_SQ_LUT[dA[i + 2]] + wB * MX_SQ_LUT[dB[i + 2]];
-
-      const lR = eR / (1 + 0.40 * eR);
-      const lG = eG / (1 + 0.40 * eG);
-      const lB = eB / (1 + 0.40 * eB);
-
-      dA[i]     = MX_SQRT_LUT[lR >= 1 ? 4095 : Math.round(lR * 4095)];
-      dA[i + 1] = MX_SQRT_LUT[lG >= 1 ? 4095 : Math.round(lG * 4095)];
-      dA[i + 2] = MX_SQRT_LUT[lB >= 1 ? 4095 : Math.round(lB * 4095)];
-      dA[i + 3] = 255;
-    }
+    blendDoubleExposureBuffers(imgA.data, imgB.data, mixPct, MX_SQ_LUT, MX_SQRT_LUT);
     oCtx.putImageData(imgA, 0, 0);
     return out;
   }
@@ -10241,13 +10264,50 @@
   }
 
   async function saveCameraExposure(rawBlob, shotNumber, opts = {}) {
-    const rawBitmap = await createImageBitmap(rawBlob);
-    const scale = Math.min(1, 1440 / Math.max(rawBitmap.width, rawBitmap.height));
-    const capW = Math.max(1, Math.round(rawBitmap.width * scale));
-    const capH = Math.max(1, Math.round(rawBitmap.height * scale));
-    const capC = document.createElement('canvas'); capC.width = capW; capC.height = capH;
-    const cCtx = capC.getContext('2d');
-    cCtx.drawImage(rawBitmap, 0, 0, capW, capH); rawBitmap.close();
+    const capC = document.createElement('canvas');
+    const cCtx = capC.getContext('2d', { willReadFrequently: true });
+    let capW = 0, capH = 0;
+
+    if (opts.mixCanvas) {
+      const mScale = Math.min(1, 1440 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
+      capW = Math.max(1, Math.round(opts.mixCanvas.width * mScale));
+      capH = Math.max(1, Math.round(opts.mixCanvas.height * mScale));
+      capC.width = capW; capC.height = capH;
+      const srcA = opts.sourceCanvas;
+      const srcRatio = srcA.width / Math.max(1, srcA.height);
+      const dstRatio = capW / Math.max(1, capH);
+      let sw = srcA.width, sh = srcA.height, sx = 0, sy = 0;
+      if (srcRatio > dstRatio) {
+        sw = Math.max(1, Math.round(srcA.height * dstRatio));
+        sx = Math.max(0, Math.round((srcA.width - sw) * 0.5));
+      } else {
+        sh = Math.max(1, Math.round(srcA.width / dstRatio));
+        sy = Math.max(0, Math.round((srcA.height - sh) * 0.5));
+      }
+      cCtx.drawImage(srcA, sx, sy, sw, sh, 0, 0, capW, capH);
+      const mixC = document.createElement('canvas');
+      mixC.width = capW; mixC.height = capH;
+      const mixCtx = mixC.getContext('2d', { willReadFrequently: true });
+      mixCtx.drawImage(opts.mixCanvas, 0, 0, capW, capH);
+      const srcData = cCtx.getImageData(0, 0, capW, capH);
+      const mixData = mixCtx.getImageData(0, 0, capW, capH);
+      blendDoubleExposureBuffers(srcData.data, mixData.data, opts.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
+      cCtx.putImageData(srcData, 0, 0);
+    } else if (opts.sourceCanvas) {
+      const scale = Math.min(1, 1440 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
+      capW = Math.max(1, Math.round(opts.sourceCanvas.width * scale));
+      capH = Math.max(1, Math.round(opts.sourceCanvas.height * scale));
+      capC.width = capW; capC.height = capH;
+      cCtx.drawImage(opts.sourceCanvas, 0, 0, capW, capH);
+    } else {
+      const rawBitmap = await createImageBitmap(rawBlob);
+      const scale = Math.min(1, 1440 / Math.max(rawBitmap.width, rawBitmap.height));
+      capW = Math.max(1, Math.round(rawBitmap.width * scale));
+      capH = Math.max(1, Math.round(rawBitmap.height * scale));
+      capC.width = capW; capC.height = capH;
+      cCtx.drawImage(rawBitmap, 0, 0, capW, capH); rawBitmap.close();
+    }
+
     const frameSeed = (((Number(state.camRollNumber) || 1) * 7919) + (shotNumber * 104729) + (Date.now() & 0xffff)) >>> 0;
     try {
       const liveC = document.createElement('canvas');
@@ -10258,16 +10318,20 @@
     } catch (ignored) {}
     const { phone, body, lens, film } = getSelectedGear();
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
-    const processed = await processFilmImage(cCtx.getImageData(0, 0, capW, capH), capW, capH, {
-      phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
-      grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
-      leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
-      isDiptych: !!opts.isDiptych,
-      flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-    }, { output: 'blob', quality: 0.92 });
+    const workerImgData = cCtx.getImageData(0, 0, capW, capH);
+    const [processed, finalRawBlob] = await Promise.all([
+      processFilmImage(workerImgData, capW, capH, {
+        phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
+        grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+        leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
+        isDiptych: !!opts.isDiptych,
+        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
+      }, { output: 'blob', quality: 0.92, transferBuffers: true }),
+      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.90)
+    ]);
     const photoBlob = processed.blob;
     const thumbnailBlob = await createShotThumbnail(photoBlob);
-    const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob, photoBlob, thumbnailBlob };
+    const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob: finalRawBlob, photoBlob, thumbnailBlob };
     let persisted = true;
     try { await storeCameraRollShot(shot); } catch (error) { persisted = false; }
 
@@ -10391,15 +10455,14 @@
           showToast('🎞️ 2× Shot 1/2 captured — Compose shot 2/2');
           return;
         }
-        const blendedC = blendDoubleExposureCanvas(state.doubleExpFirstCanvas, capC, 50);
+        const firstCanvas = state.doubleExpFirstCanvas;
         clearPendingDoubleExp();
-        const rawBlob = await canvasToJpegBlob(blendedC, 0.92);
-        await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
+        syncCameraHudUI();
+        await saveCameraExposure(null, shotNumber, { sourceCanvas: firstCanvas, mixCanvas: capC, mixPct: 50, isDiptych: false });
         return;
       }
 
-      const rawBlob = await canvasToJpegBlob(capC, 0.92);
-      await saveCameraExposure(rawBlob, shotNumber, { isDiptych: false });
+      await saveCameraExposure(null, shotNumber, { sourceCanvas: capC, isDiptych: false });
     } catch (error) {
       showToast('Could not process this shot');
     } finally {
@@ -10801,21 +10864,32 @@
 
   async function exportFullResolution() {
     if (!state.fullSourceCanvas) return;
+    const expBtn = document.getElementById('btnExport');
+    if (expBtn) { expBtn.disabled = true; expBtn.textContent = 'Saving…'; }
     showToast('⏳ Saving high-quality image...');
-    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400);
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+    const hasMx = !!state.labDoubleExpCanvas;
+    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
     const { phone, body, lens, film } = getSelectedGear();
     let blob;
     try {
-      const sourceData = src.getContext('2d').getImageData(0, 0, src.width, src.height);
+      const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+      let mixImageData = null;
+      if (hasMx && labMxScratchCanvas && labMxScratchCanvas.width === src.width && labMxScratchCanvas.height === src.height) {
+        mixImageData = labMxScratchCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+      }
       const output = await processFilmImage(sourceData, src.width, src.height, {
         phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
         grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.94 });
+      }, { output: 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
       blob = output.blob;
     } catch (error) { showToast('❌ Could not process this image'); return; }
+    finally {
+      if (expBtn) { expBtn.disabled = false; expBtn.textContent = 'Save'; }
+    }
     if (!blob) { showToast('❌ Could not create image file'); return; }
 
     const filename = `tees-lab-${film.id}-${Date.now()}.jpg`;
