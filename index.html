@@ -867,7 +867,7 @@
       box-shadow: 0 1px 5px rgba(0,0,0,0.7);
     }
 
-    /* Tweak Pill Strip (Frame · Date · Adjust — 3 equal horizontal pills) */
+    /* Tweak Pill Strip (Frame · Date · Edit · Reset — 4 horizontal pills) */
     .tweak-strip-row {
       display: flex;
       align-items: center;
@@ -875,9 +875,80 @@
     }
     .tweak-pills-wrap {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px;
       width: 100%;
+    }
+    .tweak-pill.reset-pill {
+      opacity: 0.62;
+    }
+    .tweak-pill.reset-pill.dirty {
+      opacity: 1;
+      border-color: rgba(245, 166, 35, 0.55);
+      color: #f5a623;
+    }
+    .export-preview-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #14171f;
+      border: 1px solid #242a37;
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    .export-preview-thumb {
+      width: 76px;
+      height: 54px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #090b0f;
+      border: 1px solid #272d3b;
+      flex-shrink: 0;
+    }
+    .export-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .export-info-cell {
+      background: #12151d;
+      border: 1px solid #232834;
+      border-radius: 8px;
+      padding: 6px 8px;
+      min-width: 0;
+    }
+    .export-info-lbl {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .export-info-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f3f4f6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .export-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #14171f;
+      border: 1px solid #242a37;
+      border-radius: 9px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #e5e7eb;
+      cursor: pointer;
     }
     .tweak-pill {
       min-width: 0;
@@ -3939,6 +4010,7 @@
             <div class="canvas-float-tools" id="canvasFloatTools">
               <button class="float-pill" id="btnToggleLabZoom" type="button" title="Toggle 2× zoom">🔍 1×</button>
               <button class="float-pill" id="btnToggleSplit" type="button">◧ Split</button>
+              <button class="float-pill" id="btnToggleLabOriginal" type="button" title="Switch between Original photo and Film edit">👁️ Original</button>
               <button class="float-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Camera Roll" aria-label="Delete photo from Camera Roll" style="display:none;">🗑 Delete</button>
             </div>
           </div>
@@ -3979,7 +4051,7 @@
               <button class="filter-chip" id="btnCloseTweakDrawer" style="padding:2px 7px;font-size:9.5px;">✕</button>
             </div>
           </div>
-          <input type="range" id="activeTweakSlider" min="0" max="100" value="100" />
+          <input type="range" id="activeTweakSlider" min="0" max="100" value="85" />
           <div class="tweak-frame-grid" id="tweakFrameStrip"></div>
           <div class="tweak-sub-grid" id="tweakSubStrip"></div>
         </div>
@@ -4471,6 +4543,33 @@
           <button class="filter-chip" data-gscene="archived" type="button">Archived (3)</button>
         </div>
         <div class="film-guide-list" id="filmGuideList"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: SAVE PHOTO & FILM INFO -->
+    <div class="sheet-backdrop" id="exportSheetBackdrop">
+      <div class="sheet-card">
+        <div class="sheet-head">
+          <span>💾 Save Photo &amp; Film Info</span>
+          <button class="btn-pill btn-ghost" id="btnCloseExportSheet" type="button" style="height:26px;">✕</button>
+        </div>
+        <div class="export-preview-row">
+          <img class="export-preview-thumb" id="exportPreviewThumb" alt="Edited preview" />
+          <div style="min-width:0;flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#f5a623;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="exportInfoHeadline">Kodak Portra 400 · ISO 400</div>
+            <div style="font-size:10.5px;color:#cbd5e1;margin-top:2px;line-height:1.35;" id="exportInfoSubline">SLR · 50mm f/1.4 · Strength 85%</div>
+            <div style="font-family:var(--mono);font-size:9px;color:#94a3b8;margin-top:3px;" id="exportExifStatus">EXIF: Camera, Lens, ISO &amp; Film tags embedded</div>
+          </div>
+        </div>
+        <div class="export-info-grid" id="exportInfoGrid"></div>
+        <label class="export-toggle-row" for="chkFilmInfoStamp">
+          <span>🏷️ Print film info footer on saved photo</span>
+          <input type="checkbox" id="chkFilmInfoStamp" checked style="accent-color:#f5a623;width:16px;height:16px;" />
+        </label>
+        <div style="display:grid;grid-template-columns:1fr 1.35fr;gap:8px;">
+          <button class="btn-pill btn-ghost" id="btnCopyFilmInfo" type="button" style="height:36px;justify-content:center;font-size:12px;">📋 Copy Info</button>
+          <button class="btn-pill btn-brass" id="btnConfirmExport" type="button" style="height:36px;justify-content:center;font-size:12.5px;">💾 Save Photo</button>
+        </div>
       </div>
     </div>
 
@@ -5945,8 +6044,11 @@
     leakAmt: 0,
     frameType: 'darkroom-white',
     dateStamp: 'off',
+    filmInfoStamp: true,
     hfDiptychMode: true,
+    activeTab: 'camera',
 
+    labOriginalMode: false,
     splitMode: false,
     splitPos: 50,
     recipes: [],
@@ -6137,7 +6239,7 @@
     });
   }
   let apPinnedWideOpen = true;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'hfDiptychMode', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'filmInfoStamp', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -6157,8 +6259,10 @@
       if (Object.prototype.hasOwnProperty.call(settings, key)) state[key] = settings[key];
     });
     state.phoneId = 'auto-detect';
-    state.frameType = 'darkroom-white';
-    state.dateStamp = 'off';
+    state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
+    state.dateStamp = settings.dateStamp === 'exif-or-today' ? 'exif-or-today' : 'off';
+    state.filmInfoStamp = Object.prototype.hasOwnProperty.call(settings, 'filmInfoStamp') ? !!settings.filmInfoStamp : true;
+    state.activeTab = settings.activeTab === 'darkroom' ? 'darkroom' : 'camera';
     if (!localStorage.getItem('teeslab-half-frame-2f-default-v1')) {
       state.hfDiptychMode = true;
       localStorage.setItem('teeslab-half-frame-2f-default-v1', '1');
@@ -6209,7 +6313,7 @@
       });
     }
     try {
-      snapshot.settings = { ...settings, hfDiptychMode: state.hfDiptychMode };
+      snapshot.settings = { ...settings, hfDiptychMode: state.hfDiptychMode, frameType: state.frameType, dateStamp: state.dateStamp, filmInfoStamp: state.filmInfoStamp, activeTab: state.activeTab };
       localStorage.setItem(APP_STATE_KEY, JSON.stringify(snapshot));
       localStorage.setItem('tees_lab_recipes_v1', JSON.stringify(state.recipes));
     } catch (e) {}
@@ -6244,6 +6348,7 @@
   document.addEventListener('input', scheduleSaveLocalAppState);
   document.addEventListener('change', scheduleSaveLocalAppState);
   document.addEventListener('click', scheduleSaveLocalAppState);
+  window.addEventListener('pagehide', saveLocalAppState);
 
   const previewCanvas = document.getElementById('previewCanvas');
   const originalOverlayCanvas = document.getElementById('originalOverlayCanvas');
@@ -7198,6 +7303,23 @@
     const sourceData = sourceCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
     const frameType = state.frameType;
     const { phone, body, lens, film } = getSelectedGear();
+    const lensShort = shortLensLabel(lens);
+    const formatLbl = getBodyFormatLabel(body, lens);
+
+    if (state.labOriginalMode) {
+      previewRequestVersion += 1;
+      canvasStack.style.aspectRatio = `${sourceCanvas.width} / ${sourceCanvas.height}`;
+      if (previewCanvas.width !== sourceCanvas.width || previewCanvas.height !== sourceCanvas.height) {
+        previewCanvas.width = sourceCanvas.width;
+        previewCanvas.height = sourceCanvas.height;
+      }
+      previewCanvas.getContext('2d').drawImage(sourceCanvas, 0, 0);
+      lastLabSourceMeta = { sourceCanvas, frameType: 'none', frameSeed: labFrameSeed, version: previewRequestVersion };
+      if (state.splitMode || holdOriginalActive) ensureOriginalOverlay();
+      const liveBadge = document.getElementById('liveGearBadge');
+      if (liveBadge) liveBadge.innerHTML = `<strong>Original (Unedited)</strong> — ${escapeHtml(body.name)} (${escapeHtml(formatLbl)})`;
+      return;
+    }
 
     try {
       const output = await processFilmImage(sourceData, sourceCanvas.width, sourceCanvas.height, {
@@ -7231,8 +7353,6 @@
       lastLabSourceMeta = { sourceCanvas, frameType, frameSeed: labFrameSeed, version: requestVersion };
       if (state.splitMode || holdOriginalActive) ensureOriginalOverlay();
 
-      const lensShort = shortLensLabel(lens);
-      const formatLbl = getBodyFormatLabel(body, lens);
       const liveBadge = document.getElementById('liveGearBadge');
       if (liveBadge) liveBadge.innerHTML = `${escapeHtml(body.name)} (${escapeHtml(formatLbl)}) — ${escapeHtml(lensShort)} — <strong>${escapeHtml(film.name)}</strong>`;
       output.bitmap?.close();
@@ -7558,6 +7678,7 @@
         chip.className = 'tweak-frame-chip';
         chip.textContent = opt.label;
         chip.addEventListener('click', () => {
+          state.labOriginalMode = false;
           state.frameType = opt.id;
           syncAllUI();
           renderPreview();
@@ -7599,6 +7720,7 @@
       datePill.className = 'tweak-pill';
       datePill.innerHTML = `<span>Date</span><span class="tweak-pill-val"></span>`;
       datePill.addEventListener('click', () => {
+        state.labOriginalMode = false;
         state.dateStamp = state.dateStamp !== 'off' ? 'off' : 'exif-or-today';
         syncAllUI();
         renderPreview();
@@ -7620,6 +7742,15 @@
         renderTweaksDock();
       });
       strip.appendChild(adjustPill);
+
+      const resetPill = document.createElement('button');
+      resetPill.type = 'button';
+      resetPill.dataset.pillId = 'reset';
+      resetPill.className = 'tweak-pill reset-pill';
+      resetPill.title = 'Return to initial film & lab defaults';
+      resetPill.innerHTML = `<span>↺ Reset</span><span class="tweak-pill-val">Default</span>`;
+      resetPill.addEventListener('click', () => resetAllLabTweaks());
+      strip.appendChild(resetPill);
     }
 
     if (subStrip && !subStrip.dataset.built) {
@@ -7633,6 +7764,7 @@
         sub.title = `${t.label} (double-tap to reset)`;
         sub.innerHTML = `<span>${t.short || t.label}</span><span class="tweak-sub-val"></span>`;
         sub.addEventListener('click', () => {
+          state.labOriginalMode = false;
           tweakDrawerMode = 'adjust';
           state.activeTweakKey = t.key;
           if (t.key === 'leakAmt' && state.leakType === 'none') {
@@ -7660,13 +7792,14 @@
 
     const { film } = getSelectedGear();
     let adjustedCount = 0;
-    if (state.strength !== 100) adjustedCount++;
+    if (state.strength !== 85) adjustedCount++;
     if (state.exposure !== 0) adjustedCount++;
     if (state.grain !== film.grainBase) adjustedCount++;
     if (state.leakType !== 'none' && state.leakAmt > 0) adjustedCount++;
     if (state.labDoubleExpCanvas) adjustedCount++;
 
     const isDateOn = state.dateStamp !== 'off';
+    const isModifiedFromDefault = adjustedCount > 0 || state.frameType !== 'darkroom-white' || isDateOn || !!state.labOriginalMode;
     const frameBtn = strip.querySelector('[data-pill-id="frame"]');
     if (frameBtn) {
       frameBtn.classList.toggle('active', isFrameMode || state.frameType !== 'none');
@@ -7684,6 +7817,12 @@
         ? `${def.short || def.label} ${def.fmt(state[def.key])}`
         : (adjustedCount > 0 ? `${adjustedCount} tuned` : 'Tune');
     }
+    const resetBtn = strip.querySelector('[data-pill-id="reset"]');
+    if (resetBtn) {
+      resetBtn.classList.toggle('dirty', isModifiedFromDefault);
+      resetBtn.lastElementChild.textContent = state.labOriginalMode ? 'Original' : (isModifiedFromDefault ? 'Initial' : 'Default');
+    }
+    document.getElementById('btnToggleLabOriginal')?.classList.toggle('active', !!state.labOriginalMode);
     if (subStrip) {
       TWEAK_DEFS.forEach(t => {
         const sub = subStrip.querySelector(`[data-sub-id="${t.key}"]`);
@@ -7919,6 +8058,7 @@
   }
 
   function selectFilmStock(filmId) {
+    state.labOriginalMode = false;
     state.filmId = filmId;
     state.camISO = null;
     const f = FILM_STOCKS.find(x => x.id === filmId);
@@ -11157,6 +11297,8 @@
 
   function switchMainTab(tabId) {
     if (!tabId) return;
+    state.activeTab = tabId === 'darkroom' ? 'darkroom' : 'camera';
+    scheduleSaveLocalAppState();
     document.querySelector('.app-shell')?.setAttribute('data-active-tab', tabId);
     syncOrientationLayout();
     document.querySelectorAll('.bnav-btn[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
@@ -11237,42 +11379,312 @@
     }
   }
 
+  function buildFilmInfoSpec() {
+    const { body, lens, film } = getSelectedGear();
+    const isOrig = !!state.labOriginalMode;
+    const focalMm = Math.round((lens.isZoom ? state.zoomFocalMm : lens.mm) || 50);
+    const apertureNum = Number((state.lensAperture || lens.minF || 2.8).toFixed(1));
+    const lensShort = shortLensLabel(lens);
+    const evVal = (state.exposure / 100);
+    const evStr = `${evVal >= 0 ? '+' : ''}${evVal.toFixed(1)} EV`;
+    const frameMap = { 'none': 'None', 'darkroom-white': 'White Border', '35mm-sprocket': '35mm Film', 'polaroid': 'Polaroid' };
+    const frameLabel = frameMap[state.frameType] || 'Border';
+    const d = new Date();
+    const pad2 = n => String(n).padStart(2, '0');
+    let dateExif = `${d.getFullYear()}:${pad2(d.getMonth() + 1)}:${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+    let dateDisplay = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    if (state.exif?.dateRaw) {
+      const m = state.exif.dateRaw.match(/^(\d{4}):(\d{2}):(\d{2})(?:\s+(\d{2}:\d{2}:\d{2}))?/);
+      if (m) {
+        dateExif = `${m[1]}:${m[2]}:${m[3]} ${m[4] || '12:00:00'}`;
+        dateDisplay = `${m[1]}-${m[2]}-${m[3]}`;
+      }
+    }
+    const iso = film.iso || 400;
+    const filmTypeLabel = film.isBW ? 'Black & White' : (film.brand === 'cinema' ? 'Cinema Film' : 'Color Negative');
+    const headline = isOrig ? `Original Photo (Unedited)` : `${film.name} · ISO ${iso}`;
+    const subline = isOrig
+      ? `${body.name} · ${lensShort} · Unedited original image`
+      : `${body.name} · ${lensShort} · Strength ${state.strength}% · Grain ${state.grain}%`;
+    const footerLeft = isOrig ? `ORIGINAL · UNEDITED` : `${film.name.toUpperCase()} · ISO ${iso}`;
+    const footerRight = isOrig
+      ? `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${dateDisplay}`
+      : `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
+    const captionText = isOrig
+      ? `Original Photo (Unedited) | ${body.name} • ${lensShort} | ${dateDisplay} | Tee's Lab`
+      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} • ${lensShort} | Lab: Strength ${state.strength}%, Exp ${evStr}, Grain ${state.grain}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Lab`;
+    return {
+      film, body, lens, isOrig, iso, focalMm, apertureNum, lensShort, evStr, frameLabel, filmTypeLabel,
+      dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText
+    };
+  }
+
+  function appendFilmInfoFooterCanvas(photoCanvas, spec) {
+    const w = photoCanvas.width, h = photoCanvas.height;
+    const barH = Math.max(38, Math.round(h * 0.044));
+    const out = document.createElement('canvas');
+    out.width = w;
+    out.height = h + barH;
+    const ctx = out.getContext('2d');
+    const isPaperFrame = state.frameType === 'darkroom-white' || state.frameType === 'polaroid';
+    ctx.fillStyle = isPaperFrame ? '#f7f3e9' : '#0d0f14';
+    ctx.fillRect(0, 0, w, out.height);
+    ctx.drawImage(photoCanvas, 0, 0);
+
+    ctx.strokeStyle = isPaperFrame ? 'rgba(92, 83, 70, 0.20)' : 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = Math.max(1, Math.round(barH * 0.025));
+    ctx.beginPath();
+    ctx.moveTo(0, h + 0.5);
+    ctx.lineTo(w, h + 0.5);
+    ctx.stroke();
+
+    const padX = Math.max(16, Math.round(w * 0.022));
+    const fontSize = Math.max(11, Math.round(barH * 0.34));
+    const cy = h + Math.round(barH * 0.52);
+    const dotR = Math.max(3, Math.round(fontSize * 0.28));
+    const brandColors = { fuji: '#22c55e', kodak: '#f5a623', cinema: '#38bdf8', bw: '#9ca3af' };
+    ctx.fillStyle = spec.isOrig ? '#94a3b8' : (brandColors[spec.film.brand] || '#f5a623');
+    ctx.beginPath();
+    ctx.arc(padX + dotR, cy, dotR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = `700 ${fontSize}px "SF Mono", Menlo, Consolas, monospace`;
+    ctx.fillStyle = isPaperFrame ? '#3c362e' : '#f1f5f9';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    ctx.fillText(spec.footerLeft, padX + dotR * 2 + Math.round(fontSize * 0.5), cy);
+
+    ctx.font = `600 ${Math.round(fontSize * 0.92)}px "SF Mono", Menlo, Consolas, monospace`;
+    ctx.fillStyle = isPaperFrame ? '#6b6256' : '#9ca3af';
+    ctx.textAlign = 'right';
+    ctx.fillText(spec.footerRight, w - padX, cy);
+    return out;
+  }
+
+  async function injectExifIntoJpegBlob(blob, spec) {
+    try {
+      const buf = await blob.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      if (bytes.length < 4 || bytes[0] !== 0xFF || bytes[1] !== 0xD8) return blob;
+
+      const encAscii = str => {
+        const clean = String(str || '').replace(/[^\x20-\x7E]/g, '-');
+        const out = new Uint8Array(clean.length + 1);
+        for (let i = 0; i < clean.length; i++) out[i] = clean.charCodeAt(i);
+        out[clean.length] = 0;
+        return out;
+      };
+      const mkEntry = (tag, type, count, payloadBytes) => ({ tag, type, count, data: payloadBytes });
+      const mkAscii = (tag, str) => { const d = encAscii(str); return mkEntry(tag, 2, d.length, d); };
+      const mkShort = (tag, val) => mkEntry(tag, 3, 1, new Uint8Array([(val >> 8) & 0xFF, val & 0xFF]));
+      const mkLong = (tag, val) => mkEntry(tag, 4, 1, new Uint8Array([(val >>> 24) & 0xFF, (val >>> 16) & 0xFF, (val >>> 8) & 0xFF, val & 0xFF]));
+      const mkRat = (tag, num, den) => mkEntry(tag, 5, 1, new Uint8Array([
+        (num >>> 24) & 0xFF, (num >>> 16) & 0xFF, (num >>> 8) & 0xFF, num & 0xFF,
+        (den >>> 24) & 0xFF, (den >>> 16) & 0xFF, (den >>> 8) & 0xFF, den & 0xFF
+      ]));
+
+      const ifd0Entries = [
+        mkAscii(0x010E, spec.captionText),
+        mkAscii(0x010F, "Tee's Lab"),
+        mkAscii(0x0110, spec.isOrig ? spec.body.name : `${spec.body.name} · ${spec.film.name}`),
+        mkAscii(0x0131, `Tee's Lab v${document.getElementById('versionLabel')?.textContent?.replace(/^v/i, '') || '2.4'}`),
+        mkAscii(0x0132, spec.dateExif),
+        mkLong(0x8769, 0)
+      ].sort((a, b) => a.tag - b.tag);
+
+      const userCmtStr = String(spec.captionText || '').replace(/[^\x20-\x7E]/g, '-');
+      const userCmtBytes = new Uint8Array(8 + userCmtStr.length);
+      userCmtBytes.set([0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00], 0);
+      for (let i = 0; i < userCmtStr.length; i++) userCmtBytes[8 + i] = userCmtStr.charCodeAt(i);
+
+      const exifEntries = [
+        mkRat(0x829D, Math.max(10, Math.round((spec.apertureNum || 2.8) * 10)), 10),
+        mkShort(0x8827, Math.max(25, Math.min(65000, Math.round(spec.iso || 400)))),
+        mkEntry(0x9000, 7, 4, new Uint8Array([0x30, 0x32, 0x33, 0x31])),
+        mkAscii(0x9003, spec.dateExif),
+        mkRat(0x920A, Math.max(10, Math.round((spec.focalMm || 50) * 10)), 10),
+        mkEntry(0x9286, 7, userCmtBytes.length, userCmtBytes),
+        mkAscii(0xA434, spec.lensShort)
+      ].sort((a, b) => a.tag - b.tag);
+
+      const tiffChunks = [];
+      const pushU16 = v => tiffChunks.push(new Uint8Array([(v >> 8) & 0xFF, v & 0xFF]));
+      const pushU32 = v => tiffChunks.push(new Uint8Array([(v >>> 24) & 0xFF, (v >>> 16) & 0xFF, (v >>> 8) & 0xFF, v & 0xFF]));
+
+      // TIFF header: MM, 42, IFD0 offset = 8
+      tiffChunks.push(new Uint8Array([0x4D, 0x4D, 0x00, 0x2A, 0x00, 0x00, 0x00, 0x08]));
+
+      const ifd0Size = 2 + ifd0Entries.length * 12 + 4;
+      let cursor = 8 + ifd0Size;
+      const ifd0Extra = [];
+      const exifPtrEntry = ifd0Entries.find(e => e.tag === 0x8769);
+
+      pushU16(ifd0Entries.length);
+      for (const e of ifd0Entries) {
+        if (e === exifPtrEntry) continue;
+        pushU16(e.tag); pushU16(e.type); pushU32(e.count);
+        if (e.data.length <= 4) {
+          const inline = new Uint8Array(4);
+          inline.set(e.data, 0);
+          tiffChunks.push(inline);
+        } else {
+          pushU32(cursor);
+          ifd0Extra.push(e.data);
+          cursor += e.data.length + (e.data.length % 2);
+        }
+      }
+      const exifIfdOffset = cursor;
+      // Write ExifIFD pointer entry in sorted position by rebuilding IFD0 header bytes cleanly
+      // Simpler: compute offset before emitting IFD0!
+      tiffChunks.length = 1; // keep only TIFF header
+      cursor = 8 + ifd0Size;
+      for (const e of ifd0Entries) {
+        if (e.data.length > 4) cursor += e.data.length + (e.data.length % 2);
+      }
+      const realExifIfdOffset = cursor;
+      exifPtrEntry.data = new Uint8Array([(realExifIfdOffset >>> 24) & 0xFF, (realExifIfdOffset >>> 16) & 0xFF, (realExifIfdOffset >>> 8) & 0xFF, realExifIfdOffset & 0xFF]);
+
+      let writeCur = 8 + ifd0Size;
+      const extras0 = [];
+      pushU16(ifd0Entries.length);
+      for (const e of ifd0Entries) {
+        pushU16(e.tag); pushU16(e.type); pushU32(e.count);
+        if (e.data.length <= 4) {
+          const inline = new Uint8Array(4);
+          inline.set(e.data, 0);
+          tiffChunks.push(inline);
+        } else {
+          pushU32(writeCur);
+          extras0.push(e.data);
+          writeCur += e.data.length;
+          if (e.data.length % 2) { extras0.push(new Uint8Array([0])); writeCur += 1; }
+        }
+      }
+      pushU32(0); // next IFD = 0
+      extras0.forEach(d => tiffChunks.push(d));
+
+      const exifIfdSize = 2 + exifEntries.length * 12 + 4;
+      let exifDataCur = realExifIfdOffset + exifIfdSize;
+      const extrasExif = [];
+      pushU16(exifEntries.length);
+      for (const e of exifEntries) {
+        pushU16(e.tag); pushU16(e.type); pushU32(e.count);
+        if (e.data.length <= 4) {
+          const inline = new Uint8Array(4);
+          inline.set(e.data, 0);
+          tiffChunks.push(inline);
+        } else {
+          pushU32(exifDataCur);
+          extrasExif.push(e.data);
+          exifDataCur += e.data.length;
+          if (e.data.length % 2) { extrasExif.push(new Uint8Array([0])); exifDataCur += 1; }
+        }
+      }
+      pushU32(0);
+      extrasExif.forEach(d => tiffChunks.push(d));
+
+      const tiffLen = tiffChunks.reduce((s, a) => s + a.length, 0);
+      const app1PayloadLen = 2 + 6 + tiffLen;
+      if (app1PayloadLen > 65535) return blob;
+      const app1 = new Uint8Array(2 + app1PayloadLen);
+      app1[0] = 0xFF; app1[1] = 0xE1;
+      app1[2] = (app1PayloadLen >> 8) & 0xFF; app1[3] = app1PayloadLen & 0xFF;
+      app1.set([0x45, 0x78, 0x69, 0x66, 0x00, 0x00], 4);
+      let pos = 10;
+      for (const c of tiffChunks) { app1.set(c, pos); pos += c.length; }
+
+      let insertAt = 2;
+      if (bytes.length > 6 && bytes[2] === 0xFF && bytes[3] === 0xE0) {
+        const jfifLen = (bytes[4] << 8) | bytes[5];
+        if (2 + 2 + jfifLen < bytes.length) insertAt = 4 + jfifLen;
+      }
+      return new Blob([bytes.slice(0, insertAt), app1, bytes.slice(insertAt)], { type: 'image/jpeg' });
+    } catch (e) {
+      return blob;
+    }
+  }
+
+  function openExportSheet() {
+    if (!state.fullSourceCanvas) return;
+    const spec = buildFilmInfoSpec();
+    const thumbEl = document.getElementById('exportPreviewThumb');
+    if (thumbEl && previewCanvas.width > 0) {
+      try { thumbEl.src = previewCanvas.toDataURL('image/jpeg', 0.78); } catch (e) {}
+    }
+    const headlineEl = document.getElementById('exportInfoHeadline');
+    if (headlineEl) headlineEl.textContent = spec.headline;
+    const sublineEl = document.getElementById('exportInfoSubline');
+    if (sublineEl) sublineEl.textContent = spec.subline;
+    const gridEl = document.getElementById('exportInfoGrid');
+    if (gridEl) {
+      const cells = [
+        { lbl: 'Film Stock', val: spec.isOrig ? 'Unedited Original' : `${spec.film.name} (ISO ${spec.iso})` },
+        { lbl: 'Camera & Lens', val: `${spec.body.name} · ${spec.lensShort}` },
+        { lbl: 'Lab Tweaks', val: spec.isOrig ? 'Raw original (0% filter)' : `Strength ${state.strength}% · ${spec.evStr} · Grain ${state.grain}%` },
+        { lbl: 'Frame & Date', val: `${spec.frameLabel} · ${spec.dateDisplay}` }
+      ];
+      gridEl.innerHTML = cells.map(c => `<div class="export-info-cell"><div class="export-info-lbl">${escapeHtml(c.lbl)}</div><div class="export-info-val">${escapeHtml(c.val)}</div></div>`).join('');
+    }
+    const chk = document.getElementById('chkFilmInfoStamp');
+    if (chk) chk.checked = !!state.filmInfoStamp;
+    document.getElementById('exportSheetBackdrop')?.classList.add('open');
+  }
+
   async function exportFullResolution() {
     if (!state.fullSourceCanvas) return;
-    const expBtn = document.getElementById('btnExport');
+    const expBtn = document.getElementById('btnConfirmExport') || document.getElementById('btnExport');
+    const prevBtnTxt = expBtn ? expBtn.textContent : '💾 Save Photo';
     if (expBtn) { expBtn.disabled = true; expBtn.textContent = 'Saving…'; }
-    showToast('⏳ Saving high-quality image...');
+    showToast('⏳ Saving photo with film info...');
     await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
-    const hasMx = !!state.labDoubleExpCanvas;
+    const hasMx = !state.labOriginalMode && !!state.labDoubleExpCanvas;
     const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
     const { phone, body, lens, film } = getSelectedGear();
+    const spec = buildFilmInfoSpec();
     let blob;
     try {
-      const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
-      let mixImageData = null;
-      if (hasMx && labMxScratchCanvas && labMxScratchCanvas.width === src.width && labMxScratchCanvas.height === src.height) {
-        mixImageData = labMxScratchCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+      if (state.labOriginalMode) {
+        const outCanvas = state.filmInfoStamp ? appendFilmInfoFooterCanvas(src, spec) : src;
+        blob = await canvasToJpegBlob(outCanvas, 0.94);
+      } else {
+        const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+        let mixImageData = null;
+        if (hasMx && labMxScratchCanvas && labMxScratchCanvas.width === src.width && labMxScratchCanvas.height === src.height) {
+          mixImageData = labMxScratchCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+        }
+        const output = await processFilmImage(sourceData, src.width, src.height, {
+          phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
+          grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+          leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
+          isDiptych: !!state.sourceIsDiptych,
+          flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
+        }, { output: state.filmInfoStamp ? 'bitmap' : 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+        if (state.filmInfoStamp) {
+          const renderedImg = output?.bitmap || output?.canvas;
+          if (renderedImg) {
+            const stamped = appendFilmInfoFooterCanvas(renderedImg, spec);
+            blob = await canvasToJpegBlob(stamped, 0.94);
+          }
+          output?.bitmap?.close?.();
+        } else {
+          blob = output?.blob;
+        }
       }
-      const output = await processFilmImage(sourceData, src.width, src.height, {
-        phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
-        grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
-        leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
-        isDiptych: !!state.sourceIsDiptych,
-        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
-      blob = output.blob;
+      if (blob) blob = await injectExifIntoJpegBlob(blob, spec);
     } catch (error) { showToast('❌ Could not process this image'); return; }
     finally {
-      if (expBtn) { expBtn.disabled = false; expBtn.textContent = 'Save'; }
+      if (expBtn) { expBtn.disabled = false; expBtn.textContent = prevBtnTxt; }
     }
     if (!blob) { showToast('❌ Could not create image file'); return; }
+    document.getElementById('exportSheetBackdrop')?.classList.remove('open');
 
-    const filename = `tees-lab-${film.id}-${Date.now()}.jpg`;
+    const filmSlug = state.labOriginalMode ? 'original' : film.id;
+    const filename = `tees-lab-${filmSlug}-${body.id}-${spec.focalMm}mm-iso${spec.iso}-${Date.now()}.jpg`;
     const imageFile = new File([blob], filename, { type: 'image/jpeg' });
     try {
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
         showToast('Choose “Save Image” in the share sheet to save to Photos');
-        await navigator.share({ files: [imageFile], title: "Tee's Lab photo" });
+        await navigator.share({ files: [imageFile], title: "Tee's Lab photo", text: spec.captionText });
         return;
       }
     } catch (error) {
@@ -11282,7 +11694,7 @@
     const u = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = u; a.download = filename; a.click();
     setTimeout(() => URL.revokeObjectURL(u), 1000);
-    showToast('✅ Image downloaded');
+    showToast(`✅ Saved (${spec.film.name} · ISO ${spec.iso})`);
   }
 
   function escapeHtml(s) {
@@ -11304,7 +11716,33 @@
   const fileInput = document.getElementById('fileInput');
   fileInput.addEventListener('change', e => { if (e.target.files[0]) handleImageFile(e.target.files[0]); e.target.value = ''; });
   document.getElementById('btnRotatePhoto')?.addEventListener('click', rotateLabPhoto);
-  document.getElementById('btnExport').addEventListener('click', exportFullResolution);
+  document.getElementById('btnExport').addEventListener('click', openExportSheet);
+  document.getElementById('btnCloseExportSheet')?.addEventListener('click', () => {
+    document.getElementById('exportSheetBackdrop')?.classList.remove('open');
+  });
+  document.getElementById('exportSheetBackdrop')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+  document.getElementById('chkFilmInfoStamp')?.addEventListener('change', e => {
+    state.filmInfoStamp = !!e.target.checked;
+    scheduleSaveLocalAppState();
+  });
+  document.getElementById('btnCopyFilmInfo')?.addEventListener('click', async () => {
+    const spec = buildFilmInfoSpec();
+    try {
+      await navigator.clipboard.writeText(spec.captionText);
+      showToast('📋 Film info copied');
+    } catch (e) {
+      showToast(spec.captionText);
+    }
+  });
+  document.getElementById('btnConfirmExport')?.addEventListener('click', exportFullResolution);
+  document.getElementById('btnToggleLabOriginal')?.addEventListener('click', () => {
+    state.labOriginalMode = !state.labOriginalMode;
+    renderTweaksDock();
+    renderPreview(true);
+    showToast(state.labOriginalMode ? '👁️ Viewing original unedited photo' : '🎞️ Returned to film edit');
+  });
 
   // Split, Lab 1×/2× Zoom, Pinch, Pan & Hold Original
   document.getElementById('btnToggleLabZoom')?.addEventListener('click', () => {
@@ -11896,12 +12334,14 @@
     renderTweaksDock();
   });
   document.getElementById('leakTypeSelect').addEventListener('change', e => {
+    state.labOriginalMode = false;
     state.leakType = e.target.value;
     if (state.leakType !== 'none' && state.leakAmt === 0) state.leakAmt = 45;
     renderTweaksDock(); renderPreview();
   });
   const activeTweakSliderEl = document.getElementById('activeTweakSlider');
   activeTweakSliderEl.addEventListener('input', (e) => {
+    state.labOriginalMode = false;
     const val = Number(e.target.value);
     const def = TWEAK_DEFS.find(d => d.key === state.activeTweakKey) || TWEAK_DEFS[0];
     state.activeTweakKey = def.key;
@@ -11919,20 +12359,25 @@
   activeTweakSliderEl.addEventListener('change', () => {
     renderTweaksDock();
   });
-  document.getElementById('btnResetTweaks').addEventListener('click', () => {
+  function resetAllLabTweaks() {
     const { lens, film } = getSelectedGear();
+    state.labOriginalMode = false;
     state.strength = 85; state.exposure = 0; state.warmth = 0;
     state.grain = film.grainBase; state.halation = film.halationBase;
     state.bloom = lens.bloomBase; state.vignette = lens.vignetteBase;
     state.leakType = 'none'; state.leakAmt = 0;
+    state.frameType = 'darkroom-white'; state.dateStamp = 'off';
     state.labDoubleExpMix = 50;
     if (state.labDoubleExpCanvas) {
       clearLabDoubleExp();
     } else {
-      renderTweaksDock(); renderPreview();
+      syncAllUI();
+      renderPreview(true);
     }
-    showToast('↺ Adjustments reset');
-  });
+    scheduleSaveLocalAppState();
+    showToast('↺ Returned to initial settings');
+  }
+  document.getElementById('btnResetTweaks').addEventListener('click', resetAllLabTweaks);
 
   // Save current combo as a Recipe
   document.getElementById('btnSaveRecipe').addEventListener('click', () => {
@@ -12506,6 +12951,11 @@
       return;
     }
 
+    if (document.getElementById('exportSheetBackdrop')?.classList.contains('open')) {
+      if (e.key === 'Escape') { e.preventDefault(); document.getElementById('exportSheetBackdrop').classList.remove('open'); }
+      return;
+    }
+
     if (document.getElementById('view-darkroom')?.classList.contains('active')
         && !document.getElementById('comboSheetBackdrop')?.classList.contains('open')
         && !document.getElementById('sampleSheetBackdrop')?.classList.contains('open')
@@ -12589,10 +13039,10 @@
   syncAllUI();
   renderContactSheet();
   cameraRollReady = restoreCameraRoll();
-  switchMainTab('camera');
+  switchMainTab(state.activeTab === 'darkroom' ? 'darkroom' : 'camera');
   syncOrientationLayout();
   await loadSampleScenePhotos();
-  loadSourceCanvas(SAMPLES[0].canvas, null);
+  loadSourceCanvas(SAMPLES[0].canvas, null, { sampleId: SAMPLES[0].id, forcePreviewRender: state.activeTab === 'darkroom' });
   if (hasUrlPreset) showToast('🔗 Applied shared film recipe');
 })();
 </script>
