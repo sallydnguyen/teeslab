@@ -6,7 +6,8 @@
   <meta name="theme-color" content="#090a0c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <title>Tee's Lab — 35mm Film Mobile</title>
+  <meta name="apple-mobile-web-app-title" content="Tee's Film Lab" />
+  <title>Tee's Film Lab — 35mm Film Mobile</title>
   <link rel="icon" type="image/jpeg" href="./logo.jpg" />
   <link rel="apple-touch-icon" href="./logo.jpg" />
   <link rel="manifest" href="./manifest.json" />
@@ -11431,7 +11432,7 @@
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
         showToast('Choose “Save Image” in the share sheet to save to Photos');
-        await navigator.share({ files: [imageFile], title: `Tee's Lab shot #${shot.num}` });
+        await navigator.share({ files: [imageFile], title: `Tee's Film Lab shot #${shot.num}` });
         return;
       }
       const url = URL.createObjectURL(blob);
@@ -11472,7 +11473,7 @@
       if (navigator.share && navigator.canShare && navigator.canShare({ files: shareFiles })) {
         try {
           showToast(`Choose “Save ${shareFiles.length} Images” to save roll to Photos`);
-          await navigator.share({ files: shareFiles, title: `Tee's Lab Roll #${shots[0]?.rollNumber || 1}` });
+          await navigator.share({ files: shareFiles, title: `Tee's Film Lab Roll #${shots[0]?.rollNumber || 1}` });
           return;
         } catch (err) {
           if (err?.name === 'AbortError') { showToast('Save cancelled'); return; }
@@ -11621,8 +11622,8 @@
       ? `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${dateDisplay}`
       : `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
     const captionText = isOrig
-      ? `Original Photo (Unedited) | ${body.name} • ${lensShort} | ${dateDisplay} | Tee's Lab`
-      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} • ${lensShort} | Lab: Strength ${state.strength}%, Exp ${evStr}, Grain ${state.grain}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Lab`;
+      ? `Original Photo (Unedited) | ${body.name} • ${lensShort} | ${dateDisplay} | Tee's Film Lab`
+      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} • ${lensShort} | Lab: Strength ${state.strength}%, Exp ${evStr}, Grain ${state.grain}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
     return {
       film, body, lens, isOrig, iso, focalMm, apertureNum, lensShort, evStr, frameLabel, filmTypeLabel,
       dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText
@@ -11695,9 +11696,9 @@
 
       const ifd0Entries = [
         mkAscii(0x010E, spec.captionText),
-        mkAscii(0x010F, "Tee's Lab"),
+        mkAscii(0x010F, "Tee's Film Lab"),
         mkAscii(0x0110, spec.isOrig ? spec.body.name : `${spec.body.name} · ${spec.film.name}`),
-        mkAscii(0x0131, `Tee's Lab v${document.getElementById('versionLabel')?.textContent?.replace(/^v/i, '') || '2.4'}`),
+        mkAscii(0x0131, `Tee's Film Lab v${document.getElementById('versionLabel')?.textContent?.replace(/^v/i, '') || '2.4'}`),
         mkAscii(0x0132, spec.dateExif),
         mkLong(0x8769, 0)
       ].sort((a, b) => a.tag - b.tag);
@@ -11894,7 +11895,7 @@
     try {
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
         showToast('Choose “Save Image” in the share sheet to save to Photos');
-        await navigator.share({ files: [imageFile], title: "Tee's Lab photo", text: spec.captionText });
+        await navigator.share({ files: [imageFile], title: "Tee's Film Lab photo", text: spec.captionText });
         return;
       }
     } catch (error) {
