@@ -12045,7 +12045,7 @@
         return mkEntry(tag, 10, 1, buf);
       };
 
-      const cleanModel = spec.isOrig ? spec.body.name : `${spec.body.name} (${spec.film.name})`;
+      const cleanModel = spec.isOrig ? spec.body.name : `${spec.body.name} - ${spec.film.name}`;
       const apLabel = formatApertureLabel(spec.apertureNum || 3.5).replace('f/', 'f');
       const cleanLens = `${spec.focalMm}mm ${apLabel}`;
       const shutterHz = Math.max(0.25, Number(spec.shutterHz) || 125);
