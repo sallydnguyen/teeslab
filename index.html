@@ -4337,9 +4337,10 @@
         <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
           <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (18)</button>
           <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (4)</button>
-          <button class="filter-chip" data-fbrand="fuji" type="button">Fujifilm</button>
-          <button class="filter-chip" data-fbrand="kodak" type="button">Kodak</button>
-          <button class="filter-chip" data-fbrand="cinema" type="button">Cine &amp; Indie</button>
+          <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
+          <button class="filter-chip" data-fbrand="daylight" type="button">Daylight</button>
+          <button class="filter-chip" data-fbrand="warm" type="button">Golden Hour</button>
+          <button class="filter-chip" data-fbrand="night" type="button">Night &amp; Neon</button>
           <button class="filter-chip" data-fbrand="bw" type="button">B&amp;W</button>
           <button class="filter-chip" id="btnOpenFilmGuide" type="button" title="Film rolls guide & shooting tips" style="color:#f5a623;border-color:rgba(245,166,35,0.45);">? Guide</button>
         </div>
@@ -7336,12 +7337,14 @@
       btn.classList.toggle('active', btn.dataset.id === lens.id);
     });
 
-    // 3. Film Stocks Track (preserve scrollLeft across selection; rebuild when filter OR body changes)
+    // 3. Film Stocks Track (grouped by shooting scene; normalize legacy brand filters cleanly)
+    const validFilmFilters = new Set(['all', 'match', 'portrait', 'daylight', 'warm', 'night', 'bw']);
+    if (!validFilmFilters.has(state.filmBrandFilter)) state.filmBrandFilter = 'all';
     const filteredFilms = state.filmBrandFilter === 'all'
       ? FILM_STOCKS
       : (state.filmBrandFilter === 'match'
         ? recFilmList.map(id => FILM_STOCKS.find(f => f.id === id)).filter(Boolean)
-        : FILM_STOCKS.filter(f => f.brand === state.filmBrandFilter));
+        : FILM_STOCKS.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(state.filmBrandFilter)));
     const filmIdx = Math.max(0, filteredFilms.findIndex(f => f.id === state.filmId)) + 1;
     document.getElementById('pickerFilmCount').innerHTML = `<strong>${String(filmIdx).padStart(2, '0')}</strong>/${filteredFilms.length}`;
 
@@ -7350,7 +7353,7 @@
     const matchChip = document.getElementById('btnFilmMatchFilter');
     if (matchChip) matchChip.textContent = `★ Best (${recFilmList.length})`;
 
-    document.querySelectorAll('#filmBrandPills .filter-chip').forEach(chip => {
+    document.querySelectorAll('#filmBrandPills .filter-chip[data-fbrand]').forEach(chip => {
       chip.classList.toggle('active', chip.dataset.fbrand === state.filmBrandFilter);
     });
 
@@ -11752,6 +11755,7 @@
     });
   }
   document.getElementById('btnOpenFilmGuide')?.addEventListener('click', () => {
+    filmGuideSceneFilter = ['portrait', 'daylight', 'warm', 'night', 'bw'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
     renderFilmGuide();
     filmGuideBackdrop?.classList.add('open');
   });
