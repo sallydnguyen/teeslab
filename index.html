@@ -11445,13 +11445,16 @@
     if (nextBtn) nextBtn.disabled = (index >= state.camRollShots.length - 1);
 
     revokeViewerBlobUrl();
-    if (s.photoBlob) {
-      viewerBlobUrl = URL.createObjectURL(s.photoBlob);
+    const cachedFull = s.photoBlob || s._cachedPhotoBlob;
+    if (cachedFull) {
+      s._cachedPhotoBlob = cachedFull;
+      viewerBlobUrl = URL.createObjectURL(cachedFull);
       imgEl.src = viewerBlobUrl;
     } else if (s.thumbnailBlob) {
       viewerBlobUrl = URL.createObjectURL(s.thumbnailBlob);
       imgEl.src = viewerBlobUrl;
       loadCameraRollFiles(s.id).then(files => {
+        if (files?.photoBlob) s._cachedPhotoBlob = files.photoBlob;
         if (viewerActiveShotId === s.id && files?.photoBlob) {
           revokeViewerBlobUrl();
           viewerBlobUrl = URL.createObjectURL(files.photoBlob);
@@ -11651,17 +11654,44 @@
     } catch (error) {}
   }
 
+  function isAppleTouchDevice() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function prewarmCameraRollBlobs(limit = 6) {
+    const list = (state.camRollShots || []).slice(0, limit);
+    list.forEach(s => {
+      if (s && !s.photoBlob && !s._cachedPhotoBlob && !s._cachingBlob) {
+        s._cachingBlob = true;
+        loadCameraRollFiles(s.id).then(files => {
+          if (files?.photoBlob) s._cachedPhotoBlob = files.photoBlob;
+        }).catch(() => {}).finally(() => { s._cachingBlob = false; });
+      }
+    });
+  }
+
   async function saveRollPhoto(shot) {
     const filename = `tees-lab-roll-${shot.rollNumber || 1}-shot-${String(shot.num).padStart(2, '0')}.jpg`;
     try {
-      const files = shot.photoBlob ? shot : await loadCameraRollFiles(shot.id);
-      const blob = files?.photoBlob;
+      let blob = shot.photoBlob || shot._cachedPhotoBlob;
+      if (!blob) {
+        const files = await loadCameraRollFiles(shot.id);
+        blob = files?.photoBlob;
+        if (blob) shot._cachedPhotoBlob = blob;
+      }
       if (!blob) throw new Error('Processed photo is unavailable');
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
-        showToast('Choose “Save Image” in the share sheet to save to Photos');
-        await navigator.share({ files: [imageFile], title: `Tee's Film Lab shot #${shot.num}` });
-        return;
+        try {
+          await navigator.share({ files: [imageFile] });
+          return;
+        } catch (shareErr) {
+          if (shareErr?.name === 'AbortError') { showToast('Save cancelled'); return; }
+          if (isAppleTouchDevice()) {
+            showToast('✅ Photo ready — tap Save again to save to Photos');
+            return;
+          }
+        }
       }
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -11681,6 +11711,23 @@
       showToast('No completed roll photos to save');
       return;
     }
+    const allCached = shots.every(s => !!(s.photoBlob || s._cachedPhotoBlob));
+    if (allCached) {
+      const quickFiles = shots.map(s => {
+        const b = s.photoBlob || s._cachedPhotoBlob;
+        const rollNum = s.rollNumber || 1;
+        const filename = `tees-lab-roll-${rollNum}-shot-${String(s.num).padStart(2, '0')}.jpg`;
+        return new File([b], filename, { type: 'image/jpeg' });
+      });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: quickFiles })) {
+        try {
+          await navigator.share({ files: quickFiles });
+          return;
+        } catch (err) {
+          if (err?.name === 'AbortError') { showToast('Save cancelled'); return; }
+        }
+      }
+    }
     saveAllBusy = true;
     const vfSaveBtn = document.getElementById('btnVfSaveAllRoll');
     const sheetSaveBtn = document.getElementById('btnSaveAllRollShots');
@@ -11688,8 +11735,12 @@
     try {
       const items = [];
       for (const s of shots) {
-        const files = s.photoBlob ? s : await loadCameraRollFiles(s.id);
-        const blob = files?.photoBlob;
+        let blob = s.photoBlob || s._cachedPhotoBlob;
+        if (!blob) {
+          const files = await loadCameraRollFiles(s.id);
+          blob = files?.photoBlob;
+          if (blob) s._cachedPhotoBlob = blob;
+        }
         if (!blob) continue;
         const rollNum = s.rollNumber || 1;
         const filename = `tees-lab-roll-${rollNum}-shot-${String(s.num).padStart(2, '0')}.jpg`;
@@ -11700,11 +11751,14 @@
       const shareFiles = items.map(it => it.file);
       if (navigator.share && navigator.canShare && navigator.canShare({ files: shareFiles })) {
         try {
-          showToast(`Choose “Save ${shareFiles.length} Images” to save roll to Photos`);
-          await navigator.share({ files: shareFiles, title: `Tee's Film Lab Roll #${shots[0]?.rollNumber || 1}` });
+          await navigator.share({ files: shareFiles });
           return;
         } catch (err) {
           if (err?.name === 'AbortError') { showToast('Save cancelled'); return; }
+          if (isAppleTouchDevice()) {
+            showToast(`✅ ${shareFiles.length} photos ready — tap Save All again to save to Photos`);
+            return;
+          }
         }
       }
 
@@ -12043,6 +12097,80 @@
     }
   }
 
+  let preparedExportCache = null;
+  let preparedExportPromise = null;
+
+  function getExportCacheKey() {
+    const { body, lens, film } = getSelectedGear();
+    return `${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.activeF || 3.5).toFixed(2)}|${film.id}|${state.strength}|${state.exposure}|${state.warmth}|${state.grain}|${state.leakType}|${state.leakAmt}|${state.frameType}|${state.dateStamp}|${state.filmInfoStamp ? 1 : 0}|${state.labOriginalMode ? 1 : 0}|${labFrameSeed}`;
+  }
+
+  async function buildPreparedExportPayload() {
+    if (!state.fullSourceCanvas) return null;
+    const key = getExportCacheKey();
+    const hasMx = !state.labOriginalMode && !!state.labDoubleExpCanvas;
+    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
+    const { phone, body, lens, film } = getSelectedGear();
+    const spec = buildFilmInfoSpec();
+    let blob;
+    if (state.labOriginalMode) {
+      const outCanvas = state.filmInfoStamp ? appendFilmInfoFooterCanvas(src, spec) : src;
+      blob = await canvasToJpegBlob(outCanvas, 0.94);
+    } else {
+      const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+      let mixImageData = null;
+      if (hasMx && labMxScratchCanvas && labMxScratchCanvas.width === src.width && labMxScratchCanvas.height === src.height) {
+        mixImageData = labMxScratchCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
+      }
+      const output = await processFilmImage(sourceData, src.width, src.height, {
+        phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
+        grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+        leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
+        isDiptych: !!state.sourceIsDiptych,
+        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
+      }, { output: state.filmInfoStamp ? 'bitmap' : 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+      if (state.filmInfoStamp) {
+        const renderedImg = output?.bitmap || output?.canvas;
+        if (renderedImg) {
+          const stamped = appendFilmInfoFooterCanvas(renderedImg, spec);
+          blob = await canvasToJpegBlob(stamped, 0.94);
+        }
+        output?.bitmap?.close?.();
+      } else {
+        blob = output?.blob;
+      }
+    }
+    if (blob) blob = await injectExifIntoJpegBlob(blob, spec);
+    if (!blob) return null;
+    const filmSlug = state.labOriginalMode ? 'original' : film.id;
+    const filename = `tees-lab-${filmSlug}-${body.id}-${spec.focalMm}mm-iso${spec.iso}-${Date.now()}.jpg`;
+    const file = new File([blob], filename, { type: 'image/jpeg' });
+    return { key, blob, file, filename, spec };
+  }
+
+  function triggerPreparedExportPrepare() {
+    const key = getExportCacheKey();
+    if (preparedExportCache?.key === key) return Promise.resolve(preparedExportCache);
+    const statusEl = document.getElementById('exportExifStatus');
+    const confirmBtn = document.getElementById('btnConfirmExport');
+    if (statusEl) statusEl.textContent = '⏳ Preparing HD JPEG & EXIF tags…';
+    if (confirmBtn && !confirmBtn.disabled) confirmBtn.textContent = '💾 Save Photo';
+    const promise = buildPreparedExportPayload().then(res => {
+      if (res && getExportCacheKey() === res.key) {
+        preparedExportCache = res;
+        if (statusEl) statusEl.textContent = '✓ Ready · EXIF Camera, Lens, ISO & Film embedded';
+      }
+      return res;
+    }).catch(() => {
+      if (statusEl) statusEl.textContent = 'EXIF: Camera, Lens, ISO & Film tags embedded';
+      return null;
+    }).finally(() => {
+      if (preparedExportPromise === promise) preparedExportPromise = null;
+    });
+    preparedExportPromise = promise;
+    return promise;
+  }
+
   function openExportSheet() {
     if (!state.fullSourceCanvas) return;
     const spec = buildFilmInfoSpec();
@@ -12067,73 +12195,70 @@
     const chk = document.getElementById('chkFilmInfoStamp');
     if (chk) chk.checked = !!state.filmInfoStamp;
     document.getElementById('exportSheetBackdrop')?.classList.add('open');
+    triggerPreparedExportPrepare();
   }
 
-  async function exportFullResolution() {
-    if (!state.fullSourceCanvas) return;
-    const expBtn = document.getElementById('btnConfirmExport') || document.getElementById('btnExport');
-    const prevBtnTxt = expBtn ? expBtn.textContent : '💾 Save Photo';
-    if (expBtn) { expBtn.disabled = true; expBtn.textContent = 'Saving…'; }
-    showToast('⏳ Saving photo with film info...');
-    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
-    const hasMx = !state.labOriginalMode && !!state.labDoubleExpCanvas;
-    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
-    const { phone, body, lens, film } = getSelectedGear();
-    const spec = buildFilmInfoSpec();
-    let blob;
-    try {
-      if (state.labOriginalMode) {
-        const outCanvas = state.filmInfoStamp ? appendFilmInfoFooterCanvas(src, spec) : src;
-        blob = await canvasToJpegBlob(outCanvas, 0.94);
-      } else {
-        const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
-        let mixImageData = null;
-        if (hasMx && labMxScratchCanvas && labMxScratchCanvas.width === src.width && labMxScratchCanvas.height === src.height) {
-          mixImageData = labMxScratchCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
-        }
-        const output = await processFilmImage(sourceData, src.width, src.height, {
-          phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
-          grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
-          leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
-          isDiptych: !!state.sourceIsDiptych,
-          flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-        }, { output: state.filmInfoStamp ? 'bitmap' : 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
-        if (state.filmInfoStamp) {
-          const renderedImg = output?.bitmap || output?.canvas;
-          if (renderedImg) {
-            const stamped = appendFilmInfoFooterCanvas(renderedImg, spec);
-            blob = await canvasToJpegBlob(stamped, 0.94);
-          }
-          output?.bitmap?.close?.();
-        } else {
-          blob = output?.blob;
-        }
+  function deliverExportPayload(payload, allowDownloadFallback = true) {
+    if (!payload?.blob || !payload?.file) return;
+    const { blob, file, filename, spec } = payload;
+    const canShareFiles = !!(navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] })));
+    if (canShareFiles) {
+      let sharePromise;
+      try {
+        sharePromise = navigator.share({ files: [file] });
+      } catch (syncErr) {
+        if (syncErr?.name === 'AbortError') { showToast('Save cancelled'); return; }
+        sharePromise = Promise.reject(syncErr);
       }
-      if (blob) blob = await injectExifIntoJpegBlob(blob, spec);
-    } catch (error) { showToast('❌ Could not process this image'); return; }
-    finally {
-      if (expBtn) { expBtn.disabled = false; expBtn.textContent = prevBtnTxt; }
+      return sharePromise.then(() => {
+        document.getElementById('exportSheetBackdrop')?.classList.remove('open');
+      }).catch(err => {
+        if (err?.name === 'AbortError') { showToast('Save cancelled'); return; }
+        if (isAppleTouchDevice() || !allowDownloadFallback) {
+          const btn = document.getElementById('btnConfirmExport');
+          if (btn) btn.textContent = '💾 Tap to Save to Photos';
+          showToast('✅ Photo ready — tap “Save to Photos”');
+          return;
+        }
+        document.getElementById('exportSheetBackdrop')?.classList.remove('open');
+        const u = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = u; a.download = filename; a.click();
+        setTimeout(() => URL.revokeObjectURL(u), 1000);
+        showToast(`✅ Saved (${spec.film.name} · ISO ${spec.iso})`);
+      });
     }
-    if (!blob) { showToast('❌ Could not create image file'); return; }
     document.getElementById('exportSheetBackdrop')?.classList.remove('open');
-
-    const filmSlug = state.labOriginalMode ? 'original' : film.id;
-    const filename = `tees-lab-${filmSlug}-${body.id}-${spec.focalMm}mm-iso${spec.iso}-${Date.now()}.jpg`;
-    const imageFile = new File([blob], filename, { type: 'image/jpeg' });
-    try {
-      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
-        showToast('Choose “Save Image” in the share sheet to save to Photos');
-        await navigator.share({ files: [imageFile], title: "Tee's Film Lab photo", text: spec.captionText });
-        return;
-      }
-    } catch (error) {
-      if (error?.name === 'AbortError') { showToast('Save cancelled'); return; }
-    }
-
     const u = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = u; a.download = filename; a.click();
     setTimeout(() => URL.revokeObjectURL(u), 1000);
     showToast(`✅ Saved (${spec.film.name} · ISO ${spec.iso})`);
+  }
+
+  async function exportFullResolution() {
+    if (!state.fullSourceCanvas) return;
+    const key = getExportCacheKey();
+    if (preparedExportCache?.key === key && preparedExportCache.file) {
+      deliverExportPayload(preparedExportCache, true);
+      return;
+    }
+
+    const expBtn = document.getElementById('btnConfirmExport') || document.getElementById('btnExport');
+    const prevBtnTxt = '💾 Save Photo';
+    if (expBtn) { expBtn.disabled = true; expBtn.textContent = 'Saving…'; }
+    showToast('⏳ Preparing photo with film info...');
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+    let payload = null;
+    try {
+      payload = preparedExportPromise ? await preparedExportPromise : await triggerPreparedExportPrepare();
+      if (payload) preparedExportCache = payload;
+    } catch (error) {
+      showToast('❌ Could not process this image');
+      return;
+    } finally {
+      if (expBtn) { expBtn.disabled = false; expBtn.textContent = prevBtnTxt; }
+    }
+    if (!payload) { showToast('❌ Could not create image file'); return; }
+    await deliverExportPayload(payload, !isAppleTouchDevice());
   }
 
   function escapeHtml(s) {
@@ -12164,7 +12289,11 @@
   });
   document.getElementById('chkFilmInfoStamp')?.addEventListener('change', e => {
     state.filmInfoStamp = !!e.target.checked;
+    preparedExportCache = null;
     scheduleSaveLocalAppState();
+    if (document.getElementById('exportSheetBackdrop')?.classList.contains('open')) {
+      triggerPreparedExportPrepare();
+    }
   });
   document.getElementById('btnCopyFilmInfo')?.addEventListener('click', async () => {
     const spec = buildFilmInfoSpec();
@@ -12952,7 +13081,10 @@
   sampleSheet.addEventListener('click', e => { if (e.target === sampleSheet) closeSampleSheet(); });
 
   const contactSheet = document.getElementById('contactSheetBackdrop');
-  document.getElementById('btnOpenContactSheet').addEventListener('click', () => contactSheet.classList.add('open'));
+  document.getElementById('btnOpenContactSheet').addEventListener('click', () => {
+    contactSheet.classList.add('open');
+    prewarmCameraRollBlobs(8);
+  });
   document.getElementById('btnCloseContactSheet').addEventListener('click', () => contactSheet.classList.remove('open'));
   contactSheet.addEventListener('click', e => { if (e.target === contactSheet) contactSheet.classList.remove('open'); });
 
