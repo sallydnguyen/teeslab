@@ -951,6 +951,39 @@
       color: #e5e7eb;
       cursor: pointer;
     }
+    .export-caption-box {
+      background: #14171f;
+      border: 1px solid #242a37;
+      border-radius: 9px;
+      padding: 7px 10px 8px;
+      margin-bottom: 8px;
+    }
+    .export-caption-lbl {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .export-caption-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #0d0f15;
+      border: 1px solid #2b3242;
+      border-radius: 7px;
+      padding: 6px 9px;
+      color: #f3f4f6;
+      font-size: 16px;
+      line-height: 1.3;
+      outline: none;
+    }
+    .export-caption-input:focus {
+      border-color: #f5a623;
+    }
+    .export-caption-input::placeholder {
+      color: #6b7280;
+      font-size: 12.5px;
+    }
     .tweak-pill {
       min-width: 0;
       padding: 5px 6px;
@@ -4746,6 +4779,10 @@
           </div>
         </div>
         <div class="export-info-grid" id="exportInfoGrid"></div>
+        <div class="export-caption-box">
+          <label class="export-caption-lbl" for="exportCaptionInput">Photo Caption / Title (optional)</label>
+          <input type="text" id="exportCaptionInput" class="export-caption-input" maxlength="160" placeholder="Add a caption or name for Photos…" autocomplete="off" />
+        </div>
         <label class="export-toggle-row" for="chkFilmInfoStamp">
           <span>🏷️ Print film info footer on photo (EXIF always embedded)</span>
           <input type="checkbox" id="chkFilmInfoStamp" style="accent-color:#f5a623;width:16px;height:16px;" />
@@ -6229,6 +6266,7 @@
     frameType: 'darkroom-white',
     dateStamp: 'off',
     filmInfoStamp: false,
+    exportCaption: '',
     hfDiptychMode: true,
     activeTab: 'camera',
 
@@ -7597,6 +7635,7 @@
 
   function loadSourceCanvas(srcCanvas, exifData = null, opts = {}) {
     state.fullSourceCanvas = srcCanvas;
+    state.exportCaption = '';
     state.sourceIsDiptych = !!opts.isDiptych || !!opts.preserveAspect;
     state.sourceFromCameraRoll = !!opts.fromCameraRoll;
     state.activeRollShotId = opts.fromCameraRoll ? (opts.rollShotId || null) : null;
@@ -11965,12 +12004,13 @@
     const footerRight = isOrig
       ? `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${dateDisplay}`
       : `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
+    const customCaption = String(opts.customCaption ?? (opts.fromCamera ? '' : state.exportCaption) ?? '').trim();
     const captionText = isOrig
       ? `Original Photo (Unedited) | ${body.name} - ${lensShort} | ${dateDisplay} | Tee's Film Lab`
       : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} - ${lensShort} | Shutter: ${shutterHz >= 1 ? `1/${Math.round(shutterHz)}s` : `${(1 / shutterHz).toFixed(1)}s`} | Strength ${opts.fromCamera ? 85 : state.strength}%, Exp ${evStr}, Grain ${grainVal}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
     return {
       film, body, lens, isOrig, iso, focalMm, focal35mm, apertureNum, shutterHz, evVal, lensShort, evStr, frameLabel, filmTypeLabel,
-      dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText
+      dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText, customCaption
     };
   }
 
@@ -12029,8 +12069,16 @@
         out[clean.length] = 0;
         return out;
       };
+      const encUtf8Z = str => {
+        const encoded = new TextEncoder().encode(String(str || ''));
+        const out = new Uint8Array(encoded.length + 1);
+        out.set(encoded, 0);
+        out[encoded.length] = 0;
+        return out;
+      };
       const mkEntry = (tag, type, count, payloadBytes) => ({ tag, type, count, data: payloadBytes });
       const mkAscii = (tag, str) => { const d = encAscii(str); return mkEntry(tag, 2, d.length, d); };
+      const mkUtf8 = (tag, str) => { const d = encUtf8Z(str); return mkEntry(tag, 2, d.length, d); };
       const mkShort = (tag, val) => mkEntry(tag, 3, 1, new Uint8Array([(val >> 8) & 0xFF, val & 0xFF]));
       const mkLong = (tag, val) => mkEntry(tag, 4, 1, new Uint8Array([(val >>> 24) & 0xFF, (val >>> 16) & 0xFF, (val >>> 8) & 0xFF, val & 0xFF]));
       const mkRat = (tag, num, den) => mkEntry(tag, 5, 1, new Uint8Array([
@@ -12051,6 +12099,7 @@
       const shutterHz = Math.max(0.25, Number(spec.shutterHz) || 125);
       const expNum = shutterHz >= 1 ? 1 : Math.round(1000 / shutterHz);
       const expDen = shutterHz >= 1 ? Math.round(shutterHz) : 1000;
+      const customCaption = String(spec.customCaption || '').trim();
 
       const ifd0Entries = [
         mkAscii(0x010F, "Tee's Film Lab"),
@@ -12059,7 +12108,9 @@
         mkAscii(0x0131, `Tee's Film Lab v${document.getElementById('versionLabel')?.textContent?.replace(/^v/i, '') || '2.4'}`),
         mkAscii(0x0132, spec.dateExif),
         mkLong(0x8769, 0)
-      ].sort((a, b) => a.tag - b.tag);
+      ];
+      if (customCaption) ifd0Entries.push(mkUtf8(0x010E, customCaption));
+      ifd0Entries.sort((a, b) => a.tag - b.tag);
 
       const exifEntries = [
         mkRat(0x829A, expNum, expDen),
@@ -12073,7 +12124,15 @@
         mkShort(0xA405, Math.max(10, Math.min(1000, Math.round(spec.focal35mm || spec.focalMm || 50)))),
         mkAscii(0xA433, "Tee's Film Lab"),
         mkAscii(0xA434, cleanLens)
-      ].sort((a, b) => a.tag - b.tag);
+      ];
+      if (customCaption) {
+        const capBytes = new TextEncoder().encode(customCaption);
+        const userCmtBytes = new Uint8Array(8 + capBytes.length);
+        userCmtBytes.set([0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00], 0);
+        userCmtBytes.set(capBytes, 8);
+        exifEntries.push(mkEntry(0x9286, 7, userCmtBytes.length, userCmtBytes));
+      }
+      exifEntries.sort((a, b) => a.tag - b.tag);
 
       const tiffChunks = [];
       const pushU16 = v => tiffChunks.push(new Uint8Array([(v >> 8) & 0xFF, v & 0xFF]));
@@ -12174,6 +12233,29 @@
 
   let preparedExportCache = null;
   let preparedExportPromise = null;
+  let exportCaptionSeq = 0;
+
+  function buildExportFilename(spec, filmSlug, bodyId) {
+    const rawCap = String(spec?.customCaption || '').trim();
+    const capSlug = rawCap
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 48);
+    if (capSlug) return `${capSlug}-${Date.now()}.jpg`;
+    return `tees-lab-${filmSlug}-${bodyId}-${spec.focalMm}mm-iso${spec.iso}-${Date.now()}.jpg`;
+  }
+
+  async function finalizeExportCaption(payload, captionValue = state.exportCaption) {
+    if (!payload?.baseBlob) return payload;
+    const trimmed = String(captionValue || '').trim();
+    const nextSpec = { ...payload.spec, customCaption: trimmed };
+    const blob = await injectExifIntoJpegBlob(payload.baseBlob, nextSpec);
+    const filename = buildExportFilename(nextSpec, payload.filmSlug, payload.bodyId);
+    const file = new File([blob], filename, { type: 'image/jpeg' });
+    return { ...payload, blob, file, filename, spec: nextSpec };
+  }
 
   function getExportCacheKey() {
     const { body, lens, film } = getSelectedGear();
@@ -12187,10 +12269,10 @@
     const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
     const { phone, body, lens, film } = getSelectedGear();
     const spec = buildFilmInfoSpec();
-    let blob;
+    let baseBlob;
     if (state.labOriginalMode) {
       const outCanvas = state.filmInfoStamp ? appendFilmInfoFooterCanvas(src, spec) : src;
-      blob = await canvasToJpegBlob(outCanvas, 0.94);
+      baseBlob = await canvasToJpegBlob(outCanvas, 0.94);
     } else {
       const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
       let mixImageData = null;
@@ -12209,26 +12291,41 @@
         const renderedImg = output?.bitmap || output?.canvas;
         if (renderedImg) {
           const stamped = appendFilmInfoFooterCanvas(renderedImg, spec);
-          blob = await canvasToJpegBlob(stamped, 0.94);
+          baseBlob = await canvasToJpegBlob(stamped, 0.94);
         }
         output?.bitmap?.close?.();
       } else {
-        blob = output?.blob;
+        baseBlob = output?.blob;
       }
     }
-    if (blob) blob = await injectExifIntoJpegBlob(blob, spec);
-    if (!blob) return null;
+    if (!baseBlob) return null;
     const filmSlug = state.labOriginalMode ? 'original' : film.id;
-    const filename = `tees-lab-${filmSlug}-${body.id}-${spec.focalMm}mm-iso${spec.iso}-${Date.now()}.jpg`;
-    const file = new File([blob], filename, { type: 'image/jpeg' });
-    return { key, blob, file, filename, spec };
+    const basePayload = { key, baseBlob, filmSlug, bodyId: body.id, spec };
+    return finalizeExportCaption(basePayload, state.exportCaption);
   }
 
   function triggerPreparedExportPrepare() {
     const key = getExportCacheKey();
-    if (preparedExportCache?.key === key) return Promise.resolve(preparedExportCache);
+    const wantCap = String(state.exportCaption || '').trim();
+    if (preparedExportCache?.key === key && (preparedExportCache.spec?.customCaption || '') === wantCap) {
+      return Promise.resolve(preparedExportCache);
+    }
     const statusEl = document.getElementById('exportExifStatus');
     const confirmBtn = document.getElementById('btnConfirmExport');
+    if (preparedExportCache?.key === key && preparedExportCache?.baseBlob) {
+      const seq = ++exportCaptionSeq;
+      const promise = finalizeExportCaption(preparedExportCache, wantCap).then(res => {
+        if (res && seq === exportCaptionSeq && getExportCacheKey() === res.key) {
+          preparedExportCache = res;
+          if (statusEl) statusEl.textContent = '✓ Ready · EXIF Camera, Lens, ISO & Film embedded';
+        }
+        return res;
+      }).finally(() => {
+        if (preparedExportPromise === promise) preparedExportPromise = null;
+      });
+      preparedExportPromise = promise;
+      return promise;
+    }
     if (statusEl) statusEl.textContent = '⏳ Preparing HD JPEG & EXIF tags…';
     if (confirmBtn && !confirmBtn.disabled) confirmBtn.textContent = '💾 Save Photo';
     const promise = buildPreparedExportPayload().then(res => {
@@ -12268,6 +12365,8 @@
       ];
       gridEl.innerHTML = cells.map(c => `<div class="export-info-cell"><div class="export-info-lbl">${escapeHtml(c.lbl)}</div><div class="export-info-val">${escapeHtml(c.val)}</div></div>`).join('');
     }
+    const capEl = document.getElementById('exportCaptionInput');
+    if (capEl) capEl.value = state.exportCaption || '';
     const chk = document.getElementById('chkFilmInfoStamp');
     if (chk) chk.checked = !!state.filmInfoStamp;
     document.getElementById('exportSheetBackdrop')?.classList.add('open');
@@ -12313,7 +12412,8 @@
   async function exportFullResolution() {
     if (!state.fullSourceCanvas) return;
     const key = getExportCacheKey();
-    if (preparedExportCache?.key === key && preparedExportCache.file) {
+    const wantCap = String(state.exportCaption || '').trim();
+    if (preparedExportCache?.key === key && preparedExportCache.file && (preparedExportCache.spec?.customCaption || '') === wantCap) {
       deliverExportPayload(preparedExportCache, true);
       return;
     }
@@ -12362,6 +12462,12 @@
   });
   document.getElementById('exportSheetBackdrop')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+  document.getElementById('exportCaptionInput')?.addEventListener('input', e => {
+    state.exportCaption = String(e.target.value || '').slice(0, 160);
+    if (document.getElementById('exportSheetBackdrop')?.classList.contains('open') && preparedExportCache?.baseBlob) {
+      triggerPreparedExportPrepare();
+    }
   });
   document.getElementById('chkFilmInfoStamp')?.addEventListener('change', e => {
     state.filmInfoStamp = !!e.target.checked;
