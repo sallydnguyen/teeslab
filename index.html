@@ -515,10 +515,9 @@
     }
     .float-pill {
       pointer-events: auto;
-      background: rgba(10, 13, 18, 0.72);
+      background: rgba(10, 13, 18, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #f1f5f9;
-      backdrop-filter: blur(6px);
       border-radius: 11px;
       height: 21px;
       padding: 0 7px;
@@ -2930,9 +2929,7 @@
     .photo-viewer-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(5, 7, 10, 0.96);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(5, 7, 10, 0.97);
       display: flex;
       flex-direction: column;
       z-index: 90;
@@ -3028,9 +3025,7 @@
       transform: translateY(-50%);
       width: 36px;
       height: 54px;
-      background: rgba(20, 24, 32, 0.7);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(16, 20, 28, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: #e5e7eb;
       font-size: 28px;
@@ -4900,7 +4895,7 @@
           const hi = c > 0.84 ? (c - 0.84) / 0.16 : 0;
           linLut[i] = c * c * (1 + hi * hi * 0.55);
         }
-        const nTaps = 24;
+        const nTaps = width > 860 ? 24 : 12;
         const ox = new Float32Array(nTaps), oy = new Float32Array(nTaps), ow = new Float32Array(nTaps);
         const GA = 2.399963229728653;
         for (let k = 0; k < nTaps; k++) {
@@ -4926,7 +4921,7 @@
       const maxCoCScale = Math.min(1, dofStr * 1.12);
       const mfCoCBase = mfDefocus > 0.015 ? Math.min(1, mfDefocus * 1.35) : 0;
 
-      const div = width >= 1100 ? 3 : (width >= 520 ? 2 : 1);
+      const div = width >= 540 ? 3 : (width >= 360 ? 2 : 1);
       const bw = Math.max(48, Math.floor(width / div)), bh = Math.max(48, Math.floor(height / div));
       const bw2 = Math.max(24, bw >> 1), bh2 = Math.max(24, bh >> 1);
       const bw4 = Math.max(12, bw2 >> 1), bh4 = Math.max(12, bh2 >> 1);
@@ -4968,7 +4963,7 @@
           let radCoC = 0;
           if (dofStr > 0.04 && d > dofRad) {
             const t = Math.min(1, (d - dofRad) / falloff);
-            radCoC = Math.pow(t, 1.35) * maxCoCScale;
+            radCoC = t * (0.62 + 0.38 * t) * maxCoCScale;
           }
           cocMap[by * bw + bx] = radCoC > mfCoCBase ? radCoC : mfCoCBase;
         }
@@ -6932,7 +6927,7 @@
     renderTimer = window.setTimeout(() => {
       renderTimer = 0;
       renderRaf = requestAnimationFrame(() => { renderRaf = null; renderPreview(); });
-    }, 36);
+    }, 52);
   }
 
   async function renderPreview(force = false) {
@@ -9550,7 +9545,7 @@
       }`;
 
     const FS_BOKEH = `#version 300 es
-      precision highp float;
+      precision mediump float;
       in vec2 vUv;
       out vec4 fragColor;
       uniform sampler2D uBase;
@@ -9576,7 +9571,7 @@
         if (uDofStr > 0.04 && d > innerR) {
           float falloff = max(0.85, 1.15 - uDofStr * 0.16);
           float t = min(1.0, (d - innerR) / falloff);
-          radial = pow(t, 1.35) * min(1.0, uDofStr * 1.12);
+          radial = t * (0.62 + 0.38 * t) * min(1.0, uDofStr * 1.12);
         }
         float mf = uMfDefocus > 0.015 ? min(1.0, uMfDefocus * 1.35) : 0.0;
         return max(radial, mf);
@@ -9611,11 +9606,19 @@
         vec3 acc = vec3(0.0);
         float wSum = 0.0;
         const float GA = 2.39996323;
+        const vec3 TAPS[16] = vec3[16](
+          vec3(0.17678, 0.00000, 0.17678), vec3(-0.22577, 0.20683, 0.30619),
+          vec3(0.03456, -0.39377, 0.39528), vec3(0.28457, 0.37117, 0.46771),
+          vec3(-0.52222, -0.09237, 0.53033), vec3(0.49470, -0.31468, 0.58630),
+          vec3(-0.16547, 0.61553, 0.63738), vec3(-0.31556, -0.60759, 0.68465),
+          vec3(0.68464, 0.25003, 0.72887), vec3(-0.71226, 0.29401, 0.77055),
+          vec3(0.34335, -0.73373, 0.81009), vec3(0.25373, 0.80893, 0.84779),
+          vec3(-0.76475, -0.44319, 0.88388), vec3(0.89713, -0.19723, 0.91856),
+          vec3(-0.54751, 0.77877, 0.95197), vec3(-0.12649, -0.97609, 0.98425)
+        );
         for (int i = 0; i < 16; i++) {
-          float fi = float(i);
-          float rN = sqrt((fi + 0.5) / 16.0);
-          float ang = fi * GA;
-          vec2 off = vec2(cos(ang), sin(ang)) * rN;
+          float rN = TAPS[i].z;
+          vec2 off = TAPS[i].xy;
           if (catStr > 0.001) {
             float proj = dot(off, rDir);
             off -= rDir * (proj * catStr);
@@ -9673,7 +9676,7 @@
           if (uDofStr > 0.04 && d > innerR) {
             float falloff = max(0.85, 1.15 - uDofStr * 0.16);
             float t = min(1.0, (d - innerR) / falloff);
-            radial = pow(t, 1.35) * min(1.0, uDofStr * 1.12);
+            radial = t * (0.62 + 0.38 * t) * min(1.0, uDofStr * 1.12);
           }
           float mf = uMfDefocus > 0.015 ? min(1.0, uMfDefocus * 1.35) : 0.0;
           float coc = max(radial, mf);
@@ -9701,7 +9704,8 @@
           rgb = rgb * fGain + vec3(16.0, 15.0, 12.0) * fMask;
         }
         if (uVigStr > 0.01) {
-          float vig = max(0.18, 1.0 - uVigStr * pow(max(1e-5, r2 * 0.55), 1.35));
+          float vr = clamp(r2 * 0.55, 0.0, 2.0);
+          float vig = max(0.18, 1.0 - uVigStr * vr * (0.62 + 0.38 * vr));
           rgb *= vig;
         }
         if (uGrainGain > 0.2) {
@@ -9807,7 +9811,7 @@
     if (!initResources()) return null;
 
     function ensureSize(w, h) {
-      const hw = Math.max(80, Math.floor(w / 3)), hh = Math.max(60, Math.floor(h / 3));
+      const hw = Math.max(64, Math.floor(w / 4)), hh = Math.max(48, Math.floor(h / 4));
       const qw = Math.max(48, Math.floor(w / 4)), qh = Math.max(36, Math.floor(h / 4));
       if (curW !== w || curH !== h) {
         glCanvas.width = w; glCanvas.height = h;
@@ -10064,8 +10068,25 @@
       const gpuReady = !!(gpu && gpu.isSupported());
 
       if (hasLiveVideo) {
-        state.camAnimId = requestAnimationFrame(loop);
-        if (ts - last < (gpuReady ? 66 : 120)) return;
+        const interval = gpuReady ? 64 : 120;
+        const elapsed = ts - last;
+        const token = (state.camLoopToken = (state.camLoopToken || 0) + 1);
+        window.clearTimeout(state.camLoopTimer);
+        state.camAnimId = -1;
+        if (elapsed < interval) {
+          const wait = Math.max(12, Math.round(interval - elapsed));
+          state.camLoopTimer = window.setTimeout(() => {
+            state.camLoopTimer = 0;
+            if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
+            state.camAnimId = requestAnimationFrame(loop);
+          }, wait);
+          return;
+        }
+        state.camLoopTimer = window.setTimeout(() => {
+          state.camLoopTimer = 0;
+          if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
+          state.camAnimId = requestAnimationFrame(loop);
+        }, gpuReady ? 50 : 105);
         if (!gpuReady && cameraJobInFlight) return;
       }
 
