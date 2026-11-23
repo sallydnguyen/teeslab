@@ -4818,7 +4818,7 @@
      ========================================================================== */
 
   const PHONE_PROFILES = [
-    { id: 'auto-detect', name: 'Automatic', deSharpen: 0.04, warmthOffset: 0, tintOffset: 0, satScale: 0.95, blueTame: 0.09, greenTame: 0.08, highlightRecover: 0.18, shadowLift: 0.06, contrastSoften: 0.11 }
+    { id: 'auto-detect', name: 'Automatic', deSharpen: 0, warmthOffset: 0, tintOffset: 0, satScale: 0.95, blueTame: 0.09, greenTame: 0.08, highlightRecover: 0.18, shadowLift: 0.06, contrastSoften: 0.11 }
   ];
 
   const VIEWFINDER_MODES = [
@@ -7229,6 +7229,8 @@
     sh /= z;
     const sx = (srcW - sw) / 2;
     const sy = (srcH - sh) / 2;
+    targetCtx.imageSmoothingEnabled = true;
+    targetCtx.imageSmoothingQuality = outW > 720 ? 'high' : 'medium';
     targetCtx.drawImage(source, sx, sy, sw, sh, 0, 0, outW, outH);
   }
 
@@ -7240,6 +7242,8 @@
     targetCtx.save();
     targetCtx.setTransform(1, 0, 0, 1, 0, 0);
     targetCtx.clearRect(0, 0, outW, outH);
+    targetCtx.imageSmoothingEnabled = true;
+    targetCtx.imageSmoothingQuality = outW > 720 ? 'high' : 'medium';
     targetCtx.translate(outW / 2, outH / 2);
     targetCtx.scale(scale, scale);
     targetCtx.drawImage(source, -srcW / 2, -srcH / 2);
@@ -7708,8 +7712,8 @@
     labRenderDirty = false;
     const requestVersion = ++previewRequestVersion;
     const isMobile = window.matchMedia('(max-width: 700px)').matches;
-    const maxDim = isMobile ? 640 : 820;
-    const maxPixels = isMobile ? 250000 : 360000;
+    const maxDim = isMobile ? 540 : 720;
+    const maxPixels = isMobile ? 190000 : 280000;
     const sourceCanvas = buildLabCroppedCanvas(state.previewSourceCanvas, maxDim, true, maxPixels);
     const sourceData = sourceCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
     const frameType = state.frameType;
@@ -9826,7 +9830,7 @@
 
   function getCameraCaptureDimensions(body, lens, src = null) {
     const ratio = getBodyAspect(body, lens);
-    let maxLong = 2048;
+    let maxLong = 2560;
     const srcW = src?.videoWidth || src?.width || 0;
     const srcH = src?.videoHeight || src?.height || 0;
     if (srcW > 0 && srcH > 0) {
@@ -9836,14 +9840,14 @@
       else sh = srcW / ratio;
       const z = Math.max(1, lens?.cropZoom || 1);
       const croppedLong = Math.max(sw / z, sh / z);
-      maxLong = Math.min(2048, Math.max(960, Math.round(croppedLong)));
+      maxLong = Math.min(2560, Math.max(640, Math.round(croppedLong)));
     }
     if (ratio >= 1) {
       const w = maxLong;
-      return { w, h: Math.max(480, Math.round(w / ratio)), ratio };
+      return { w, h: Math.max(420, Math.round(w / ratio)), ratio };
     }
     const h = maxLong;
-    return { w: Math.max(480, Math.round(h * ratio)), h, ratio };
+    return { w: Math.max(420, Math.round(h * ratio)), h, ratio };
   }
 
   function syncSlrMeterLed(body, lens) {
@@ -11208,10 +11212,11 @@
     let capW = 0, capH = 0;
 
     if (opts.mixCanvas) {
-      const mScale = Math.min(1, 2048 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
+      const mScale = Math.min(1, 2560 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
       capW = Math.max(1, Math.round(opts.mixCanvas.width * mScale));
       capH = Math.max(1, Math.round(opts.mixCanvas.height * mScale));
       capC.width = capW; capC.height = capH;
+      cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
       const srcA = opts.sourceCanvas;
       const srcRatio = srcA.width / Math.max(1, srcA.height);
       const dstRatio = capW / Math.max(1, capH);
@@ -11227,23 +11232,26 @@
       const mixC = document.createElement('canvas');
       mixC.width = capW; mixC.height = capH;
       const mixCtx = mixC.getContext('2d', { willReadFrequently: true });
+      mixCtx.imageSmoothingEnabled = true; mixCtx.imageSmoothingQuality = 'high';
       mixCtx.drawImage(opts.mixCanvas, 0, 0, capW, capH);
       const srcData = cCtx.getImageData(0, 0, capW, capH);
       const mixData = mixCtx.getImageData(0, 0, capW, capH);
       blendDoubleExposureBuffers(srcData.data, mixData.data, opts.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
       cCtx.putImageData(srcData, 0, 0);
     } else if (opts.sourceCanvas) {
-      const scale = Math.min(1, 2048 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
+      const scale = Math.min(1, 2560 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
       capW = Math.max(1, Math.round(opts.sourceCanvas.width * scale));
       capH = Math.max(1, Math.round(opts.sourceCanvas.height * scale));
       capC.width = capW; capC.height = capH;
+      cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
       cCtx.drawImage(opts.sourceCanvas, 0, 0, capW, capH);
     } else {
       const rawBitmap = await createImageBitmap(rawBlob);
-      const scale = Math.min(1, 2048 / Math.max(rawBitmap.width, rawBitmap.height));
+      const scale = Math.min(1, 2560 / Math.max(rawBitmap.width, rawBitmap.height));
       capW = Math.max(1, Math.round(rawBitmap.width * scale));
       capH = Math.max(1, Math.round(rawBitmap.height * scale));
       capC.width = capW; capC.height = capH;
+      cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
       cCtx.drawImage(rawBitmap, 0, 0, capW, capH); rawBitmap.close();
     }
 
@@ -11269,8 +11277,8 @@
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
         isDiptych: !!opts.isDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.94, transferBuffers: true }),
-      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.92)
+      }, { output: 'blob', quality: 0.96, transferBuffers: true }),
+      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.95)
     ]);
     const camSpec = buildFilmInfoSpec({
       fromCamera: true,
@@ -11353,14 +11361,22 @@
       const stillPromise = (track && typeof ImageCapture === 'function')
         ? Promise.race([
             (async () => {
-              const blob = await new ImageCapture(track).takePhoto();
+              const ic = new ImageCapture(track);
+              let photoOpts;
+              try {
+                const caps = await ic.getPhotoCapabilities?.();
+                if (caps?.imageWidth?.max && caps?.imageHeight?.max) {
+                  photoOpts = { imageWidth: caps.imageWidth.max, imageHeight: caps.imageHeight.max };
+                }
+              } catch (ignored) {}
+              const blob = await (photoOpts ? ic.takePhoto(photoOpts) : ic.takePhoto());
               const bmp = await createImageBitmap(blob);
               const vidPx = (camVideo.videoWidth || 0) * (camVideo.videoHeight || 0);
               if (bmp.width * bmp.height >= vidPx) return bmp;
               bmp.close();
               return null;
             })().catch(() => null),
-            new Promise(resolve => setTimeout(() => resolve(null), 1200))
+            new Promise(resolve => setTimeout(() => resolve(null), 1500))
           ])
         : Promise.resolve(null);
       const [capturedStill] = await Promise.all([stillPromise, exposureTimer]);
@@ -12238,12 +12254,12 @@
     if (!state.fullSourceCanvas) return null;
     const key = getExportCacheKey();
     const hasMx = !state.labOriginalMode && !!state.labDoubleExpCanvas;
-    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 2400, false, 0, hasMx);
+    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 3072, false, 0, hasMx);
     const { phone, body, lens, film } = getSelectedGear();
     const spec = buildFilmInfoSpec();
     let baseBlob;
     if (state.labOriginalMode) {
-      baseBlob = await canvasToJpegBlob(src, 0.94);
+      baseBlob = await canvasToJpegBlob(src, 0.96);
     } else {
       const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
       let mixImageData = null;
@@ -12257,7 +12273,7 @@
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.94, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+      }, { output: 'blob', quality: 0.96, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
       baseBlob = output?.blob;
     }
     if (!baseBlob) return null;
