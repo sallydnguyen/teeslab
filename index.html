@@ -768,7 +768,7 @@
     }
     .tweak-sub-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 4px;
       width: 100%;
     }
@@ -1311,7 +1311,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.42;
+      opacity: 0.48;
       mix-blend-mode: screen;
       pointer-events: none;
       z-index: 3;
@@ -1345,6 +1345,15 @@
       cursor: pointer;
       padding: 0 2px;
       line-height: 1;
+    }
+    .vf-mx-bar .vf-mx-roll-btn {
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 9px;
+      font-weight: 700;
     }
 
     .mx-lab-bar {
@@ -3787,6 +3796,8 @@
             <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 100%</span>
             <div style="display:flex;gap:6px;align-items:center;">
               <select class="dark-select" id="leakTypeSelect" style="display:none;padding:2px 6px;font-size:10px;"></select>
+              <button class="filter-chip" id="btnEditPickMx" type="button" style="display:none;padding:2px 7px;font-size:9.5px;color:#f5a623;border-color:rgba(245,166,35,0.45);">🎞️ Chọn film</button>
+              <button class="filter-chip" id="btnEditSwapMx" type="button" style="display:none;padding:2px 6px;font-size:9.5px;" title="Swap Double Exposure layers">⇄</button>
               <button class="filter-chip" id="btnResetTweaks" style="padding:2px 8px;font-size:9.5px;">↺ Reset</button>
               <button class="filter-chip" id="btnCloseTweakDrawer" style="padding:2px 7px;font-size:9.5px;">✕</button>
             </div>
@@ -3982,6 +3993,7 @@
               <img class="vf-mx-ghost" id="vfMxGhostImg" alt="" aria-hidden="true" />
               <div class="vf-mx-bar" id="vfMxBar">
                 <span id="vfMxLabel">2× · 1/2</span>
+                <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Chọn film đã chụp làm nền 1/2" style="display:none;">🎞️ Roll</button>
                 <button type="button" id="btnCancelDoubleExp" title="Discard Double Exposure 1/2">✕</button>
               </div>
 
@@ -4235,6 +4247,13 @@
           <button class="hf-target-chip" id="btnSampleTarget2" data-hf-slot="2" type="button">2/2 Right Frame</button>
         </div>
         <button class="btn-pill btn-brass" id="btnSheetOpenPhoto" type="button" style="width:100%;height:36px;font-size:12.5px;border-radius:10px;margin-bottom:10px;">➕ Choose Photo from Library</button>
+        <div id="rollSamplesSection" style="display:none;margin-bottom:10px;">
+          <div style="font-size:10.5px;color:#f5a623;margin-bottom:6px;font-weight:700;display:flex;align-items:center;justify-content:space-between;">
+            <span>🎞️ Film đã chụp (Camera Roll)</span>
+            <span id="rollSamplesCount" style="font-family:var(--mono);font-size:9.5px;color:var(--text-muted);"></span>
+          </div>
+          <div class="sample-grid-3" id="rollSampleStrip"></div>
+        </div>
         <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Sample scenes</div>
         <div class="sample-grid-3" id="sampleStrip"></div>
       </div>
@@ -4436,7 +4455,8 @@
     { key: 'strength', label: 'Film strength', short: 'Strength', min: 0, max: 100, fmt: v => `${v}%` },
     { key: 'exposure', label: 'Exposure', short: 'Exp', min: -150, max: 150, fmt: v => `${v >= 0 ? '+' : ''}${(v / 100).toFixed(1)}` },
     { key: 'grain', label: 'Grain', short: 'Grain', min: 0, max: 100, fmt: v => `${v}%` },
-    { key: 'leakAmt', label: 'Light leak', short: 'Leak', min: 0, max: 100, fmt: v => `${v}%` }
+    { key: 'leakAmt', label: 'Light leak', short: 'Leak', min: 0, max: 100, fmt: v => `${v}%` },
+    { key: 'labDoubleExpMix', label: 'Double Exp', short: '2×', min: 20, max: 80, fmt: v => (state.labDoubleExpCanvas ? `${v}%` : 'Off') }
   ];
 
   const LEAK_TYPES = [
@@ -5705,6 +5725,8 @@
     labDoubleExpCanvas: null,
     labDoubleExpPreviewCanvas: null,
     labDoubleExpSampleId: null,
+    labDoubleExpRollShotId: null,
+    labDoubleExpLabel: null,
     labDoubleExpFromCameraRoll: false,
     labDoubleExpMix: 50,
     sampleSheetTargetMode: 'primary',
@@ -6723,6 +6745,8 @@
     state.labDoubleExpCanvas = srcCanvas || null;
     state.labDoubleExpPreviewCanvas = srcCanvas ? makeScaledPreviewCanvas(srcCanvas) : null;
     state.labDoubleExpSampleId = opts.sampleId !== undefined ? opts.sampleId : null;
+    state.labDoubleExpRollShotId = opts.rollShotId !== undefined ? opts.rollShotId : null;
+    state.labDoubleExpLabel = opts.rollLabel !== undefined ? opts.rollLabel : null;
     state.labDoubleExpFromCameraRoll = !!opts.fromCameraRoll;
     previewSourceVersion += 1;
     labRenderDirty = true;
@@ -6734,6 +6758,8 @@
     state.labDoubleExpCanvas = null;
     state.labDoubleExpPreviewCanvas = null;
     state.labDoubleExpSampleId = null;
+    state.labDoubleExpRollShotId = null;
+    state.labDoubleExpLabel = null;
     state.labDoubleExpFromCameraRoll = false;
     previewSourceVersion += 1;
     labRenderDirty = true;
@@ -6748,6 +6774,7 @@
     const tmpPrev = state.previewSourceCanvas;
     const tmpSample = state.activeSampleId;
     const tmpRoll = state.sourceFromCameraRoll;
+    const tmpRollLabel = SAMPLES.find(s => s.id === tmpSample)?.title || (tmpRoll ? 'Camera Roll' : 'Photo 1');
 
     state.fullSourceCanvas = state.labDoubleExpCanvas;
     state.previewSourceCanvas = state.labDoubleExpPreviewCanvas || makeScaledPreviewCanvas(state.labDoubleExpCanvas);
@@ -6757,6 +6784,8 @@
     state.labDoubleExpCanvas = tmpFull;
     state.labDoubleExpPreviewCanvas = tmpPrev || makeScaledPreviewCanvas(tmpFull);
     state.labDoubleExpSampleId = tmpSample;
+    state.labDoubleExpRollShotId = null;
+    state.labDoubleExpLabel = tmpRollLabel;
     state.labDoubleExpFromCameraRoll = tmpRoll;
 
     previewSourceVersion += 1;
@@ -7161,6 +7190,11 @@
     else if (key === 'exposure') state.exposure = 0;
     else if (key === 'grain') state.grain = film.grainBase;
     else if (key === 'leakAmt') { state.leakType = 'none'; state.leakAmt = 0; }
+    else if (key === 'labDoubleExpMix') {
+      state.labDoubleExpMix = 50;
+      clearLabDoubleExp();
+      return;
+    }
     renderTweaksDock();
     renderPreview();
   }
@@ -7177,13 +7211,23 @@
     const subStrip = document.getElementById('tweakSubStrip');
     const headerRow = document.getElementById('tweakHeaderRow');
     const slider = document.getElementById('activeTweakSlider');
+    const isMxNoLayer = def.key === 'labDoubleExpMix' && !state.labDoubleExpCanvas;
 
     if (frameStrip) frameStrip.classList.toggle('open', isFrameMode);
     if (subStrip) subStrip.style.display = isFrameMode ? 'none' : '';
     if (headerRow) headerRow.style.display = isFrameMode ? 'none' : '';
-    if (slider) slider.style.display = isFrameMode ? 'none' : '';
+    if (slider) slider.style.display = (isFrameMode || isMxNoLayer) ? 'none' : '';
 
-    document.getElementById('activeTweakTitle').textContent = `${def.label}: ${def.fmt(state[def.key])}`;
+    const titleEl = document.getElementById('activeTweakTitle');
+    if (titleEl) {
+      if (def.key === 'labDoubleExpMix' && state.labDoubleExpCanvas) {
+        const sTitle = SAMPLES.find(s => s.id === state.labDoubleExpSampleId)?.title;
+        const lbl = state.labDoubleExpLabel || sTitle || 'Photo 2';
+        titleEl.textContent = `2× ${lbl}: ${state.labDoubleExpMix}%`;
+      } else {
+        titleEl.textContent = `${def.label}: ${def.fmt(state[def.key])}`;
+      }
+    }
     slider.min = def.min;
     slider.max = def.max;
     slider.value = state[def.key];
@@ -7197,6 +7241,16 @@
       lsel.value = state.leakType;
     } else {
       lsel.style.display = 'none';
+    }
+
+    const editPickMxBtn = document.getElementById('btnEditPickMx');
+    const editSwapMxBtn = document.getElementById('btnEditSwapMx');
+    if (editPickMxBtn) {
+      editPickMxBtn.style.display = (def.key === 'labDoubleExpMix' && !isFrameMode) ? '' : 'none';
+      editPickMxBtn.textContent = state.labDoubleExpCanvas ? '🎞️ Đổi film' : '🎞️ Chọn film';
+    }
+    if (editSwapMxBtn) {
+      editSwapMxBtn.style.display = (def.key === 'labDoubleExpMix' && !isFrameMode && !!state.labDoubleExpCanvas) ? '' : 'none';
     }
 
     if (frameStrip && !frameStrip.dataset.built) {
@@ -7291,6 +7345,12 @@
             if (state.leakAmt === 0) state.leakAmt = 40;
             renderPreview();
           }
+          if (t.key === 'labDoubleExpMix' && !state.labDoubleExpCanvas) {
+            drawer.classList.add('open');
+            renderTweaksDock();
+            openSampleSheetForDoubleExp();
+            return;
+          }
           drawer.classList.add('open');
           renderTweaksDock();
         });
@@ -7309,6 +7369,7 @@
     if (state.exposure !== 0) adjustedCount++;
     if (state.grain !== film.grainBase) adjustedCount++;
     if (state.leakType !== 'none' && state.leakAmt > 0) adjustedCount++;
+    if (state.labDoubleExpCanvas) adjustedCount++;
 
     const isDateOn = state.dateStamp !== 'off';
     const frameBtn = strip.querySelector('[data-pill-id="frame"]');
@@ -7332,7 +7393,8 @@
       TWEAK_DEFS.forEach(t => {
         const sub = subStrip.querySelector(`[data-sub-id="${t.key}"]`);
         if (!sub) return;
-        sub.classList.toggle('active', state.activeTweakKey === t.key);
+        const isActive = state.activeTweakKey === t.key || (t.key === 'labDoubleExpMix' && !!state.labDoubleExpCanvas);
+        sub.classList.toggle('active', isActive);
         sub.lastElementChild.textContent = t.fmt(state[t.key]);
       });
     }
@@ -7387,11 +7449,105 @@
     });
   }
 
+  const sheetRollThumbUrls = new Set();
+  async function loadRollShotCanvas(shot) {
+    const files = shot.rawBlob ? shot : await loadCameraRollFiles(shot.id);
+    const blob = files?.rawBlob || files?.photoBlob;
+    if (!blob) throw new Error('Roll photo unavailable');
+    const bitmap = await createImageBitmap(blob);
+    const c = document.createElement('canvas');
+    c.width = bitmap.width;
+    c.height = bitmap.height;
+    c.getContext('2d').drawImage(bitmap, 0, 0);
+    bitmap.close();
+    return c;
+  }
+
+  function renderRollSampleStrip() {
+    sheetRollThumbUrls.forEach(u => URL.revokeObjectURL(u));
+    sheetRollThumbUrls.clear();
+    const sec = document.getElementById('rollSamplesSection');
+    const strip = document.getElementById('rollSampleStrip');
+    const countEl = document.getElementById('rollSamplesCount');
+    if (!sec || !strip) return;
+    const shots = state.camRollShots || [];
+    if (shots.length === 0) {
+      sec.style.display = 'none';
+      strip.innerHTML = '';
+      return;
+    }
+    sec.style.display = '';
+    if (countEl) countEl.textContent = `${shots.length} tấm`;
+    strip.innerHTML = '';
+    const isMx2 = state.sampleSheetTargetMode === 'mx2';
+    shots.forEach(s => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = `sample-thumb ${(isMx2 && state.labDoubleExpRollShotId === s.id) ? 'active' : ''}`;
+      const img = document.createElement('img');
+      const url = URL.createObjectURL(s.thumbnailBlob);
+      sheetRollThumbUrls.add(url);
+      img.src = url;
+      const lblText = `R${s.rollNumber || 1} · #${String(s.num).padStart(2, '0')}`;
+      img.alt = lblText;
+      img.decoding = 'async';
+      const lbl = document.createElement('span');
+      lbl.textContent = `${lblText} · ${s.filmName || 'Film'}`;
+      item.appendChild(img);
+      item.appendChild(lbl);
+      item.addEventListener('click', async () => {
+        try {
+          const c = await loadRollShotCanvas(s);
+          if (state.sampleSheetTargetMode === 'cam-mx1') {
+            state.sampleSheetTargetMode = 'primary';
+            state.doubleExpMode = true;
+            state.doubleExpFirstCanvas = c;
+            if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+            const mxGhost = document.getElementById('vfMxGhostImg');
+            if (mxGhost) mxGhost.src = c.toDataURL('image/jpeg', 0.72);
+            document.getElementById('sampleSheetBackdrop').classList.remove('open');
+            syncCameraHudUI();
+            switchMainTab('camera');
+            showToast(`🎞️ Đã chọn nền ${lblText} — Chụp tiếp tấm 2/2`);
+            return;
+          }
+          if (state.sampleSheetTargetMode === 'mx2') {
+            state.sampleSheetTargetMode = 'primary';
+            state.activeTweakKey = 'labDoubleExpMix';
+            loadLabDoubleExpCanvas(c, { sampleId: null, rollShotId: s.id, rollLabel: lblText, fromCameraRoll: true, forcePreviewRender: true });
+            renderSampleStrip();
+            document.getElementById('sampleSheetBackdrop').classList.remove('open');
+            showToast(`🎞️ 2× Chồng ${lblText}`);
+            return;
+          }
+          const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+          if (isSlot2) {
+            loadHalfFrameSecondCanvas(c, { sampleId: null, fromCameraRoll: true, forcePreviewRender: true });
+            renderSampleStrip();
+            document.getElementById('sampleSheetBackdrop').classList.remove('open');
+            showToast(`🎞️ Photo 2/2: ${lblText}`);
+            return;
+          }
+          state.activeSampleId = null;
+          renderSampleStrip();
+          loadSourceCanvas(c, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, frameSeed: s.frameSeed, forcePreviewRender: true });
+          document.getElementById('sampleSheetBackdrop').classList.remove('open');
+          showToast(`Đã mở ${lblText}`);
+        } catch (err) {
+          showToast('Không thể đọc ảnh từ Camera Roll');
+        }
+      });
+      strip.appendChild(item);
+    });
+  }
+
   function renderSampleStrip() {
+    renderRollSampleStrip();
     const strip = document.getElementById('sampleStrip');
     strip.innerHTML = '';
     const isMx2 = state.sampleSheetTargetMode === 'mx2';
-    const isHf2 = !isMx2 && state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+    const isCamMx1 = state.sampleSheetTargetMode === 'cam-mx1';
+    const isHf2 = !isMx2 && !isCamMx1 && state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
     const activeSample = isMx2
       ? state.labDoubleExpSampleId
       : (isHf2 ? state.halfFrameLabSecondSampleId : state.activeSampleId);
@@ -7412,9 +7568,23 @@
           showToast(`Could not load sample: ${s.title}`);
           return;
         }
+        if (state.sampleSheetTargetMode === 'cam-mx1') {
+          state.sampleSheetTargetMode = 'primary';
+          state.doubleExpMode = true;
+          state.doubleExpFirstCanvas = s.canvas;
+          if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+          const mxGhost = document.getElementById('vfMxGhostImg');
+          if (mxGhost) mxGhost.src = s.canvas.toDataURL('image/jpeg', 0.72);
+          document.getElementById('sampleSheetBackdrop').classList.remove('open');
+          syncCameraHudUI();
+          switchMainTab('camera');
+          showToast(`🎞️ Đã chọn nền ${s.title} — Chụp tiếp tấm 2/2`);
+          return;
+        }
         if (state.sampleSheetTargetMode === 'mx2') {
           state.sampleSheetTargetMode = 'primary';
-          loadLabDoubleExpCanvas(s.canvas, { sampleId: s.id, fromCameraRoll: false, forcePreviewRender: true });
+          state.activeTweakKey = 'labDoubleExpMix';
+          loadLabDoubleExpCanvas(s.canvas, { sampleId: s.id, rollShotId: null, rollLabel: s.title, fromCameraRoll: false, forcePreviewRender: true });
           renderSampleStrip();
           document.getElementById('sampleSheetBackdrop').classList.remove('open');
           showToast(`🎞️ 2× Layer 2: ${s.title}`);
@@ -8415,7 +8585,7 @@
 
     const targetBar = document.getElementById('hfSampleTargetBar');
     if (targetBar) {
-      targetBar.classList.toggle('visible', isHfLab && is2F && state.sampleSheetTargetMode !== 'mx2');
+      targetBar.classList.toggle('visible', isHfLab && is2F && state.sampleSheetTargetMode === 'primary');
       document.getElementById('btnSampleTarget1')?.classList.toggle('active', state.halfFrameTargetSlot !== 2);
       document.getElementById('btnSampleTarget2')?.classList.toggle('active', state.halfFrameTargetSlot === 2);
     }
@@ -8430,7 +8600,8 @@
     const pickBtn = document.getElementById('btnMxLabPick');
     if (pickBtn) {
       const sTitle = SAMPLES.find(s => s.id === state.labDoubleExpSampleId)?.title;
-      pickBtn.textContent = sTitle ? `🎞️ 2× ${sTitle}` : '🎞️ 2× Photo 2';
+      const lbl = state.labDoubleExpLabel || sTitle || 'Photo 2';
+      pickBtn.textContent = `🎞️ 2× ${lbl}`;
     }
     const slider = document.getElementById('mxBlendSlider');
     const valEl = document.getElementById('mxBlendVal');
@@ -8924,9 +9095,13 @@
     const mxGhost = document.getElementById('vfMxGhostImg');
     const mxBar = document.getElementById('vfMxBar');
     const mxLabel = document.getElementById('vfMxLabel');
+    const mxPickRollBtn = document.getElementById('btnVfMxPickRoll');
+    const mxCancelBtn = document.getElementById('btnCancelDoubleExp');
     if (mxGhost) mxGhost.classList.toggle('visible', hasMxFirst);
     if (mxBar) mxBar.classList.toggle('visible', !!state.doubleExpMode);
     if (mxLabel) mxLabel.textContent = hasMxFirst ? '2× · 2/2 READY' : '2× · 1/2';
+    if (mxPickRollBtn) mxPickRollBtn.style.display = (state.doubleExpMode && state.camRollShots && state.camRollShots.length > 0) ? '' : 'none';
+    if (mxCancelBtn) mxCancelBtn.style.display = hasMxFirst ? '' : 'none';
 
     const flashBtn = document.getElementById('btnVfFlashToggle');
     if (flashBtn) {
@@ -10581,9 +10756,22 @@
         c.width = Math.round(img.naturalWidth * scale);
         c.height = Math.round(img.naturalHeight * scale);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        if (state.sampleSheetTargetMode === 'cam-mx1') {
+          state.sampleSheetTargetMode = 'primary';
+          state.doubleExpMode = true;
+          state.doubleExpFirstCanvas = c;
+          if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+          const mxGhost = document.getElementById('vfMxGhostImg');
+          if (mxGhost) mxGhost.src = c.toDataURL('image/jpeg', 0.72);
+          syncCameraHudUI();
+          switchMainTab('camera');
+          showToast('🎞️ Đã nạp nền 1/2 — Chụp tiếp tấm 2/2');
+          return;
+        }
         if (state.sampleSheetTargetMode === 'mx2') {
           state.sampleSheetTargetMode = 'primary';
-          loadLabDoubleExpCanvas(c, { sampleId: null, fromCameraRoll: false, forcePreviewRender: true });
+          state.activeTweakKey = 'labDoubleExpMix';
+          loadLabDoubleExpCanvas(c, { sampleId: null, rollShotId: null, rollLabel: 'Photo 2', fromCameraRoll: false, forcePreviewRender: true });
           renderSampleStrip();
           switchMainTab('darkroom');
           showToast('🎞️ 2× Layer 2 loaded');
@@ -11174,6 +11362,12 @@
     state[def.key] = val;
     const titleEl = document.getElementById('activeTweakTitle');
     if (titleEl && def) titleEl.textContent = `${def.label}: ${def.fmt(val)}`;
+    if (def.key === 'labDoubleExpMix') {
+      const mxSlider = document.getElementById('mxBlendSlider');
+      const mxVal = document.getElementById('mxBlendVal');
+      if (mxSlider) mxSlider.value = val;
+      if (mxVal) mxVal.textContent = `${val}%`;
+    }
     scheduleRender();
   });
   activeTweakSliderEl.addEventListener('change', () => {
@@ -11185,7 +11379,12 @@
     state.grain = film.grainBase; state.halation = film.halationBase;
     state.bloom = lens.bloomBase; state.vignette = lens.vignetteBase;
     state.leakType = 'none'; state.leakAmt = 0;
-    renderTweaksDock(); renderPreview();
+    state.labDoubleExpMix = 50;
+    if (state.labDoubleExpCanvas) {
+      clearLabDoubleExp();
+    } else {
+      renderTweaksDock(); renderPreview();
+    }
     showToast('↺ Adjustments reset');
   });
 
@@ -11228,7 +11427,15 @@
   function openSampleSheetForDoubleExp() {
     state.sampleSheetTargetMode = 'mx2';
     const titleEl = document.getElementById('sampleSheetTitle');
-    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Choose 2nd Photo';
+    if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Chọn film chồng';
+    renderHalfFrameLabUI();
+    renderSampleStrip();
+    sampleSheet.classList.add('open');
+  }
+  function openSampleSheetForCameraDoubleExp() {
+    state.sampleSheetTargetMode = 'cam-mx1';
+    const titleEl = document.getElementById('sampleSheetTitle');
+    if (titleEl) titleEl.textContent = '🎞️ Chụp chồng film · Chọn nền 1/2';
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
@@ -11239,10 +11446,20 @@
   });
   document.getElementById('btnLabDoubleExp')?.addEventListener('click', () => openSampleSheetForDoubleExp());
   document.getElementById('btnMxLabPick')?.addEventListener('click', () => openSampleSheetForDoubleExp());
+  document.getElementById('btnEditPickMx')?.addEventListener('click', () => openSampleSheetForDoubleExp());
+  document.getElementById('btnEditSwapMx')?.addEventListener('click', () => {
+    swapLabDoubleExpLayers();
+    showToast('⇄ Swapped Double Exposure layers');
+  });
   document.getElementById('mxBlendSlider')?.addEventListener('input', e => {
     state.labDoubleExpMix = Math.max(20, Math.min(80, Number(e.target.value) || 50));
     const valEl = document.getElementById('mxBlendVal');
     if (valEl) valEl.textContent = `${state.labDoubleExpMix}%`;
+    if (state.activeTweakKey === 'labDoubleExpMix') {
+      activeTweakSliderEl.value = state.labDoubleExpMix;
+      const titleEl = document.getElementById('activeTweakTitle');
+      if (titleEl) titleEl.textContent = `Double Exp: ${state.labDoubleExpMix}%`;
+    }
     scheduleRender();
   });
   document.getElementById('btnMxLabSwap')?.addEventListener('click', () => {
@@ -11479,25 +11696,35 @@
     showToast('Half frame #1 discarded');
   });
   document.getElementById('btnVfDoubleExpToggle')?.addEventListener('click', () => {
+    if (!state.doubleExpMode && state.camNeedsRewind) {
+      showToast('🎞️ Hết cuộn — Hãy Save All hoặc Rewind trước');
+      return;
+    }
     state.doubleExpMode = !state.doubleExpMode;
     if (state.doubleExpMode) {
       if (state.bodyId === 'half-frame' && state.hfDiptychMode) {
         state.hfDiptychMode = false;
         clearPendingHalfFrame();
       }
-      showToast('🎞️ 2× Double Exposure ON — Take shot 1/2');
+      if (state.camNeedsWind && !state.camNeedsRewind) {
+        windFilmLever(false);
+      }
+      showToast('🎞️ Chồng film 2× BẬT — Chụp 2 lần liên tiếp hoặc chọn 🎞️ Roll');
     } else {
       clearPendingDoubleExp();
-      showToast('🎞️ 2× Double Exposure OFF');
+      showToast('🎞️ Chồng film 2× TẮT');
     }
     syncCameraHudUI();
     renderHalfFrameLabUI();
     scheduleSaveLocalAppState();
   });
+  document.getElementById('btnVfMxPickRoll')?.addEventListener('click', () => {
+    openSampleSheetForCameraDoubleExp();
+  });
   document.getElementById('btnCancelDoubleExp')?.addEventListener('click', () => {
     clearPendingDoubleExp();
     syncCameraHudUI();
-    showToast('Double exposure shot 1/2 discarded');
+    showToast('Đã hủy tấm nền 1/2');
   });
 
   // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, SLR 35-70mm Zoom Toggle, Disposable Flash)
