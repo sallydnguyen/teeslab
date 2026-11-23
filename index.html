@@ -4747,8 +4747,8 @@
         </div>
         <div class="export-info-grid" id="exportInfoGrid"></div>
         <label class="export-toggle-row" for="chkFilmInfoStamp">
-          <span>🏷️ Print film info footer on saved photo</span>
-          <input type="checkbox" id="chkFilmInfoStamp" checked style="accent-color:#f5a623;width:16px;height:16px;" />
+          <span>🏷️ Print film info footer on photo (EXIF always embedded)</span>
+          <input type="checkbox" id="chkFilmInfoStamp" style="accent-color:#f5a623;width:16px;height:16px;" />
         </label>
         <div style="display:grid;grid-template-columns:1fr 1.35fr;gap:8px;">
           <button class="btn-pill btn-ghost" id="btnCopyFilmInfo" type="button" style="height:36px;justify-content:center;font-size:12px;">📋 Copy Info</button>
@@ -6228,7 +6228,7 @@
     leakAmt: 0,
     frameType: 'darkroom-white',
     dateStamp: 'off',
-    filmInfoStamp: true,
+    filmInfoStamp: false,
     hfDiptychMode: true,
     activeTab: 'camera',
 
@@ -6461,7 +6461,12 @@
     state.phoneId = 'auto-detect';
     state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
     state.dateStamp = settings.dateStamp === 'exif-or-today' ? 'exif-or-today' : 'off';
-    state.filmInfoStamp = Object.prototype.hasOwnProperty.call(settings, 'filmInfoStamp') ? !!settings.filmInfoStamp : true;
+    if (!localStorage.getItem('teeslab-exif-no-visual-stamp-v1')) {
+      state.filmInfoStamp = false;
+      localStorage.setItem('teeslab-exif-no-visual-stamp-v1', '1');
+    } else {
+      state.filmInfoStamp = Object.prototype.hasOwnProperty.call(settings, 'filmInfoStamp') ? !!settings.filmInfoStamp : false;
+    }
     state.activeTab = settings.activeTab === 'darkroom' ? 'darkroom' : 'camera';
     if (!localStorage.getItem('teeslab-half-frame-2f-default-v1')) {
       state.hfDiptychMode = true;
@@ -11207,18 +11212,31 @@
     } catch (ignored) {}
     const { phone, body, lens, film } = getSelectedGear();
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
+    const camShutterInfo = getEffectiveShutterInfo(lens, film);
+    const camEv = cameraExposureEV();
+    const camIso = getEffectiveCameraISO(film);
+    const camGrain = getEffectiveCameraGrain(film);
     const workerImgData = cCtx.getImageData(0, 0, capW, capH);
     const [processed, finalRawBlob] = await Promise.all([
       processFilmImage(workerImgData, capW, capH, {
-        phone, body, lens, film, strength: 85, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
-        grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+        phone, body, lens, film, strength: 85, exposureEV: camEv, shutterShakeRisk: camShutterInfo.shakeRisk, warmth: 0,
+        grainAmt: camGrain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
         isDiptych: !!opts.isDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'blob', quality: 0.94, transferBuffers: true }),
       rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.92)
     ]);
-    const photoBlob = processed.blob;
+    const camSpec = buildFilmInfoSpec({
+      fromCamera: true,
+      isOrig: false,
+      iso: camIso,
+      ev: camEv,
+      shutterHz: camShutterInfo.hz,
+      grain: camGrain,
+      shotNumber
+    });
+    const photoBlob = await injectExifIntoJpegBlob(processed.blob, camSpec);
     const thumbnailBlob = await createShotThumbnail(photoBlob);
     const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob: finalRawBlob, photoBlob, thumbnailBlob };
     let persisted = true;
@@ -11911,42 +11929,47 @@
     }
   }
 
-  function buildFilmInfoSpec() {
+  function buildFilmInfoSpec(opts = {}) {
     const { body, lens, film } = getSelectedGear();
-    const isOrig = !!state.labOriginalMode;
+    const isOrig = Object.prototype.hasOwnProperty.call(opts, 'isOrig') ? !!opts.isOrig : !!state.labOriginalMode;
     const focalMm = Math.round((lens.isZoom ? state.zoomFocalMm : lens.mm) || 50);
-    const apertureNum = Number((state.lensAperture || lens.minF || 2.8).toFixed(1));
+    const focal35mm = body.id === 'half-frame'
+      ? Math.round(focalMm * 1.44)
+      : (body.id === 'medium-format' ? Math.round(focalMm * 0.55) : focalMm);
+    const apertureNum = Number((lens.activeF || state.lensAperture || lens.minF || 3.5).toFixed(1));
     const lensShort = shortLensLabel(lens);
-    const evVal = (state.exposure / 100);
+    const evVal = Number.isFinite(opts.ev) ? opts.ev : (state.exposure / 100);
     const evStr = `${evVal >= 0 ? '+' : ''}${evVal.toFixed(1)} EV`;
+    const shutterHz = Number.isFinite(opts.shutterHz) ? opts.shutterHz : 125;
+    const grainVal = Number.isFinite(opts.grain) ? opts.grain : state.grain;
     const frameMap = { 'none': 'None', 'darkroom-white': 'White Border', '35mm-sprocket': '35mm Film', 'polaroid': 'Polaroid' };
     const frameLabel = frameMap[state.frameType] || 'Border';
     const d = new Date();
     const pad2 = n => String(n).padStart(2, '0');
     let dateExif = `${d.getFullYear()}:${pad2(d.getMonth() + 1)}:${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
     let dateDisplay = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-    if (state.exif?.dateRaw) {
+    if (!opts.fromCamera && state.exif?.dateRaw) {
       const m = state.exif.dateRaw.match(/^(\d{4}):(\d{2}):(\d{2})(?:\s+(\d{2}:\d{2}:\d{2}))?/);
       if (m) {
         dateExif = `${m[1]}:${m[2]}:${m[3]} ${m[4] || '12:00:00'}`;
         dateDisplay = `${m[1]}-${m[2]}-${m[3]}`;
       }
     }
-    const iso = film.iso || 400;
+    const iso = Math.round(Number(opts.iso) || film.iso || 400);
     const filmTypeLabel = film.isBW ? 'Black & White' : (film.brand === 'cinema' ? 'Cinema Film' : 'Color Negative');
     const headline = isOrig ? `Original Photo (Unedited)` : `${film.name} · ISO ${iso}`;
     const subline = isOrig
       ? `${body.name} · ${lensShort} · Unedited original image`
-      : `${body.name} · ${lensShort} · Strength ${state.strength}% · Grain ${state.grain}%`;
+      : `${body.name} · ${lensShort} · Strength ${opts.fromCamera ? 85 : state.strength}% · Grain ${grainVal}%`;
     const footerLeft = isOrig ? `ORIGINAL · UNEDITED` : `${film.name.toUpperCase()} · ISO ${iso}`;
     const footerRight = isOrig
       ? `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${dateDisplay}`
       : `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
     const captionText = isOrig
-      ? `Original Photo (Unedited) | ${body.name} • ${lensShort} | ${dateDisplay} | Tee's Film Lab`
-      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} • ${lensShort} | Lab: Strength ${state.strength}%, Exp ${evStr}, Grain ${state.grain}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
+      ? `Original Photo (Unedited) | ${body.name} - ${lensShort} | ${dateDisplay} | Tee's Film Lab`
+      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} - ${lensShort} | Shutter: ${shutterHz >= 1 ? `1/${Math.round(shutterHz)}s` : `${(1 / shutterHz).toFixed(1)}s`} | Strength ${opts.fromCamera ? 85 : state.strength}%, Exp ${evStr}, Grain ${grainVal}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
     return {
-      film, body, lens, isOrig, iso, focalMm, apertureNum, lensShort, evStr, frameLabel, filmTypeLabel,
+      film, body, lens, isOrig, iso, focalMm, focal35mm, apertureNum, shutterHz, evVal, lensShort, evStr, frameLabel, filmTypeLabel,
       dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText
     };
   }
@@ -12014,11 +12037,25 @@
         (num >>> 24) & 0xFF, (num >>> 16) & 0xFF, (num >>> 8) & 0xFF, num & 0xFF,
         (den >>> 24) & 0xFF, (den >>> 16) & 0xFF, (den >>> 8) & 0xFF, den & 0xFF
       ]));
+      const mkSRat = (tag, num, den) => {
+        const buf = new Uint8Array(8);
+        const dv = new DataView(buf.buffer);
+        dv.setInt32(0, Math.round(num), false);
+        dv.setInt32(4, Math.max(1, Math.round(den)), false);
+        return mkEntry(tag, 10, 1, buf);
+      };
+
+      const cleanModel = spec.isOrig ? spec.body.name : `${spec.body.name} (${spec.film.name})`;
+      const cleanLens = spec.isOrig ? spec.lensShort : `${spec.lensShort} (${spec.film.name})`;
+      const shutterHz = Math.max(0.25, Number(spec.shutterHz) || 125);
+      const expNum = shutterHz >= 1 ? 1 : Math.round(1000 / shutterHz);
+      const expDen = shutterHz >= 1 ? Math.round(shutterHz) : 1000;
 
       const ifd0Entries = [
         mkAscii(0x010E, spec.captionText),
         mkAscii(0x010F, "Tee's Film Lab"),
-        mkAscii(0x0110, spec.isOrig ? spec.body.name : `${spec.body.name} · ${spec.film.name}`),
+        mkAscii(0x0110, cleanModel),
+        mkShort(0x0112, 1),
         mkAscii(0x0131, `Tee's Film Lab v${document.getElementById('versionLabel')?.textContent?.replace(/^v/i, '') || '2.4'}`),
         mkAscii(0x0132, spec.dateExif),
         mkLong(0x8769, 0)
@@ -12030,13 +12067,18 @@
       for (let i = 0; i < userCmtStr.length; i++) userCmtBytes[8 + i] = userCmtStr.charCodeAt(i);
 
       const exifEntries = [
-        mkRat(0x829D, Math.max(10, Math.round((spec.apertureNum || 2.8) * 10)), 10),
+        mkRat(0x829A, expNum, expDen),
+        mkRat(0x829D, Math.max(10, Math.round((spec.apertureNum || 3.5) * 10)), 10),
         mkShort(0x8827, Math.max(25, Math.min(65000, Math.round(spec.iso || 400)))),
         mkEntry(0x9000, 7, 4, new Uint8Array([0x30, 0x32, 0x33, 0x31])),
         mkAscii(0x9003, spec.dateExif),
+        mkAscii(0x9004, spec.dateExif),
+        mkSRat(0x9204, Math.round((Number(spec.evVal) || 0) * 10), 10),
         mkRat(0x920A, Math.max(10, Math.round((spec.focalMm || 50) * 10)), 10),
         mkEntry(0x9286, 7, userCmtBytes.length, userCmtBytes),
-        mkAscii(0xA434, spec.lensShort)
+        mkShort(0xA405, Math.max(10, Math.min(1000, Math.round(spec.focal35mm || spec.focalMm || 50)))),
+        mkAscii(0xA433, "Tee's Film Lab"),
+        mkAscii(0xA434, cleanLens)
       ].sort((a, b) => a.tag - b.tag);
 
       const tiffChunks = [];
