@@ -3702,7 +3702,7 @@
 
         <!-- Dynamic Viewfinder Stage (6 Film Body Viewfinders) -->
         <div class="cam-vf-box" id="camVfBox">
-          <video id="camVideo" autoplay playsinline muted style="display:none;"></video>
+          <video id="camVideo" autoplay playsinline muted style="position:fixed;top:-9999px;left:-9999px;width:2px;height:2px;opacity:0.001;pointer-events:none;"></video>
           <div class="vf-stage" id="vfStage" data-vf-mode="slr">
             <canvas id="cameraViewfinderCanvas"></canvas>
 
@@ -8362,6 +8362,7 @@
       facingMode: state.camFacing,
       width: { ideal: land ? (hiRes ? 1440 : 960) : (hiRes ? 1080 : 720) },
       height: { ideal: land ? (hiRes ? 1080 : 720) : (hiRes ? 1440 : 960) },
+      aspectRatio: { ideal: land ? (4 / 3) : (3 / 4) },
       frameRate: { ideal: 18, max: 24 }
     };
   }
@@ -9167,7 +9168,8 @@
       try {
         await track.applyConstraints({
           width: { ideal: wantLandscape ? 1440 : 1080 },
-          height: { ideal: wantLandscape ? 1080 : 1440 }
+          height: { ideal: wantLandscape ? 1080 : 1440 },
+          aspectRatio: { ideal: wantLandscape ? (4 / 3) : (3 / 4) }
         });
       } catch (ignored) {}
       await new Promise(r => setTimeout(r, 220));
@@ -9327,33 +9329,9 @@
     playShutterSound(shutterInfo.durationSec);
     const exposureTimer = exposureWaitMs > 0 ? new Promise(resolve => setTimeout(resolve, exposureWaitMs)) : null;
 
-    let highResBitmap = null;
     try {
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
-      let src = hasLiveVideo ? camVideo : (state.fullSourceCanvas || SAMPLES[0].canvas);
-      if (hasLiveVideo && typeof ImageCapture !== 'undefined') {
-        const track = cameraTrack();
-        if (track && track.readyState === 'live') {
-          try {
-            const ic = new ImageCapture(track);
-            const photoBlob = await Promise.race([
-              ic.takePhoto(),
-              new Promise((_, rej) => setTimeout(() => rej(new Error('ImageCapture timeout')), 950))
-            ]);
-            const candidateBitmap = await createImageBitmap(photoBlob);
-            const videoReady = camVideo.videoWidth > 0 && camVideo.videoHeight > 0;
-            const videoIsLand = camVideo.videoWidth >= camVideo.videoHeight;
-            const shotIsLand = candidateBitmap.width >= candidateBitmap.height;
-            const viewportIsLand = isCameraViewportLandscape();
-            if ((videoReady && shotIsLand !== videoIsLand) || (viewportIsLand && !shotIsLand && (!videoReady || videoIsLand))) {
-              candidateBitmap.close();
-            } else {
-              highResBitmap = candidateBitmap;
-              src = highResBitmap;
-            }
-          } catch (ignored) {}
-        }
-      }
+      const src = hasLiveVideo ? camVideo : (state.fullSourceCanvas || SAMPLES[0].canvas);
       if (exposureTimer) await exposureTimer;
 
       const capZoom = lens.cropZoom || 1.0;
@@ -9409,7 +9387,6 @@
     } catch (error) {
       showToast('Could not process this shot');
     } finally {
-      if (highResBitmap) highResBitmap.close();
       shutterBusy = false;
       shutterButton.disabled = false;
     }
@@ -10745,7 +10722,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1720';
+  const APP_BUILD = '20261122-1725';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
