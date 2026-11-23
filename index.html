@@ -12046,13 +12046,13 @@
       };
 
       const cleanModel = spec.isOrig ? spec.body.name : `${spec.body.name} (${spec.film.name})`;
-      const cleanLens = spec.isOrig ? spec.lensShort : `${spec.lensShort} (${spec.film.name})`;
+      const apLabel = formatApertureLabel(spec.apertureNum || 3.5).replace('f/', 'f');
+      const cleanLens = `${spec.focalMm}mm ${apLabel}`;
       const shutterHz = Math.max(0.25, Number(spec.shutterHz) || 125);
       const expNum = shutterHz >= 1 ? 1 : Math.round(1000 / shutterHz);
       const expDen = shutterHz >= 1 ? Math.round(shutterHz) : 1000;
 
       const ifd0Entries = [
-        mkAscii(0x010E, spec.captionText),
         mkAscii(0x010F, "Tee's Film Lab"),
         mkAscii(0x0110, cleanModel),
         mkShort(0x0112, 1),
@@ -12060,11 +12060,6 @@
         mkAscii(0x0132, spec.dateExif),
         mkLong(0x8769, 0)
       ].sort((a, b) => a.tag - b.tag);
-
-      const userCmtStr = String(spec.captionText || '').replace(/[^\x20-\x7E]/g, '-');
-      const userCmtBytes = new Uint8Array(8 + userCmtStr.length);
-      userCmtBytes.set([0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00], 0);
-      for (let i = 0; i < userCmtStr.length; i++) userCmtBytes[8 + i] = userCmtStr.charCodeAt(i);
 
       const exifEntries = [
         mkRat(0x829A, expNum, expDen),
@@ -12075,7 +12070,6 @@
         mkAscii(0x9004, spec.dateExif),
         mkSRat(0x9204, Math.round((Number(spec.evVal) || 0) * 10), 10),
         mkRat(0x920A, Math.max(10, Math.round((spec.focalMm || 50) * 10)), 10),
-        mkEntry(0x9286, 7, userCmtBytes.length, userCmtBytes),
         mkShort(0xA405, Math.max(10, Math.min(1000, Math.round(spec.focal35mm || spec.focalMm || 50)))),
         mkAscii(0xA433, "Tee's Film Lab"),
         mkAscii(0xA434, cleanLens)
