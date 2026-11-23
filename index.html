@@ -3964,7 +3964,7 @@
         <!-- Collapsible Adjust / Frame Drawer (Slider on top, Tweak buttons below) -->
         <div class="tweak-drawer" id="tweakDrawer">
           <div class="tweak-header-row" id="tweakHeaderRow">
-            <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 100%</span>
+            <span id="activeTweakTitle" style="color:#f5a623;">Film strength: 85%</span>
             <div style="display:flex;gap:6px;align-items:center;">
               <select class="dark-select" id="leakTypeSelect" style="display:none;padding:2px 6px;font-size:10px;"></select>
               <button class="filter-chip" id="btnEditPickMx" type="button" style="display:none;padding:2px 7px;font-size:9.5px;color:#f5a623;border-color:rgba(245,166,35,0.45);">🎞️ Pick film</button>
@@ -4508,7 +4508,7 @@
      ========================================================================== */
 
   const PHONE_PROFILES = [
-    { id: 'auto-detect', name: 'Automatic', deSharpen: 0.14, warmthOffset: 0, tintOffset: 0, satScale: 0.96, blueTame: 0.08, greenTame: 0.08, highlightRecover: 0.10, shadowLift: 0.04, contrastSoften: 0.06 }
+    { id: 'auto-detect', name: 'Automatic', deSharpen: 0.22, warmthOffset: 0, tintOffset: 0, satScale: 0.95, blueTame: 0.09, greenTame: 0.08, highlightRecover: 0.18, shadowLift: 0.06, contrastSoften: 0.11 }
   ];
 
   const VIEWFINDER_MODES = [
@@ -4623,27 +4623,27 @@
 
 
   const FILM_STOCKS = [
-    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, archived: true, canisterColor: 'linear-gradient(180deg,#10b981,#e5e7eb,#059669)', edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-12,16,15], midTint: [-3,7,6], highlightTint: [4,7,5], foliageShift: {gBoost:10,bShift:20,rShift:-16,satScale:0.84}, skyShift: {cyanBoost:22,bDepth:-4}, redHueShift: 5, skinWarmth: 3, vibrance: -0.07, skinProtect: 0.84, saturation: 0.90, contrast: 0.93, blackLift: 0.048, grainBase: 22, grainSize: 1.00, halationBase: 12, isBW: false },
-    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.07, blackLift: 0.025, grainBase: 32, grainSize: 1.14, halationBase: 16, isBW: false },
-    { id: 'fuji-superia-premium-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Premium 400', subtitle: 'Soft Japanese skin & greens', iso: 400, canisterColor: 'linear-gradient(180deg,#991b1b,#059669,#fbbf24)', edgeCode: 'FUJI PREMIUM 400  19', matrix: [1.00,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,0.98], shadowTint: [-8,11,10], midTint: [6,5,1], highlightTint: [11,8,1], foliageShift: {gBoost:14,bShift:12,rShift:-11,satScale:0.98}, skyShift: {cyanBoost:13,bDepth:4}, redHueShift: 2, skinWarmth: 6, vibrance: 0.02, skinProtect: 0.86, saturation: 1.01, contrast: 0.99, blackLift: 0.036, grainBase: 25, grainSize: 1.04, halationBase: 16, isBW: false },
-    { id: 'fuji-fujicolor-100', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor 100', subtitle: 'Crisp daylight cool-green', iso: 100, canisterColor: 'linear-gradient(180deg,#16a34a,#f8fafc,#15803d)', edgeCode: 'FUJICOLOR 100     07', matrix: [0.97,0.02,0.01,-0.02,1.03,0.02,-0.01,0.03,1.02], shadowTint: [-10,12,11], midTint: [-2,4,4], highlightTint: [5,7,4], foliageShift: {gBoost:14,bShift:12,rShift:-12,satScale:1.00}, skyShift: {cyanBoost:16,bDepth:10}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 0.99, contrast: 1.05, blackLift: 0.020, grainBase: 13, grainSize: 0.84, halationBase: 11, isBW: false },
-    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, archived: true, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.16, blackLift: 0.026, grainBase: 21, grainSize: 0.96, halationBase: 9, isBW: false },
+    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, archived: true, canisterColor: 'linear-gradient(180deg,#10b981,#e5e7eb,#059669)', edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-12,16,15], midTint: [-3,7,6], highlightTint: [4,7,5], foliageShift: {gBoost:10,bShift:20,rShift:-16,satScale:0.84}, skyShift: {cyanBoost:22,bDepth:-4}, redHueShift: 5, skinWarmth: 3, vibrance: -0.07, skinProtect: 0.84, saturation: 0.90, contrast: 0.93, blackLift: 0.048, grainBase: 17, grainSize: 0.92, halationBase: 12, isBW: false },
+    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.05, blackLift: 0.026, grainBase: 25, grainSize: 1.02, halationBase: 16, isBW: false },
+    { id: 'fuji-superia-premium-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Premium 400', subtitle: 'Soft Japanese skin & greens', iso: 400, canisterColor: 'linear-gradient(180deg,#991b1b,#059669,#fbbf24)', edgeCode: 'FUJI PREMIUM 400  19', matrix: [1.00,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,0.98], shadowTint: [-8,11,10], midTint: [6,5,1], highlightTint: [11,8,1], foliageShift: {gBoost:14,bShift:12,rShift:-11,satScale:0.98}, skyShift: {cyanBoost:13,bDepth:4}, redHueShift: 2, skinWarmth: 6, vibrance: 0.02, skinProtect: 0.86, saturation: 1.01, contrast: 0.98, blackLift: 0.038, grainBase: 20, grainSize: 0.95, halationBase: 16, isBW: false },
+    { id: 'fuji-fujicolor-100', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor 100', subtitle: 'Crisp daylight cool-green', iso: 100, canisterColor: 'linear-gradient(180deg,#16a34a,#f8fafc,#15803d)', edgeCode: 'FUJICOLOR 100     07', matrix: [0.97,0.02,0.01,-0.02,1.03,0.02,-0.01,0.03,1.02], shadowTint: [-10,12,11], midTint: [-2,4,4], highlightTint: [5,7,4], foliageShift: {gBoost:14,bShift:12,rShift:-12,satScale:1.00}, skyShift: {cyanBoost:16,bDepth:10}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 0.99, contrast: 1.03, blackLift: 0.022, grainBase: 11, grainSize: 0.80, halationBase: 11, isBW: false },
+    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, archived: true, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
 
-    { id: 'kodak-portra-160', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, canisterColor: 'linear-gradient(180deg,#fbbf24,#fef3c7,#b45309)', edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.90, blackLift: 0.050, grainBase: 14, grainSize: 0.84, halationBase: 13, isBW: false },
-    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.95, blackLift: 0.042, grainBase: 22, grainSize: 1.00, halationBase: 18, isBW: false },
-    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, canisterColor: 'linear-gradient(180deg,#ea580c,#fbbf24,#78350f)', edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.07, blackLift: 0.033, grainBase: 36, grainSize: 1.18, halationBase: 26, isBW: false },
-    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, canisterColor: 'linear-gradient(180deg,#fbbf24,#a855f7,#dc2626)', edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.05, blackLift: 0.028, grainBase: 26, grainSize: 1.06, halationBase: 22, isBW: false },
-    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, canisterColor: 'linear-gradient(180deg,#eab308,#dc2626,#7c2d12)', edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.12, blackLift: 0.025, grainBase: 31, grainSize: 1.12, halationBase: 14, isBW: false },
-    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.12, blackLift: 0.022, grainBase: 35, grainSize: 1.16, halationBase: 19, isBW: false },
-    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, canisterColor: 'linear-gradient(180deg,#dc2626,#f59e0b,#111827)', edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.17, blackLift: 0.010, grainBase: 11, grainSize: 0.78, halationBase: 13, isBW: false },
+    { id: 'kodak-portra-160', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, canisterColor: 'linear-gradient(180deg,#fbbf24,#fef3c7,#b45309)', edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.89, blackLift: 0.052, grainBase: 12, grainSize: 0.80, halationBase: 13, isBW: false },
+    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
+    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, canisterColor: 'linear-gradient(180deg,#ea580c,#fbbf24,#78350f)', edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.05, blackLift: 0.035, grainBase: 28, grainSize: 1.06, halationBase: 26, isBW: false },
+    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, canisterColor: 'linear-gradient(180deg,#fbbf24,#a855f7,#dc2626)', edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.03, blackLift: 0.030, grainBase: 21, grainSize: 0.96, halationBase: 22, isBW: false },
+    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, canisterColor: 'linear-gradient(180deg,#eab308,#dc2626,#7c2d12)', edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.09, blackLift: 0.027, grainBase: 24, grainSize: 1.00, halationBase: 14, isBW: false },
+    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
+    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, canisterColor: 'linear-gradient(180deg,#dc2626,#f59e0b,#111827)', edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.14, blackLift: 0.012, grainBase: 10, grainSize: 0.76, halationBase: 13, isBW: false },
 
-    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.09, blackLift: 0.032, grainBase: 34, grainSize: 1.14, halationBase: 72, isBW: false },
-    { id: 'cyberpunk-640t', brand: 'cinema', brandLabel: '640T', name: 'Cyberpunk 640T', subtitle: 'Neon cyan & amber halo', iso: 640, canisterColor: 'linear-gradient(180deg,#7c3aed,#06b6d4,#ea580c)', edgeCode: 'CYBERPUNK 640T   36A', matrix: [0.92,0.01,0.05,-0.02,1.02,0.06,0.04,0.06,1.12], shadowTint: [-20,11,28], midTint: [-10,3,19], highlightTint: [22,-3,-4], foliageShift: {gBoost:4,bShift:22,rShift:-18,satScale:0.96}, skyShift: {cyanBoost:26,bDepth:16}, redHueShift: -12, skinWarmth: 2, vibrance: 0.08, skinProtect: 0.60, saturation: 1.08, contrast: 1.12, blackLift: 0.026, grainBase: 29, grainSize: 1.08, halationBase: 64, isBW: false },
-    { id: 'lomo-800', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, canisterColor: 'linear-gradient(180deg,#6d28d9,#dc2626,#eab308)', edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.11, blackLift: 0.020, grainBase: 38, grainSize: 1.22, halationBase: 28, isBW: false },
-    { id: 'popho-luminar-100', brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, canisterColor: 'linear-gradient(180deg,#fef3c7,#f59e0b,#0d9488)', edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.99, blackLift: 0.024, grainBase: 12, grainSize: 0.80, halationBase: 18, isBW: false },
+    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.07, blackLift: 0.034, grainBase: 26, grainSize: 1.02, halationBase: 72, isBW: false },
+    { id: 'cyberpunk-640t', brand: 'cinema', brandLabel: '640T', name: 'Cyberpunk 640T', subtitle: 'Neon cyan & amber halo', iso: 640, canisterColor: 'linear-gradient(180deg,#7c3aed,#06b6d4,#ea580c)', edgeCode: 'CYBERPUNK 640T   36A', matrix: [0.92,0.01,0.05,-0.02,1.02,0.06,0.04,0.06,1.12], shadowTint: [-20,11,28], midTint: [-10,3,19], highlightTint: [22,-3,-4], foliageShift: {gBoost:4,bShift:22,rShift:-18,satScale:0.96}, skyShift: {cyanBoost:26,bDepth:16}, redHueShift: -12, skinWarmth: 2, vibrance: 0.08, skinProtect: 0.60, saturation: 1.08, contrast: 1.09, blackLift: 0.028, grainBase: 23, grainSize: 0.98, halationBase: 64, isBW: false },
+    { id: 'lomo-800', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, canisterColor: 'linear-gradient(180deg,#6d28d9,#dc2626,#eab308)', edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.08, blackLift: 0.022, grainBase: 29, grainSize: 1.08, halationBase: 28, isBW: false },
+    { id: 'popho-luminar-100', brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, canisterColor: 'linear-gradient(180deg,#fef3c7,#f59e0b,#0d9488)', edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.98, blackLift: 0.026, grainBase: 10, grainSize: 0.76, halationBase: 18, isBW: false },
 
-    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, archived: true, canisterColor: 'linear-gradient(180deg,#111827,#10b981,#e5e7eb)', edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.15, blackLift: 0.042, grainBase: 40, grainSize: 1.20, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
-    { id: 'agfa-apx-400', brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, canisterColor: 'linear-gradient(180deg,#18181b,#dc2626,#e5e7eb)', edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.08, blackLift: 0.028, grainBase: 30, grainSize: 1.06, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] }
+    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, archived: true, canisterColor: 'linear-gradient(180deg,#111827,#10b981,#e5e7eb)', edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.12, blackLift: 0.044, grainBase: 31, grainSize: 1.08, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
+    { id: 'agfa-apx-400', brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, canisterColor: 'linear-gradient(180deg,#18181b,#dc2626,#e5e7eb)', edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.06, blackLift: 0.030, grainBase: 23, grainSize: 0.96, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] }
   ];
 
   const FILM_SUBTITLES_EN = {
@@ -4933,14 +4933,14 @@
     const totalTint = phone.tintOffset + body.bodyTint + lens.coatingTint;
     const { lutR, lutG, lutB } = buildToneLUT(effectiveEV, totalContrast, totalLift, totalRolloff, totalWarmth, totalTint);
 
-    // Keep stock differences visible while avoiding exaggerated digital color casts.
+    // Keep stock character clear while preserving soft, natural developed-print gradations.
     const m = film.matrix, sT = film.shadowTint, mT = film.midTint, hT = film.highlightTint;
-    const filmColorMix = 0.76;
-    const filmTintMix = 0.76;
+    const filmColorMix = 0.70;
+    const filmTintMix = 0.70;
     const redShift = (film.redHueShift || 0) * filmColorMix;
     const skinWarm = (film.skinWarmth || 0) * filmColorMix;
     const vib = (film.vibrance || 0) * filmColorMix;
-    const filmSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.82;
+    const filmSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
     const softFocus = body.softFocus || 0;
     const deSharp = Math.min(0.85, phone.deSharpen + lens.edgeSoft * 0.45 + softFocus * 0.65);
     const hasCA = lens.chromaticAb > 0.2, caStr = lens.chromaticAb * (width / 900);
@@ -5401,8 +5401,8 @@
 
     const bodyGrain = body.grainScale || 1.0;
     const effVig = Math.min(100, vignetteAmt + (body.vignetteBoost || 0));
-    const vigStr = (effVig / 100) * 0.72, grainGain = (grainAmt / 100) * 26 * bodyGrain;
-    const grainScale = 1 / Math.max(0.55, film.grainSize * (0.72 + 0.28 * bodyGrain) * (width / 950));
+    const vigStr = (effVig / 100) * 0.72, grainGain = (grainAmt / 100) * 13.5 * bodyGrain;
+    const grainScale = 1 / Math.max(0.76, film.grainSize * (0.74 + 0.26 * bodyGrain) * (width / 1280));
     if (vigStr > 0.01 || grainGain > 0.2 || flashBurst) {
       let vigPowLut = globalThis.__vigPowLut;
       if (!vigPowLut && vigStr > 0.01) {
@@ -5431,9 +5431,9 @@
           if (grainGain > 0.2) {
             const gx = ((x * grainScale) | 0) & (GRAIN_SIZE - 1);
             const lumN = (0.299*r + 0.587*g + 0.114*b) / 255;
-            const n = GRAIN_TILE[gy * GRAIN_SIZE + gx] * grainGain * (0.35 + 2.6 * lumN * (1 - lumN));
+            const n = GRAIN_TILE[gy * GRAIN_SIZE + gx] * grainGain * (0.30 + 2.1 * lumN * (1 - lumN));
             if (film.isBW) { r += n; g += n; b += n; }
-            else { r += n * 1.05; g += n * 0.96; b += n * 1.08; }
+            else { r += n * 1.02; g += n * 0.98; b += n * 1.03; }
           }
           outData[sp] = clamp255(r); outData[sp+1] = clamp255(g); outData[sp+2] = clamp255(b);
         }
@@ -5928,10 +5928,10 @@
     pickerTab: 'camera',
     activeTweakKey: 'strength',
 
-    strength: 100,
+    strength: 85,
     exposure: 0,
     warmth: 0,
-    grain: 22,
+    grain: 18,
     halation: 18,
     bloom: 22,
     vignette: 20,
@@ -7473,7 +7473,7 @@
 
   function resetSingleTweak(key) {
     const { film } = getSelectedGear();
-    if (key === 'strength') state.strength = 100;
+    if (key === 'strength') state.strength = 85;
     else if (key === 'exposure') state.exposure = 0;
     else if (key === 'grain') state.grain = film.grainBase;
     else if (key === 'leakAmt') { state.leakType = 'none'; state.leakAmt = 0; }
@@ -9999,8 +9999,8 @@
           vec2 gUv = (floor(px * uGrainScale) + 0.5) / 256.0;
           float gn = (texture(uGrain, gUv).r * 255.0 - 127.5) / 28.0;
           float lumN = dot(rgb, vec3(0.299, 0.587, 0.114)) / 255.0;
-          float n = gn * uGrainGain * (0.35 + 2.6 * lumN * (1.0 - lumN));
-          rgb += uIsBW > 0.5 ? vec3(n) : vec3(n * 1.05, n * 0.96, n * 1.08);
+          float n = gn * uGrainGain * (0.30 + 2.1 * lumN * (1.0 - lumN));
+          rgb += uIsBW > 0.5 ? vec3(n) : vec3(n * 1.02, n * 0.98, n * 1.03);
         }
         fragColor = vec4(clamp(rgb / 255.0, 0.0, 1.0), 1.0);
       }`;
@@ -10204,13 +10204,13 @@
         }
 
         const m = film.matrix, sT = film.shadowTint, mT = film.midTint, hT = film.highlightTint;
-        const filmColorMix = 0.76, filmTintMix = 0.76;
+        const filmColorMix = 0.70, filmTintMix = 0.70;
         const previewMatrix = [
           1 + (m[0] - 1) * filmColorMix, m[1] * filmColorMix, m[2] * filmColorMix,
           m[3] * filmColorMix, 1 + (m[4] - 1) * filmColorMix, m[5] * filmColorMix,
           m[6] * filmColorMix, m[7] * filmColorMix, 1 + (m[8] - 1) * filmColorMix
         ];
-        const previewSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.82;
+        const previewSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
         const softFocus = body.softFocus || 0;
         const deSharp = Math.min(0.85, phone.deSharpen + (lens.edgeSoft || 0) * 0.45 + softFocus * 0.65);
         const ug = pGrade.u;
@@ -10298,8 +10298,8 @@
         const bodyGrain = body.grainScale || 1.0;
         const effVig = Math.min(100, vignetteAmt + (body.vignetteBoost || 0));
         const vigStr = (effVig / 100) * 0.72;
-        const grainGain = (grainAmt / 100) * 26 * bodyGrain;
-        const grainScale = 1 / Math.max(0.55, film.grainSize * (0.72 + 0.28 * bodyGrain) * (w / 950));
+        const grainGain = (grainAmt / 100) * 13.5 * bodyGrain;
+        const grainScale = 1 / Math.max(0.76, film.grainSize * (0.74 + 0.26 * bodyGrain) * (w / 1280));
         const uc = pComposite.u;
         gl.useProgram(pComposite.prog);
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboBase.tex); gl.uniform1i(uc.uBase, 0);
@@ -10405,8 +10405,8 @@
       const vfRatio = stageDim.ratio;
       const vfZoom = body.id === 'rangefinder' ? 1.0 : (lens.cropZoom || 1.0);
       const vfConfig = {
-        phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: shutterInfo.shakeRisk, warmth: 0,
-        grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.65),
+        phone, body, lens, film, strength: 85, exposureEV: cameraExposureEV(), shutterShakeRisk: shutterInfo.shakeRisk, warmth: 0,
+        grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.72),
         halationAmt: 0,
         bloomAmt: 0,
         ecoPreview: true,
@@ -10628,7 +10628,7 @@
     const workerImgData = cCtx.getImageData(0, 0, capW, capH);
     const [processed, finalRawBlob] = await Promise.all([
       processFilmImage(workerImgData, capW, capH, {
-        phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
+        phone, body, lens, film, strength: 85, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
         grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
         isDiptych: !!opts.isDiptych,
@@ -11913,7 +11913,7 @@
   });
   document.getElementById('btnResetTweaks').addEventListener('click', () => {
     const { lens, film } = getSelectedGear();
-    state.strength = 100; state.exposure = 0; state.warmth = 0;
+    state.strength = 85; state.exposure = 0; state.warmth = 0;
     state.grain = film.grainBase; state.halation = film.halationBase;
     state.bloom = lens.bloomBase; state.vignette = lens.vignetteBase;
     state.leakType = 'none'; state.leakAmt = 0;
