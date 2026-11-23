@@ -4435,11 +4435,7 @@
   const TWEAK_DEFS = [
     { key: 'strength', label: 'Film strength', short: 'Strength', min: 0, max: 100, fmt: v => `${v}%` },
     { key: 'exposure', label: 'Exposure', short: 'Exp', min: -150, max: 150, fmt: v => `${v >= 0 ? '+' : ''}${(v / 100).toFixed(1)}` },
-    { key: 'warmth', label: 'Warmth', short: 'Warmth', min: -40, max: 40, fmt: v => (v > 0 ? `+${v}` : `${v}`) },
     { key: 'grain', label: 'Grain', short: 'Grain', min: 0, max: 100, fmt: v => `${v}%` },
-    { key: 'halation', label: 'Halation', short: 'Halation', min: 0, max: 100, fmt: v => `${v}%` },
-    { key: 'bloom', label: 'Bloom', short: 'Bloom', min: 0, max: 100, fmt: v => `${v}%` },
-    { key: 'vignette', label: 'Vignette', short: 'Vig', min: 0, max: 100, fmt: v => `${v}%` },
     { key: 'leakAmt', label: 'Light leak', short: 'Leak', min: 0, max: 100, fmt: v => `${v}%` }
   ];
 
@@ -6909,11 +6905,11 @@
         phone, body, lens, film,
         strength: state.strength,
         exposureEV: state.exposure / 100,
-        warmth: state.warmth,
+        warmth: 0,
         grainAmt: state.grain,
-        halationAmt: state.halation,
-        bloomAmt: state.bloom,
-        vignetteAmt: state.vignette,
+        halationAmt: film.halationBase,
+        bloomAmt: lens.bloomBase,
+        vignetteAmt: lens.vignetteBase,
         leakType: state.leakType,
         leakAmt: state.leakAmt,
         frameType,
@@ -7160,14 +7156,10 @@
   let tweakDrawerMode = 'adjust';
 
   function resetSingleTweak(key) {
-    const { lens, film } = getSelectedGear();
+    const { film } = getSelectedGear();
     if (key === 'strength') state.strength = 100;
     else if (key === 'exposure') state.exposure = 0;
-    else if (key === 'warmth') state.warmth = 0;
     else if (key === 'grain') state.grain = film.grainBase;
-    else if (key === 'halation') state.halation = film.halationBase;
-    else if (key === 'bloom') state.bloom = lens.bloomBase;
-    else if (key === 'vignette') state.vignette = lens.vignetteBase;
     else if (key === 'leakAmt') { state.leakType = 'none'; state.leakAmt = 0; }
     renderTweaksDock();
     renderPreview();
@@ -7179,6 +7171,7 @@
     const isFrameMode = isDrawerOpen && tweakDrawerMode === 'frame';
     const isAdjustMode = isDrawerOpen && tweakDrawerMode !== 'frame';
     const def = TWEAK_DEFS.find(d => d.key === state.activeTweakKey) || TWEAK_DEFS[0];
+    if (state.activeTweakKey !== def.key) state.activeTweakKey = def.key;
 
     const frameStrip = document.getElementById('tweakFrameStrip');
     const subStrip = document.getElementById('tweakSubStrip');
@@ -7310,15 +7303,11 @@
       });
     }
 
-    const { lens, film } = getSelectedGear();
+    const { film } = getSelectedGear();
     let adjustedCount = 0;
     if (state.strength !== 100) adjustedCount++;
     if (state.exposure !== 0) adjustedCount++;
-    if (state.warmth !== 0) adjustedCount++;
     if (state.grain !== film.grainBase) adjustedCount++;
-    if (state.halation !== film.halationBase) adjustedCount++;
-    if (state.bloom !== lens.bloomBase) adjustedCount++;
-    if (state.vignette !== lens.vignetteBase) adjustedCount++;
     if (state.leakType !== 'none' && state.leakAmt > 0) adjustedCount++;
 
     const isDateOn = state.dateStamp !== 'off';
@@ -9911,7 +9900,7 @@
       const vfRatio = stageDim.ratio;
       const vfZoom = body.id === 'rangefinder' ? 1.0 : (lens.cropZoom || 1.0);
       const vfConfig = {
-        phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: shutterInfo.shakeRisk, warmth: state.warmth,
+        phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: shutterInfo.shakeRisk, warmth: 0,
         grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.65),
         halationAmt: 0,
         bloomAmt: 0,
@@ -10095,7 +10084,7 @@
     const { phone, body, lens, film } = getSelectedGear();
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
     const processed = await processFilmImage(cCtx.getImageData(0, 0, capW, capH), capW, capH, {
-      phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: state.warmth,
+      phone, body, lens, film, strength: 100, exposureEV: cameraExposureEV(), shutterShakeRisk: getEffectiveShutterInfo(lens, film).shakeRisk, warmth: 0,
       grainAmt: getEffectiveCameraGrain(film), halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
       leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
       isDiptych: !!opts.isDiptych,
@@ -10631,8 +10620,8 @@
     try {
       const sourceData = src.getContext('2d').getImageData(0, 0, src.width, src.height);
       const output = await processFilmImage(sourceData, src.width, src.height, {
-        phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: state.warmth,
-        grainAmt: state.grain, halationAmt: state.halation, bloomAmt: state.bloom, vignetteAmt: state.vignette,
+        phone, body, lens, film, strength: state.strength, exposureEV: state.exposure / 100, warmth: 0,
+        grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
@@ -11180,8 +11169,9 @@
   const activeTweakSliderEl = document.getElementById('activeTweakSlider');
   activeTweakSliderEl.addEventListener('input', (e) => {
     const val = Number(e.target.value);
-    state[state.activeTweakKey] = val;
     const def = TWEAK_DEFS.find(d => d.key === state.activeTweakKey) || TWEAK_DEFS[0];
+    state.activeTweakKey = def.key;
+    state[def.key] = val;
     const titleEl = document.getElementById('activeTweakTitle');
     if (titleEl && def) titleEl.textContent = `${def.label}: ${def.fmt(val)}`;
     scheduleRender();
