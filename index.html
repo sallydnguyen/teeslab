@@ -3271,6 +3271,42 @@
       border-radius: 4px;
       pointer-events: none;
     }
+    .picker-info-btn {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      color: #cbd5e1;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 10px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      z-index: 3;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, transform 0.12s ease;
+    }
+    .picker-info-btn:hover,
+    .picker-tile.active .picker-info-btn {
+      border-color: rgba(245, 166, 35, 0.6);
+      color: #f5a623;
+    }
+    .picker-info-btn:active {
+      transform: scale(0.9);
+      background: rgba(245, 166, 35, 0.24);
+    }
+    .film-guide-card.focused {
+      border-color: #f5a623;
+      box-shadow: 0 0 0 1px rgba(245, 166, 35, 0.55), 0 0 14px rgba(245, 166, 35, 0.22);
+    }
     .picker-match-bar {
       display: flex;
       align-items: center;
@@ -7364,17 +7400,29 @@
       filmTrack.innerHTML = '';
       filteredFilms.forEach(f => {
         const isRec = recFilmSet.has(f.id);
-        const btn = document.createElement('button');
-        btn.type = 'button';
+        const btn = document.createElement('div');
+        btn.setAttribute('role', 'button');
+        btn.tabIndex = 0;
         btn.dataset.id = f.id;
         btn.className = `picker-tile${isRec ? ' is-rec' : ''}`;
         btn.innerHTML = `
+          <button class="picker-info-btn" type="button" title="${escapeHtml(f.name)} guide" aria-label="${escapeHtml(f.name)} guide">i</button>
           ${isRec ? '<span class="picker-rec-badge" title="Recommended for this body">★ Best</span>' : ''}
           <div class="combo-card-art">${renderFilmArt(f.id, f.name)}</div>
           <span class="picker-tile-name">${escapeHtml(f.name)}</span>
           <span class="picker-tile-sub">${escapeHtml(f.subtitle)}</span>
         `;
+        btn.querySelector('.picker-info-btn').addEventListener('click', e => {
+          e.stopPropagation();
+          openFilmGuideForStock(f.id);
+        });
         btn.addEventListener('click', () => selectFilmStock(f.id));
+        btn.addEventListener('keydown', e => {
+          if (e.target === btn && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            selectFilmStock(f.id);
+          }
+        });
         filmTrack.appendChild(btn);
       });
       filmTrack.scrollLeft = 0;
@@ -11715,9 +11763,10 @@
     });
   });
 
-  // Film Roll Guide modal (? Guide inside Film Picker)
+  // Film Roll Guide modal (? Guide or 'i' button on any film roll)
   const filmGuideBackdrop = document.getElementById('filmGuideBackdrop');
   let filmGuideSceneFilter = 'all';
+  let filmGuideFocusedId = null;
   function renderFilmGuide() {
     const listEl = document.getElementById('filmGuideList');
     if (!listEl) return;
@@ -11733,7 +11782,8 @@
       const meta = FILM_GUIDE_META[f.id] || {};
       const card = document.createElement('button');
       card.type = 'button';
-      card.className = `film-guide-card${f.id === state.filmId ? ' active' : ''}`;
+      const isFocused = filmGuideFocusedId === f.id;
+      card.className = `film-guide-card${f.id === state.filmId ? ' active' : ''}${isFocused ? ' focused' : ''}`;
       card.dataset.filmId = f.id;
       card.innerHTML = `
         <div class="film-guide-art">${renderFilmArt(f.id, f.name)}</div>
@@ -11748,23 +11798,45 @@
       `;
       card.addEventListener('click', () => {
         selectFilmStock(f.id);
+        filmGuideFocusedId = null;
         filmGuideBackdrop?.classList.remove('open');
         showToast(`🎞️ Loaded ${f.name}`);
       });
       listEl.appendChild(card);
     });
   }
-  document.getElementById('btnOpenFilmGuide')?.addEventListener('click', () => {
-    filmGuideSceneFilter = ['portrait', 'daylight', 'warm', 'night', 'bw'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
+  function openFilmGuideForStock(filmId = null) {
+    filmGuideFocusedId = filmId || null;
+    const activeScene = ['portrait', 'daylight', 'warm', 'night', 'bw'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
+    if (filmId && activeScene !== 'all') {
+      const inActiveScene = (FILM_GUIDE_META[filmId]?.scenes || []).includes(activeScene);
+      filmGuideSceneFilter = inActiveScene ? activeScene : 'all';
+    } else {
+      filmGuideSceneFilter = activeScene;
+    }
     renderFilmGuide();
     filmGuideBackdrop?.classList.add('open');
+    if (filmId) {
+      requestAnimationFrame(() => {
+        const target = document.querySelector(`#filmGuideList .film-guide-card[data-film-id="${CSS.escape(filmId)}"]`);
+        target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      });
+    }
+  }
+  document.getElementById('btnOpenFilmGuide')?.addEventListener('click', () => openFilmGuideForStock(null));
+  document.getElementById('btnCloseFilmGuide')?.addEventListener('click', () => {
+    filmGuideFocusedId = null;
+    filmGuideBackdrop?.classList.remove('open');
   });
-  document.getElementById('btnCloseFilmGuide')?.addEventListener('click', () => filmGuideBackdrop?.classList.remove('open'));
   filmGuideBackdrop?.addEventListener('click', e => {
-    if (e.target === filmGuideBackdrop) filmGuideBackdrop.classList.remove('open');
+    if (e.target === filmGuideBackdrop) {
+      filmGuideFocusedId = null;
+      filmGuideBackdrop.classList.remove('open');
+    }
   });
   document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(btn => {
     btn.addEventListener('click', () => {
+      filmGuideFocusedId = null;
       filmGuideSceneFilter = btn.dataset.gscene || 'all';
       renderFilmGuide();
     });
