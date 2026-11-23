@@ -6019,7 +6019,7 @@
     bodyId: 'slr',
     lensId: '50mm',
     lensFocalMm: 50,
-    lensAperture: 1.4,
+    lensAperture: 3.5,
     zoomFocalMm: 50,
     focusMode: 'af',
     focusPos: 0.45,
@@ -6243,7 +6243,15 @@
       transaction.onabort = () => reject(transaction.error || new Error('Camera roll delete was interrupted'));
     });
   }
-  let apPinnedWideOpen = true;
+  const DEFAULT_LENS_APERTURE = 3.5;
+  function getDefaultApertureForLens(lens, zoomMm = state.zoomFocalMm) {
+    if (!lens) return DEFAULT_LENS_APERTURE;
+    const minF = lens.isZoom ? getZoomMinF(lens, zoomMm || lens.mm || 50) : (lens.minF || 2.8);
+    if (lens.isFixedAperture) return minF;
+    const maxF = lens.maxF || 16;
+    return Number(Math.max(minF, Math.min(maxF, lens.defaultAperture || DEFAULT_LENS_APERTURE)).toFixed(2));
+  }
+  let apPinnedWideOpen = false;
   const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'filmInfoStamp', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
@@ -6296,8 +6304,8 @@
       state.lensAperture = Math.max(baseMinF, Math.min(activeLens.maxF || 16, Number(settings.lensAperture)));
       apPinnedWideOpen = Math.abs(state.lensAperture - baseMinF) < 0.04;
     } else {
-      state.lensAperture = baseMinF;
-      apPinnedWideOpen = true;
+      state.lensAperture = getDefaultApertureForLens(activeLens, state.zoomFocalMm);
+      apPinnedWideOpen = Math.abs(state.lensAperture - baseMinF) < 0.04;
     }
 
     state.focusMode = state.focusMode === 'mf' ? 'mf' : 'af';
@@ -6345,6 +6353,18 @@
       saveLocalAppState();
     }
   } catch (e) { state.hfDiptychMode = true; }
+  const LENS_APERTURE_35_DEFAULT_KEY = 'tees-lab-lens-aperture-35-default-v1';
+  try {
+    if (!localStorage.getItem(LENS_APERTURE_35_DEFAULT_KEY)) {
+      const activeFocals = getModeFocals(state.bodyId);
+      const activeLens = activeFocals.find(f => f.id === state.lensId) || activeFocals[0];
+      const baseMinF = activeLens?.isZoom ? getZoomMinF(activeLens, state.zoomFocalMm) : (activeLens?.minF || 2.8);
+      state.lensAperture = getDefaultApertureForLens(activeLens, state.zoomFocalMm);
+      apPinnedWideOpen = Math.abs(state.lensAperture - baseMinF) < 0.04;
+      localStorage.setItem(LENS_APERTURE_35_DEFAULT_KEY, '1');
+      saveLocalAppState();
+    }
+  } catch (e) { state.lensAperture = DEFAULT_LENS_APERTURE; }
   let saveStateTimer = 0;
   function scheduleSaveLocalAppState() {
     window.clearTimeout(saveStateTimer);
@@ -7859,7 +7879,7 @@
         const matchedFocal = modeFocals.find(f => f.id === fId) || modeFocals[0];
         const nextZoomMm = Number.isFinite(Number(r.zoomFocalMm)) ? Math.max(35, Math.min(70, Number(r.zoomFocalMm))) : state.zoomFocalMm;
         const nextFocalMm = Number.isFinite(Number(r.lensFocalMm)) ? Number(r.lensFocalMm) : (matchedFocal.mm || 50);
-        const nextAp = Number.isFinite(Number(r.lensAperture)) ? Number(r.lensAperture) : (matchedFocal.minF || 2.8);
+        const nextAp = Number.isFinite(Number(r.lensAperture)) ? Number(r.lensAperture) : getDefaultApertureForLens(matchedFocal, nextZoomMm);
         apPinnedWideOpen = Math.abs(nextAp - (matchedFocal.minF || 2.8)) < 0.04;
         Object.assign(state, {
           phoneId: 'auto-detect', bodyId: mId, lensId: fId,
@@ -8085,17 +8105,18 @@
       const zMid = Math.round((zMin + zMax) * 0.5);
       const z = Math.max(zMin, Math.min(zMax, Number(state.zoomFocalMm) || matched.mm || zMid));
       state.zoomFocalMm = Number(z.toFixed(2));
-      state.lensAperture = getZoomMinF(matched, z);
+      state.lensAperture = getDefaultApertureForLens(matched, z);
     } else {
       state.lensFocalMm = matched.mm || 50;
-      state.lensAperture = matched.minF || 2.8;
+      state.lensAperture = getDefaultApertureForLens(matched);
     }
     if (matched.isFixedAperture) {
       state.focusMode = 'af';
       state.focusPos = state.afTargetPos;
     }
     state.focusPoint = { x: 0.5, y: 0.48 };
-    apPinnedWideOpen = true;
+    const matchedMinF = matched.isZoom ? getZoomMinF(matched, state.zoomFocalMm) : (matched.minF || 2.8);
+    apPinnedWideOpen = Math.abs(state.lensAperture - matchedMinF) < 0.04;
     const { lens } = getSelectedGear();
     state.bloom = lens.bloomBase;
     state.vignette = lens.vignetteBase;
@@ -8135,17 +8156,18 @@
       const zMax = nextFocal.zoomMax || 70;
       const zMid = Math.round((zMin + zMax) * 0.5);
       state.zoomFocalMm = Math.max(zMin, Math.min(zMax, Number(state.zoomFocalMm) || nextFocal.mm || zMid));
-      state.lensAperture = getZoomMinF(nextFocal, state.zoomFocalMm);
+      state.lensAperture = getDefaultApertureForLens(nextFocal, state.zoomFocalMm);
     } else {
       state.lensFocalMm = nextFocal.mm || 50;
-      state.lensAperture = nextFocal.minF || 2.8;
+      state.lensAperture = getDefaultApertureForLens(nextFocal);
     }
     if (nextFocal.isFixedAperture) {
       state.focusMode = 'af';
       state.focusPos = state.afTargetPos;
     }
     state.focusPoint = { x: 0.5, y: 0.48 };
-    apPinnedWideOpen = true;
+    const nextMinF = nextFocal.isZoom ? getZoomMinF(nextFocal, state.zoomFocalMm) : (nextFocal.minF || 2.8);
+    apPinnedWideOpen = Math.abs(state.lensAperture - nextMinF) < 0.04;
     const { lens } = getSelectedGear();
     state.bloom = lens.bloomBase;
     state.vignette = lens.vignetteBase;
@@ -8325,6 +8347,12 @@
       ticks.unshift({ x: fToTrackX(baseMinF), cls: 'major', stopVal: baseMinF });
     }
 
+    const snapStops = [...stopSet];
+    if (DEFAULT_LENS_APERTURE >= baseMinF - 0.02 && DEFAULT_LENS_APERTURE <= lensMaxF + 0.02 && !snapStops.some(s => Math.abs(s - DEFAULT_LENS_APERTURE) < 0.05)) {
+      snapStops.push(DEFAULT_LENS_APERTURE);
+      snapStops.sort((a, b) => a - b);
+    }
+
     return {
       modeKey: `ap:${body.id}:${rawLens.id}:${baseMinF}:${lensMaxF}`,
       tag: 'APERTURE',
@@ -8333,7 +8361,7 @@
       maxX,
       marks,
       ticks,
-      snapStops: stopSet,
+      snapStops,
       getCurX: () => fToTrackX(resolvedLens.activeF || resolvedLens.minF || 2.8),
       getMinDragX: () => fToTrackX(resolvedLens.minF || baseMinF),
       getValText: () => resolvedLens.aperture || formatApertureLabel(resolvedLens.minF),
@@ -8345,7 +8373,7 @@
           if (Math.abs(cx - dragMinX) <= 4.5) cx = dragMinX;
           else if (Math.abs(cx - maxX) <= 4.5) cx = maxX;
           else {
-            for (const s of stopSet) {
+            for (const s of snapStops) {
               if (s >= curMinF - 0.02) {
                 const sx = fToTrackX(s);
                 if (Math.abs(cx - sx) <= 2.5) { cx = sx; break; }
@@ -11983,16 +12011,17 @@
         const zMax = recLens.zoomMax || 70;
         const zMid = Math.round((zMin + zMax) * 0.5);
         state.zoomFocalMm = zMid;
-        state.lensAperture = getZoomMinF(recLens, zMid);
+        state.lensAperture = getDefaultApertureForLens(recLens, zMid);
       } else {
         state.lensFocalMm = recLens.mm || 50;
-        state.lensAperture = recLens.minF || 2.8;
+        state.lensAperture = getDefaultApertureForLens(recLens);
       }
       if (recLens.isFixedAperture) {
         state.focusMode = 'af';
         state.focusPos = state.afTargetPos;
       }
-      apPinnedWideOpen = true;
+      const recMinF = recLens.isZoom ? getZoomMinF(recLens, state.zoomFocalMm) : (recLens.minF || 2.8);
+      apPinnedWideOpen = Math.abs(state.lensAperture - recMinF) < 0.04;
     }
     state.filmId = recFilm.id;
     const resolved = getSelectedGear().lens;
@@ -12074,14 +12103,15 @@
     if (rawLens.isZoom) {
       const steps = Array.isArray(rawLens.zoomSteps) && rawLens.zoomSteps.length ? rawLens.zoomSteps : [35, 50, 70];
       state.zoomFocalMm = pick(steps);
-      state.lensAperture = getZoomMinF(rawLens, state.zoomFocalMm);
+      state.lensAperture = getDefaultApertureForLens(rawLens, state.zoomFocalMm);
     } else {
       if (!rawLens.isFormatLens && !rawLens.isFixedAperture && rawLens.mm) {
         state.lensFocalMm = rawLens.mm;
       }
-      state.lensAperture = rawLens.minF || 2.8;
+      state.lensAperture = getDefaultApertureForLens(rawLens);
     }
-    apPinnedWideOpen = true;
+    const rawMinF = rawLens.isZoom ? getZoomMinF(rawLens, state.zoomFocalMm) : (rawLens.minF || 2.8);
+    apPinnedWideOpen = Math.abs(state.lensAperture - rawMinF) < 0.04;
     state.focusMode = 'af';
     state.focusPos = state.afTargetPos;
     const resolved = getSelectedGear().lens;
@@ -12149,7 +12179,8 @@
       state.zoomFocalMm = clamp(p.zm, 35, 70, state.zoomFocalMm);
       state.lensFocalMm = rawLens.mm || 50;
       const minF = rawLens.isZoom ? (3.5 + ((state.zoomFocalMm - 35) / 35) * 1.0) : (rawLens.minF || 2.8);
-      state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 16, minF);
+      const defAp = getDefaultApertureForLens(rawLens, state.zoomFocalMm);
+      state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 16, defAp);
       apPinnedWideOpen = Math.abs(state.lensAperture - minF) < 0.04;
       state.focusMode = rawLens.isFixedAperture ? 'af' : (p.fm === 'mf' ? 'mf' : 'af');
       state.focusPos = rawLens.isFixedAperture ? state.afTargetPos : clamp(p.fp, 0, 1, state.afTargetPos);
