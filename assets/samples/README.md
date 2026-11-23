@@ -8,7 +8,7 @@ These locally bundled sample photographs are served by Unsplash and are included
 | `neon-street.jpg` | https://images.unsplash.com/photo-1577579566380-70290779519c |
 | `forest.jpg` | https://images.unsplash.com/photo-1441974231531-c6227db76b6e |
 | `portrait.jpg` | https://images.unsplash.com/photo-1534528741775-53994a69daeb |
-| `coffee.jpg` | https://images.unsplash.com/photo-1549399220-e6b0ec230f24 |
+| `coffee.jpg` | https://images.unsplash.com/photo-1670932652903-c58dd01c6c5f |
 | `ocean.jpg` | https://images.unsplash.com/photo-1518837695005-2083093ee35b |
 | `tokyo-alley.jpg` | https://images.unsplash.com/photo-1789160378558-9a5b88b19fba |
 | `mountains.jpg` | https://images.unsplash.com/photo-1506905925346-21bda4d32df4 |
