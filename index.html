@@ -2975,6 +2975,79 @@
       font-size: 10px;
     }
 
+    /* Film Roll Guide Sheet */
+    .film-guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 8px;
+    }
+    .film-guide-card {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #13161d;
+      border: 1px solid var(--border);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.14s ease, background 0.14s ease;
+    }
+    .film-guide-card.active {
+      border-color: #f5a623;
+      background: rgba(245, 166, 35, 0.1);
+    }
+    .film-guide-art {
+      flex: 0 0 30px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .film-guide-art img {
+      max-height: 44px;
+      max-width: 28px;
+      object-fit: contain;
+    }
+    .film-guide-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .film-guide-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .film-guide-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .film-guide-iso {
+      font-family: var(--mono);
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+    .film-guide-tone {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #f5a623;
+    }
+    .film-guide-tip {
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+
     /* Full-Screen Camera Roll Photo Viewer */
     .photo-viewer-backdrop {
       position: absolute;
@@ -4268,6 +4341,7 @@
           <button class="filter-chip" data-fbrand="kodak" type="button">Kodak</button>
           <button class="filter-chip" data-fbrand="cinema" type="button">Cine &amp; Indie</button>
           <button class="filter-chip" data-fbrand="bw" type="button">B&amp;W</button>
+          <button class="filter-chip" id="btnOpenFilmGuide" type="button" title="Film rolls guide & shooting tips" style="color:#f5a623;border-color:rgba(245,166,35,0.45);">? Guide</button>
         </div>
         <div class="h-scroll" id="pickerFilmTrack"></div>
       </div>
@@ -4317,6 +4391,25 @@
           </div>
         </div>
         <div class="contact-grid-2" id="contactSheetGrid"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: FILM ROLL GUIDE -->
+    <div class="sheet-backdrop" id="filmGuideBackdrop">
+      <div class="sheet-card">
+        <div class="sheet-head">
+          <span>🎞️ Film Roll Guide</span>
+          <button class="btn-pill btn-ghost" id="btnCloseFilmGuide" type="button" style="height:26px;">✕</button>
+        </div>
+        <div class="h-scroll" id="filmGuideScenarios" style="margin-bottom:6px;">
+          <button class="filter-chip active" data-gscene="all" type="button">All (18)</button>
+          <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
+          <button class="filter-chip" data-gscene="daylight" type="button">Daylight</button>
+          <button class="filter-chip" data-gscene="warm" type="button">Golden Hour</button>
+          <button class="filter-chip" data-gscene="night" type="button">Night &amp; Neon</button>
+          <button class="filter-chip" data-gscene="bw" type="button">B&amp;W</button>
+        </div>
+        <div class="film-guide-list" id="filmGuideList"></div>
       </div>
     </div>
 
@@ -4505,6 +4598,27 @@
     'ilford-hp5': 'Documentary black & white', 'agfa-apx-400': 'Smooth silver monochrome'
   };
   FILM_STOCKS.forEach(film => { film.subtitle = FILM_SUBTITLES_EN[film.id]; });
+
+  const FILM_GUIDE_META = {
+    'fuji-pro-400h': { scenes: ['portrait', 'daylight'], tip: 'Airy pastel teal for overcast portraits, weddings & minimal cafes.' },
+    'fuji-superia-400': { scenes: ['daylight'], tip: 'Everyday street stock with crisp Japanese greens & lively contrast (PnS / SLR).' },
+    'fuji-superia-premium-400': { scenes: ['portrait', 'daylight'], tip: 'Warmer Japanese skin tones and softer shadows than X-Tra 400.' },
+    'fuji-fujicolor-100': { scenes: ['daylight'], tip: 'Clean, tight fine-grain daylight roll for sunny city walks & architecture.' },
+    'fuji-classic-chrome': { scenes: ['daylight', 'portrait'], tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.' },
+    'kodak-portra-160': { scenes: ['portrait', 'daylight'], tip: 'Ultra-fine pastel grain for bright daylight fashion & soft sunlit skin.' },
+    'kodak-portra-400': { scenes: ['portrait', 'warm'], tip: 'All-around portrait champion with creamy skin tones & highlight latitude.' },
+    'kodak-portra-800': { scenes: ['warm', 'night', 'portrait'], tip: 'Richer sunset warmth and speed for twilight, indoor ambient & golden hour.' },
+    'kodak-gold-200': { scenes: ['warm', 'daylight'], tip: 'Nostalgic amber glow made for golden hour, beaches & late-afternoon sun.' },
+    'kodak-colorplus-200': { scenes: ['warm', 'daylight'], tip: 'Crisp retro contrast and sandy warmth for travel, vintage shops & street.' },
+    'kodak-ultramax-400': { scenes: ['daylight', 'warm'], tip: 'Punchy deep blues and vibrant everyday color — great with Disposable / PnS.' },
+    'kodak-ektar-100': { scenes: ['daylight'], tip: 'Boldest saturation and ultra-fine detail for landscapes, nature & travel scenery.' },
+    'cinestill-800t': { scenes: ['night'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation.' },
+    'cyberpunk-640t': { scenes: ['night'], tip: 'Electric cyan-violet shadows & strong orange-red halo — great for night & 2×.' },
+    'lomo-800': { scenes: ['night', 'warm'], tip: 'Warm saturated low-light color with bold grain — fun for night flash & parties.' },
+    'popho-luminar-100': { scenes: ['daylight', 'warm'], tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range.' },
+    'ilford-hp5': { scenes: ['bw'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
+    'agfa-apx-400': { scenes: ['bw', 'portrait'], tip: 'Smoother silver-slate gradation and finer midtones for overcast & B&W portraits.' }
+  };
 
   const TWEAK_DEFS = [
     { key: 'strength', label: 'Film strength', short: 'Strength', min: 0, max: 100, fmt: v => `${v}%` },
@@ -11591,10 +11705,64 @@
   });
 
   // Film brand filter pills inside Combo Picker
-  document.querySelectorAll('#filmBrandPills .filter-chip').forEach(btn => {
+  document.querySelectorAll('#filmBrandPills .filter-chip[data-fbrand]').forEach(btn => {
     btn.addEventListener('click', () => {
       state.filmBrandFilter = btn.dataset.fbrand;
       renderComboPickerSheet();
+    });
+  });
+
+  // Film Roll Guide modal (? Guide inside Film Picker)
+  const filmGuideBackdrop = document.getElementById('filmGuideBackdrop');
+  let filmGuideSceneFilter = 'all';
+  function renderFilmGuide() {
+    const listEl = document.getElementById('filmGuideList');
+    if (!listEl) return;
+    document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(chip => {
+      if (chip.dataset.gscene === 'all') chip.textContent = `All (${FILM_STOCKS.length})`;
+      chip.classList.toggle('active', chip.dataset.gscene === filmGuideSceneFilter);
+    });
+    const rows = filmGuideSceneFilter === 'all'
+      ? FILM_STOCKS
+      : FILM_STOCKS.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(filmGuideSceneFilter));
+    listEl.innerHTML = '';
+    rows.forEach(f => {
+      const meta = FILM_GUIDE_META[f.id] || {};
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = `film-guide-card${f.id === state.filmId ? ' active' : ''}`;
+      card.dataset.filmId = f.id;
+      card.innerHTML = `
+        <div class="film-guide-art">${renderFilmArt(f.id, f.name)}</div>
+        <div class="film-guide-body">
+          <div class="film-guide-head">
+            <span class="film-guide-name">${escapeHtml(f.name)}</span>
+            <span class="film-guide-iso">${escapeHtml(f.brandLabel)} · ISO ${f.iso}</span>
+          </div>
+          <div class="film-guide-tone">${escapeHtml(f.subtitle)}</div>
+          <div class="film-guide-tip">${escapeHtml(meta.tip || '')}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        selectFilmStock(f.id);
+        filmGuideBackdrop?.classList.remove('open');
+        showToast(`🎞️ Loaded ${f.name}`);
+      });
+      listEl.appendChild(card);
+    });
+  }
+  document.getElementById('btnOpenFilmGuide')?.addEventListener('click', () => {
+    renderFilmGuide();
+    filmGuideBackdrop?.classList.add('open');
+  });
+  document.getElementById('btnCloseFilmGuide')?.addEventListener('click', () => filmGuideBackdrop?.classList.remove('open'));
+  filmGuideBackdrop?.addEventListener('click', e => {
+    if (e.target === filmGuideBackdrop) filmGuideBackdrop.classList.remove('open');
+  });
+  document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filmGuideSceneFilter = btn.dataset.gscene || 'all';
+      renderFilmGuide();
     });
   });
 
