@@ -5012,6 +5012,11 @@
       if (type === 2) return readAscii(view, pos, count);
       if (type === 3) return view.getUint16(pos, le);
       if (type === 4) return view.getUint32(pos, le);
+      if (type === 5) {
+        const num = view.getUint32(pos, le);
+        const den = view.getUint32(pos + 4, le);
+        return den ? (num / den) : null;
+      }
       return null;
     };
 
@@ -5025,7 +5030,7 @@
         if (ep + 12 > view.byteLength) break;
         const tag = view.getUint16(ep, le);
         if (tag === 0x8769) sub = view.getUint32(ep + 8, le);
-        else if (tag === 0x9003 || tag === 0x0132) {
+        else if (tag === 0x9003 || tag === 0x0132 || tag === 0x9206) {
           const v = readVal(view.getUint16(ep + 2, le), view.getUint32(ep + 4, le), ep + 8);
           if (v !== null && v !== '') tags[tag] = v;
         }
@@ -5035,7 +5040,9 @@
 
     const subIfd = parseIfd(firstIfd);
     if (subIfd) parseIfd(subIfd);
-    return tags[0x9003] || tags[0x0132] ? { dateRaw: tags[0x9003] || tags[0x0132] || '' } : null;
+    const dateRaw = tags[0x9003] || tags[0x0132] || '';
+    const subjectDistance = (Number.isFinite(tags[0x9206]) && tags[0x9206] > 0) ? tags[0x9206] : null;
+    return (dateRaw || subjectDistance !== null) ? { dateRaw, subjectDistance } : null;
   }
 
   /* ==========================================================================
@@ -5044,18 +5051,18 @@
 
   function generateSampleScenes() {
     const scenes = [
-      { id: 'morning-cafe', title: 'Coffee', src: './assets/samples/coffee.jpg' },
-      { id: 'golden-street', title: 'Golden hour', src: './assets/samples/golden-hour.jpg' },
-      { id: 'neon-night', title: 'Neon night', src: './assets/samples/neon-street.jpg' },
-      { id: 'emerald-forest', title: 'Forest', src: './assets/samples/forest.jpg' },
-      { id: 'portrait-window', title: 'Portrait', src: './assets/samples/portrait.jpg' },
-      { id: 'ocean-breeze', title: 'Ocean', src: './assets/samples/ocean.jpg' },
-      { id: 'tokyo-alley', title: 'Tokyo alley', src: './assets/samples/tokyo-alley.jpg' },
-      { id: 'alpine-peaks', title: 'Alpine peaks', src: './assets/samples/mountains.jpg' },
-      { id: 'modern-arch', title: 'Architecture', src: './assets/samples/architecture.jpg' },
-      { id: 'botanical-bloom', title: 'Botanical', src: './assets/samples/flower.jpg' },
-      { id: 'venice-harbor', title: 'Venice', src: './assets/samples/venice.jpg' },
-      { id: 'midnight-car', title: 'Midnight car', src: './assets/samples/night-car.jpg' }
+      { id: 'morning-cafe', title: 'Coffee', src: './assets/samples/coffee.jpg', focusMeters: 0.65, nearMeters: 0.45, farMeters: 1.8 },
+      { id: 'golden-street', title: 'Golden hour', src: './assets/samples/golden-hour.jpg', focusMeters: 4.5, nearMeters: 1.6, farMeters: 18 },
+      { id: 'neon-night', title: 'Neon night', src: './assets/samples/neon-street.jpg', focusMeters: 3.5, nearMeters: 1.4, farMeters: 14 },
+      { id: 'emerald-forest', title: 'Forest', src: './assets/samples/forest.jpg', focusMeters: 7.5, nearMeters: 2.5, farMeters: 28 },
+      { id: 'portrait-window', title: 'Portrait', src: './assets/samples/portrait.jpg', focusMeters: 1.4, nearMeters: 0.85, farMeters: 4.2 },
+      { id: 'ocean-breeze', title: 'Ocean', src: './assets/samples/ocean.jpg', focusMeters: 24, nearMeters: 3.5, farMeters: Infinity },
+      { id: 'tokyo-alley', title: 'Tokyo alley', src: './assets/samples/tokyo-alley.jpg', focusMeters: 4.2, nearMeters: 1.5, farMeters: 16 },
+      { id: 'alpine-peaks', title: 'Alpine peaks', src: './assets/samples/mountains.jpg', focusMeters: Infinity, nearMeters: 12, farMeters: Infinity },
+      { id: 'modern-arch', title: 'Architecture', src: './assets/samples/architecture.jpg', focusMeters: 12, nearMeters: 3.5, farMeters: 38 },
+      { id: 'botanical-bloom', title: 'Botanical', src: './assets/samples/flower.jpg', focusMeters: 0.50, nearMeters: 0.32, farMeters: 1.6 },
+      { id: 'venice-harbor', title: 'Venice', src: './assets/samples/venice.jpg', focusMeters: 16, nearMeters: 3.2, farMeters: Infinity },
+      { id: 'midnight-car', title: 'Midnight car', src: './assets/samples/night-car.jpg', focusMeters: 3.0, nearMeters: 1.3, farMeters: 12 }
     ];
     return scenes.map(scene => ({
       ...scene,
@@ -6709,12 +6716,176 @@
     return prevStop.meters || 5.0;
   }
 
+  function metersToFocusPos(meters, stops = FOCUS_STOPS) {
+    const list = Array.isArray(stops) && stops.length >= 2 ? stops : FOCUS_STOPS;
+    if (!Number.isFinite(meters) || meters >= 60) return 1.0;
+    const minM = list[0].meters || 0.45;
+    if (meters <= minM) return list[0].pos ?? 0.0;
+    const infStop = list[list.length - 1];
+    const prevStop = list[list.length - 2];
+    if (meters >= prevStop.meters) {
+      const invStart = 1 / Math.max(0.2, prevStop.meters || 5);
+      const frac = Math.max(0, Math.min(1, 1 - (1 / meters) / invStart));
+      return Number((prevStop.pos + frac * (infStop.pos - prevStop.pos)).toFixed(4));
+    }
+    for (let i = 0; i < list.length - 2; i++) {
+      const a = list[i], b = list[i + 1];
+      if (meters <= b.meters) {
+        const t = Math.max(0, Math.min(1, (meters - a.meters) / Math.max(1e-5, b.meters - a.meters)));
+        return Number((a.pos + t * (b.pos - a.pos)).toFixed(4));
+      }
+    }
+    return prevStop.pos ?? 0.85;
+  }
+
   function formatFocusDistance(pos, stops = FOCUS_STOPS) {
     const meters = focusPosToMeters(pos, stops);
     if (!Number.isFinite(meters)) return '∞';
     if (meters < 1.0) return `${meters.toFixed(2).replace(/0$/, '')}m`;
     if (meters < 10) return `${meters.toFixed(1).replace(/\.0$/, '')}m`;
     return `${Math.round(meters)}m`;
+  }
+
+  function estimateAdaptiveFocusMeters(body, rawLens, zoomMm, centerPt) {
+    const nx = Math.max(0.05, Math.min(0.95, Number.isFinite(centerPt?.x) ? centerPt.x : 0.5));
+    const ny = Math.max(0.05, Math.min(0.95, Number.isFinite(centerPt?.y) ? centerPt.y : 0.48));
+    const dy = ny - 0.48;
+    const edgeBias = Math.min(1, Math.abs(nx - 0.5) * 1.4);
+    const hasLiveVideo = !!(state.camStream && typeof camVideo !== 'undefined' && camVideo && camVideo.readyState >= 2);
+    let baseMeters = null;
+
+    if (hasLiveVideo) {
+      try {
+        const track = typeof cameraTrack === 'function' ? cameraTrack() : null;
+        const hwSettings = track?.getSettings?.();
+        if (hwSettings && Number.isFinite(hwSettings.focusDistance) && hwSettings.focusDistance > 0.05) {
+          baseMeters = hwSettings.focusDistance;
+        }
+      } catch (ignored) {}
+    }
+
+    if (baseMeters === null && !hasLiveVideo && state.activeSampleId && !state.sourceFromCameraRoll) {
+      const sample = SAMPLES.find(s => s.id === state.activeSampleId);
+      if (sample && (sample.focusMeters !== undefined)) {
+        const midM = sample.focusMeters;
+        const nearM = Number.isFinite(sample.nearMeters) ? sample.nearMeters : 0.6;
+        const farM = sample.farMeters !== undefined ? sample.farMeters : Infinity;
+        if (!Number.isFinite(midM)) {
+          baseMeters = dy > 0.12 ? Math.max(nearM, nearM / Math.max(0.25, (dy - 0.08) * 2.1)) : Infinity;
+        } else if (dy > 0.05) {
+          const tNear = Math.min(1, (dy - 0.05) / 0.37);
+          baseMeters = midM + (nearM - midM) * tNear;
+        } else if (dy < -0.05 || edgeBias > 0.55) {
+          const tFar = Math.min(1, Math.max(0, (-dy - 0.05) / 0.37) + Math.max(0, edgeBias - 0.55) * 0.4);
+          if (!Number.isFinite(farM)) {
+            baseMeters = tFar > 0.52 ? Infinity : midM * (1 + tFar * 3.2);
+          } else {
+            baseMeters = midM + (farM - midM) * tFar;
+          }
+        } else {
+          baseMeters = midM;
+        }
+      }
+    }
+
+    if (baseMeters === null && !hasLiveVideo && Number.isFinite(state.exif?.subjectDistance) && state.exif.subjectDistance > 0.1) {
+      const exifM = state.exif.subjectDistance;
+      const factor = dy > 0.06 ? Math.max(0.45, 1 - dy * 1.15) : (dy < -0.06 ? (1 + (-dy) * 2.2) : 1);
+      baseMeters = exifM * factor;
+    }
+
+    if (baseMeters === null) {
+      let zoneLum = 0.45;
+      let edgeEnergy = 0.08;
+      let skyScore = 0;
+      try {
+        const src = hasLiveVideo ? camVideo : (state.previewSourceCanvas || state.fullSourceCanvas);
+        if (src) {
+          const srcW = src.videoWidth || src.width || 300;
+          const srcH = src.videoHeight || src.height || 200;
+          const pw = Math.max(12, Math.round(srcW * 0.18));
+          const ph = Math.max(12, Math.round(srcH * 0.18));
+          const sx = Math.max(0, Math.min(srcW - pw, Math.round(nx * srcW - pw * 0.5)));
+          const sy = Math.max(0, Math.min(srcH - ph, Math.round(ny * srcH - ph * 0.5)));
+          const c = document.createElement('canvas');
+          c.width = 10; c.height = 10;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(src, sx, sy, pw, ph, 0, 0, 10, 10);
+          const data = ctx.getImageData(0, 0, 10, 10).data;
+          let lumSum = 0, gradSum = 0, blueSum = 0, redSum = 0;
+          for (let y = 0; y < 10; y++) {
+            for (let x = 0; x < 10; x++) {
+              const idx = (y * 10 + x) * 4;
+              const l = (0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2]) / 255;
+              lumSum += l;
+              redSum += data[idx] / 255;
+              blueSum += data[idx + 2] / 255;
+              if (x < 9) {
+                const idxR = idx + 4;
+                const lR = (0.299 * data[idxR] + 0.587 * data[idxR + 1] + 0.114 * data[idxR + 2]) / 255;
+                gradSum += Math.abs(l - lR);
+              }
+              if (y < 9) {
+                const idxD = idx + 40;
+                const lD = (0.299 * data[idxD] + 0.587 * data[idxD + 1] + 0.114 * data[idxD + 2]) / 255;
+                gradSum += Math.abs(l - lD);
+              }
+            }
+          }
+          zoneLum = lumSum / 100;
+          edgeEnergy = gradSum / 180;
+          const coolBias = (blueSum - redSum) / 100;
+          skyScore = (ny < 0.38 ? (0.38 - ny) * 1.8 : 0) + (zoneLum > 0.62 ? 0.35 : 0) + (coolBias > 0.05 ? 0.25 : 0) - Math.min(0.45, edgeEnergy * 4);
+        }
+      } catch (ignored) {}
+
+      if (skyScore > 0.58) {
+        baseMeters = Infinity;
+      } else {
+        const depthT = Math.max(0.05, Math.min(0.95, 0.42 - dy * 0.95 + (0.09 - Math.min(0.14, edgeEnergy)) * 1.9 + edgeBias * 0.14));
+        baseMeters = 0.52 * Math.pow(36, depthT);
+      }
+    }
+
+    if (!Number.isFinite(baseMeters)) return Infinity;
+
+    const mm = rawLens?.isZoom ? (Number(zoomMm) || rawLens.mm || 50) : (rawLens?.mm || 50);
+    let lensScale = 1.0;
+    if (mm <= 29) lensScale = 0.80;
+    else if (mm <= 40) lensScale = 0.92;
+    else if (mm <= 58) lensScale = 1.00;
+    else if (mm <= 90) lensScale = 1.22;
+    else lensScale = 1.36;
+
+    let bodyScale = 1.0;
+    if (body?.id === 'medium-format') bodyScale = 1.12;
+    else if (body?.id === 'pns') bodyScale = baseMeters > 1.0 ? 1.06 : 1.0;
+    else if (body?.id === 'half-frame') bodyScale = 0.96;
+
+    const stops = getFocusStopsForLens(rawLens);
+    const minFocus = stops[0]?.meters || 0.45;
+    const adapted = baseMeters * lensScale * bodyScale;
+    return adapted >= 55 ? Infinity : Math.max(minFocus, adapted);
+  }
+
+  function updateAdaptiveAfTarget(opts = {}) {
+    const mode = VIEWFINDER_MODES.find(m => m.id === state.bodyId) || VIEWFINDER_MODES[0];
+    const focals = getModeFocals(mode.id);
+    const rawLens = focals.find(f => f.id === state.lensId) || focals[0];
+    const stops = getFocusStopsForLens(rawLens);
+    const center = opts.center || state.focusPoint || { x: 0.5, y: 0.48 };
+    let nextPos;
+    if (rawLens?.isFixedAperture) {
+      nextPos = 0.5;
+    } else {
+      const meters = estimateAdaptiveFocusMeters(mode, rawLens, state.zoomFocalMm, center);
+      nextPos = metersToFocusPos(meters, stops);
+    }
+    state.afTargetPos = nextPos;
+    if (opts.syncFocusToAf) {
+      state.focusPos = nextPos;
+    }
+    return nextPos;
   }
 
   function computeFocusOptics(mm, curF, isFixedAperture, lensMeta = null) {
@@ -7433,6 +7604,8 @@
     resetLabZoom();
 
     state.phoneId = 'auto-detect';
+    state.focusPoint = { x: 0.5, y: 0.48 };
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
     labRenderDirty = true;
     cameraLastStaticKey = '';
 
@@ -8273,11 +8446,11 @@
       state.lensFocalMm = matched.mm || 50;
       state.lensAperture = getDefaultApertureForLens(matched);
     }
+    state.focusPoint = { x: 0.5, y: 0.48 };
     if (matched.isFixedAperture) {
       state.focusMode = 'af';
-      state.focusPos = state.afTargetPos;
     }
-    state.focusPoint = { x: 0.5, y: 0.48 };
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!matched.isFixedAperture, center: state.focusPoint });
     const matchedMinF = matched.isZoom ? getZoomMinF(matched, state.zoomFocalMm) : (matched.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - matchedMinF) < 0.04;
     const { lens } = getSelectedGear();
@@ -8298,6 +8471,7 @@
     state.zoomFocalMm = Math.max(zMin, Math.min(zMax, val));
     const minF = getZoomMinF(rawLens, state.zoomFocalMm);
     state.lensAperture = apPinnedWideOpen ? minF : Math.max(minF, Math.min(rawLens.maxF || 16, state.lensAperture));
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
     const { lens } = getSelectedGear();
     state.bloom = lens.bloomBase;
     state.vignette = lens.vignetteBase;
@@ -8324,11 +8498,11 @@
       state.lensFocalMm = nextFocal.mm || 50;
       state.lensAperture = getDefaultApertureForLens(nextFocal);
     }
+    state.focusPoint = { x: 0.5, y: 0.48 };
     if (nextFocal.isFixedAperture) {
       state.focusMode = 'af';
-      state.focusPos = state.afTargetPos;
     }
-    state.focusPoint = { x: 0.5, y: 0.48 };
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!nextFocal.isFixedAperture, center: state.focusPoint });
     const nextMinF = nextFocal.isZoom ? getZoomMinF(nextFocal, state.zoomFocalMm) : (nextFocal.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - nextMinF) < 0.04;
     const { lens } = getSelectedGear();
@@ -8747,8 +8921,8 @@
       return;
     }
     state.focusMode = 'af';
-    state.focusPos = state.afTargetPos;
     state.focusPoint = { x: 0.5, y: 0.48 };
+    updateAdaptiveAfTarget({ syncFocusToAf: true, center: state.focusPoint });
 
     document.querySelectorAll('.lens-barrel-ring[data-ring="focus"] .lens-ring-track').forEach(tr => {
       tr.classList.add('snap-af');
@@ -8764,12 +8938,13 @@
       showVfFocusReticle('50%', '50%', 900);
     }
 
+    const nextResolvedLens = getSelectedGear().lens;
     playLensClickSound(true);
     syncLensLiveUI(false);
-    syncViewfinderFocusAid(body, getSelectedGear().lens);
+    syncViewfinderFocusAid(body, nextResolvedLens);
     scheduleCameraSettingsApply();
     scheduleSaveLocalAppState();
-    if (showFeedback) showToast('🎯 Auto Focus (AF)');
+    if (showFeedback) showToast(`🎯 AF ${nextResolvedLens.focusDistanceLabel}`);
   }
 
   function syncLensLiveUI(needsLayout = false) {
@@ -9893,6 +10068,13 @@
         }
       }
     }
+    try {
+      const hwFocus = track.getSettings?.()?.focusDistance;
+      if (state.focusMode !== 'mf' && Number.isFinite(hwFocus) && hwFocus > 0.05) {
+        updateAdaptiveAfTarget({ syncFocusToAf: true, center: state.focusPoint });
+        syncLensBarrelWidgets();
+      }
+    } catch (ignored) {}
     syncCameraHudUI();
   }
 
@@ -12195,8 +12377,9 @@
       }
       if (recLens.isFixedAperture) {
         state.focusMode = 'af';
-        state.focusPos = state.afTargetPos;
       }
+      state.focusPoint = { x: 0.5, y: 0.48 };
+      updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!recLens.isFixedAperture, center: state.focusPoint });
       const recMinF = recLens.isZoom ? getZoomMinF(recLens, state.zoomFocalMm) : (recLens.minF || 2.8);
       apPinnedWideOpen = Math.abs(state.lensAperture - recMinF) < 0.04;
     }
@@ -12290,7 +12473,8 @@
     const rawMinF = rawLens.isZoom ? getZoomMinF(rawLens, state.zoomFocalMm) : (rawLens.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - rawMinF) < 0.04;
     state.focusMode = 'af';
-    state.focusPos = state.afTargetPos;
+    state.focusPoint = { x: 0.5, y: 0.48 };
+    updateAdaptiveAfTarget({ syncFocusToAf: true, center: state.focusPoint });
     const resolved = getSelectedGear().lens;
     state.filmId = film.id;
     state.filmBrandFilter = 'all';
@@ -12359,6 +12543,7 @@
       const defAp = getDefaultApertureForLens(rawLens, state.zoomFocalMm);
       state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 16, defAp);
       apPinnedWideOpen = Math.abs(state.lensAperture - minF) < 0.04;
+      updateAdaptiveAfTarget({ syncFocusToAf: false, center: state.focusPoint });
       state.focusMode = rawLens.isFixedAperture ? 'af' : (p.fm === 'mf' ? 'mf' : 'af');
       state.focusPos = rawLens.isFixedAperture ? state.afTargetPos : clamp(p.fp, 0, 1, state.afTargetPos);
       state.strength = Math.round(clamp(p.st, 0, 100, state.strength));
@@ -12822,6 +13007,7 @@
     const nx = Math.max(0.06, Math.min(0.94, (e.clientX - rect.left) / rect.width));
     const ny = Math.max(0.08, Math.min(0.92, (e.clientY - rect.top) / rect.height));
     state.focusPoint = { x: nx, y: ny };
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
 
     showVfFocusReticle(`${(nx * 100).toFixed(1)}%`, `${(ny * 100).toFixed(1)}%`, 1600);
 
@@ -12870,6 +13056,7 @@
       } catch (ignored) {}
     }
 
+    syncLensLiveUI(false);
     syncCameraHudUI();
     scheduleCameraSettingsApply();
     scheduleSaveLocalAppState();
