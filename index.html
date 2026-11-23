@@ -4387,7 +4387,7 @@
 
       <div class="picker-section" id="pickerSecFilm">
         <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-fbrand="youtube" id="btnFilmAllFilter" type="button">YT Clip (15)</button>
+          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (15)</button>
           <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (4)</button>
           <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-fbrand="daylight" type="button">Daylight</button>
@@ -4456,7 +4456,7 @@
           <button class="btn-pill btn-ghost" id="btnCloseFilmGuide" type="button" style="height:26px;">✕</button>
         </div>
         <div class="h-scroll" id="filmGuideScenarios" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-gscene="youtube" type="button">YT Clip (15)</button>
+          <button class="filter-chip active" data-gscene="all" type="button">All (15)</button>
           <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-gscene="daylight" type="button">Daylight</button>
           <button class="filter-chip" data-gscene="warm" type="button">Golden Hour</button>
@@ -5924,7 +5924,7 @@
     afTargetPos: 0.45,
     focusPoint: { x: 0.5, y: 0.48 },
     filmId: 'kodak-portra-400',
-    filmBrandFilter: 'youtube',
+    filmBrandFilter: 'all',
     pickerTab: 'camera',
     activeTweakKey: 'strength',
 
@@ -7391,23 +7391,23 @@
       btn.classList.toggle('active', btn.dataset.id === lens.id);
     });
 
-    // 3. Film Stocks Track (YouTube clip rolls active by scene + extra rolls in Archived)
-    const validFilmFilters = new Set(['youtube', 'match', 'portrait', 'daylight', 'warm', 'night', 'bw', 'archived']);
-    if (!validFilmFilters.has(state.filmBrandFilter)) state.filmBrandFilter = 'youtube';
-    const youtubeFilms = FILM_STOCKS.filter(f => !f.archived);
+    // 3. Film Stocks Track (active rolls by scene + extra rolls in Archived)
+    const validFilmFilters = new Set(['all', 'match', 'portrait', 'daylight', 'warm', 'night', 'bw', 'archived']);
+    if (!validFilmFilters.has(state.filmBrandFilter)) state.filmBrandFilter = 'all';
+    const activeFilms = FILM_STOCKS.filter(f => !f.archived);
     const archivedFilms = FILM_STOCKS.filter(f => !!f.archived);
-    const filteredFilms = state.filmBrandFilter === 'youtube'
-      ? youtubeFilms
+    const filteredFilms = state.filmBrandFilter === 'all'
+      ? activeFilms
       : (state.filmBrandFilter === 'archived'
         ? archivedFilms
         : (state.filmBrandFilter === 'match'
           ? recFilmList.map(id => FILM_STOCKS.find(f => f.id === id)).filter(Boolean)
-          : youtubeFilms.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(state.filmBrandFilter))));
+          : activeFilms.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(state.filmBrandFilter))));
     const filmIdx = Math.max(0, filteredFilms.findIndex(f => f.id === state.filmId)) + 1;
     document.getElementById('pickerFilmCount').innerHTML = `<strong>${String(filmIdx).padStart(2, '0')}</strong>/${filteredFilms.length}`;
 
     const allChip = document.getElementById('btnFilmAllFilter');
-    if (allChip) allChip.textContent = `YT Clip (${youtubeFilms.length})`;
+    if (allChip) allChip.textContent = `All (${activeFilms.length})`;
     const archChip = document.getElementById('btnFilmArchivedFilter');
     if (archChip) archChip.textContent = `Archived (${archivedFilms.length})`;
     const matchChip = document.getElementById('btnFilmMatchFilter');
@@ -11634,7 +11634,7 @@
     state.focusPos = state.afTargetPos;
     const resolved = getSelectedGear().lens;
     state.filmId = film.id;
-    state.filmBrandFilter = 'youtube';
+    state.filmBrandFilter = 'all';
     state.bloom = resolved.bloomBase;
     state.vignette = resolved.vignetteBase;
     state.grain = film.grainBase;
@@ -11795,23 +11795,23 @@
 
   // Film Roll Guide modal (? Guide or 'i' button on any film roll)
   const filmGuideBackdrop = document.getElementById('filmGuideBackdrop');
-  let filmGuideSceneFilter = 'youtube';
+  let filmGuideSceneFilter = 'all';
   let filmGuideFocusedId = null;
   function renderFilmGuide() {
     const listEl = document.getElementById('filmGuideList');
     if (!listEl) return;
-    const youtubeFilms = FILM_STOCKS.filter(f => !f.archived);
+    const activeFilms = FILM_STOCKS.filter(f => !f.archived);
     const archivedFilms = FILM_STOCKS.filter(f => !!f.archived);
     document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(chip => {
-      if (chip.dataset.gscene === 'youtube') chip.textContent = `YT Clip (${youtubeFilms.length})`;
+      if (chip.dataset.gscene === 'all') chip.textContent = `All (${activeFilms.length})`;
       if (chip.dataset.gscene === 'archived') chip.textContent = `Archived (${archivedFilms.length})`;
       chip.classList.toggle('active', chip.dataset.gscene === filmGuideSceneFilter);
     });
-    const rows = filmGuideSceneFilter === 'youtube'
-      ? youtubeFilms
+    const rows = filmGuideSceneFilter === 'all'
+      ? activeFilms
       : (filmGuideSceneFilter === 'archived'
         ? archivedFilms
-        : youtubeFilms.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(filmGuideSceneFilter)));
+        : activeFilms.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(filmGuideSceneFilter)));
     listEl.innerHTML = '';
     rows.forEach(f => {
       const meta = FILM_GUIDE_META[f.id] || {};
@@ -11846,12 +11846,12 @@
     if (stock?.archived) {
       filmGuideSceneFilter = 'archived';
     } else {
-      const activeScene = ['portrait', 'daylight', 'warm', 'night', 'bw', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'youtube';
-      if (filmId && activeScene !== 'youtube' && activeScene !== 'archived') {
+      const activeScene = ['portrait', 'daylight', 'warm', 'night', 'bw', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
+      if (filmId && activeScene !== 'all' && activeScene !== 'archived') {
         const inActiveScene = (FILM_GUIDE_META[filmId]?.scenes || []).includes(activeScene);
-        filmGuideSceneFilter = inActiveScene ? activeScene : 'youtube';
+        filmGuideSceneFilter = inActiveScene ? activeScene : 'all';
       } else {
-        filmGuideSceneFilter = activeScene === 'archived' && filmId ? 'youtube' : activeScene;
+        filmGuideSceneFilter = activeScene === 'archived' && filmId ? 'all' : activeScene;
       }
     }
     renderFilmGuide();
