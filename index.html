@@ -4722,9 +4722,9 @@
         for (let i = 0; i < 256; i++) {
           const c = i / 255;
           const hi = c > 0.84 ? (c - 0.84) / 0.16 : 0;
-          linLut[i] = Math.pow(c, 2.2) * (1 + hi * hi * 0.55);
+          linLut[i] = c * c * (1 + hi * hi * 0.55);
         }
-        const nTaps = 32;
+        const nTaps = 24;
         const ox = new Float32Array(nTaps), oy = new Float32Array(nTaps), ow = new Float32Array(nTaps);
         const GA = 2.399963229728653;
         for (let k = 0; k < nTaps; k++) {
@@ -4824,11 +4824,10 @@
         }
       }
 
-      // 3. Variable-CoC 32-tap Circular Bokeh with Trilinear Mip Blending & Cat's-Eye
+      // 3. Variable-CoC 24-tap Circular Bokeh with Trilinear Mip Blending & Cat's-Eye
       const blurEffort = Math.max(dofStr, mfDefocus * 1.2);
       const maxRadPx = Math.max(4, bw * (0.015 + blurEffort * 0.026));
       const dofBuf = new Float32Array(bw * bh * 3);
-      const inv22 = 1 / 2.2;
       const bwM1 = bw - 1, bhM1 = bh - 1, bw2M1 = bw2 - 1, bh2M1 = bh2 - 1, bw4M1 = bw4 - 1, bh4M1 = bh4 - 1;
       const s2x = bw2 / bw, s2y = bh2 / bh, s4x = bw4 / bw, s4y = bh4 / bh;
 
@@ -4851,7 +4850,7 @@
           }
 
           // Smooth trilinear mip level: 0=lin1, 1=lin2, 2=lin4
-          const subR = radPx * 0.21;
+          const subR = radPx * 0.23;
           const lod = Math.max(0, Math.min(2, Math.log2(Math.max(1, subR * 1.15))));
           const lodFloor = lod < 1 ? 0 : (lod < 2 ? 1 : 2);
           const mipFrac = lod - lodFloor;
@@ -4862,7 +4861,7 @@
           const msxA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2x : s4x);
           const msyA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2y : s4y);
 
-          const hasBlend = mipFrac > 0.01 && lodFloor < 2;
+          const hasBlend = mipFrac > 0.04 && lodFloor < 2;
           const mipB = lodFloor === 0 ? lin2 : lin4;
           const mwB = lodFloor === 0 ? bw2 : bw4;
           const mwBM1 = lodFloor === 0 ? bw2M1 : bw4M1;
@@ -4925,9 +4924,9 @@
           if (lg > 1) lg = lg / (1 + (lg - 1) * 0.45);
           if (lb > 1) lb = lb / (1 + (lb - 1) * 0.45);
           const dp = cIdx * 3;
-          dofBuf[dp] = Math.min(255, Math.pow(Math.max(0, lr), inv22) * 255);
-          dofBuf[dp + 1] = Math.min(255, Math.pow(Math.max(0, lg), inv22) * 255);
-          dofBuf[dp + 2] = Math.min(255, Math.pow(Math.max(0, lb), inv22) * 255);
+          dofBuf[dp] = Math.min(255, Math.sqrt(Math.max(0, lr)) * 255);
+          dofBuf[dp + 1] = Math.min(255, Math.sqrt(Math.max(0, lg)) * 255);
+          dofBuf[dp + 2] = Math.min(255, Math.sqrt(Math.max(0, lb)) * 255);
         }
       }
 
@@ -7684,6 +7683,9 @@
       zoomBtn.style.display = isSlr ? '' : 'none';
       if (isSlr) zoomBtn.classList.toggle('active', !!lens.isZoom);
     }
+    if (typeof startCameraLoop === 'function' && document.getElementById('view-camera')?.classList.contains('active')) {
+      startCameraLoop();
+    }
   }
 
   const barrelWidgets = [];
@@ -8436,11 +8438,12 @@
 
   function getCameraStageDimensions(body, lens) {
     const ratio = getBodyAspect(body, lens);
+    const isLive = !!(state.camStream && camVideo.readyState >= 2);
     if (ratio >= 1) {
-      const w = 600;
+      const w = isLive ? 480 : 600;
       return { w, h: Math.max(240, Math.round(w / ratio)), ratio };
     }
-    const h = 480;
+    const h = isLive ? 384 : 480;
     return { w: Math.max(240, Math.round(h * ratio)), h, ratio };
   }
 
@@ -8660,6 +8663,9 @@
     syncViewfinderFocusAid(body, lens);
     syncLensBarrelWidgets();
     layoutViewfinderStage();
+    if (typeof startCameraLoop === 'function' && document.getElementById('view-camera')?.classList.contains('active')) {
+      startCameraLoop();
+    }
   }
 
   let cameraSettingsTimer = 0;
@@ -8724,7 +8730,7 @@
       width: { ideal: land ? (hiRes ? 1440 : 960) : (hiRes ? 1080 : 720) },
       height: { ideal: land ? (hiRes ? 1080 : 720) : (hiRes ? 1440 : 960) },
       aspectRatio: { ideal: land ? (4 / 3) : (3 / 4) },
-      frameRate: { ideal: 18, max: 24 }
+      frameRate: { ideal: 15, max: 20 }
     };
   }
 
@@ -8772,6 +8778,7 @@
           srcBtn.textContent = state.camFacing === 'environment' ? 'Rear' : 'Front';
           srcBtn.classList.add('live');
         }
+        startCameraLoop();
       } catch (e) {
         state.camLiveEnabled = false;
         if (state.camStream) state.camStream.getTracks().forEach(track => track.stop());
@@ -8791,7 +8798,7 @@
     const glCanvas = document.createElement('canvas');
     let gl = null;
     try {
-      gl = glCanvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: true });
+      gl = glCanvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false, powerPreference: 'low-power' });
     } catch (e) { gl = null; }
     if (!gl) return null;
 
@@ -9043,7 +9050,7 @@
       }
 
       vec3 srgbToBokehLin(vec3 c) {
-        vec3 lin = pow(max(c, vec3(0.0)), vec3(2.2));
+        vec3 lin = c * c;
         float lum = dot(c, vec3(0.299, 0.587, 0.114));
         float hi = lum > 0.84 ? (lum - 0.84) / 0.16 : 0.0;
         return lin * (1.0 + hi * hi * 0.55);
@@ -9059,7 +9066,7 @@
         float effort = max(uDofStr, uMfDefocus * 1.2);
         float maxRadPx = max(4.0, uBaseSize.x * (0.015 + effort * 0.026));
         float radPx = coc * maxRadPx;
-        float lod = clamp(log2(max(1.0, radPx * 0.24)), 0.0, 2.5);
+        float lod = clamp(log2(max(1.0, radPx * 0.28)), 0.0, 2.5);
         vec2 radUv = vec2(radPx) / uBaseSize;
 
         float rCorner2 = dot(nPos, nPos);
@@ -9071,9 +9078,9 @@
         vec3 acc = vec3(0.0);
         float wSum = 0.0;
         const float GA = 2.39996323;
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 16; i++) {
           float fi = float(i);
-          float rN = sqrt((fi + 0.5) / 32.0);
+          float rN = sqrt((fi + 0.5) / 16.0);
           float ang = fi * GA;
           vec2 off = vec2(cos(ang), sin(ang)) * rN;
           if (catStr > 0.001) {
@@ -9087,7 +9094,7 @@
           wSum += w;
         }
         vec3 linRes = acc / max(1e-4, wSum);
-        vec3 res = pow(max(linRes / (vec3(1.0) + max(vec3(0.0), linRes - vec3(1.0)) * 0.45), vec3(0.0)), vec3(1.0 / 2.2));
+        vec3 res = sqrt(max(linRes / (vec3(1.0) + max(vec3(0.0), linRes - vec3(1.0)) * 0.45), vec3(0.0)));
         fragColor = vec4(clamp(res, 0.0, 1.0), 1.0);
       }`;
 
@@ -9267,7 +9274,7 @@
     if (!initResources()) return null;
 
     function ensureSize(w, h) {
-      const hw = Math.max(96, Math.floor(w / 2)), hh = Math.max(72, Math.floor(h / 2));
+      const hw = Math.max(80, Math.floor(w / 3)), hh = Math.max(60, Math.floor(h / 3));
       const qw = Math.max(48, Math.floor(w / 4)), qh = Math.max(36, Math.floor(h / 4));
       if (curW !== w || curH !== h) {
         glCanvas.width = w; glCanvas.height = h;
@@ -9507,42 +9514,45 @@
   function startCameraLoop() {
     if (state.camAnimId) return;
     const viewCamEl = document.getElementById('view-camera');
-    const tmp = document.createElement('canvas');
-    const tCtx = tmp.getContext('2d');
     let cpuTmp = null, cpuCtx = null;
     const vfCtx = vfCanvas.getContext('2d');
     let last = 0;
-    let lastStaticCheck = 0;
-    let landscapeUploadVersion = 0;
+    let lastVideoTime = -1;
+    let lastLiveKey = '';
     const loop = (ts) => {
-      state.camAnimId = requestAnimationFrame(loop);
+      state.camAnimId = null;
       if (viewCamEl && !viewCamEl.classList.contains('active')) return;
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
       const src = hasLiveVideo ? camVideo : state.previewSourceCanvas;
       if (!src) return;
 
-      if (!hasLiveVideo && cameraLastStaticKey && ts - lastStaticCheck < 80) {
-        return;
-      }
-      lastStaticCheck = ts;
-
       const gpu = getGpuCameraRenderer();
       const gpuReady = !!(gpu && gpu.isSupported());
-      if (hasLiveVideo && ts - last < (gpuReady ? 50 : 100)) return;
-      if (!gpuReady && cameraJobInFlight) return;
+
+      if (hasLiveVideo) {
+        state.camAnimId = requestAnimationFrame(loop);
+        if (ts - last < (gpuReady ? 66 : 120)) return;
+        if (!gpuReady && cameraJobInFlight) return;
+      }
 
       const { phone, body, lens, film } = getSelectedGear();
       const shutterInfo = getEffectiveShutterInfo(lens, film);
       const stageDim = getCameraStageDimensions(body, lens);
       const targetW = stageDim.w;
       const targetH = stageDim.h;
-      const staticKey = hasLiveVideo
-        ? ''
-        : `${state.activeSampleId || 'custom'}|${previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${Number(lens.focusPos || 0.45).toFixed(2)}|${Number(lens.focusCenterX || 0.5).toFixed(2)},${Number(lens.focusCenterY || 0.48).toFixed(2)}|${state.camShutterSpeed}|${shutterInfo.shakeRisk.toFixed(2)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
+      const stateKey = `${hasLiveVideo ? 'live' : (state.activeSampleId || 'custom')}|${hasLiveVideo ? 'v' : previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${Number(lens.focusPos || 0.45).toFixed(2)}|${Number(lens.focusCenterX || 0.5).toFixed(2)},${Number(lens.focusCenterY || 0.48).toFixed(2)}|${state.camShutterSpeed}|${shutterInfo.shakeRisk.toFixed(2)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
 
-      if (!hasLiveVideo && staticKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
+      if (!hasLiveVideo && stateKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
         return;
+      }
+      if (hasLiveVideo) {
+        const curVT = camVideo.currentTime || 0;
+        if (curVT === lastVideoTime && stateKey === lastLiveKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
+          return;
+        }
+        lastVideoTime = curVT;
+        lastLiveKey = stateKey;
       }
 
       last = ts;
@@ -9565,12 +9575,10 @@
       };
 
       if (gpuReady) {
-        if (tmp.width !== targetW || tmp.height !== targetH) { tmp.width = targetW; tmp.height = targetH; }
-        drawCameraFrameSource(tCtx, src, targetW, targetH, vfZoom);
-        const rendered = gpu.render(tmp, hasLiveVideo, hasLiveVideo ? -1 : ++landscapeUploadVersion, targetW, targetH, vfRatio, 1, vfConfig);
+        const rendered = gpu.render(src, hasLiveVideo, hasLiveVideo ? -1 : previewSourceVersion, targetW, targetH, vfRatio, vfZoom, vfConfig);
         if (rendered) {
           vfCtx.drawImage(rendered, 0, 0);
-          if (!hasLiveVideo) cameraLastStaticKey = staticKey;
+          if (!hasLiveVideo) cameraLastStaticKey = stateKey;
           return;
         }
       }
@@ -9583,7 +9591,7 @@
       drawCameraFrameSource(cpuCtx, src, targetW, targetH, vfZoom);
 
       cameraJobInFlight = true;
-      if (!hasLiveVideo) cameraLastStaticKey = staticKey;
+      if (!hasLiveVideo) cameraLastStaticKey = stateKey;
       const version = ++cameraPreviewFrameVersion;
       processFilmImage(cpuCtx.getImageData(0, 0, targetW, targetH), targetW, targetH, vfConfig, { output: 'bitmap', coalesceKey: 'camera-preview' }).then(output => {
         if (!output || version !== cameraPreviewFrameVersion) { output?.bitmap?.close(); return; }
@@ -9611,6 +9619,8 @@
     camVideo.srcObject = null;
     const srcBtn = document.getElementById('camSourceStatus');
     if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
+    cameraLastStaticKey = '';
+    if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
   }
 
   function pauseCameraWhenHidden() {
@@ -9662,11 +9672,13 @@
     layoutViewfinderStage();
     syncLensBarrelWidgets();
     syncRealCameraOrientation();
+    if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
     requestAnimationFrame(() => {
       if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
       syncOrientationLayout();
       layoutViewfinderStage();
       syncLensBarrelWidgets();
+      if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
     });
   }
   document.addEventListener('visibilitychange', () => {
@@ -9696,7 +9708,7 @@
         pauseCameraWhenHidden();
         showToast('🔋 Camera paused (idle) — tap to resume');
       }
-    }, 60000);
+    }, 45000);
   }
   document.getElementById('view-camera')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
   document.getElementById('btnShutter')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
