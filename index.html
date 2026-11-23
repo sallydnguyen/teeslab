@@ -534,6 +534,15 @@
       color: #f5a623;
       border-color: rgba(245, 166, 35, 0.65);
     }
+    .float-pill.danger {
+      background: rgba(28, 12, 16, 0.88);
+      color: #fca5a5;
+      border-color: rgba(248, 113, 113, 0.45);
+    }
+    .float-pill.danger:active {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: rgba(248, 113, 113, 0.8);
+    }
 
     /* Lab bottom single-row bar snugly anchored right above tool dock */
     .stage-overlay-bottom {
@@ -2910,12 +2919,53 @@
       gap: 8px;
     }
     .shot-card {
+      position: relative;
       background: #08090b;
       border: 1px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
     }
     .shot-card img { width: 100%; height: 144px; object-fit: contain; background: #050608; display: block; }
+    .shot-del-btn, .thumb-del-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(18, 10, 12, 0.86);
+      border: 1px solid rgba(248, 113, 113, 0.48);
+      color: #fca5a5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      line-height: 1;
+      z-index: 4;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+    .thumb-del-btn {
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+    }
+    .shot-del-btn:active, .thumb-del-btn:active {
+      transform: scale(0.9);
+      background: rgba(239, 68, 68, 0.35);
+      border-color: rgba(248, 113, 113, 0.85);
+    }
+    .btn-pill.btn-danger-ghost {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(248, 113, 113, 0.42);
+      color: #fca5a5;
+    }
+    .btn-pill.btn-danger-ghost:active {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: rgba(248, 113, 113, 0.78);
+    }
     .shot-foot {
       padding: 5px 7px;
       display: flex;
@@ -3758,6 +3808,7 @@
             <div class="canvas-float-tools" id="canvasFloatTools">
               <button class="float-pill" id="btnToggleLabZoom" type="button" title="Toggle 2× zoom">🔍 1×</button>
               <button class="float-pill" id="btnToggleSplit" type="button">◧ Split</button>
+              <button class="float-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Camera Roll" aria-label="Delete photo from Camera Roll" style="display:none;">🗑 Delete</button>
             </div>
           </div>
           <button class="photo-viewer-nav lab-photo-nav btn-next" id="btnLabPhotoNext" type="button" title="Next photo" aria-label="Next photo">›</button>
@@ -4289,6 +4340,7 @@
         <div class="photo-viewer-botbar">
           <div class="photo-viewer-tag" id="photoViewerFilmTag">🎞️ Film photo</div>
           <div class="photo-viewer-actions">
+            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" style="height:28px;padding:0 10px;font-size:11.5px;">🗑 Delete</button>
             <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">🧪 Edit in Lab</button>
             <button class="btn-pill btn-brass" id="btnViewerSave" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">💾 Save</button>
           </div>
@@ -5680,6 +5732,7 @@
     previewSourceData: null,
     sourceIsDiptych: false,
     sourceFromCameraRoll: false,
+    activeRollShotId: null,
     activeSampleId: SAMPLES[0].id,
     exif: null,
 
@@ -5887,6 +5940,17 @@
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error || new Error('Could not clear camera roll'));
       transaction.onabort = () => reject(transaction.error || new Error('Camera roll clear was interrupted'));
+    });
+  }
+  async function deleteCameraRollShotFromStorage(id) {
+    const database = await openRollDatabase();
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(['camera-roll', 'camera-roll-files'], 'readwrite');
+      transaction.objectStore('camera-roll').delete(id);
+      transaction.objectStore('camera-roll-files').delete(id);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error || new Error('Could not delete camera roll photo'));
+      transaction.onabort = () => reject(transaction.error || new Error('Camera roll delete was interrupted'));
     });
   }
   let apPinnedWideOpen = true;
@@ -6792,17 +6856,19 @@
     const tmpPrev = state.previewSourceCanvas;
     const tmpSample = state.activeSampleId;
     const tmpRoll = state.sourceFromCameraRoll;
+    const tmpShotId = state.activeRollShotId;
     const tmpRollLabel = SAMPLES.find(s => s.id === tmpSample)?.title || (tmpRoll ? 'Camera Roll' : 'Photo 1');
 
     state.fullSourceCanvas = state.labDoubleExpCanvas;
     state.previewSourceCanvas = state.labDoubleExpPreviewCanvas || makeScaledPreviewCanvas(state.labDoubleExpCanvas);
     state.activeSampleId = state.labDoubleExpSampleId;
     state.sourceFromCameraRoll = state.labDoubleExpFromCameraRoll;
+    state.activeRollShotId = state.labDoubleExpRollShotId || null;
 
     state.labDoubleExpCanvas = tmpFull;
     state.labDoubleExpPreviewCanvas = tmpPrev || makeScaledPreviewCanvas(tmpFull);
     state.labDoubleExpSampleId = tmpSample;
-    state.labDoubleExpRollShotId = null;
+    state.labDoubleExpRollShotId = tmpShotId || null;
     state.labDoubleExpLabel = tmpRollLabel;
     state.labDoubleExpFromCameraRoll = tmpRoll;
 
@@ -6852,6 +6918,7 @@
     state.fullSourceCanvas = srcCanvas;
     state.sourceIsDiptych = !!opts.isDiptych || !!opts.preserveAspect;
     state.sourceFromCameraRoll = !!opts.fromCameraRoll;
+    state.activeRollShotId = opts.fromCameraRoll ? (opts.rollShotId || null) : null;
     if (opts.isDiptych) {
       state.halfFrameLabSecondCanvas = null;
       state.halfFrameLabSecondPreviewCanvas = null;
@@ -7498,9 +7565,10 @@
     if (countEl) countEl.textContent = `${shots.length} ${shots.length === 1 ? 'shot' : 'shots'}`;
     strip.innerHTML = '';
     const isMx2 = state.sampleSheetTargetMode === 'mx2';
-    shots.forEach(s => {
-      const item = document.createElement('button');
-      item.type = 'button';
+    shots.forEach((s, sIdx) => {
+      const item = document.createElement('div');
+      item.role = 'button';
+      item.tabIndex = 0;
       item.className = `sample-thumb ${(isMx2 && state.labDoubleExpRollShotId === s.id) ? 'active' : ''}`;
       const img = document.createElement('img');
       const url = URL.createObjectURL(s.thumbnailBlob);
@@ -7511,9 +7579,20 @@
       img.decoding = 'async';
       const lbl = document.createElement('span');
       lbl.textContent = `${lblText} · ${s.filmName || 'Film'}`;
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'thumb-del-btn';
+      delBtn.title = `Delete ${lblText}`;
+      delBtn.setAttribute('aria-label', `Delete ${lblText}`);
+      delBtn.textContent = '🗑';
+      delBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        deleteRollShot(s);
+      });
       item.appendChild(img);
+      item.appendChild(delBtn);
       item.appendChild(lbl);
-      item.addEventListener('click', async () => {
+      const openItem = async () => {
         try {
           const c = await loadRollShotCanvas(s);
           if (state.sampleSheetTargetMode === 'cam-mx1') {
@@ -7547,14 +7626,17 @@
             return;
           }
           state.activeSampleId = null;
+          viewerCurrentIndex = sIdx;
           renderSampleStrip();
-          loadSourceCanvas(c, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, frameSeed: s.frameSeed, forcePreviewRender: true });
+          loadSourceCanvas(c, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, rollShotId: s.id, frameSeed: s.frameSeed, forcePreviewRender: true });
           document.getElementById('sampleSheetBackdrop').classList.remove('open');
           showToast(`Opened ${lblText}`);
         } catch (err) {
           showToast('Could not load photo from Camera Roll');
         }
-      });
+      };
+      item.addEventListener('click', openItem);
+      item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openItem(); } });
       strip.appendChild(item);
     });
   }
@@ -8633,6 +8715,8 @@
     syncLensBarrelWidgets();
     renderHalfFrameLabUI();
     renderDoubleExpLabUI();
+    const labDelBtn = document.getElementById('btnLabDeleteRollShot');
+    if (labDelBtn) labDelBtn.style.display = (state.sourceFromCameraRoll && state.activeRollShotId) ? '' : 'none';
     if (document.getElementById('comboSheetBackdrop')?.classList.contains('open')) {
       pickerDirty = false;
       renderComboPickerSheet();
@@ -10371,6 +10455,8 @@
     state.camRollShots.unshift(persisted
       ? { id: shot.id, rollId: shot.rollId, rollNumber: shot.rollNumber, num: shot.num, frameSeed: shot.frameSeed, createdAt: shot.createdAt, filmName: shot.filmName, isDiptych: shot.isDiptych, thumbnailBlob: shot.thumbnailBlob }
       : shot);
+    state.activeRollShotId = shot.id;
+    viewerCurrentIndex = 0;
     syncAllUI();
     renderContactSheet();
     if (state.camNeedsRewind) {
@@ -10492,20 +10578,22 @@
     }
   }
 
-  async function openShotInLab(s) {
+  async function openShotInLab(s, opts = {}) {
     try {
       const files = s.rawBlob ? s : await loadCameraRollFiles(s.id);
       if (!files?.rawBlob) throw new Error('Original photo is unavailable');
       closePhotoViewer();
       document.getElementById('contactSheetBackdrop').classList.remove('open');
+      const foundIdx = state.camRollShots.findIndex(item => item.id === s.id);
+      if (foundIdx >= 0) viewerCurrentIndex = foundIdx;
       const bitmap = await createImageBitmap(files.rawBlob);
       const source = document.createElement('canvas');
       source.width = bitmap.width; source.height = bitmap.height;
       source.getContext('2d').drawImage(bitmap, 0, 0);
       bitmap.close();
-      loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, frameSeed: s.frameSeed });
+      loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, rollShotId: s.id, frameSeed: s.frameSeed, forcePreviewRender: !!opts.forcePreviewRender });
       switchMainTab('darkroom');
-      showToast(`Shot #${s.num} opened in Lab`);
+      if (!opts.silent) showToast(`Shot #${s.num} opened in Lab`);
     } catch (error) { showToast('Could not open the original photo'); }
   }
 
@@ -10646,6 +10734,59 @@
   }
 
   const cameraThumbUrls = new Set();
+  const deletingRollShotIds = new Set();
+  async function deleteRollShot(shot) {
+    if (!shot || !shot.id || deletingRollShotIds.has(shot.id)) return false;
+    deletingRollShotIds.add(shot.id);
+    try {
+      await deleteCameraRollShotFromStorage(shot.id);
+      const idx = state.camRollShots.findIndex(item => item.id === shot.id);
+      if (idx >= 0) state.camRollShots.splice(idx, 1);
+      if (state.labDoubleExpRollShotId === shot.id) state.labDoubleExpRollShotId = null;
+      if (state.camRollShots.length === 0) {
+        state.camShotCount = 0;
+        state.camNeedsRewind = false;
+        state.camNeedsWind = false;
+        saveCameraRollMeta();
+      }
+      const viewerOpen = document.getElementById('photoViewerBackdrop')?.classList.contains('open');
+      if (viewerOpen) {
+        if (state.camRollShots.length === 0) {
+          closePhotoViewer();
+        } else if (viewerActiveShotId === shot.id || viewerCurrentIndex >= state.camRollShots.length) {
+          const nextIdx = Math.min(idx >= 0 ? idx : viewerCurrentIndex, state.camRollShots.length - 1);
+          await viewerShowShot(nextIdx, 'next');
+        } else {
+          const curIdx = state.camRollShots.findIndex(item => item.id === viewerActiveShotId);
+          if (curIdx >= 0) await viewerShowShot(curIdx);
+        }
+      }
+      if (state.sourceFromCameraRoll && state.activeRollShotId === shot.id) {
+        if (state.camRollShots.length > 0) {
+          const nextLabShot = state.camRollShots[Math.min(idx >= 0 ? idx : 0, state.camRollShots.length - 1)];
+          await openShotInLab(nextLabShot, { silent: true, forcePreviewRender: true });
+        } else if (SAMPLES[0]) {
+          state.activeRollShotId = null;
+          state.sourceFromCameraRoll = false;
+          state.activeSampleId = SAMPLES[0].id;
+          await ensureSampleLoaded(SAMPLES[0]);
+          loadSourceCanvas(SAMPLES[0].canvas, null, { sampleId: SAMPLES[0].id, fromCameraRoll: false, forcePreviewRender: true });
+        }
+      }
+      renderContactSheet();
+      renderRollSampleStrip();
+      syncAllUI();
+      const label = `R${shot.rollNumber || 1} · #${String(shot.num).padStart(2, '0')}`;
+      showToast(`🗑️ Deleted ${label} (${state.camRollShots.length} left)`);
+      return true;
+    } catch (error) {
+      showToast('Could not delete this photo');
+      return false;
+    } finally {
+      deletingRollShotIds.delete(shot.id);
+    }
+  }
+
   function renderContactSheet() {
     cameraThumbUrls.forEach(url => URL.revokeObjectURL(url));
     cameraThumbUrls.clear();
@@ -10662,10 +10803,12 @@
       card.className = 'shot-card';
       const thumbnailUrl = URL.createObjectURL(s.thumbnailBlob);
       cameraThumbUrls.add(thumbnailUrl);
+      const shotLabel = `R${s.rollNumber || 1} · #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
       card.innerHTML = `
         <img src="${thumbnailUrl}" alt="Shot ${s.num}" style="cursor:pointer;" />
+        <button class="shot-del-btn" type="button" title="Delete ${shotLabel}" aria-label="Delete ${shotLabel}">🗑</button>
         <div class="shot-foot">
-          <span>R${s.rollNumber || 1} · #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}</span>
+          <span>${shotLabel}</span>
           <div style="display:flex;gap:4px;">
             <button class="btn-pill btn-ghost btn-view-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">View</button>
             <button class="btn-pill btn-brass btn-save-shot" type="button" style="height:24px;padding:0 7px;font-size:10.5px;">Save</button>
@@ -10673,6 +10816,7 @@
         </div>
       `;
       card.querySelector('img').addEventListener('click', () => openPhotoViewer(idx));
+      card.querySelector('.shot-del-btn').addEventListener('click', e => { e.stopPropagation(); deleteRollShot(s); });
       card.querySelector('.btn-view-shot').addEventListener('click', () => openPhotoViewer(idx));
       card.querySelector('.btn-save-shot').addEventListener('click', () => saveRollPhoto(s));
       grid.appendChild(card);
@@ -11033,6 +11177,11 @@
   document.getElementById('btnLabPhotoNext')?.addEventListener('click', e => {
     e.stopPropagation();
     stepLabPhoto(1);
+  });
+  document.getElementById('btnLabDeleteRollShot')?.addEventListener('click', async e => {
+    e.stopPropagation();
+    const s = state.camRollShots.find(item => item.id === state.activeRollShotId) || state.camRollShots[viewerCurrentIndex];
+    if (s) await deleteRollShot(s);
   });
 
   const activeLabPointers = new Map();
@@ -11612,6 +11761,10 @@
     const s = state.camRollShots[viewerCurrentIndex];
     if (s) await openShotInLab(s);
   });
+  document.getElementById('btnViewerDelete')?.addEventListener('click', async () => {
+    const s = state.camRollShots[viewerCurrentIndex];
+    if (s) await deleteRollShot(s);
+  });
   document.getElementById('btnViewerSave')?.addEventListener('click', () => {
     const s = state.camRollShots[viewerCurrentIndex];
     if (s) saveRollPhoto(s);
@@ -11936,9 +12089,13 @@
     state.lastCompletedRollId = null;
     state.camRollNumber = 1;
     state.camRollId = createRollId();
+    state.activeRollShotId = null;
+    state.sourceFromCameraRoll = false;
+    closePhotoViewer();
     saveCameraRollMeta();
     renderContactSheet();
-    syncCameraHudUI();
+    renderRollSampleStrip();
+    syncAllUI();
     showToast(`🎞️ Roll reset to Roll #01 (0/${state.camMaxShots})`);
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
