@@ -4254,7 +4254,7 @@
             <div class="cam-mini-logo" title="Tee's Film Lab"><img src="./logo.jpg" alt="Tee's Film Lab" /></div>
           </div>
           <div class="cam-top-right">
-            <button class="cam-wind-lever is-cocked" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
+            <button class="cam-wind-lever is-cocked is-auto" id="btnWindFilm" type="button" title="Film advance lever — tap/swipe to wind, hold for Auto-Wind" aria-label="Wind film (hold for Auto-Wind)">
               <svg viewBox="0 0 84 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                   <linearGradient id="inoxArm" x1="16" y1="9" x2="54" y2="23" gradientUnits="userSpaceOnUse">
@@ -6238,7 +6238,7 @@
     camNeedsWind: false,
     camNeedsRewind: false,
     lastCompletedRollId: null,
-    camAutoWind: false,
+    camAutoWind: true,
     doubleExpMode: false,
     doubleExpFirstCanvas: null,
     labDoubleExpCanvas: null,
@@ -6537,6 +6537,14 @@
       saveLocalAppState();
     }
   } catch (e) { state.lensAperture = DEFAULT_LENS_APERTURE; }
+  const AUTO_WIND_DEFAULT_KEY = 'tees-lab-auto-wind-default-v1';
+  try {
+    if (!localStorage.getItem(AUTO_WIND_DEFAULT_KEY)) {
+      state.camAutoWind = true;
+      localStorage.setItem(AUTO_WIND_DEFAULT_KEY, '1');
+      saveLocalAppState();
+    }
+  } catch (e) { state.camAutoWind = true; }
   let saveStateTimer = 0;
   function scheduleSaveLocalAppState() {
     window.clearTimeout(saveStateTimer);
