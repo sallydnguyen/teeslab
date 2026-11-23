@@ -5774,7 +5774,15 @@
     return lens.displayLabel || lens.label || lens.id;
   }
 
+  function isCameraViewportLandscape() {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth > window.innerHeight;
+  }
+
   function getBodyAspect(body, lens) {
+    if (body?.id === 'half-frame' && !state.hfDiptychMode && isCameraViewportLandscape()) {
+      return 4 / 3;
+    }
     return lens?.formatAspect || body?.aspect || (3 / 2);
   }
 
@@ -8334,6 +8342,16 @@
     syncCameraHudUI();
   }
 
+  function getRealCameraVideoConstraints(hiRes = true) {
+    const land = isCameraViewportLandscape();
+    return {
+      facingMode: state.camFacing,
+      width: { ideal: land ? (hiRes ? 1440 : 960) : (hiRes ? 1080 : 720) },
+      height: { ideal: land ? (hiRes ? 1080 : 720) : (hiRes ? 1440 : 960) },
+      frameRate: { ideal: 18, max: 24 }
+    };
+  }
+
   let camStartPromise = null;
   async function startRealCamera(userInitiated = false) {
     if (camStartPromise) return camStartPromise;
@@ -8357,18 +8375,13 @@
         let stream;
         try {
           stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-              facingMode: state.camFacing,
-              width: { ideal: 1080 },
-              height: { ideal: 1440 },
-              frameRate: { ideal: 18, max: 24 }
-            },
+            video: getRealCameraVideoConstraints(true),
             audio: false
           });
         } catch (hiResErr) {
           const canRetryLoRes = hiResErr?.name === 'OverconstrainedError' || hiResErr?.name === 'ConstraintNotSatisfiedError';
           if (!canRetryLoRes) throw hiResErr;
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing, width: { ideal: 720 }, height: { ideal: 960 }, frameRate: { ideal: 18, max: 24 } }, audio: false });
+          stream = await navigator.mediaDevices.getUserMedia({ video: getRealCameraVideoConstraints(false), audio: false });
         }
         if (!document.getElementById('view-camera').classList.contains('active') || !state.camLiveEnabled) {
           stream.getTracks().forEach(track => track.stop());
@@ -9125,10 +9138,38 @@
       cameraLastStaticKey = '';
     }
   }
+  let camOrientSyncTimer = 0;
+  function syncRealCameraOrientation() {
+    window.clearTimeout(camOrientSyncTimer);
+    if (!state.camStream || !state.camLiveEnabled || !document.getElementById('view-camera')?.classList.contains('active')) return;
+    camOrientSyncTimer = window.setTimeout(async () => {
+      if (!state.camStream || !state.camLiveEnabled) return;
+      const track = cameraTrack();
+      if (!track || track.readyState !== 'live') return;
+      const wantLandscape = isCameraViewportLandscape();
+      if (camVideo.videoWidth > 0 && camVideo.videoHeight > 0 && (camVideo.videoWidth >= camVideo.videoHeight) === wantLandscape) {
+        return;
+      }
+      try {
+        await track.applyConstraints({
+          width: { ideal: wantLandscape ? 1440 : 1080 },
+          height: { ideal: wantLandscape ? 1080 : 1440 }
+        });
+      } catch (ignored) {}
+      await new Promise(r => setTimeout(r, 220));
+      if (!state.camStream || !state.camLiveEnabled) return;
+      if (camVideo.videoWidth > 0 && camVideo.videoHeight > 0 && (camVideo.videoWidth >= camVideo.videoHeight) !== wantLandscape) {
+        stopRealCamera();
+        await startRealCamera();
+      }
+    }, 180);
+  }
   function handleViewportResizeOrOrientation() {
+    cameraLastStaticKey = '';
     syncOrientationLayout();
     layoutViewfinderStage();
     syncLensBarrelWidgets();
+    syncRealCameraOrientation();
     requestAnimationFrame(() => {
       syncOrientationLayout();
       layoutViewfinderStage();
@@ -9283,8 +9324,17 @@
               ic.takePhoto(),
               new Promise((_, rej) => setTimeout(() => rej(new Error('ImageCapture timeout')), 950))
             ]);
-            highResBitmap = await createImageBitmap(photoBlob);
-            src = highResBitmap;
+            const candidateBitmap = await createImageBitmap(photoBlob);
+            const videoReady = camVideo.videoWidth > 0 && camVideo.videoHeight > 0;
+            const videoIsLand = camVideo.videoWidth >= camVideo.videoHeight;
+            const shotIsLand = candidateBitmap.width >= candidateBitmap.height;
+            const viewportIsLand = isCameraViewportLandscape();
+            if ((videoReady && shotIsLand !== videoIsLand) || (viewportIsLand && !shotIsLand && (!videoReady || videoIsLand))) {
+              candidateBitmap.close();
+            } else {
+              highResBitmap = candidateBitmap;
+              src = highResBitmap;
+            }
           } catch (ignored) {}
         }
       }
@@ -10679,7 +10729,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1635';
+  const APP_BUILD = '20261122-1645';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
