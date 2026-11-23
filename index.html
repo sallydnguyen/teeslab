@@ -3187,11 +3187,16 @@
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .cam-plate-left::after {
         content: "Tee's Film Lab";
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.4px;
-        color: #e2e8f0;
+        font-family: 'Caveat', cursive;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        line-height: 1;
+        color: #f3feff;
+        paint-order: stroke fill;
+        -webkit-text-stroke: 1.1px var(--cyan);
+        text-shadow: 0 0 3px var(--cyan), 0 0 8px rgba(34, 211, 238, 0.75);
+        white-space: nowrap;
       }
       .app-shell[data-active-tab="camera"]:not(.picker-open) .cam-mini-logo {
         width: 24px;
@@ -10751,7 +10756,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1736';
+  const APP_BUILD = '20261122-1738';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
