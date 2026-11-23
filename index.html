@@ -4721,8 +4721,8 @@
         const linLut = new Float32Array(256);
         for (let i = 0; i < 256; i++) {
           const c = i / 255;
-          const hi = c > 0.72 ? (c - 0.72) / 0.28 : 0;
-          linLut[i] = Math.pow(c, 2.2) * (1 + hi * hi * 1.15);
+          const hi = c > 0.84 ? (c - 0.84) / 0.16 : 0;
+          linLut[i] = Math.pow(c, 2.2) * (1 + hi * hi * 0.55);
         }
         const nTaps = 32;
         const ox = new Float32Array(nTaps), oy = new Float32Array(nTaps), ow = new Float32Array(nTaps);
@@ -4732,13 +4732,12 @@
           const ang = k * GA;
           ox[k] = rN * Math.cos(ang);
           oy[k] = rN * Math.sin(ang);
-          const dRim = rN - 0.84;
-          ow[k] = 0.82 + 0.24 * Math.exp(-(dRim * dRim) / 0.036);
+          ow[k] = 1.0 - 0.14 * rN * rN;
         }
         return { linLut, nTaps, ox, oy, ow };
       })());
 
-      const dofRad = lens.dofRadius ?? 0.42;
+      const dofRad = (lens.dofRadius ?? 0.42) * 0.45;
       const focusCX = Number.isFinite(lens.focusCenterX) ? lens.focusCenterX : 0.5;
       const focusCY = Number.isFinite(lens.focusCenterY) ? lens.focusCenterY : 0.48;
       const fxC = focusCX * 2 - 1;
@@ -4746,8 +4745,8 @@
       const isDiptychDof = !!cfg.isDiptych;
       const aspect = (isDiptychDof ? width * 0.5 : width) / Math.max(1, height);
       const ax = Math.min(1.18, Math.sqrt(Math.max(0.4, aspect)));
-      const ay = Math.min(1.18, 1 / Math.sqrt(Math.max(0.4, aspect))) * 0.86;
-      const falloff = Math.max(0.28, 0.48 - dofStr * 0.16);
+      const ayBase = Math.min(1.18, 1 / Math.sqrt(Math.max(0.4, aspect)));
+      const falloff = Math.max(0.85, 1.15 - dofStr * 0.16);
       const maxCoCScale = Math.min(1, dofStr * 1.12);
       const mfCoCBase = mfDefocus > 0.015 ? Math.min(1, mfDefocus * 1.35) : 0;
 
@@ -4761,12 +4760,13 @@
       const { linLut, nTaps, ox, oy, ow } = bokehTbl;
       const invBw = 1 / bw, invBh = 1 / bh;
 
-      // 1. Build anti-aliased linear-light HDR buffer + per-pixel optical CoC map
+      // 1. Build anti-aliased linear-light buffer + smooth gradual CoC map
       for (let by = 0; by < bh; by++) {
         const sy0 = Math.min(height - 1, Math.floor((by * height) / bh));
         const sy1 = div > 1 ? Math.min(height - 1, sy0 + Math.floor(div * 0.5)) : sy0;
         const ny = ((by + 0.5) * invBh - 0.5) * 2;
-        const dy = (ny - fyC) * ay;
+        const dyRaw = ny - fyC;
+        const dy = dyRaw * ayBase * (dyRaw < 0 ? 1.08 : 0.72);
         const dy2 = dy * dy;
         for (let bx = 0; bx < bw; bx++) {
           const sx0 = Math.min(width - 1, Math.floor((bx * width) / bw));
@@ -4792,13 +4792,13 @@
           let radCoC = 0;
           if (dofStr > 0.04 && d > dofRad) {
             const t = Math.min(1, (d - dofRad) / falloff);
-            radCoC = t * t * (3 - 2 * t) * maxCoCScale;
+            radCoC = Math.pow(t, 1.35) * maxCoCScale;
           }
           cocMap[by * bw + bx] = radCoC > mfCoCBase ? radCoC : mfCoCBase;
         }
       }
 
-      // 2. Build 2x and 4x hierarchical linear mips for silky-smooth large bokeh discs
+      // 2. Build 2x and 4x hierarchical linear mips for silky-smooth bokeh discs
       const lin2 = new Float32Array(bw2 * bh2 * 3);
       for (let y2 = 0; y2 < bh2; y2++) {
         const sy0 = Math.min(bh - 1, y2 * 2), sy1 = Math.min(bh - 1, sy0 + 1);
@@ -4824,9 +4824,9 @@
         }
       }
 
-      // 3. Variable-CoC 32-tap Golden-Angle Circular Bokeh with Cat's-Eye & Anti-Halo
+      // 3. Variable-CoC 32-tap Circular Bokeh with Trilinear Mip Blending & Cat's-Eye
       const blurEffort = Math.max(dofStr, mfDefocus * 1.2);
-      const maxRadPx = Math.max(4, bw * (0.015 + blurEffort * 0.024));
+      const maxRadPx = Math.max(4, bw * (0.015 + blurEffort * 0.026));
       const dofBuf = new Float32Array(bw * bh * 3);
       const inv22 = 1 / 2.2;
       const bwM1 = bw - 1, bhM1 = bh - 1, bw2M1 = bw2 - 1, bh2M1 = bh2 - 1, bw4M1 = bw4 - 1, bh4M1 = bh4 - 1;
@@ -4837,28 +4837,38 @@
         for (let bx = 0; bx < bw; bx++) {
           const cIdx = by * bw + bx;
           const coc = cocMap[cIdx];
-          if (coc < 0.008) continue;
+          if (coc < 0.004) continue;
 
           const radPx = coc * maxRadPx;
           const nx = ((bx + 0.5) * invBw - 0.5) * 2;
           const rCorner2 = nx * nx + ny * ny;
           let catStr = 0, rDirX = 1, rDirY = 0;
           if (rCorner2 > 0.08 && mfDefocus <= 0.015) {
-            catStr = Math.min(0.40, dofStr * 0.34) * Math.min(1, (rCorner2 - 0.08) * 0.48);
+            catStr = Math.min(0.36, dofStr * 0.30) * Math.min(1, (rCorner2 - 0.08) * 0.45);
             const invLen = 1 / Math.sqrt(rCorner2);
             rDirX = nx * invLen;
             rDirY = ny * invLen;
           }
 
+          // Smooth trilinear mip level: 0=lin1, 1=lin2, 2=lin4
           const subR = radPx * 0.21;
-          const mip = subR >= 2.6 ? lin4 : (subR >= 1.2 ? lin2 : lin1);
-          const mw = subR >= 2.6 ? bw4 : (subR >= 1.2 ? bw2 : bw);
-          const mwM1 = subR >= 2.6 ? bw4M1 : (subR >= 1.2 ? bw2M1 : bwM1);
-          const mhM1 = subR >= 2.6 ? bh4M1 : (subR >= 1.2 ? bh2M1 : bhM1);
-          const msx = subR >= 2.6 ? s4x : (subR >= 1.2 ? s2x : 1);
-          const msy = subR >= 2.6 ? s4y : (subR >= 1.2 ? s2y : 1);
-          const cocThreshold = coc * 0.65;
-          const invCocTh = cocThreshold > 1e-4 ? 1 / cocThreshold : 0;
+          const lod = Math.max(0, Math.min(2, Math.log2(Math.max(1, subR * 1.15))));
+          const lodFloor = lod < 1 ? 0 : (lod < 2 ? 1 : 2);
+          const mipFrac = lod - lodFloor;
+          const mipA = lodFloor === 0 ? lin1 : (lodFloor === 1 ? lin2 : lin4);
+          const mwA = lodFloor === 0 ? bw : (lodFloor === 1 ? bw2 : bw4);
+          const mwAM1 = lodFloor === 0 ? bwM1 : (lodFloor === 1 ? bw2M1 : bw4M1);
+          const mhAM1 = lodFloor === 0 ? bhM1 : (lodFloor === 1 ? bh2M1 : bh4M1);
+          const msxA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2x : s4x);
+          const msyA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2y : s4y);
+
+          const hasBlend = mipFrac > 0.01 && lodFloor < 2;
+          const mipB = lodFloor === 0 ? lin2 : lin4;
+          const mwB = lodFloor === 0 ? bw2 : bw4;
+          const mwBM1 = lodFloor === 0 ? bw2M1 : bw4M1;
+          const mhBM1 = lodFloor === 0 ? bh2M1 : bh4M1;
+          const msxB = lodFloor === 0 ? s2x : s4x;
+          const msyB = lodFloor === 0 ? s2y : s4y;
 
           let accR = 0, accG = 0, accB = 0, wSum = 0;
           for (let k = 0; k < nTaps; k++) {
@@ -4870,31 +4880,50 @@
             }
             const sx = Math.max(0, Math.min(bwM1, bx + tx * radPx));
             const sy = Math.max(0, Math.min(bhM1, by + ty * radPx));
-            const sCoc = cocMap[(sy | 0) * bw + (sx | 0)];
-            let antiHalo = 1;
-            if (sCoc < cocThreshold) antiHalo = 0.18 + 0.82 * (sCoc * invCocTh);
-            const w = ow[k] * antiHalo;
+            const w = ow[k];
 
-            const mx = sx * msx, my = sy * msy;
+            const mx = sx * msxA, my = sy * msyA;
             const mx0 = mx | 0, my0 = my | 0;
-            const mx1 = mx0 < mwM1 ? mx0 + 1 : mx0;
-            const my1 = my0 < mhM1 ? my0 + 1 : my0;
+            const mx1 = mx0 < mwAM1 ? mx0 + 1 : mx0;
+            const my1 = my0 < mhAM1 ? my0 + 1 : my0;
             const fx = mx - mx0, fy = my - my0;
             const omx = 1 - fx, omy = 1 - fy;
             const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
-            const q00 = (my0 * mw + mx0) * 3, q10 = (my0 * mw + mx1) * 3;
-            const q01 = (my1 * mw + mx0) * 3, q11 = (my1 * mw + mx1) * 3;
+            const q00 = (my0 * mwA + mx0) * 3, q10 = (my0 * mwA + mx1) * 3;
+            const q01 = (my1 * mwA + mx0) * 3, q11 = (my1 * mwA + mx1) * 3;
 
-            accR += (mip[q00] * w00 + mip[q10] * w10 + mip[q01] * w01 + mip[q11] * w11) * w;
-            accG += (mip[q00 + 1] * w00 + mip[q10 + 1] * w10 + mip[q01 + 1] * w01 + mip[q11 + 1] * w11) * w;
-            accB += (mip[q00 + 2] * w00 + mip[q10 + 2] * w10 + mip[q01 + 2] * w01 + mip[q11 + 2] * w11) * w;
+            let sr = mipA[q00] * w00 + mipA[q10] * w10 + mipA[q01] * w01 + mipA[q11] * w11;
+            let sg = mipA[q00 + 1] * w00 + mipA[q10 + 1] * w10 + mipA[q01 + 1] * w01 + mipA[q11 + 1] * w11;
+            let sb = mipA[q00 + 2] * w00 + mipA[q10 + 2] * w10 + mipA[q01 + 2] * w01 + mipA[q11 + 2] * w11;
+
+            if (hasBlend) {
+              const bxM = sx * msxB, byM = sy * msyB;
+              const bx0 = bxM | 0, by0 = byM | 0;
+              const bx1 = bx0 < mwBM1 ? bx0 + 1 : bx0;
+              const by1 = by0 < mhBM1 ? by0 + 1 : by0;
+              const bfx = bxM - bx0, bfy = byM - by0;
+              const bomx = 1 - bfx, bomy = 1 - bfy;
+              const bw00 = bomx * bomy, bw10 = bfx * bomy, bw01 = bomx * bfy, bw11 = bfx * bfy;
+              const bq00 = (by0 * mwB + bx0) * 3, bq10 = (by0 * mwB + bx1) * 3;
+              const bq01 = (by1 * mwB + bx0) * 3, bq11 = (by1 * mwB + bx1) * 3;
+              const srB = mipB[bq00] * bw00 + mipB[bq10] * bw10 + mipB[bq01] * bw01 + mipB[bq11] * bw11;
+              const sgB = mipB[bq00 + 1] * bw00 + mipB[bq10 + 1] * bw10 + mipB[bq01 + 1] * bw01 + mipB[bq11 + 1] * bw11;
+              const sbB = mipB[bq00 + 2] * bw00 + mipB[bq10 + 2] * bw10 + mipB[bq01 + 2] * bw01 + mipB[bq11 + 2] * bw11;
+              sr += (srB - sr) * mipFrac;
+              sg += (sgB - sg) * mipFrac;
+              sb += (sbB - sb) * mipFrac;
+            }
+
+            accR += sr * w;
+            accG += sg * w;
+            accB += sb * w;
             wSum += w;
           }
           const invW = 1 / Math.max(1e-4, wSum);
           let lr = accR * invW, lg = accG * invW, lb = accB * invW;
-          if (lr > 1) lr = lr / (1 + (lr - 1) * 0.35);
-          if (lg > 1) lg = lg / (1 + (lg - 1) * 0.35);
-          if (lb > 1) lb = lb / (1 + (lb - 1) * 0.35);
+          if (lr > 1) lr = lr / (1 + (lr - 1) * 0.45);
+          if (lg > 1) lg = lg / (1 + (lg - 1) * 0.45);
+          if (lb > 1) lb = lb / (1 + (lb - 1) * 0.45);
           const dp = cIdx * 3;
           dofBuf[dp] = Math.min(255, Math.pow(Math.max(0, lr), inv22) * 255);
           dofBuf[dp + 1] = Math.min(255, Math.pow(Math.max(0, lg), inv22) * 255);
@@ -4902,7 +4931,7 @@
         }
       }
 
-      // 4. Seamless transition composite (0.35..2.2px sub-pixel feather, 100% bokeh beyond)
+      // 4. Wide feather transition composite (0.1..5.5px gradual ease, 100% bokeh beyond)
       for (let y = 0; y < height; y++) {
         const gyf = (y / height) * (bh - 1), gy0 = gyf | 0, gy1 = Math.min(bh - 1, gy0 + 1), fy = gyf - gy0;
         const omy = 1 - fy;
@@ -4913,11 +4942,11 @@
           const c00 = gy0 * bw + gx0, c10 = gy0 * bw + gx1, c01 = gy1 * bw + gx0, c11 = gy1 * bw + gx1;
           const coc = cocMap[c00] * w00 + cocMap[c10] * w10 + cocMap[c01] * w01 + cocMap[c11] * w11;
           const radPx = coc * maxRadPx;
-          if (radPx <= 0.35) continue;
+          if (radPx <= 0.1) continue;
           let mix = 1;
-          if (radPx < 2.2) {
-            const t = (radPx - 0.35) / 1.85;
-            mix = t * t * (3 - 2 * t);
+          if (radPx < 5.5) {
+            const t = (radPx - 0.1) / 5.4;
+            mix = t * (2 - t) * 0.4 + t * t * (3 - 2 * t) * 0.6;
           }
           const p00 = c00 * 3, p10 = c10 * 3, p01 = c01 * 3, p11 = c11 * 3;
           const br = dofBuf[p00] * w00 + dofBuf[p10] * w10 + dofBuf[p01] * w01 + dofBuf[p11] * w11;
@@ -8997,15 +9026,17 @@
         float fx = uFocusCenter.x * 2.0 - 1.0;
         float fy = uFocusCenter.y * 2.0 - 1.0;
         float ax = min(1.18, sqrt(max(0.4, uAspect)));
-        float ay = min(1.18, 1.0 / sqrt(max(0.4, uAspect))) * 0.86;
+        float ayBase = min(1.18, 1.0 / sqrt(max(0.4, uAspect)));
+        float dyRaw = nPos.y - fy;
         float dx = (nPos.x - fx) * ax;
-        float dy = (nPos.y - fy) * ay;
+        float dy = dyRaw * ayBase * (dyRaw < 0.0 ? 1.08 : 0.72);
         float d = sqrt(dx * dx + dy * dy);
+        float innerR = uDofRad * 0.45;
         float radial = 0.0;
-        if (uDofStr > 0.04 && d > uDofRad) {
-          float falloff = max(0.28, 0.48 - uDofStr * 0.16);
-          float t = min(1.0, (d - uDofRad) / falloff);
-          radial = t * t * (3.0 - 2.0 * t) * min(1.0, uDofStr * 1.12);
+        if (uDofStr > 0.04 && d > innerR) {
+          float falloff = max(0.85, 1.15 - uDofStr * 0.16);
+          float t = min(1.0, (d - innerR) / falloff);
+          radial = pow(t, 1.35) * min(1.0, uDofStr * 1.12);
         }
         float mf = uMfDefocus > 0.015 ? min(1.0, uMfDefocus * 1.35) : 0.0;
         return max(radial, mf);
@@ -9014,26 +9045,26 @@
       vec3 srgbToBokehLin(vec3 c) {
         vec3 lin = pow(max(c, vec3(0.0)), vec3(2.2));
         float lum = dot(c, vec3(0.299, 0.587, 0.114));
-        float hi = lum > 0.72 ? (lum - 0.72) / 0.28 : 0.0;
-        return lin * (1.0 + hi * hi * 1.15);
+        float hi = lum > 0.84 ? (lum - 0.84) / 0.16 : 0.0;
+        return lin * (1.0 + hi * hi * 0.55);
       }
 
       void main() {
         vec2 nPos;
         float coc = evalCoC(vUv, nPos);
-        if (coc < 0.008) {
+        if (coc < 0.004) {
           fragColor = vec4(textureLod(uBase, vUv, 0.0).rgb, 1.0);
           return;
         }
         float effort = max(uDofStr, uMfDefocus * 1.2);
-        float maxRadPx = max(4.0, uBaseSize.x * (0.015 + effort * 0.024));
+        float maxRadPx = max(4.0, uBaseSize.x * (0.015 + effort * 0.026));
         float radPx = coc * maxRadPx;
-        float lod = clamp(log2(max(1.0, radPx * 0.24)), 0.0, 2.6);
+        float lod = clamp(log2(max(1.0, radPx * 0.24)), 0.0, 2.5);
         vec2 radUv = vec2(radPx) / uBaseSize;
 
         float rCorner2 = dot(nPos, nPos);
         float catStr = (rCorner2 > 0.08 && uMfDefocus <= 0.015)
-          ? min(0.40, uDofStr * 0.34) * min(1.0, (rCorner2 - 0.08) * 0.48)
+          ? min(0.36, uDofStr * 0.30) * min(1.0, (rCorner2 - 0.08) * 0.45)
           : 0.0;
         vec2 rDir = rCorner2 > 1e-4 ? normalize(nPos) : vec2(1.0, 0.0);
 
@@ -9050,20 +9081,13 @@
             off -= rDir * (proj * catStr);
           }
           vec2 tapUv = clamp(vUv + vec2(off.x, -off.y) * radUv, vec2(0.001), vec2(0.999));
-          vec2 sNPos;
-          float sCoc = evalCoC(tapUv, sNPos);
-          float dRim = rN - 0.84;
-          float discW = 0.82 + 0.24 * exp(-(dRim * dRim) / 0.036);
-          float antiHalo = (sCoc < coc * 0.65)
-            ? (0.18 + 0.82 * clamp(sCoc / max(1e-4, coc * 0.65), 0.0, 1.0))
-            : 1.0;
-          float w = discW * antiHalo;
+          float w = 1.0 - 0.14 * rN * rN;
           vec3 sc = textureLod(uBase, tapUv, lod).rgb;
           acc += srgbToBokehLin(sc) * w;
           wSum += w;
         }
         vec3 linRes = acc / max(1e-4, wSum);
-        vec3 res = pow(max(linRes / (vec3(1.0) + max(vec3(0.0), linRes - vec3(1.0)) * 0.35), vec3(0.0)), vec3(1.0 / 2.2));
+        vec3 res = pow(max(linRes / (vec3(1.0) + max(vec3(0.0), linRes - vec3(1.0)) * 0.45), vec3(0.0)), vec3(1.0 / 2.2));
         fragColor = vec4(clamp(res, 0.0, 1.0), 1.0);
       }`;
 
@@ -9099,21 +9123,24 @@
           float fx = uFocusCenter.x * 2.0 - 1.0;
           float fy = uFocusCenter.y * 2.0 - 1.0;
           float ax = min(1.18, sqrt(max(0.4, uAspect)));
-          float ay = min(1.18, 1.0 / sqrt(max(0.4, uAspect))) * 0.86;
+          float ayBase = min(1.18, 1.0 / sqrt(max(0.4, uAspect)));
+          float dyRaw = ny - fy;
           float dx = (nx - fx) * ax;
-          float dy = (ny - fy) * ay;
+          float dy = dyRaw * ayBase * (dyRaw < 0.0 ? 1.08 : 0.72);
           float d = sqrt(dx * dx + dy * dy);
+          float innerR = uDofRad * 0.45;
           float radial = 0.0;
-          if (uDofStr > 0.04 && d > uDofRad) {
-            float falloff = max(0.28, 0.48 - uDofStr * 0.16);
-            float t = min(1.0, (d - uDofRad) / falloff);
-            radial = t * t * (3.0 - 2.0 * t) * min(1.0, uDofStr * 1.12);
+          if (uDofStr > 0.04 && d > innerR) {
+            float falloff = max(0.85, 1.15 - uDofStr * 0.16);
+            float t = min(1.0, (d - innerR) / falloff);
+            radial = pow(t, 1.35) * min(1.0, uDofStr * 1.12);
           }
           float mf = uMfDefocus > 0.015 ? min(1.0, uMfDefocus * 1.35) : 0.0;
           float coc = max(radial, mf);
           float effort = max(uDofStr, uMfDefocus * 1.2);
-          float radPx = coc * max(4.0, uSize.x * (0.015 + effort * 0.024));
-          float mixV = smoothstep(0.35, 2.2, radPx);
+          float radPx = coc * max(4.0, uSize.x * (0.015 + effort * 0.026));
+          float ft = clamp((radPx - 0.1) / 5.4, 0.0, 1.0);
+          float mixV = ft * (2.0 - ft) * 0.4 + ft * ft * (3.0 - 2.0 * ft) * 0.6;
           if (mixV > 0.002) {
             vec3 br = texture(uDof, vUv).rgb * 255.0;
             rgb = mix(rgb, br, mixV);
