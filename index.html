@@ -9965,7 +9965,7 @@
       else sh = srcW / ratio;
       const z = Math.max(1, lens?.cropZoom || 1);
       const croppedLong = Math.max(sw / z, sh / z);
-      maxLong = Math.min(3840, Math.max(2048, Math.round(croppedLong)));
+      maxLong = Math.min(3840, Math.max(2560, Math.round(croppedLong)));
     }
     if (ratio >= 1) {
       const w = maxLong;
@@ -10264,13 +10264,13 @@
     syncCameraHudUI();
   }
 
-  function getRealCameraVideoConstraints(hiRes = true) {
+  function getRealCameraVideoConstraints(hiRes = false) {
     const land = isCameraViewportLandscape();
     return {
       facingMode: state.camFacing,
-      width: { ideal: land ? (hiRes ? 3840 : 1920) : (hiRes ? 2160 : 1080) },
-      height: { ideal: land ? (hiRes ? 2160 : 1080) : (hiRes ? 3840 : 1920) },
-      frameRate: { ideal: 15, max: 24 }
+      width: { ideal: land ? (hiRes ? 3840 : 1440) : (hiRes ? 2160 : 1080) },
+      height: { ideal: land ? (hiRes ? 2160 : 1080) : (hiRes ? 3840 : 1440) },
+      frameRate: { ideal: hiRes ? 24 : 12, max: hiRes ? 30 : 15 }
     };
   }
 
@@ -10297,13 +10297,13 @@
         let stream;
         try {
           stream = await navigator.mediaDevices.getUserMedia({
-            video: getRealCameraVideoConstraints(true),
+            video: getRealCameraVideoConstraints(false),
             audio: false
           });
         } catch (hiResErr) {
           const canRetryLoRes = hiResErr?.name === 'OverconstrainedError' || hiResErr?.name === 'ConstraintNotSatisfiedError';
           if (!canRetryLoRes) throw hiResErr;
-          stream = await navigator.mediaDevices.getUserMedia({ video: getRealCameraVideoConstraints(false), audio: false });
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: state.camFacing }, audio: false });
         }
         if (!document.getElementById('view-camera').classList.contains('active') || !state.camLiveEnabled) {
           stream.getTracks().forEach(track => track.stop());
@@ -11246,11 +11246,7 @@
         return;
       }
       try {
-        await track.applyConstraints({
-          width: { ideal: wantLandscape ? 4032 : 3024 },
-          height: { ideal: wantLandscape ? 3024 : 4032 },
-          aspectRatio: { ideal: wantLandscape ? (4 / 3) : (3 / 4) }
-        });
+        await track.applyConstraints(getRealCameraVideoConstraints(false));
       } catch (ignored) {}
       await new Promise(r => setTimeout(r, 220));
       if (!state.camStream || !state.camLiveEnabled) return;
@@ -11474,9 +11470,10 @@
     const exposureTimer = exposureWaitMs > 0 ? new Promise(resolve => setTimeout(resolve, exposureWaitMs)) : null;
 
     let stillBitmap = null;
+    let boostedVideoForShot = false;
+    const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
+    const track = hasLiveVideo ? cameraTrack() : null;
     try {
-      const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
-      const track = hasLiveVideo ? cameraTrack() : null;
       const stillPromise = (track && typeof ImageCapture === 'function')
         ? Promise.race([
             (async () => {
@@ -11500,6 +11497,19 @@
         : Promise.resolve(null);
       const [capturedStill] = await Promise.all([stillPromise, exposureTimer]);
       stillBitmap = capturedStill;
+      if (!stillBitmap && track?.applyConstraints) {
+        const curMax = Math.max(camVideo.videoWidth || 0, camVideo.videoHeight || 0);
+        if (curMax > 0 && curMax < 2560) {
+          try {
+            await Promise.race([
+              track.applyConstraints(getRealCameraVideoConstraints(true)),
+              new Promise(resolve => setTimeout(resolve, 650))
+            ]);
+            boostedVideoForShot = true;
+            await new Promise(resolve => setTimeout(resolve, 110));
+          } catch (ignored) {}
+        }
+      }
       const src = stillBitmap || (hasLiveVideo ? camVideo : (state.fullSourceCanvas || SAMPLES[0].canvas));
 
       const capZoom = lens.cropZoom || 1.0;
@@ -11507,8 +11517,8 @@
 
       if (body.id === 'half-frame' && state.hfDiptychMode) {
         const halfC = document.createElement('canvas');
-        halfC.width = 600; halfC.height = 800;
-        drawCameraFrameSource(halfC.getContext('2d'), src, 600, 800, capZoom);
+        halfC.width = 1200; halfC.height = 1600;
+        drawCameraFrameSource(halfC.getContext('2d'), src, 1200, 1600, capZoom);
 
         if (!state.halfFrameFirstCanvas) {
           state.halfFrameFirstCanvas = halfC;
@@ -11534,13 +11544,13 @@
 
         const firstHalf = state.halfFrameFirstCanvas;
         const dipC = document.createElement('canvas');
-        dipC.width = 1260; dipC.height = 840;
+        dipC.width = 2520; dipC.height = 1680;
         const dCtx = dipC.getContext('2d');
         dCtx.fillStyle = '#090a0d';
         dCtx.fillRect(0, 0, dipC.width, dipC.height);
-        dCtx.drawImage(firstHalf, 20, 20, 600, 800);
-        dCtx.drawImage(halfC, 640, 20, 600, 800);
-        const rawBlob = await canvasToJpegBlob(dipC, 0.94);
+        dCtx.drawImage(firstHalf, 40, 40, 1200, 1600);
+        dCtx.drawImage(halfC, 1280, 40, 1200, 1600);
+        const rawBlob = await canvasToJpegBlob(dipC, 0.98);
         await saveCameraExposure(rawBlob, shotNumber, { isDiptych: true });
         clearPendingHalfFrame();
         return;
@@ -11550,6 +11560,10 @@
       const capC = document.createElement('canvas');
       capC.width = capDim.w; capC.height = capDim.h;
       drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom);
+      if (boostedVideoForShot && track?.applyConstraints) {
+        boostedVideoForShot = false;
+        track.applyConstraints(getRealCameraVideoConstraints(false)).catch(() => {});
+      }
 
       if (state.doubleExpMode) {
         if (!state.doubleExpFirstCanvas) {
@@ -11571,6 +11585,9 @@
     } catch (error) {
       showToast('Could not process this shot');
     } finally {
+      if (boostedVideoForShot && track?.applyConstraints) {
+        track.applyConstraints(getRealCameraVideoConstraints(false)).catch(() => {});
+      }
       stillBitmap?.close?.();
       shutterBusy = false;
       shutterButton.disabled = false;
