@@ -7273,26 +7273,13 @@
       }
       return { w, h, ratio: 3 / 2, zoom: (state.sourceFromCameraRoll || isUserUploaded) ? 1.0 : (lens.cropZoom || 1.0), isHalfFramePair: true };
     }
-    if (isUserUploaded) {
-      const srcW = srcCanvas.videoWidth || srcCanvas.width || maxDim;
-      const srcH = srcCanvas.videoHeight || srcCanvas.height || maxDim;
-      const s = Math.min(1, maxDim / Math.max(1, Math.max(srcW, srcH)));
-      let w = Math.max(120, Math.round(srcW * s));
-      let h = Math.max(120, Math.round(srcH * s));
-      if (maxPixels > 0 && w * h > maxPixels) {
-        const ps = Math.sqrt(maxPixels / (w * h));
-        w = Math.max(120, Math.round(w * ps));
-        h = Math.max(120, Math.round(h * ps));
-      }
-      return { w, h, ratio: srcW / Math.max(1, srcH), zoom: 1.0 };
-    }
-    let ratio = getBodyAspect(body, lens);
+    let ratio = isUserUploaded ? (3 / 2) : getBodyAspect(body, lens);
     if (ratio > 1 && srcCanvas.height > srcCanvas.width) {
       ratio = 1 / ratio;
     } else if (ratio < 1 && srcCanvas.width > srcCanvas.height) {
       ratio = 1 / ratio;
     }
-    const zoom = state.sourceFromCameraRoll ? 1.0 : (lens.cropZoom || 1.0);
+    const zoom = (state.sourceFromCameraRoll || isUserUploaded) ? 1.0 : (lens.cropZoom || 1.0);
     const srcW = srcCanvas.videoWidth || srcCanvas.width || maxDim;
     const srcH = srcCanvas.videoHeight || srcCanvas.height || maxDim;
     const srcRatio = srcW / Math.max(1, srcH);
