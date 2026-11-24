@@ -2283,6 +2283,10 @@
     .lens-barrel-picker .lens-barrel-ring[data-ring="focal"] {
       height: 28px;
     }
+    @media (max-height: 760px) {
+      .lens-barrel-vf:has(.lens-barrel-ring[data-ring="focal"]:not([style*="none"])) .lens-barrel-ring { height: 25px; }
+      .lens-barrel-vf:has(.lens-barrel-ring[data-ring="focal"]:not([style*="none"])) .lens-barrel-ring[data-ring="focal"] { height: 23px; }
+    }
     @media (max-height: 700px) {
       .lens-barrel-vf .lens-barrel-ring { height: 27px; }
       .lens-barrel-vf .lens-barrel-ring[data-ring="focal"] { height: 23px; }
@@ -2303,6 +2307,14 @@
       color: #8f98a8;
       background: linear-gradient(180deg, #1e232d, #13161e);
       border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .lens-barrel-ring[data-ring="focal"] .lens-ring-tag {
+      color: #f87171;
+      cursor: pointer;
+    }
+    .lens-barrel-ring[data-ring="focal"] .lens-ring-val {
+      color: #fca5a5;
+      cursor: pointer;
     }
     .lens-barrel-ring[data-ring="aperture"] .lens-ring-tag {
       color: #f5a623;
@@ -4504,7 +4516,7 @@
               </div>
               <div class="vf-hud-center-actions">
                 <button class="vf-badge-btn af-active" id="btnVfAutoFocus" type="button" title="Auto Focus — tap to return to AF">AF</button>
-                <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between primes & 35–70mm zoom" style="display:none;">35–70</button>
+                <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between Prime & Pro Zoom lenses" style="display:none;">ZOOM</button>
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
                 <button class="vf-badge-btn" id="btnVfDoubleExpToggle" type="button" title="Double Exposure (2×) — expose twice on one frame">2×</button>
                 <button class="vf-badge-btn" id="btnVfIso" type="button" title="Adjust ISO (Push / Pull film)">ISO 400</button>
@@ -4829,7 +4841,7 @@
       aspect: 3 / 2,
       meta: 'Split-prism focus + LED exposure meter',
       defaultFocalId: '50mm',
-      recLenses: ['50mm', '85mm', '35mm'],
+      recLenses: ['50mm', '24-70mm', '85mm', '35mm'],
       recFilms: ['kodak-portra-400', 'fuji-superia-premium-400', 'kodak-gold-200', 'cinestill-800t'],
       blackLift: 0.024,
       contrast: 1.08,
@@ -4848,7 +4860,7 @@
       aspect: 3 / 2,
       meta: 'Autofocus 35mm compact · Direct flash & motorized advance',
       defaultFocalId: '35mm',
-      recLenses: ['35mm', '28mm'],
+      recLenses: ['35mm', '38-90mm', '28mm'],
       recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-portra-400'],
       blackLift: 0.020,
       contrast: 1.12,
@@ -4867,7 +4879,7 @@
       aspect: 1,
       meta: 'Ultra-fine grain, wide dynamic range',
       defaultFocalId: '6x6',
-      recLenses: ['6x7', '6x45', '6x6'],
+      recLenses: ['6x7', '6x45', '55-110mm', '6x6'],
       recFilms: ['kodak-portra-400', 'kodak-portra-160', 'kodak-ektar-100', 'agfa-apx-400'],
       blackLift: 0.012,
       contrast: 1.04,
@@ -4904,11 +4916,52 @@
     slr: [
       { id: '35mm', mm: 35, minF: 2.0, maxF: 22, focusProfile: 'standard', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Wide · Street & cafe', meta: 'Wide-normal · Street, indoor cafes & full-body portrait; natural separation at f/2', cropZoom: 1.38, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.66, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 20, chromaticAb: 0.24, edgeSoft: 0.02 },
       { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: '50mm f/1.4', short: '50mm', tileSub: 'Standard · Bright bokeh', meta: 'Standard · Half-body portrait & all genres; bright f/1.4 low-light & bokeh', cropZoom: 1.80, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 19, chromaticAb: 0.20, edgeSoft: 0.02 },
-      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 }
+      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 },
+      {
+        id: '24-70mm', isZoom: true, mm: 35, zoomMin: 24, zoomMax: 70, zoomSteps: [24, 28, 35, 50, 70],
+        minF: 2.8, zoomMaxMinF: 2.8, maxF: 22, focusProfile: 'zoom',
+        focalTag: '24–70', aperture: 'f/2.8', label: '24–70mm f/2.8', short: '24–70',
+        tileSub: 'Pro Zoom · Const f/2.8',
+        meta: 'Flagship 24–70mm f/2.8 constant-aperture pro zoom · Nano/T* coating, tack-sharp corners & smooth bokeh',
+        brightlinePct: 100, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 1, coatingTint: 0,
+        zoomAnchors: [
+          { mm: 24, cropZoom: 1.00, minF: 2.8, apertureEV: 0.06, dofStrength: 0.52, dofRadius: 0.50, barrelDistort: 0.012, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.014, skinFlatter: 0.00 },
+          { mm: 35, cropZoom: 1.38, minF: 2.8, apertureEV: 0.06, dofStrength: 0.62, dofRadius: 0.44, barrelDistort: 0.004, bloomBase: 17, vignetteBase: 17, chromaticAb: 0.14, edgeSoft: 0.012, skinFlatter: 0.02 },
+          { mm: 50, cropZoom: 1.80, minF: 2.8, apertureEV: 0.05, dofStrength: 0.72, dofRadius: 0.38, barrelDistort: 0.000, bloomBase: 18, vignetteBase: 16, chromaticAb: 0.12, edgeSoft: 0.012, skinFlatter: 0.05 },
+          { mm: 70, cropZoom: 2.25, minF: 2.8, apertureEV: 0.04, dofStrength: 0.82, dofRadius: 0.33, barrelDistort: 0.000, bloomBase: 20, vignetteBase: 17, chromaticAb: 0.12, edgeSoft: 0.012, skinFlatter: 0.09 }
+        ]
+      },
+      {
+        id: '70-200mm', isZoom: true, mm: 105, zoomMin: 70, zoomMax: 200, zoomSteps: [70, 85, 105, 135, 200],
+        minF: 2.8, zoomMaxMinF: 2.8, maxF: 22, focusProfile: 'tele-zoom',
+        focalTag: '70–200', aperture: 'f/2.8', label: '70–200mm f/2.8', short: '70–200',
+        tileSub: 'Tele Pro · Const f/2.8',
+        meta: 'Legendary 70–200mm f/2.8 ED/Fluorite telephoto pro zoom · Cinematic compression & buttery portrait bokeh',
+        brightlinePct: 100, shakeSens: 0.12, skinFlatter: 0.14, coatingWarmth: 1.5, coatingTint: 0,
+        zoomAnchors: [
+          { mm: 70, cropZoom: 2.25, minF: 2.8, apertureEV: 0.05, dofStrength: 0.82, dofRadius: 0.33, barrelDistort: 0, bloomBase: 19, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011, skinFlatter: 0.10 },
+          { mm: 105, cropZoom: 2.95, minF: 2.8, apertureEV: 0.04, dofStrength: 0.90, dofRadius: 0.29, barrelDistort: 0, bloomBase: 21, vignetteBase: 17, chromaticAb: 0.10, edgeSoft: 0.011, skinFlatter: 0.14 },
+          { mm: 135, cropZoom: 3.45, minF: 2.8, apertureEV: 0.02, dofStrength: 0.95, dofRadius: 0.26, barrelDistort: 0, bloomBase: 22, vignetteBase: 18, chromaticAb: 0.10, edgeSoft: 0.012, skinFlatter: 0.16 },
+          { mm: 200, cropZoom: 4.20, minF: 2.8, apertureEV: 0.00, dofStrength: 0.99, dofRadius: 0.24, barrelDistort: 0, bloomBase: 23, vignetteBase: 19, chromaticAb: 0.11, edgeSoft: 0.013, skinFlatter: 0.18 }
+        ]
+      }
     ],
     pns: [
       { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Street snap', meta: 'Wide 28mm f/2.8 compact prime (Ricoh GR1 style) · Dynamic street perspective', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
-      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp · Everyday AF', meta: 'Classic 35mm f/2.8 prime (Olympus Mju II / Yashica T4) · Crisp everyday & flash', cropZoom: 1.18, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.50, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 }
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp · Everyday AF', meta: 'Classic 35mm f/2.8 prime (Olympus Mju II / Yashica T4) · Crisp everyday & flash', cropZoom: 1.18, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.50, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
+      {
+        id: '38-90mm', isZoom: true, mm: 50, zoomMin: 38, zoomMax: 90, zoomSteps: [38, 50, 70, 90],
+        minF: 3.5, zoomMaxMinF: 6.5, maxF: 16, focusProfile: 'pns',
+        focalTag: '38–90', aperture: 'f/3.5–6.5', label: '38–90mm T* Zoom', short: '38–90',
+        tileSub: 'T* Luxury · Compact Zoom',
+        meta: 'Contax TVS / Leica Minilux style Vario-Sonnar T* 38–90mm luxury titanium compact zoom',
+        shakeSens: 0.05, skinFlatter: 0.04, coatingWarmth: 2, coatingTint: 0,
+        zoomAnchors: [
+          { mm: 38, cropZoom: 1.24, minF: 3.5, apertureEV: 0.00, dofStrength: 0.42, dofRadius: 0.50, barrelDistort: 0.010, bloomBase: 16, vignetteBase: 19, chromaticAb: 0.16, edgeSoft: 0.016, skinFlatter: 0.02 },
+          { mm: 60, cropZoom: 1.88, minF: 4.8, apertureEV: -0.08, dofStrength: 0.54, dofRadius: 0.43, barrelDistort: 0.004, bloomBase: 18, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.018, skinFlatter: 0.05 },
+          { mm: 90, cropZoom: 2.60, minF: 6.5, apertureEV: -0.18, dofStrength: 0.66, dofRadius: 0.36, barrelDistort: 0.000, bloomBase: 19, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020, skinFlatter: 0.08 }
+        ]
+      }
     ],
     disposable: [
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
@@ -4916,7 +4969,21 @@
     'medium-format': [
       { id: '6x6', mm: 80, minF: 2.8, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '80mm', aperture: 'f/2.8', label: '80mm f/2.8 (6×6)', short: '80mm 6×6', tileSub: '6×6 Planar · 1:1', meta: 'Hasselblad / Rolleiflex 80mm f/2.8 Planar · Classic 1:1 square & creamy bokeh', formatAspect: 1, formatLabel: '120 · 6×6', cropZoom: 1.18, barrelDistort: 0, apertureEV: 0.05, dofStrength: 0.80, dofRadius: 0.37, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.12, edgeSoft: 0.01 },
       { id: '6x45', mm: 80, minF: 2.0, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '80mm', aperture: 'f/2', label: '80mm f/2 (6×4.5)', short: '80mm 645', tileSub: '6×4.5 · Contax f/2', meta: 'Contax 645 80mm f/2 Planar · Iconic 4:3 editorial portrait depth & glow', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 1.24, barrelDistort: 0, apertureEV: 0.12, dofStrength: 0.88, dofRadius: 0.33, shakeSens: 0, skinFlatter: 0.11, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.11, edgeSoft: 0.01 },
-      { id: '6x7', mm: 105, minF: 2.4, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '105mm', aperture: 'f/2.4', label: '105mm f/2.4 (6×7)', short: '105mm 6×7', tileSub: '6×7 · Pentax f/2.4', meta: 'Pentax 67 105mm f/2.4 Takumar · Signature 7:6 studio compression & 3D pop', formatAspect: 7 / 6, formatLabel: '120 · 6×7', cropZoom: 1.38, barrelDistort: 0, apertureEV: 0.08, dofStrength: 0.94, dofRadius: 0.30, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.01 }
+      { id: '6x7', mm: 105, minF: 2.4, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '105mm', aperture: 'f/2.4', label: '105mm f/2.4 (6×7)', short: '105mm 6×7', tileSub: '6×7 · Pentax f/2.4', meta: 'Pentax 67 105mm f/2.4 Takumar · Signature 7:6 studio compression & 3D pop', formatAspect: 7 / 6, formatLabel: '120 · 6×7', cropZoom: 1.38, barrelDistort: 0, apertureEV: 0.08, dofStrength: 0.94, dofRadius: 0.30, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.01 },
+      {
+        id: '55-110mm', isZoom: true, isFormatLens: true, formatAspect: 4 / 3, formatLabel: '120 · 6×4.5',
+        mm: 80, zoomMin: 55, zoomMax: 110, zoomSteps: [55, 70, 85, 110],
+        minF: 4.0, zoomMaxMinF: 4.0, maxF: 22, focusProfile: 'medium-format',
+        focalTag: '55–110', aperture: 'f/4', label: '55–110mm f/4 (645)', short: '55–110',
+        tileSub: '6×4.5 Vario · Const f/4',
+        meta: 'Hasselblad FE / Contax 645 Vario-Sonnar 55–110mm f/4 constant-aperture 120 studio zoom',
+        shakeSens: 0, skinFlatter: 0.10, coatingWarmth: 0.8, coatingTint: 0,
+        zoomAnchors: [
+          { mm: 55, cropZoom: 1.00, minF: 4.0, apertureEV: 0.04, dofStrength: 0.68, dofRadius: 0.42, barrelDistort: 0.004, bloomBase: 15, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.010, skinFlatter: 0.06 },
+          { mm: 80, cropZoom: 1.26, minF: 4.0, apertureEV: 0.04, dofStrength: 0.80, dofRadius: 0.35, barrelDistort: 0.000, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.09, edgeSoft: 0.010, skinFlatter: 0.10 },
+          { mm: 110, cropZoom: 1.65, minF: 4.0, apertureEV: 0.02, dofStrength: 0.90, dofRadius: 0.30, barrelDistort: 0.000, bloomBase: 17, vignetteBase: 15, chromaticAb: 0.09, edgeSoft: 0.010, skinFlatter: 0.14 }
+        ]
+      }
     ],
     'half-frame': [
       { id: '28mm', mm: 28, minF: 3.5, maxF: 16, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/3.5', label: '28mm f/3.5', short: '28mm', tileSub: 'Pen EE · ~40mm eq', meta: '28mm f/3.5 (~40mm eq) · Compact Pen EE / Demi everyday street diptychs', cropZoom: 1.14, barrelDistort: 0.016, apertureEV: -0.05, dofStrength: 0.36, dofRadius: 0.55, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 22, vignetteBase: 24, chromaticAb: 0.36, edgeSoft: 0.035 },
@@ -6331,7 +6398,7 @@
     if (modeId === 'slr') {
       if (oldFocal === '24mm' || oldFocal === '28mm') return '35mm';
       if (oldFocal === '135mm') return '85mm';
-      if (oldFocal === '35-70mm') return '50mm';
+      if (oldFocal === '35-70mm') return '24-70mm';
     } else if (modeId === 'half-frame') {
       if (oldFocal === '22mm') return '28mm';
       if (oldFocal === '35mm' || oldFocal === '50mm' || oldFocal === '60mm') return '38mm';
@@ -6499,9 +6566,8 @@
     state.zoomFocalMm = Number.isFinite(zVal) ? Math.max(zMin, Math.min(zMax, zVal)) : (activeLens.mm || 50);
     state.lensFocalMm = activeLens.mm || 50;
 
-    const zMaxMinF = activeLens.zoomMaxMinF || 4.5;
     const baseMinF = activeLens.isZoom
-      ? Number(((activeLens.minF || 3.5) + ((state.zoomFocalMm - zMin) / Math.max(1, zMax - zMin)) * (zMaxMinF - (activeLens.minF || 3.5))).toFixed(2))
+      ? getZoomMinF(activeLens, state.zoomFocalMm)
       : (activeLens.minF || 2.8);
     const hasSavedAp = Object.prototype.hasOwnProperty.call(settings, 'lensAperture') && Number.isFinite(Number(settings.lensAperture));
     if (activeLens.isFixedAperture) {
@@ -6714,6 +6780,15 @@
       { pos: 0.85, label: '10', meters: 10.0 },
       { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
     ],
+    'tele-zoom': [
+      { pos: 0.00, label: '1.2', meters: 1.2, adrClass: 'adr-warm' },
+      { pos: 0.16, label: '1.5', meters: 1.5 },
+      { pos: 0.32, label: '2', meters: 2.0 },
+      { pos: 0.50, label: '3', meters: 3.0 },
+      { pos: 0.68, label: '5', meters: 5.0 },
+      { pos: 0.85, label: '10', meters: 10.0 },
+      { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
+    ],
     tele: [
       { pos: 0.00, label: '1.5', meters: 1.5, adrClass: 'adr-warm' },
       { pos: 0.16, label: '2', meters: 2.0 },
@@ -6900,7 +6975,8 @@
     else if (mm <= 40) lensScale = 0.92;
     else if (mm <= 58) lensScale = 1.00;
     else if (mm <= 90) lensScale = 1.22;
-    else lensScale = 1.36;
+    else if (mm <= 140) lensScale = 1.38;
+    else lensScale = 1.55;
 
     let bodyScale = 1.0;
     if (body?.id === 'medium-format') bodyScale = 1.12;
@@ -6973,9 +7049,24 @@
     if (!lens?.isZoom) return lens?.minF || 2.8;
     const zMin = lens.zoomMin || 35;
     const zMax = lens.zoomMax || 70;
-    const fMin = lens.minF || 3.5;
-    const fMax = lens.zoomMaxMinF || 4.5;
-    const t = Math.max(0, Math.min(1, (mm - zMin) / Math.max(1e-5, zMax - zMin)));
+    const fMin = lens.minF || 2.8;
+    const fMax = lens.zoomMaxMinF ?? fMin;
+    const zMm = Math.max(zMin, Math.min(zMax, Number(mm) || lens.mm || zMin));
+    const anchors = Array.isArray(lens.zoomAnchors) && lens.zoomAnchors.length >= 2 ? lens.zoomAnchors : null;
+    if (anchors) {
+      if (zMm <= anchors[0].mm) return Number((anchors[0].minF ?? fMin).toFixed(2));
+      const last = anchors[anchors.length - 1];
+      if (zMm >= last.mm) return Number((last.minF ?? fMax).toFixed(2));
+      for (let i = 0; i < anchors.length - 1; i++) {
+        const a = anchors[i], b = anchors[i + 1];
+        if (zMm <= b.mm) {
+          const t = Math.max(0, Math.min(1, (zMm - a.mm) / Math.max(1e-5, b.mm - a.mm)));
+          const v = (a.minF ?? fMin) + ((b.minF ?? fMax) - (a.minF ?? fMin)) * t;
+          return Number(v.toFixed(2));
+        }
+      }
+    }
+    const t = Math.max(0, Math.min(1, (zMm - zMin) / Math.max(1e-5, zMax - zMin)));
     return Number((fMin + (fMax - fMin) * t).toFixed(2));
   }
 
@@ -6984,7 +7075,9 @@
   }
 
   function getPrimeAnchors(modeId) {
-    return getModeFocals(modeId).filter(f => !f.isZoom && !f.isFormatLens && !f.isFixedAperture);
+    const focals = getModeFocals(modeId);
+    const stdPrimes = focals.filter(f => !f.isZoom && !f.isFormatLens && !f.isFixedAperture);
+    return stdPrimes.length ? stdPrimes : focals.filter(f => !f.isZoom && !f.isFixedAperture);
   }
 
   function resolveLensConfig(lens, modeId = state.bodyId) {
@@ -6993,45 +7086,55 @@
     const focusCenterY = Number.isFinite(state.focusPoint?.y) ? state.focusPoint.y : 0.48;
 
     if (lens.isZoom) {
-      const zMin = lens.zoomMin || 35;
+      const zMin = lens.zoomMin || 24;
       const zMax = lens.zoomMax || 70;
       const zMid = Math.round((zMin + zMax) * 0.5);
-      const isPnsZoom = zMax >= 75;
-      const anchors = isPnsZoom
-        ? [
-          { mm: zMin, cropZoom: 1.0, minF: lens.minF || 4.5, apertureEV: -0.05, dofStrength: 0.30, dofRadius: 0.56, barrelDistort: 0.015, bloomBase: 18, vignetteBase: 20, chromaticAb: 0.24, edgeSoft: 0.022 },
-          { mm: zMid, cropZoom: 1.35, minF: ((lens.minF || 4.5) + (lens.zoomMaxMinF || 8.0)) * 0.5, apertureEV: -0.15, dofStrength: 0.46, dofRadius: 0.46, barrelDistort: 0.010, bloomBase: 20, vignetteBase: 20, chromaticAb: 0.26, edgeSoft: 0.025 },
-          { mm: zMax, cropZoom: 1.85, minF: lens.zoomMaxMinF || 8.0, apertureEV: -0.28, dofStrength: 0.64, dofRadius: 0.36, barrelDistort: 0.005, bloomBase: 22, vignetteBase: 22, chromaticAb: 0.28, edgeSoft: 0.028 }
-        ]
-        : [
-          { mm: 35, cropZoom: 1.38, minF: 3.5, apertureEV: -0.22, dofStrength: 0.36, dofRadius: 0.54, barrelDistort: 0.015, bloomBase: 20, vignetteBase: 26, chromaticAb: 0.34, edgeSoft: 0.035 },
-          { mm: 50, cropZoom: 1.80, minF: 4.0, apertureEV: -0.30, dofStrength: 0.48, dofRadius: 0.46, barrelDistort: 0.010, bloomBase: 20, vignetteBase: 26, chromaticAb: 0.34, edgeSoft: 0.035 },
-          { mm: 70, cropZoom: 2.25, minF: 4.5, apertureEV: -0.38, dofStrength: 0.62, dofRadius: 0.38, barrelDistort: 0.005, bloomBase: 22, vignetteBase: 27, chromaticAb: 0.32, edgeSoft: 0.035 }
-        ];
+      const defaultAnchors = [
+        { mm: zMin, cropZoom: 1.0, minF: lens.minF || 2.8, apertureEV: 0.04, dofStrength: 0.52, dofRadius: 0.48, barrelDistort: 0.010, bloomBase: 17, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015, skinFlatter: lens.skinFlatter ?? 0.02 },
+        { mm: zMid, cropZoom: 1.6, minF: ((lens.minF || 2.8) + (lens.zoomMaxMinF ?? (lens.minF || 2.8))) * 0.5, apertureEV: 0.02, dofStrength: 0.68, dofRadius: 0.38, barrelDistort: 0.003, bloomBase: 18, vignetteBase: 18, chromaticAb: 0.14, edgeSoft: 0.014, skinFlatter: lens.skinFlatter ?? 0.05 },
+        { mm: zMax, cropZoom: 2.2, minF: lens.zoomMaxMinF ?? (lens.minF || 2.8), apertureEV: 0.00, dofStrength: 0.80, dofRadius: 0.32, barrelDistort: 0.000, bloomBase: 20, vignetteBase: 19, chromaticAb: 0.14, edgeSoft: 0.014, skinFlatter: lens.skinFlatter ?? 0.08 }
+      ];
+      const anchors = Array.isArray(lens.zoomAnchors) && lens.zoomAnchors.length >= 2 ? lens.zoomAnchors : defaultAnchors;
       const zMm = Math.max(zMin, Math.min(zMax, Number(state.zoomFocalMm) || lens.mm || zMid));
-      const a = zMm <= zMid ? anchors[0] : anchors[1];
-      const b = zMm <= zMid ? anchors[1] : anchors[2];
+      let a = anchors[0];
+      let b = anchors[anchors.length - 1];
+      for (let i = 0; i < anchors.length - 1; i++) {
+        if (zMm <= anchors[i + 1].mm || i === anchors.length - 2) {
+          a = anchors[i];
+          b = anchors[i + 1];
+          break;
+        }
+      }
       const t = Math.max(0, Math.min(1, (zMm - a.mm) / Math.max(1e-5, b.mm - a.mm)));
-      const lerp = k => a[k] + (b[k] - a[k]) * t;
-      const minF = Number(lerp('minF').toFixed(2));
-      const maxF = lens.maxF || 16;
+      const lerp = (k, fallback = 0) => {
+        const av = a[k] ?? lens[k] ?? fallback;
+        const bv = b[k] ?? lens[k] ?? fallback;
+        return av + (bv - av) * t;
+      };
+      const minF = Number(lerp('minF', lens.minF || 2.8).toFixed(2));
+      const maxF = lens.maxF || 22;
       const curF = Math.max(minF, Math.min(maxF, Number(state.lensAperture) || minF));
       const interp = {
         ...lens,
-        cropZoom: lerp('cropZoom'),
-        barrelDistort: lerp('barrelDistort'),
-        dofStrength: lerp('dofStrength'),
-        dofRadius: lerp('dofRadius'),
-        bloomBase: lerp('bloomBase'),
-        vignetteBase: lerp('vignetteBase'),
-        chromaticAb: lerp('chromaticAb'),
-        edgeSoft: lerp('edgeSoft')
+        cropZoom: lerp('cropZoom', 1.38),
+        barrelDistort: lerp('barrelDistort', 0),
+        dofStrength: lerp('dofStrength', 0.65),
+        dofRadius: lerp('dofRadius', 0.40),
+        bloomBase: Math.round(lerp('bloomBase', 18)),
+        vignetteBase: Math.round(lerp('vignetteBase', 18)),
+        chromaticAb: lerp('chromaticAb', 0.14),
+        edgeSoft: lerp('edgeSoft', 0.014),
+        skinFlatter: lerp('skinFlatter', lens.skinFlatter || 0.04)
       };
-      const optics = applyApertureOptics(interp, curF, minF, lerp('apertureEV'));
+      const optics = applyApertureOptics(interp, curF, minF, lerp('apertureEV', 0.02));
       const focusOptics = computeFocusOptics(zMm, curF, false, lens);
       const zRound = Math.round(zMm);
       const apStr = formatApertureLabel(curF);
-      const ringAngleDeg = (zMm - zMin) * 4 + 2 * Math.log2(curF) * 28;
+      const fmtSuffix = lens.formatLabel ? lens.formatLabel.replace(/^120\s*·\s*/, '') : '';
+      const displayLabel = lens.isFormatLens && fmtSuffix
+        ? `${zRound}mm ${apStr} (${fmtSuffix} Z)`
+        : `${zRound}mm ${apStr} (Z)`;
+      const ringAngleDeg = ((zMm - zMin) / Math.max(1, zMax - zMin)) * 140 + 2 * Math.log2(curF) * 28;
       return {
         ...interp,
         ...optics,
@@ -7044,7 +7147,7 @@
         activeF: curF,
         focalTag: `${zRound}mm`,
         aperture: apStr,
-        displayLabel: `${zRound}mm ${apStr} (Z)`,
+        displayLabel,
         ringAngleDeg
       };
     }
@@ -7115,23 +7218,31 @@
      ========================================================================== */
 
   function svgFocalBadge(focalObj) {
-    const tag = escapeHtml(focalObj?.focalTag || focalObj?.label || '50mm');
-    const ap = escapeHtml(focalObj?.aperture || '');
+    const rawTag = String(focalObj?.focalTag || focalObj?.label || '50mm');
+    const rawAp = String(focalObj?.aperture || '');
+    const tag = escapeHtml(rawTag);
+    const ap = escapeHtml(rawAp);
+    const isZoom = !!focalObj?.isZoom;
     const rotDeg = Math.round((focalObj?.ringAngleDeg || 0) / 8) * 8;
     const rotAttr = rotDeg ? ` transform="rotate(${rotDeg} 27 20)"` : '';
+    const proRing = isZoom
+      ? `<circle cx="27" cy="20" r="15.6" stroke="#ef4444" stroke-opacity="0.65" stroke-width="0.9"/>`
+      : '';
     if (ap) {
-      const fSize = tag.length > 4 ? 8 : 9.2;
-      const apSize = ap.length > 5 ? 5.5 : 6.6;
+      const fSize = rawTag.length >= 6 ? 6.6 : (rawTag.length === 5 ? 7.4 : (rawTag.length > 4 ? 8 : 9.2));
+      const apSize = rawAp.length >= 7 ? 4.9 : (rawAp.length > 5 ? 5.5 : 6.6);
       return `<svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="27" cy="20" r="17" fill="#141820" stroke="#4b5563" stroke-width="1.4"/>
-        <circle cx="27" cy="20" r="14" stroke="#f5a623" stroke-opacity="0.65" stroke-width="1" stroke-dasharray="3 2"${rotAttr}/>
+        <circle cx="27" cy="20" r="17" fill="#141820" stroke="${isZoom ? '#6b7280' : '#4b5563'}" stroke-width="1.4"/>
+        ${proRing}
+        <circle cx="27" cy="20" r="13.6" stroke="#f5a623" stroke-opacity="0.68" stroke-width="1" stroke-dasharray="3 2"${rotAttr}/>
         <text x="27" y="18.5" text-anchor="middle" fill="#f3f4f6" font-family="monospace" font-size="${fSize}" font-weight="800">${tag}</text>
-        <text x="27" y="27.5" text-anchor="middle" fill="#f5a623" font-family="monospace" font-size="${apSize}" font-weight="700">${ap}</text>
+        <text x="27" y="27.3" text-anchor="middle" fill="${isZoom ? '#fca5a5' : '#f5a623'}" font-family="monospace" font-size="${apSize}" font-weight="700">${ap}</text>
       </svg>`;
     }
-    const isShort = tag.length <= 3;
+    const isShort = rawTag.length <= 3;
     return `<svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="27" cy="20" r="17" fill="#141820" stroke="#4b5563" stroke-width="1.4"/>
+      ${proRing}
       <circle cx="27" cy="20" r="13.5" stroke="#f5a623" stroke-opacity="0.65" stroke-width="1" stroke-dasharray="3 2"${rotAttr}/>
       <text x="27" y="23" text-anchor="middle" fill="#f3f4f6" font-family="monospace" font-size="${isShort ? 10.5 : 8.5}" font-weight="800">${tag}</text>
     </svg>`;
@@ -8268,10 +8379,15 @@
         const fId = migrateFocalId(mId, r.lensId);
         const modeFocals = getModeFocals(mId);
         const matchedFocal = modeFocals.find(f => f.id === fId) || modeFocals[0];
-        const nextZoomMm = Number.isFinite(Number(r.zoomFocalMm)) ? Math.max(35, Math.min(70, Number(r.zoomFocalMm))) : state.zoomFocalMm;
+        const zMinR = matchedFocal.zoomMin || 24;
+        const zMaxR = matchedFocal.zoomMax || 200;
+        const nextZoomMm = Number.isFinite(Number(r.zoomFocalMm))
+          ? Math.max(zMinR, Math.min(zMaxR, Number(r.zoomFocalMm)))
+          : (matchedFocal.mm || state.zoomFocalMm);
         const nextFocalMm = Number.isFinite(Number(r.lensFocalMm)) ? Number(r.lensFocalMm) : (matchedFocal.mm || 50);
         const nextAp = Number.isFinite(Number(r.lensAperture)) ? Number(r.lensAperture) : getDefaultApertureForLens(matchedFocal, nextZoomMm);
-        apPinnedWideOpen = Math.abs(nextAp - (matchedFocal.minF || 2.8)) < 0.04;
+        const rMinF = matchedFocal.isZoom ? getZoomMinF(matchedFocal, nextZoomMm) : (matchedFocal.minF || 2.8);
+        apPinnedWideOpen = Math.abs(nextAp - rMinF) < 0.04;
         Object.assign(state, {
           phoneId: 'auto-detect', bodyId: mId, lensId: fId,
           lensFocalMm: nextFocalMm,
@@ -8488,13 +8604,22 @@
   function selectFocalOption(focalId) {
     const modeId = state.bodyId;
     const focals = getModeFocals(modeId);
+    const prevLens = focals.find(f => f.id === state.lensId);
     const matched = focals.find(f => f.id === focalId) || focals[0];
     state.lensId = matched.id;
     if (matched.isZoom) {
-      const zMin = matched.zoomMin || 35;
+      const zMin = matched.zoomMin || 24;
       const zMax = matched.zoomMax || 70;
       const zMid = Math.round((zMin + zMax) * 0.5);
-      const z = Math.max(zMin, Math.min(zMax, Number(state.zoomFocalMm) || matched.mm || zMid));
+      let seedMm;
+      if (prevLens?.id === matched.id) {
+        seedMm = Number(state.zoomFocalMm) || matched.mm || zMid;
+      } else if (prevLens && !prevLens.isZoom && state.lensFocalMm >= zMin && state.lensFocalMm <= zMax) {
+        seedMm = state.lensFocalMm;
+      } else {
+        seedMm = matched.mm || zMid;
+      }
+      const z = Math.max(zMin, Math.min(zMax, seedMm));
       state.zoomFocalMm = Number(z.toFixed(2));
       state.lensAperture = getDefaultApertureForLens(matched, z);
     } else {
@@ -8521,11 +8646,11 @@
     if (!Number.isFinite(val)) return;
     const focals = getModeFocals(state.bodyId);
     const rawLens = focals.find(f => f.id === state.lensId) || focals[0];
-    const zMin = rawLens.zoomMin || 35;
+    const zMin = rawLens.zoomMin || 24;
     const zMax = rawLens.zoomMax || 70;
-    state.zoomFocalMm = Math.max(zMin, Math.min(zMax, val));
+    state.zoomFocalMm = Number(Math.max(zMin, Math.min(zMax, val)).toFixed(2));
     const minF = getZoomMinF(rawLens, state.zoomFocalMm);
-    state.lensAperture = apPinnedWideOpen ? minF : Math.max(minF, Math.min(rawLens.maxF || 16, state.lensAperture));
+    state.lensAperture = apPinnedWideOpen ? minF : Math.max(minF, Math.min(rawLens.maxF || 22, state.lensAperture));
     updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
     const { lens } = getSelectedGear();
     state.bloom = lens.bloomBase;
@@ -8544,10 +8669,11 @@
     const nextFocal = keepCurrent || focals.find(f => f.id === mode.defaultFocalId) || focals[0];
     state.lensId = nextFocal.id;
     if (nextFocal.isZoom) {
-      const zMin = nextFocal.zoomMin || 35;
+      const zMin = nextFocal.zoomMin || 24;
       const zMax = nextFocal.zoomMax || 70;
       const zMid = Math.round((zMin + zMax) * 0.5);
-      state.zoomFocalMm = Math.max(zMin, Math.min(zMax, Number(state.zoomFocalMm) || nextFocal.mm || zMid));
+      const seedMm = keepCurrent ? (Number(state.zoomFocalMm) || nextFocal.mm || zMid) : (nextFocal.mm || zMid);
+      state.zoomFocalMm = Math.max(zMin, Math.min(zMax, seedMm));
       state.lensAperture = getDefaultApertureForLens(nextFocal, state.zoomFocalMm);
     } else {
       state.lensFocalMm = nextFocal.mm || 50;
@@ -8611,36 +8737,30 @@
       };
     }
 
-    const zMin = resolvedLens.zoomMin || 35;
+    const zMin = resolvedLens.zoomMin || 24;
     const zMax = resolvedLens.zoomMax || 70;
     const zSpan = Math.max(1, zMax - zMin);
-    const maxX = 152;
+    const maxX = zSpan > 80 ? 188 : 158;
     const valToX = mm => ((Math.max(zMin, Math.min(zMax, mm)) - zMin) / zSpan) * maxX;
     const xToVal = x => zMin + (Math.max(0, Math.min(maxX, x)) / maxX) * zSpan;
     const detSteps = Array.isArray(resolvedLens.zoomSteps) && resolvedLens.zoomSteps.length >= 2
       ? resolvedLens.zoomSteps
       : [zMin, Math.round((zMin + zMax) * 0.5), zMax];
-    const zMid = detSteps[Math.floor(detSteps.length / 2)];
-    const marks = zMax >= 75
-      ? [
-        { x: valToX(zMin), label: String(zMin), isMajor: true, adrClass: 'adr-warm' },
-        { x: valToX(45), label: '45', isMinor: true },
-        { x: valToX(zMid), label: String(zMid), isMajor: true },
-        { x: valToX(68), label: '68', isMinor: true },
-        { x: valToX(zMax), label: String(zMax), isMajor: true, adrClass: 'adr-cyan' }
-      ]
-      : [
-        { x: valToX(35), label: '35', isMajor: true, adrClass: 'adr-warm' },
-        { x: valToX(40), label: '40', isMinor: true },
-        { x: valToX(50), label: '50', isMajor: true },
-        { x: valToX(60), label: '60', isMinor: true },
-        { x: valToX(70), label: '70', isMajor: true, adrClass: 'adr-cyan' }
-      ];
+    const marks = detSteps.map((s, idx) => ({
+      x: valToX(s),
+      label: String(s),
+      isMajor: true,
+      adrClass: idx === 0 ? 'adr-warm' : (idx === detSteps.length - 1 ? 'adr-cyan' : '')
+    }));
     const ticks = [];
-    for (let mm = zMin; mm <= zMax + 0.01; mm += 2.5) {
-      const isMaj = detSteps.some(s => Math.abs(s - mm) < 0.8);
-      const isHalf = !isMaj && Math.round(mm) % 5 === 0;
+    const tickStep = zSpan > 80 ? 5 : 2.5;
+    for (let mm = zMin; mm <= zMax + 0.01; mm += tickStep) {
+      const isMaj = detSteps.some(s => Math.abs(s - mm) < (tickStep * 0.45));
+      const isHalf = !isMaj && Math.round(mm) % (tickStep * 2) === 0;
       ticks.push({ x: valToX(mm), cls: isMaj ? 'major' : (isHalf ? 'half' : '') });
+    }
+    if (!ticks.some(tk => Math.abs(tk.x - maxX) < 1.0)) {
+      ticks.push({ x: maxX, cls: 'major' });
     }
     const detXs = detSteps.map(valToX);
 
@@ -8659,16 +8779,18 @@
         let cx = Math.max(0, Math.min(maxX, rawX));
         if (isRelease) {
           for (const dx of detXs) {
-            if (Math.abs(cx - dx) <= 2.5) { cx = dx; break; }
+            if (Math.abs(cx - dx) <= 3.0) { cx = dx; break; }
           }
         }
         const nextMm = Number(xToVal(cx).toFixed(2));
         state.zoomFocalMm = nextMm;
         const nextMinF = getZoomMinF(resolvedLens, nextMm);
-        state.lensAperture = apPinnedWideOpen ? nextMinF : Math.max(nextMinF, Math.min(resolvedLens.maxF || 16, state.lensAperture));
-        const detentBucket = Math.round(nextMm / 5);
+        state.lensAperture = apPinnedWideOpen ? nextMinF : Math.max(nextMinF, Math.min(resolvedLens.maxF || 22, state.lensAperture));
+        updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
+        const bucketSpan = zSpan > 80 ? 10 : 5;
+        const detentBucket = Math.round(nextMm / bucketSpan);
         if (prevDetent !== undefined && prevDetent !== detentBucket) {
-          playLensClickSound(detSteps.some(s => Math.abs(s - detentBucket * 5) <= 1.5));
+          playLensClickSound(detSteps.some(s => Math.abs(s - detentBucket * bucketSpan) <= bucketSpan * 0.4));
         }
         return { changed: true, needsLayout: false, detent: detentBucket };
       }
@@ -9036,15 +9158,25 @@
       pickerDirty = true;
     }
 
-    const zoomBtn = document.getElementById('btnVfZoomModeToggle');
-    if (zoomBtn) {
-      const hasZoom = getModeFocals(body.id).some(f => f.isZoom);
-      zoomBtn.style.display = (body.id === 'slr' && hasZoom) ? '' : 'none';
-      if (hasZoom) zoomBtn.classList.toggle('active', !!lens.isZoom);
-    }
+    syncVfZoomModeBtn(body, lens);
     if (typeof startCameraLoop === 'function' && document.getElementById('view-camera')?.classList.contains('active')) {
       startCameraLoop();
     }
+  }
+
+  function syncVfZoomModeBtn(body, lens) {
+    const zoomBtn = document.getElementById('btnVfZoomModeToggle');
+    if (!zoomBtn) return;
+    const zooms = getModeFocals(body?.id || state.bodyId).filter(f => f.isZoom);
+    if (!zooms.length) {
+      zoomBtn.style.display = 'none';
+      return;
+    }
+    zoomBtn.style.display = '';
+    zoomBtn.classList.toggle('active', !!lens?.isZoom);
+    zoomBtn.textContent = lens?.isZoom
+      ? (lens.short || `${Math.round(lens.mm || state.zoomFocalMm || 50)}mm`)
+      : (zooms[0].short || 'ZOOM');
   }
 
   const barrelWidgets = [];
@@ -9053,13 +9185,13 @@
     container.dataset.barrelInit = '1';
     container.innerHTML = `
       <div class="lens-barrel-ring" data-ring="focal" style="display:none;">
-        <span class="lens-ring-tag">ZOOM</span>
+        <button type="button" class="lens-ring-tag" title="Pro Zoom ring — tap to step focal lengths">ZOOM</button>
         <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Zoom lens focal length ring">
           <div class="lens-ring-track"></div>
           <div class="lens-ring-shade"></div>
           <div class="lens-ring-index"></div>
         </div>
-        <span class="lens-ring-val">50mm</span>
+        <span class="lens-ring-val" title="Tap to step zoom focal length">50mm</span>
       </div>
       <div class="lens-barrel-divider focal-divider" style="display:none;"></div>
       <div class="lens-barrel-ring" data-ring="aperture">
@@ -9111,6 +9243,29 @@
       let dragState = null;
 
       const isVertical = () => getComputedStyle(row).flexDirection === 'column';
+
+      if (ringKind === 'focal') {
+        const stepZoomFocal = (e) => {
+          e.stopPropagation();
+          if (spec?.locked) return;
+          const focals = getModeFocals(state.bodyId);
+          const rawLens = focals.find(f => f.id === state.lensId) || focals[0];
+          if (!rawLens?.isZoom) return;
+          const steps = Array.isArray(rawLens.zoomSteps) && rawLens.zoomSteps.length >= 2
+            ? rawLens.zoomSteps
+            : [rawLens.zoomMin || 24, Math.round(((rawLens.zoomMin || 24) + (rawLens.zoomMax || 70)) * 0.5), rawLens.zoomMax || 70];
+          const curMm = Number(state.zoomFocalMm) || rawLens.mm || steps[0];
+          let nextIdx = steps.findIndex(s => s > curMm + 1.2);
+          if (nextIdx < 0) nextIdx = 0;
+          const nextStep = steps[nextIdx];
+          playLensClickSound(true);
+          selectZoomFocalMm(nextStep);
+          scheduleSaveLocalAppState();
+          showToast(`🔭 Zoom: ${nextStep}mm (${shortLensLabel(getSelectedGear().lens)})`);
+        };
+        tagEl.addEventListener('click', stepZoomFocal);
+        valEl.addEventListener('click', stepZoomFocal);
+      }
 
       if (ringKind === 'focus') {
         tagEl.addEventListener('click', e => {
@@ -9954,12 +10109,7 @@
       frameBtn.classList.toggle('active', state.frameType !== 'none');
     }
 
-    const zoomModeBtn = document.getElementById('btnVfZoomModeToggle');
-    if (zoomModeBtn) {
-      const hasZoom = getModeFocals(body.id).some(f => f.isZoom);
-      zoomModeBtn.style.display = (body.id === 'slr' && hasZoom) ? '' : 'none';
-      if (hasZoom) zoomModeBtn.classList.toggle('active', !!lens.isZoom);
-    }
+    syncVfZoomModeBtn(body, lens);
 
     const isHalfFrame = body.id === 'half-frame';
     const diptychBtn = document.getElementById('btnVfDiptychToggle');
@@ -12880,11 +13030,13 @@
       state.bodyId = mId;
       state.lensId = fId;
       state.filmId = matchedFilm.id;
-      state.zoomFocalMm = clamp(p.zm, 35, 70, state.zoomFocalMm);
+      const zMinUrl = rawLens.zoomMin || 24;
+      const zMaxUrl = rawLens.zoomMax || 200;
+      state.zoomFocalMm = clamp(p.zm, zMinUrl, zMaxUrl, rawLens.mm || state.zoomFocalMm);
       state.lensFocalMm = rawLens.mm || 50;
-      const minF = rawLens.isZoom ? (3.5 + ((state.zoomFocalMm - 35) / 35) * 1.0) : (rawLens.minF || 2.8);
+      const minF = rawLens.isZoom ? getZoomMinF(rawLens, state.zoomFocalMm) : (rawLens.minF || 2.8);
       const defAp = getDefaultApertureForLens(rawLens, state.zoomFocalMm);
-      state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 16, defAp);
+      state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 22, defAp);
       apPinnedWideOpen = Math.abs(state.lensAperture - minF) < 0.04;
       updateAdaptiveAfTarget({ syncFocusToAf: false, center: state.focusPoint });
       state.focusMode = rawLens.isFixedAperture ? 'af' : (p.fm === 'mf' ? 'mf' : 'af');
@@ -13449,10 +13601,103 @@
     photoViewerStageEl.addEventListener('pointercancel', endViewerPointer);
   }
 
-  // Tap-to-Focus & Spot AE Metering on #vfStage
+  // Tap-to-Focus, Spot AE Metering & Pinch/Wheel Optical Zoom on #vfStage
   const vfStageEl = document.getElementById('vfStage');
   const vfFocusReticle = document.getElementById('vfFocusReticle');
+  let vfGestureBlockClickUntil = 0;
+  const activeVfPointers = new Map();
+  let vfPinchStartDist = 0;
+  let vfPinchStartMm = 50;
+
+  if (vfStageEl) {
+    const applyLiveVfZoomMm = (rawLens, targetMm) => {
+      const zMin = rawLens.zoomMin || 24;
+      const zMax = rawLens.zoomMax || 70;
+      const nextMm = Number(Math.max(zMin, Math.min(zMax, targetMm)).toFixed(2));
+      if (Math.abs(nextMm - state.zoomFocalMm) < 0.08) return;
+      const prevBucket = Math.round(state.zoomFocalMm / ((zMax - zMin) > 80 ? 10 : 5));
+      state.zoomFocalMm = nextMm;
+      const nextMinF = getZoomMinF(rawLens, nextMm);
+      state.lensAperture = apPinnedWideOpen ? nextMinF : Math.max(nextMinF, Math.min(rawLens.maxF || 22, state.lensAperture));
+      updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
+      const { lens } = getSelectedGear();
+      state.bloom = lens.bloomBase;
+      state.vignette = lens.vignetteBase;
+      const nextBucket = Math.round(nextMm / ((zMax - zMin) > 80 ? 10 : 5));
+      if (nextBucket !== prevBucket) playLensClickSound(false);
+      syncLensLiveUI(false);
+      syncCameraHudUI();
+      scheduleCameraSettingsApply();
+      scheduleSaveLocalAppState();
+    };
+
+    vfStageEl.addEventListener('pointerdown', e => {
+      if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar, .vf-mx-bar, .vf-roll-done-bar')) return;
+      activeVfPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activeVfPointers.size === 2) {
+        const pts = Array.from(activeVfPointers.values());
+        vfPinchStartDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        const focals = getModeFocals(state.bodyId);
+        const rawLens = focals.find(f => f.id === state.lensId) || focals[0];
+        vfPinchStartMm = rawLens?.isZoom ? (Number(state.zoomFocalMm) || rawLens.mm || 50) : (rawLens?.mm || 50);
+        vfGestureBlockClickUntil = Date.now() + 450;
+      }
+    });
+
+    vfStageEl.addEventListener('pointermove', e => {
+      if (!activeVfPointers.has(e.pointerId)) return;
+      activeVfPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activeVfPointers.size === 2 && vfPinchStartDist > 10) {
+        vfGestureBlockClickUntil = Date.now() + 450;
+        const zooms = getModeFocals(state.bodyId).filter(f => f.isZoom);
+        if (!zooms.length) return;
+        const pts = Array.from(activeVfPointers.values());
+        const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        const scale = dist / vfPinchStartDist;
+        const focals = getModeFocals(state.bodyId);
+        let rawLens = focals.find(f => f.id === state.lensId) || focals[0];
+        if (!rawLens?.isZoom) {
+          if (Math.abs(scale - 1) < 0.12) return;
+          const desiredMm = vfPinchStartMm * scale;
+          const bestZoom = zooms.find(z => desiredMm >= (z.zoomMin || 24) && desiredMm <= (z.zoomMax || 70)) || zooms[0];
+          selectFocalOption(bestZoom.id);
+          rawLens = bestZoom;
+          vfPinchStartMm = state.zoomFocalMm;
+          vfPinchStartDist = dist;
+          showToast(`🔭 ${bestZoom.label}`);
+          return;
+        }
+        applyLiveVfZoomMm(rawLens, vfPinchStartMm * scale);
+      }
+    });
+
+    const endVfPointer = e => {
+      if (e?.pointerId !== undefined) activeVfPointers.delete(e.pointerId);
+      else activeVfPointers.clear();
+      if (activeVfPointers.size < 2) vfPinchStartDist = 0;
+    };
+    vfStageEl.addEventListener('pointerup', endVfPointer);
+    vfStageEl.addEventListener('pointercancel', endVfPointer);
+
+    vfStageEl.addEventListener('wheel', e => {
+      if (e.target.closest('.lens-barrel-dock')) return;
+      const focals = getModeFocals(state.bodyId);
+      const rawLens = focals.find(f => f.id === state.lensId) || focals[0];
+      if (!rawLens?.isZoom && !e.ctrlKey) return;
+      const zooms = focals.filter(f => f.isZoom);
+      if (!zooms.length) return;
+      e.preventDefault();
+      if (!rawLens?.isZoom) {
+        selectFocalOption(zooms[0].id);
+        return;
+      }
+      const factor = Math.exp(-e.deltaY * 0.0022);
+      applyLiveVfZoomMm(rawLens, (Number(state.zoomFocalMm) || rawLens.mm || 50) * factor);
+    }, { passive: false });
+  }
+
   vfStageEl?.addEventListener('click', e => {
+    if (Date.now() < vfGestureBlockClickUntil) return;
     if (e.target.closest('button, input, .lens-barrel-dock, .vf-hf-diptych-bar, .vf-mx-bar, .vf-roll-done-bar')) return;
     const rect = vfStageEl.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
@@ -13575,7 +13820,7 @@
     showToast('Double exposure shot 1/2 discarded');
   });
 
-  // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, SLR 35-70mm Zoom Toggle, Disposable Flash)
+  // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, Pro Zoom Toggle, Flash)
   const camExposureControl = document.getElementById('camExposureControl');
   camExposureControl.addEventListener('input', e => {
     state.camExposureEV = Number(e.target.value);
@@ -13617,30 +13862,32 @@
     renderPreview();
   });
   document.getElementById('btnVfZoomModeToggle').addEventListener('click', () => {
-    if (state.bodyId !== 'slr') return;
-    if (state.lensId === '35-70mm') {
-      const z = Math.max(24, Math.min(135, Number(state.zoomFocalMm) || 50));
-      const primes = getPrimeAnchors('slr');
-      const nearest = primes.reduce((a, b) => Math.abs(b.mm - z) < Math.abs(a.mm - z) ? b : a, primes[0]);
-      state.lensId = nearest.id;
-      state.lensFocalMm = nearest.mm;
-      const nextLens = getSelectedGear().lens;
-      state.lensAperture = apPinnedWideOpen ? nextLens.minF : Math.max(nextLens.minF, state.lensAperture);
-      showToast(`SLR Primes (${nearest.focalTag || nearest.mm + 'mm'})`);
+    const focals = getModeFocals(state.bodyId);
+    const zooms = focals.filter(f => f.isZoom);
+    if (!zooms.length) return;
+    const curZoomIdx = zooms.findIndex(z => z.id === state.lensId);
+    playLensClickSound(true);
+    if (curZoomIdx < 0) {
+      selectFocalOption(zooms[0].id);
+      scheduleSaveLocalAppState();
+      showToast(`🔭 ${zooms[0].label} (@${Math.round(state.zoomFocalMm)}mm)`);
+    } else if (curZoomIdx + 1 < zooms.length) {
+      const nextZoom = zooms[curZoomIdx + 1];
+      selectFocalOption(nextZoom.id);
+      scheduleSaveLocalAppState();
+      showToast(`🔭 ${nextZoom.label} (@${Math.round(state.zoomFocalMm)}mm)`);
     } else {
-      state.lensId = '35-70mm';
-      const z = Math.max(35, Math.min(70, Number(state.lensFocalMm) || 50));
-      state.zoomFocalMm = Number(z.toFixed(2));
-      const minF = Number((3.5 + ((z - 35) / 35) * 1.0).toFixed(2));
-      state.lensAperture = apPinnedWideOpen ? minF : Math.max(minF, state.lensAperture);
-      showToast(`SLR Zoom 35–70mm (@${Math.round(z)}mm)`);
+      const z = Number(state.zoomFocalMm) || 50;
+      const primes = getPrimeAnchors(state.bodyId);
+      const nearest = primes.length
+        ? primes.reduce((a, b) => Math.abs((b.mm || 50) - z) < Math.abs((a.mm || 50) - z) ? b : a, primes[0])
+        : focals.find(f => !f.isZoom);
+      if (nearest) {
+        selectFocalOption(nearest.id);
+        scheduleSaveLocalAppState();
+        showToast(`📷 Prime: ${nearest.label}`);
+      }
     }
-    const { lens } = getSelectedGear();
-    state.bloom = lens.bloomBase;
-    state.vignette = lens.vignetteBase;
-    syncAllUI();
-    scheduleCameraSettingsApply();
-    renderPreview();
   });
   document.getElementById('btnVfFlashToggle').addEventListener('click', () => {
     state.camFlashOn = !state.camFlashOn;
