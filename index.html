@@ -4263,7 +4263,7 @@
           </div>
           <div class="combo-card" role="button" tabindex="0" data-open-combo="lens">
             <span class="combo-card-tag">LENS</span>
-            <span class="combo-card-val" id="labCardLensName">50mm f/1.4</span>
+            <span class="combo-card-val" id="labCardLensName">50mm f/1.2</span>
             <span class="combo-card-caret">▾</span>
             <div class="combo-card-nav-row">
               <button class="card-step-btn" data-step-gear="lens" data-step-dir="-1" type="button" title="Previous lens" aria-label="Previous lens">‹</button>
@@ -4635,7 +4635,7 @@
               <span class="clapper-col-lbl">LENS</span>
               <span class="clapper-col-num" id="pickerLensCount"><strong>04</strong>/7</span>
             </div>
-            <div class="clapper-col-val" id="clapperLensVal">50mm f/1.4</div>
+            <div class="clapper-col-val" id="clapperLensVal">50mm f/1.2</div>
           </button>
           <button class="clapper-col film-col" data-picker-tab="film" type="button">
             <div class="clapper-col-head">
@@ -4655,7 +4655,7 @@
         <div class="picker-match-bar" id="pickerBodyMatchBar">
           <div class="picker-match-info">
             <span class="picker-match-lbl" id="pickerBodyMatchLbl">Best for SLR:</span>
-            <button class="picker-match-link" id="btnJumpRecLens" type="button" title="Jump to Lens options">50mm f/1.4</button>
+            <button class="picker-match-link" id="btnJumpRecLens" type="button" title="Jump to Lens options">50mm f/1.2</button>
             <span style="color:#525a6a;">+</span>
             <button class="picker-match-link" id="btnJumpRecFilm" type="button" title="Jump to matching Films">Pro 400H</button>
           </div>
@@ -4667,7 +4667,7 @@
       <div class="picker-section" id="pickerSecLens">
         <div class="picker-spec-bar">
           <span class="picker-spec-note" id="pickerLensEffect">Standard · Half-body portrait &amp; all genres</span>
-          <span class="picker-spec-stat" id="pickerLensStat">f/1.4 · 1.80x</span>
+          <span class="picker-spec-stat" id="pickerLensStat">f/1.2 · 1.80x</span>
         </div>
         <div class="h-scroll" id="lensScenePills" style="margin-bottom:6px;display:none;">
           <button class="filter-chip active" data-lscene="all" type="button">All</button>
@@ -4772,7 +4772,7 @@
           <img class="export-preview-thumb" id="exportPreviewThumb" alt="Edited preview" />
           <div style="min-width:0;flex:1;">
             <div style="font-size:12px;font-weight:700;color:#f5a623;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="exportInfoHeadline">Kodak Portra 400 · ISO 400</div>
-            <div style="font-size:10.5px;color:#cbd5e1;margin-top:2px;line-height:1.35;" id="exportInfoSubline">SLR · 50mm f/1.4 · Strength 85%</div>
+            <div style="font-size:10.5px;color:#cbd5e1;margin-top:2px;line-height:1.35;" id="exportInfoSubline">SLR · 50mm f/1.2 · Strength 85%</div>
             <div style="font-family:var(--mono);font-size:9px;color:#94a3b8;margin-top:3px;" id="exportExifStatus">EXIF: Camera, Lens, ISO &amp; Film tags embedded</div>
           </div>
         </div>
@@ -4913,8 +4913,7 @@
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
       { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
-      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: '50mm f/1.4', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.4 · Manual classic everyday lens, gorgeous rendering & bright f/1.4 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
-      { id: '50mm-18g', mm: 50, minF: 1.8, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.8', label: '50mm f/1.8', short: '50mm f/1.8', recScene: 'night', recFilms: ['cinestill-800t', 'lomo-800', 'kodak-portra-800', 'ilford-hp5'], tileSub: 'Night · Fast AF f/1.8', meta: '50mm f/1.8 · Fast, sharp modern prime for low-light & night street', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.86, dofRadius: 0.35, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.12, edgeSoft: 0.012 },
+      { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: '85mm f/1.8 · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
     ],
     pns: [
