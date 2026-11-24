@@ -4859,8 +4859,8 @@
       formatLabel: '35mm · Compact AF',
       aspect: 3 / 2,
       meta: 'Autofocus 35mm compact · Direct flash & motorized advance',
-      defaultFocalId: '35mm',
-      recLenses: ['35mm', '38-90mm', '28mm'],
+      defaultFocalId: '40mm',
+      recLenses: ['40mm', '28mm', '38-90mm'],
       recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-portra-400'],
       blackLift: 0.020,
       contrast: 1.12,
@@ -4947,8 +4947,8 @@
       }
     ],
     pns: [
-      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'Wide · Street snap', meta: 'Wide 28mm f/2.8 compact prime (Ricoh GR1 style) · Dynamic street perspective', cropZoom: 1.0, barrelDistort: 0.022, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.20, edgeSoft: 0.020 },
-      { id: '35mm', mm: 35, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', tileSub: 'Sharp · Everyday AF', meta: 'Classic 35mm f/2.8 prime (Olympus Mju II / Yashica T4) · Crisp everyday & flash', cropZoom: 1.18, barrelDistort: 0.008, apertureEV: 0.05, dofStrength: 0.50, dofRadius: 0.48, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.015 },
+      { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'GR1v · Ultra-sharp street', meta: 'Ricoh GR1v / GR1s 28mm f/2.8 GR · Ultra-sharp, wide-angle & compact for street photography', cropZoom: 1.0, barrelDistort: 0.018, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 21, chromaticAb: 0.16, edgeSoft: 0.015 },
+      { id: '40mm', mm: 40, minF: 2.4, maxF: 16, focusProfile: 'pns', focalTag: '40mm', aperture: 'f/2.4', label: '40mm f/2.4', short: '40mm', tileSub: 'Minilux · Bright portrait', meta: 'Leica Minilux 40mm f/2.4 Summarit · Largest P&S aperture, tack-sharp & flattering for portraits', cropZoom: 1.48, barrelDistort: 0.004, apertureEV: 0.10, dofStrength: 0.62, dofRadius: 0.42, shakeSens: 0, skinFlatter: 0.05, coatingWarmth: 1.5, coatingTint: 0, bloomBase: 16, vignetteBase: 16, chromaticAb: 0.14, edgeSoft: 0.014 },
       {
         id: '38-90mm', isZoom: true, mm: 50, zoomMin: 38, zoomMax: 90, zoomSteps: [38, 50, 70, 90],
         minF: 3.5, zoomMaxMinF: 6.5, maxF: 16, focusProfile: 'pns',
@@ -6399,6 +6399,8 @@
       if (oldFocal === '24mm' || oldFocal === '28mm') return '35mm';
       if (oldFocal === '135mm') return '85mm';
       if (oldFocal === '35-70mm') return '24-70mm';
+    } else if (modeId === 'pns') {
+      if (oldFocal === '35mm') return '40mm';
     } else if (modeId === 'half-frame') {
       if (oldFocal === '22mm') return '28mm';
       if (oldFocal === '35mm' || oldFocal === '50mm' || oldFocal === '60mm') return '38mm';
