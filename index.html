@@ -7273,7 +7273,7 @@
       }
       return { w, h, ratio: 3 / 2, zoom: (state.sourceFromCameraRoll || isUserUploaded) ? 1.0 : (lens.cropZoom || 1.0), isHalfFramePair: true };
     }
-    let ratio = isUserUploaded ? (3 / 2) : getBodyAspect(body, lens);
+    let ratio = getBodyAspect(body, lens);
     if (ratio > 1 && srcCanvas.height > srcCanvas.width) {
       ratio = 1 / ratio;
     } else if (ratio < 1 && srcCanvas.width > srcCanvas.height) {
