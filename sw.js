@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v176';
+const CACHE_NAME = 'tees-lab-shell-v177';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -24,7 +24,6 @@ const WARM_FILES = [
   './assets/gear/films/kodak-ultramax-400.webp',
   './assets/gear/films/kodak-ektar-100.webp',
   './assets/gear/films/cinestill-800t.webp',
-  './assets/gear/films/cyberpunk-640t.webp',
   './assets/gear/films/lomo-800.webp',
   './assets/gear/films/popho-luminar-100.webp',
   './assets/gear/films/ilford-hp5.webp',
