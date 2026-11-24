@@ -11892,6 +11892,32 @@
     });
   }
 
+  const TEES_ALBUM_NAME = "Tee's Film Lab";
+  function getNativeAlbumPlugin() {
+    const cap = window.Capacitor;
+    if (!cap?.isNativePlatform?.()) return null;
+    return cap.Plugins?.TeesPhotoAlbum || null;
+  }
+  function blobToBase64Raw(blob) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        const res = String(fr.result || '');
+        const comma = res.indexOf(',');
+        resolve(comma >= 0 ? res.slice(comma + 1) : res);
+      };
+      fr.onerror = () => reject(fr.error || new Error('Read failed'));
+      fr.readAsDataURL(blob);
+    });
+  }
+  async function saveBlobToNativeAlbum(blob, filename) {
+    const plugin = getNativeAlbumPlugin();
+    if (!plugin?.saveToAlbum) return false;
+    const base64 = await blobToBase64Raw(blob);
+    await plugin.saveToAlbum({ base64, albumName: TEES_ALBUM_NAME, filename });
+    return true;
+  }
+
   async function saveRollPhoto(shot) {
     const filename = `tees-lab-roll-${shot.rollNumber || 1}-shot-${String(shot.num).padStart(2, '0')}.jpg`;
     try {
@@ -11902,6 +11928,11 @@
         if (blob) shot._cachedPhotoBlob = blob;
       }
       if (!blob) throw new Error('Processed photo is unavailable');
+      if (getNativeAlbumPlugin()) {
+        await saveBlobToNativeAlbum(blob, filename);
+        showToast(`📸 Saved to "${TEES_ALBUM_NAME}" album`);
+        return;
+      }
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [imageFile] }))) {
         try {
@@ -11933,8 +11964,9 @@
       showToast('No completed roll photos to save');
       return;
     }
+    const hasNativeAlbum = !!getNativeAlbumPlugin();
     const allCached = shots.every(s => !!(s.photoBlob || s._cachedPhotoBlob));
-    if (allCached) {
+    if (allCached && !hasNativeAlbum) {
       const quickFiles = shots.map(s => {
         const b = s.photoBlob || s._cachedPhotoBlob;
         const rollNum = s.rollNumber || 1;
@@ -11969,6 +12001,16 @@
         items.push({ blob, filename, file: new File([blob], filename, { type: 'image/jpeg' }) });
       }
       if (items.length === 0) throw new Error('Processed roll photos are unavailable');
+
+      if (hasNativeAlbum) {
+        for (let i = 0; i < items.length; i++) {
+          const txt = `⏳ ${i + 1}/${items.length}`;
+          [vfSaveBtn, sheetSaveBtn].forEach(b => { if (b) b.textContent = txt; });
+          await saveBlobToNativeAlbum(items[i].blob, items[i].filename);
+        }
+        showToast(`📸 Saved ${items.length} photos to "${TEES_ALBUM_NAME}" album`);
+        return;
+      }
 
       const shareFiles = items.map(it => it.file);
       if (navigator.share && navigator.canShare && navigator.canShare({ files: shareFiles })) {
@@ -12448,6 +12490,14 @@
   function deliverExportPayload(payload, allowDownloadFallback = true) {
     if (!payload?.blob || !payload?.file) return;
     const { blob, file, filename, spec } = payload;
+    if (getNativeAlbumPlugin()) {
+      return saveBlobToNativeAlbum(blob, filename).then(() => {
+        document.getElementById('exportSheetBackdrop')?.classList.remove('open');
+        showToast(`📸 Saved to "${TEES_ALBUM_NAME}" album`);
+      }).catch(() => {
+        showToast('Could not save to Photos album');
+      });
+    }
     const canShareFiles = !!(navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] })));
     if (canShareFiles) {
       let sharePromise;

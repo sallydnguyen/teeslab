@@ -1,0 +1,17 @@
+{
+  "name": "tees-film-lab",
+  "version": "2.4.118",
+  "private": true,
+  "description": "Tee's Film Lab — 35mm & 120 Film Camera + Darkroom PWA / iOS App",
+  "scripts": {
+    "build:www": "node scripts/sync-www.mjs",
+    "cap:sync": "npm run build:www && npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  }
+}

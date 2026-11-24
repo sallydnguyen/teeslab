@@ -1,0 +1,10 @@
+{
+  "appId": "com.teeslab.film",
+  "appName": "Tee's Film Lab",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "never",
+    "allowsLinkPreview": false,
+    "scrollEnabled": false
+  }
+}
