@@ -4878,7 +4878,7 @@
       aspect: 4 / 3,
       meta: 'Contax 645 autofocus medium format (6×4.5) · Ultra-fine grain & wide dynamic range',
       defaultFocalId: '140mm',
-      recLenses: ['140mm', '6x45', '55-110mm'],
+      recLenses: ['140mm'],
       recFilms: ['kodak-portra-400', 'kodak-portra-160', 'kodak-ektar-100', 'agfa-apx-400'],
       blackLift: 0.012,
       contrast: 1.04,
@@ -4924,22 +4924,7 @@
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
     ],
     'medium-format': [
-      { id: '6x45', mm: 80, minF: 2.0, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '80mm', aperture: 'f/2', label: 'Planar 80mm f/2', short: '80mm', tileSub: 'Standard · Iconic f/2', meta: 'Contax 645 Carl Zeiss Planar 80mm f/2 · Iconic 6×4.5 editorial depth & creamy glow', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 1.24, barrelDistort: 0, apertureEV: 0.12, dofStrength: 0.88, dofRadius: 0.33, shakeSens: 0, skinFlatter: 0.11, coatingWarmth: 1, coatingTint: 0, bloomBase: 18, vignetteBase: 14, chromaticAb: 0.11, edgeSoft: 0.01 },
-      { id: '140mm', mm: 140, minF: 2.8, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '140mm', aperture: 'f/2.8', label: 'Sonnar 140mm f/2.8', short: '140mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Contax 645 Carl Zeiss Sonnar 140mm f/2.8 · Flagship 6×4.5 portrait telephoto (~85mm eq) with buttery bokeh', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 2.05, barrelDistort: 0, apertureEV: 0.08, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0.06, skinFlatter: 0.16, coatingWarmth: 1.5, coatingTint: 0, bloomBase: 20, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.01 },
-      {
-        id: '55-110mm', isZoom: true, isFormatLens: true, formatAspect: 4 / 3, formatLabel: '120 · 6×4.5',
-        mm: 80, zoomMin: 55, zoomMax: 110, zoomSteps: [55, 70, 85, 110],
-        minF: 4.0, zoomMaxMinF: 4.0, maxF: 22, focusProfile: 'medium-format',
-        focalTag: '55–110', aperture: 'f/4', label: '55–110mm f/4 (645)', short: '55–110',
-        tileSub: '6×4.5 Vario · Const f/4',
-        meta: 'Contax 645 / Hasselblad Vario 55–110mm f/4 constant-aperture 120 studio zoom',
-        shakeSens: 0, skinFlatter: 0.10, coatingWarmth: 0.8, coatingTint: 0,
-        zoomAnchors: [
-          { mm: 55, cropZoom: 1.00, minF: 4.0, apertureEV: 0.04, dofStrength: 0.68, dofRadius: 0.42, barrelDistort: 0.004, bloomBase: 15, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.010, skinFlatter: 0.06 },
-          { mm: 80, cropZoom: 1.26, minF: 4.0, apertureEV: 0.04, dofStrength: 0.80, dofRadius: 0.35, barrelDistort: 0.000, bloomBase: 16, vignetteBase: 14, chromaticAb: 0.09, edgeSoft: 0.010, skinFlatter: 0.10 },
-          { mm: 110, cropZoom: 1.65, minF: 4.0, apertureEV: 0.02, dofStrength: 0.90, dofRadius: 0.30, barrelDistort: 0.000, bloomBase: 17, vignetteBase: 15, chromaticAb: 0.09, edgeSoft: 0.010, skinFlatter: 0.14 }
-        ]
-      }
+      { id: '140mm', mm: 140, minF: 2.8, maxF: 22, focusProfile: 'medium-format', isFormatLens: true, focalTag: '140mm', aperture: 'f/2.8', label: 'Sonnar 140mm f/2.8', short: '140mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Contax 645 Carl Zeiss Sonnar 140mm f/2.8 · Flagship 6×4.5 portrait telephoto (~85mm eq) with buttery bokeh', formatAspect: 4 / 3, formatLabel: '120 · 6×4.5', cropZoom: 2.05, barrelDistort: 0, apertureEV: 0.08, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0.06, skinFlatter: 0.16, coatingWarmth: 1.5, coatingTint: 0, bloomBase: 20, vignetteBase: 14, chromaticAb: 0.10, edgeSoft: 0.01 }
     ],
     'half-frame': [
       { id: '28mm', mm: 28, minF: 3.5, maxF: 16, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/3.5', label: '28mm f/3.5', short: '28mm', tileSub: 'Pen EE · ~40mm eq', meta: '28mm f/3.5 (~40mm eq) · Compact Pen EE / Demi everyday street diptychs', cropZoom: 1.14, barrelDistort: 0.016, apertureEV: -0.05, dofStrength: 0.36, dofRadius: 0.55, shakeSens: 0, skinFlatter: 0, coatingWarmth: 2, coatingTint: 0, bloomBase: 22, vignetteBase: 24, chromaticAb: 0.36, edgeSoft: 0.035 },
