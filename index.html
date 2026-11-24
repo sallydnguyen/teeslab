@@ -6200,7 +6200,7 @@
         mixPixels = canZeroCopyMix ? mData.buffer : mData.slice().buffer;
         transfer.push(mixPixels);
       }
-      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, mixPixels, mixPct: job.mixPct ?? 50, config: job.config, output: job.output, quality: job.quality }, transfer);
+      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, mixPixels, mixPct: job.mixPct ?? 50, config: job.config, output: 'bitmap', quality: job.quality }, transfer);
     } catch (error) {
       filmWorkerActiveJob = null;
       if (job.imageData?.data?.byteLength) runFilmJobFallback(job).then(job.resolve, job.reject).finally(pumpFilmWorker);
@@ -6208,11 +6208,29 @@
     }
   }
 
-  function processFilmImage(imageData, width, height, config, { output = 'bitmap', quality = 0.94, coalesceKey = null, mixImageData = null, mixPct = 50, transferBuffers = false } = {}) {
+  function processFilmImage(imageData, width, height, config, { output = 'bitmap', quality = 0.96, coalesceKey = null, mixImageData = null, mixPct = 50, transferBuffers = false } = {}) {
     createFilmWorker();
     if (!filmWorker) return runFilmJobFallback({ imageData, width, height, config, output, quality, mixImageData, mixPct });
     return new Promise((resolve, reject) => {
-      const job = { id: ++filmWorkerJobId, imageData, width, height, config, output, quality, coalesceKey, mixImageData, mixPct, transferBuffers, resolve, reject };
+      const wrappedResolve = async (res) => {
+        if (output === 'blob' && res?.bitmap) {
+          try {
+            const bmp = res.bitmap;
+            const c = document.createElement('canvas');
+            c.width = bmp.width;
+            c.height = bmp.height;
+            c.getContext('2d').drawImage(bmp, 0, 0);
+            bmp.close();
+            const blob = await canvasToJpegBlob(c, quality);
+            resolve({ blob });
+          } catch (err) {
+            reject(err);
+          }
+          return;
+        }
+        resolve(res);
+      };
+      const job = { id: ++filmWorkerJobId, imageData, width, height, config, output, quality, coalesceKey, mixImageData, mixPct, transferBuffers, resolve: wrappedResolve, reject };
       if (coalesceKey) {
         const queuedAt = filmWorkerQueue.findIndex(item => item.coalesceKey === coalesceKey);
         if (queuedAt >= 0) { filmWorkerQueue[queuedAt].resolve(null); filmWorkerQueue.splice(queuedAt, 1); }
@@ -9947,7 +9965,7 @@
       else sh = srcW / ratio;
       const z = Math.max(1, lens?.cropZoom || 1);
       const croppedLong = Math.max(sw / z, sh / z);
-      maxLong = Math.min(3840, Math.max(640, Math.round(croppedLong)));
+      maxLong = Math.min(3840, Math.max(2048, Math.round(croppedLong)));
     }
     if (ratio >= 1) {
       const w = maxLong;
@@ -10250,9 +10268,8 @@
     const land = isCameraViewportLandscape();
     return {
       facingMode: state.camFacing,
-      width: { ideal: land ? (hiRes ? 4032 : 1440) : (hiRes ? 3024 : 1080) },
-      height: { ideal: land ? (hiRes ? 3024 : 1080) : (hiRes ? 4032 : 1440) },
-      aspectRatio: { ideal: land ? (4 / 3) : (3 / 4) },
+      width: { ideal: land ? (hiRes ? 3840 : 1920) : (hiRes ? 2160 : 1080) },
+      height: { ideal: land ? (hiRes ? 2160 : 1080) : (hiRes ? 3840 : 1920) },
       frameRate: { ideal: 15, max: 24 }
     };
   }
