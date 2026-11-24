@@ -4199,7 +4199,6 @@
             </div>
             <div class="canvas-float-tools" id="canvasFloatTools">
               <button class="float-pill" id="btnToggleSplit" type="button">◧ Split</button>
-              <button class="float-pill" id="btnToggleLabOriginal" type="button" title="Switch between Original photo and Film edit">👁️ Original</button>
               <button class="float-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Camera Roll" aria-label="Delete photo from Camera Roll" style="display:none;">🗑 Delete</button>
             </div>
           </div>
@@ -7872,6 +7871,11 @@
     setArtSvg('camCardLensArt', lensSvgKey, svgFocalBadge(lens));
     setFilmArt('camCardFilmArt', film.id, film.name);
 
+    const hasMultiLenses = getModeFocals(body.id).length > 1;
+    document.querySelectorAll('.card-step-btn[data-step-gear="lens"]').forEach(btn => {
+      btn.style.display = hasMultiLenses ? '' : 'none';
+    });
+
     // Clapperboard summary inside Combo Picker Sheet & Stage caption
     document.getElementById('clapperBodyVal').textContent = body.name;
     document.getElementById('clapperLensVal').textContent = lensShort;
@@ -8308,7 +8312,6 @@
       resetBtn.classList.toggle('dirty', isModifiedFromDefault);
       resetBtn.lastElementChild.textContent = state.labOriginalMode ? 'Original' : (isModifiedFromDefault ? 'Initial' : 'Default');
     }
-    document.getElementById('btnToggleLabOriginal')?.classList.toggle('active', !!state.labOriginalMode);
     if (subStrip) {
       TWEAK_DEFS.forEach(t => {
         const sub = subStrip.querySelector(`[data-sub-id="${t.key}"]`);
@@ -12564,12 +12567,6 @@
     }
   });
   document.getElementById('btnConfirmExport')?.addEventListener('click', exportFullResolution);
-  document.getElementById('btnToggleLabOriginal')?.addEventListener('click', () => {
-    state.labOriginalMode = !state.labOriginalMode;
-    renderTweaksDock();
-    renderPreview(true);
-    showToast(state.labOriginalMode ? '👁️ Viewing original unedited photo' : '🎞️ Returned to film edit');
-  });
 
   // Split, Pinch, Pan, Wheel Zoom & Hold Original
   document.getElementById('btnToggleSplit').addEventListener('click', (e) => {
