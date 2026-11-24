@@ -4836,12 +4836,12 @@
   const VIEWFINDER_MODES = [
     {
       id: 'slr',
-      name: 'SLR',
-      formatLabel: '35mm · 3:2',
+      name: 'Nikon F6',
+      formatLabel: '35mm SLR · 3:2',
       aspect: 3 / 2,
-      meta: 'Split-prism focus + LED exposure meter',
+      meta: 'Nikon F6 flagship 35mm SLR · Split-prism focus + LED exposure meter',
       defaultFocalId: '50mm',
-      recLenses: ['50mm', '24-70mm', '85mm', '35mm'],
+      recLenses: ['50mm', '24mm', '85mm'],
       recFilms: ['kodak-portra-400', 'fuji-superia-premium-400', 'kodak-gold-200', 'cinestill-800t'],
       blackLift: 0.024,
       contrast: 1.08,
@@ -4914,37 +4914,9 @@
 
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
-      { id: '35mm', mm: 35, minF: 2.0, maxF: 22, focusProfile: 'standard', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', tileSub: 'Wide · Street & cafe', meta: 'Wide-normal · Street, indoor cafes & full-body portrait; natural separation at f/2', cropZoom: 1.38, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.10, dofStrength: 0.66, dofRadius: 0.44, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 20, chromaticAb: 0.24, edgeSoft: 0.02 },
-      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: '50mm f/1.4', short: '50mm', tileSub: 'Standard · Bright bokeh', meta: 'Standard · Half-body portrait & all genres; bright f/1.4 low-light & bokeh', cropZoom: 1.80, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 24, vignetteBase: 19, chromaticAb: 0.20, edgeSoft: 0.02 },
-      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Short tele · Waist-up & close-up portrait; heavy bokeh, flattering face', cropZoom: 2.55, brightlinePct: 100, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 28, vignetteBase: 21, chromaticAb: 0.18, edgeSoft: 0.02 },
-      {
-        id: '24-70mm', isZoom: true, mm: 35, zoomMin: 24, zoomMax: 70, zoomSteps: [24, 28, 35, 50, 70],
-        minF: 2.8, zoomMaxMinF: 2.8, maxF: 22, focusProfile: 'zoom',
-        focalTag: '24–70', aperture: 'f/2.8', label: '24–70mm f/2.8', short: '24–70',
-        tileSub: 'Pro Zoom · Const f/2.8',
-        meta: 'Flagship 24–70mm f/2.8 constant-aperture pro zoom · Nano/T* coating, tack-sharp corners & smooth bokeh',
-        brightlinePct: 100, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 1, coatingTint: 0,
-        zoomAnchors: [
-          { mm: 24, cropZoom: 1.00, minF: 2.8, apertureEV: 0.06, dofStrength: 0.52, dofRadius: 0.50, barrelDistort: 0.012, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.16, edgeSoft: 0.014, skinFlatter: 0.00 },
-          { mm: 35, cropZoom: 1.38, minF: 2.8, apertureEV: 0.06, dofStrength: 0.62, dofRadius: 0.44, barrelDistort: 0.004, bloomBase: 17, vignetteBase: 17, chromaticAb: 0.14, edgeSoft: 0.012, skinFlatter: 0.02 },
-          { mm: 50, cropZoom: 1.80, minF: 2.8, apertureEV: 0.05, dofStrength: 0.72, dofRadius: 0.38, barrelDistort: 0.000, bloomBase: 18, vignetteBase: 16, chromaticAb: 0.12, edgeSoft: 0.012, skinFlatter: 0.05 },
-          { mm: 70, cropZoom: 2.25, minF: 2.8, apertureEV: 0.04, dofStrength: 0.82, dofRadius: 0.33, barrelDistort: 0.000, bloomBase: 20, vignetteBase: 17, chromaticAb: 0.12, edgeSoft: 0.012, skinFlatter: 0.09 }
-        ]
-      },
-      {
-        id: '70-200mm', isZoom: true, mm: 105, zoomMin: 70, zoomMax: 200, zoomSteps: [70, 85, 105, 135, 200],
-        minF: 2.8, zoomMaxMinF: 2.8, maxF: 22, focusProfile: 'tele-zoom',
-        focalTag: '70–200', aperture: 'f/2.8', label: '70–200mm f/2.8', short: '70–200',
-        tileSub: 'Tele Pro · Const f/2.8',
-        meta: 'Legendary 70–200mm f/2.8 ED/Fluorite telephoto pro zoom · Cinematic compression & buttery portrait bokeh',
-        brightlinePct: 100, shakeSens: 0.12, skinFlatter: 0.14, coatingWarmth: 1.5, coatingTint: 0,
-        zoomAnchors: [
-          { mm: 70, cropZoom: 2.25, minF: 2.8, apertureEV: 0.05, dofStrength: 0.82, dofRadius: 0.33, barrelDistort: 0, bloomBase: 19, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011, skinFlatter: 0.10 },
-          { mm: 105, cropZoom: 2.95, minF: 2.8, apertureEV: 0.04, dofStrength: 0.90, dofRadius: 0.29, barrelDistort: 0, bloomBase: 21, vignetteBase: 17, chromaticAb: 0.10, edgeSoft: 0.011, skinFlatter: 0.14 },
-          { mm: 135, cropZoom: 3.45, minF: 2.8, apertureEV: 0.02, dofStrength: 0.95, dofRadius: 0.26, barrelDistort: 0, bloomBase: 22, vignetteBase: 18, chromaticAb: 0.10, edgeSoft: 0.012, skinFlatter: 0.16 },
-          { mm: 200, cropZoom: 4.20, minF: 2.8, apertureEV: 0.00, dofStrength: 0.99, dofRadius: 0.24, barrelDistort: 0, bloomBase: 23, vignetteBase: 19, chromaticAb: 0.11, edgeSoft: 0.013, skinFlatter: 0.18 }
-        ]
-      }
+      { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: 'AF-D 24mm f/2.8D', short: '24mm', tileSub: 'Landscape · Fast AF', meta: 'Nikkor AF-D 24mm f/2.8D · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
+      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: 'AI-S 50mm f/1.4', short: '50mm', tileSub: 'Everyday · Classic MF', meta: 'Nikkor AI-S 50mm f/1.4 · Manual classic everyday lens, gorgeous rendering & bright f/1.4 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
+      { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: 'AF-D 85mm f/1.8D', short: '85mm', tileSub: 'Portrait · Creamy bokeh', meta: 'Nikkor AF-D 85mm f/1.8D · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
     ],
     pns: [
       { id: '28mm', mm: 28, minF: 2.8, maxF: 16, focusProfile: 'pns', focalTag: '28mm', aperture: 'f/2.8', label: '28mm f/2.8', short: '28mm', tileSub: 'GR1v · Ultra-sharp street', meta: 'Ricoh GR1v / GR1s 28mm f/2.8 GR · Ultra-sharp, wide-angle & compact for street photography', cropZoom: 1.0, barrelDistort: 0.018, apertureEV: 0.0, dofStrength: 0.38, dofRadius: 0.54, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 14, vignetteBase: 21, chromaticAb: 0.16, edgeSoft: 0.015 },
@@ -6396,9 +6368,9 @@
     const list = FOCAL_OPTIONS_BY_MODE[modeId] || FOCAL_OPTIONS_BY_MODE.slr;
     if (list.some(f => f.id === oldFocal)) return oldFocal;
     if (modeId === 'slr') {
-      if (oldFocal === '24mm' || oldFocal === '28mm') return '35mm';
-      if (oldFocal === '135mm') return '85mm';
-      if (oldFocal === '35-70mm') return '24-70mm';
+      if (oldFocal === '28mm' || oldFocal === '24-70mm') return '24mm';
+      if (oldFocal === '135mm' || oldFocal === '70-200mm') return '85mm';
+      if (oldFocal === '35mm' || oldFocal === '35-70mm') return '50mm';
     } else if (modeId === 'pns') {
       if (oldFocal === '35mm') return '40mm';
     } else if (modeId === 'half-frame') {
