@@ -4669,6 +4669,13 @@
           <span class="picker-spec-note" id="pickerLensEffect">Standard · Half-body portrait &amp; all genres</span>
           <span class="picker-spec-stat" id="pickerLensStat">f/1.4 · 1.80x</span>
         </div>
+        <div class="h-scroll" id="lensScenePills" style="margin-bottom:6px;display:none;">
+          <button class="filter-chip active" data-lscene="all" type="button">All</button>
+          <button class="filter-chip" data-lscene="landscape" type="button">Landscape</button>
+          <button class="filter-chip" data-lscene="everyday" type="button">Everyday</button>
+          <button class="filter-chip" data-lscene="portrait" type="button">Portrait</button>
+          <button class="filter-chip" data-lscene="night" type="button">Night</button>
+        </div>
         <div class="lens-barrel-dock lens-barrel-picker" id="pickerLensBarrel" aria-label="Lens focal length and aperture rings"></div>
         <div class="h-scroll" id="pickerLensTrack"></div>
       </div>
@@ -4680,6 +4687,7 @@
           <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
           <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
+          <button class="filter-chip" data-fbrand="night" type="button">Night</button>
           <button class="filter-chip" data-fbrand="archived" id="btnFilmArchivedFilter" type="button">Archived (3)</button>
           <button class="filter-chip" id="btnOpenFilmGuide" type="button" title="Film rolls guide & shooting tips" style="color:#f5a623;border-color:rgba(245,166,35,0.45);">? Guide</button>
         </div>
@@ -4748,6 +4756,7 @@
           <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-gscene="everyday" type="button">Everyday</button>
           <button class="filter-chip" data-gscene="landscape" type="button">Landscape</button>
+          <button class="filter-chip" data-gscene="night" type="button">Night</button>
           <button class="filter-chip" data-gscene="archived" type="button">Archived (3)</button>
         </div>
         <div class="film-guide-list" id="filmGuideList"></div>
@@ -4906,7 +4915,8 @@
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
       { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: 'AF-D 24mm f/2.8D', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160'], tileSub: 'Landscape · Fast AF', meta: 'Nikkor AF-D 24mm f/2.8D · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
-      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: 'AI-S 50mm f/1.4', short: '50mm', recScene: 'everyday', recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: 'Nikkor AI-S 50mm f/1.4 · Manual classic everyday lens, gorgeous rendering & bright f/1.4 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
+      { id: '50mm', mm: 50, minF: 1.4, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.4', label: 'AI-S 50mm f/1.4', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: 'Nikkor AI-S 50mm f/1.4 · Manual classic everyday lens, gorgeous rendering & bright f/1.4 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
+      { id: '58mm', mm: 58, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '58mm', aperture: 'f/1.2', label: 'Noct 58mm f/1.2', short: '58mm', recScene: 'night', recFilms: ['cinestill-800t', 'cyberpunk-640t', 'lomo-800', 'kodak-portra-800'], tileSub: 'Night · Low-light f/1.2', meta: 'Noct-Nikkor 58mm f/1.2 · Legendary low-light & night street prime with zero-coma point lights', cropZoom: 1.98, barrelDistort: 0, apertureEV: 0.36, dofStrength: 0.94, dofRadius: 0.30, shakeSens: 0, skinFlatter: 0.08, coatingWarmth: 0, coatingTint: 1, bloomBase: 30, vignetteBase: 22, chromaticAb: 0.12, edgeSoft: 0.014 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: 'AF-D 85mm f/1.8D', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: 'Nikkor AF-D 85mm f/1.8D · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
     ],
     pns: [
@@ -4964,17 +4974,17 @@
     'fuji-classic-chrome': { scenes: ['everyday', 'portrait'], tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.' },
     'kodak-portra-160': { scenes: ['portrait', 'landscape'], tip: 'Ultra-fine pastel grain for bright daylight portraits, fashion & soft sunlit scenery.' },
     'kodak-portra-400': { scenes: ['portrait', 'everyday'], tip: 'All-around portrait & everyday champion with creamy skin tones & highlight latitude.' },
-    'kodak-portra-800': { scenes: ['portrait', 'everyday'], tip: 'Richer sunset warmth and speed for twilight portraits, cozy indoor cafes & golden hour.' },
+    'kodak-portra-800': { scenes: ['portrait', 'everyday', 'night'], tip: 'Richer sunset warmth and speed for twilight portraits, cozy indoor cafes & golden hour.' },
     'kodak-gold-200': { scenes: ['everyday', 'landscape'], tip: 'Nostalgic amber glow made for golden hour, travel landscapes & everyday sun.' },
     'kodak-colorplus-200': { scenes: ['everyday', 'landscape'], tip: 'Crisp retro contrast and sandy warmth for travel, vintage cafes & street.' },
-    'kodak-ultramax-400': { scenes: ['everyday', 'landscape'], tip: 'Punchy deep blues and vibrant everyday color — great for street & travel.' },
+    'kodak-ultramax-400': { scenes: ['everyday', 'landscape', 'night'], tip: 'Punchy deep blues and vibrant everyday color — great for street & travel.' },
     'kodak-ektar-100': { scenes: ['landscape'], tip: 'Boldest saturation and ultra-fine detail for landscapes, nature & travel scenery.' },
-    'cinestill-800t': { scenes: ['everyday'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation for night streets.' },
-    'cyberpunk-640t': { scenes: ['everyday'], tip: 'Electric cyan-violet shadows & strong orange-red halo — great for night streets & 2×.' },
-    'lomo-800': { scenes: ['everyday'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.' },
+    'cinestill-800t': { scenes: ['everyday', 'night'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation for night streets.' },
+    'cyberpunk-640t': { scenes: ['everyday', 'night'], tip: 'Electric cyan-violet shadows & strong orange-red halo — great for night streets & 2×.' },
+    'lomo-800': { scenes: ['everyday', 'night'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.' },
     'popho-luminar-100': { scenes: ['landscape'], tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range for landscapes.' },
-    'ilford-hp5': { scenes: ['everyday'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
-    'agfa-apx-400': { scenes: ['portrait', 'everyday'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
+    'ilford-hp5': { scenes: ['everyday', 'night'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
+    'agfa-apx-400': { scenes: ['portrait', 'everyday', 'night'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
   };
 
   const TWEAK_DEFS = [
@@ -6640,7 +6650,7 @@
 
   function formatApertureLabel(f) {
     const val = Math.max(1.0, Math.min(22, Number(f) || 2.8));
-    const canonical = [1.4, 1.8, 2, 2.8, 3.5, 4, 4.5, 5.6, 8, 11, 16, 22];
+    const canonical = [1.2, 1.4, 1.8, 2, 2.8, 3.5, 4, 4.5, 5.6, 8, 11, 16, 22];
     for (const s of canonical) {
       if (Math.abs(val - s) < 0.045) {
         return Number.isInteger(s) ? `f/${s}` : `f/${s.toFixed(1)}`;
@@ -7948,7 +7958,7 @@
     const recFilmSet = new Set(recFilmList);
     const recLensObj = focals.find(f => f.id === (body.recLenses?.[0] || body.defaultFocalId)) || focals[0];
     const recFilmObj = FILM_STOCKS.find(f => f.id === (recFilmList[0] || FILM_STOCKS[0].id)) || FILM_STOCKS[0];
-    const sceneTitleMap = { portrait: 'Portrait', everyday: 'Everyday', landscape: 'Landscape' };
+    const sceneTitleMap = { portrait: 'Portrait', everyday: 'Everyday', landscape: 'Landscape', night: 'Night' };
     const matchLbl = document.getElementById('pickerBodyMatchLbl');
     const jumpLensBtn = document.getElementById('btnJumpRecLens');
     const jumpFilmBtn = document.getElementById('btnJumpRecFilm');
@@ -7987,12 +7997,25 @@
       btn.classList.toggle('active', btn.dataset.id === body.id);
     });
 
-    // 2. Mode-Specific Lens / Format Options Track
+    // 2. Mode-Specific Lens / Format Options Track (filterable by scene on multi-lens bodies)
+    const lensPillsEl = document.getElementById('lensScenePills');
+    const validLensScenes = new Set(['all', 'landscape', 'everyday', 'portrait', 'night']);
+    if (!validLensScenes.has(state.lensSceneFilter)) state.lensSceneFilter = 'all';
+    if (lensPillsEl) {
+      lensPillsEl.style.display = focals.length > 1 ? '' : 'none';
+      lensPillsEl.querySelectorAll('.filter-chip[data-lscene]').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.lscene === state.lensSceneFilter);
+      });
+    }
+    const visibleFocals = (focals.length > 1 && state.lensSceneFilter !== 'all')
+      ? focals.filter(f => (f.recScenes || [f.recScene]).includes(state.lensSceneFilter))
+      : focals;
     const lensTrack = document.getElementById('pickerLensTrack');
-    if (lensTrack.dataset.mode !== body.id) {
-      lensTrack.dataset.mode = body.id;
+    const lensFilterKey = `${body.id}|${focals.length > 1 ? state.lensSceneFilter : 'all'}`;
+    if (lensTrack.dataset.mode !== lensFilterKey) {
+      lensTrack.dataset.mode = lensFilterKey;
       lensTrack.innerHTML = '';
-      focals.forEach(f => {
+      visibleFocals.forEach(f => {
         const isRec = recLensSet.has(f.id);
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -8013,7 +8036,7 @@
     });
 
     // 3. Film Stocks Track (active rolls by scene + extra rolls in Archived)
-    const validFilmFilters = new Set(['all', 'match', 'portrait', 'everyday', 'landscape', 'archived']);
+    const validFilmFilters = new Set(['all', 'match', 'portrait', 'everyday', 'landscape', 'night', 'archived']);
     if (!validFilmFilters.has(state.filmBrandFilter)) state.filmBrandFilter = 'all';
     const activeFilms = FILM_STOCKS.filter(f => !f.archived);
     const archivedFilms = FILM_STOCKS.filter(f => !!f.archived);
@@ -8597,7 +8620,7 @@
     updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!matched.isFixedAperture, center: state.focusPoint });
     const matchedMinF = matched.isZoom ? getZoomMinF(matched, state.zoomFocalMm) : (matched.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - matchedMinF) < 0.04;
-    if (matched.recScene && ['portrait', 'everyday', 'landscape'].includes(state.filmBrandFilter)) {
+    if (matched.recScene && ['portrait', 'everyday', 'landscape', 'night'].includes(state.filmBrandFilter)) {
       state.filmBrandFilter = matched.recScene;
     }
     const { lens } = getSelectedGear();
@@ -8653,7 +8676,7 @@
     updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!nextFocal.isFixedAperture, center: state.focusPoint });
     const nextMinF = nextFocal.isZoom ? getZoomMinF(nextFocal, state.zoomFocalMm) : (nextFocal.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - nextMinF) < 0.04;
-    if (nextFocal.recScene && ['portrait', 'everyday', 'landscape'].includes(state.filmBrandFilter)) {
+    if (nextFocal.recScene && ['portrait', 'everyday', 'landscape', 'night'].includes(state.filmBrandFilter)) {
       state.filmBrandFilter = nextFocal.recScene;
     }
     const { lens } = getSelectedGear();
@@ -13158,6 +13181,14 @@
     if (comboSheet.classList.contains('open') && !e.target.closest('button, input, .lens-barrel-dock')) closeComboPicker();
   });
 
+  // Lens scene filter pills inside Combo Picker
+  document.querySelectorAll('#lensScenePills .filter-chip[data-lscene]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.lensSceneFilter = btn.dataset.lscene || 'all';
+      renderComboPickerSheet();
+    });
+  });
+
   // Film brand filter pills inside Combo Picker
   document.querySelectorAll('#filmBrandPills .filter-chip[data-fbrand]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -13219,7 +13250,7 @@
     if (stock?.archived) {
       filmGuideSceneFilter = 'archived';
     } else {
-      const activeScene = ['portrait', 'everyday', 'landscape', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
+      const activeScene = ['portrait', 'everyday', 'landscape', 'night', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
       if (filmId && activeScene !== 'all' && activeScene !== 'archived') {
         const inActiveScene = (FILM_GUIDE_META[filmId]?.scenes || []).includes(activeScene);
         filmGuideSceneFilter = inActiveScene ? activeScene : 'all';
