@@ -4677,13 +4677,9 @@
         <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
           <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (15)</button>
           <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (4)</button>
-          <button class="filter-chip" data-fbrand="japanese" type="button">Japanese Style</button>
-          <button class="filter-chip" data-fbrand="coffee" type="button">Coffee Style</button>
           <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
-          <button class="filter-chip" data-fbrand="daylight" type="button">Daylight</button>
-          <button class="filter-chip" data-fbrand="warm" type="button">Golden Hour</button>
-          <button class="filter-chip" data-fbrand="night" type="button">Night &amp; Neon</button>
-          <button class="filter-chip" data-fbrand="bw" type="button">B&amp;W</button>
+          <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
+          <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
           <button class="filter-chip" data-fbrand="archived" id="btnFilmArchivedFilter" type="button">Archived (3)</button>
           <button class="filter-chip" id="btnOpenFilmGuide" type="button" title="Film rolls guide & shooting tips" style="color:#f5a623;border-color:rgba(245,166,35,0.45);">? Guide</button>
         </div>
@@ -4749,13 +4745,9 @@
         </div>
         <div class="h-scroll" id="filmGuideScenarios" style="margin-bottom:6px;">
           <button class="filter-chip active" data-gscene="all" type="button">All (15)</button>
-          <button class="filter-chip" data-gscene="japanese" type="button">Japanese Style</button>
-          <button class="filter-chip" data-gscene="coffee" type="button">Coffee Style</button>
           <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
-          <button class="filter-chip" data-gscene="daylight" type="button">Daylight</button>
-          <button class="filter-chip" data-gscene="warm" type="button">Golden Hour</button>
-          <button class="filter-chip" data-gscene="night" type="button">Night &amp; Neon</button>
-          <button class="filter-chip" data-gscene="bw" type="button">B&amp;W</button>
+          <button class="filter-chip" data-gscene="everyday" type="button">Everyday</button>
+          <button class="filter-chip" data-gscene="landscape" type="button">Landscape</button>
           <button class="filter-chip" data-gscene="archived" type="button">Archived (3)</button>
         </div>
         <div class="film-guide-list" id="filmGuideList"></div>
@@ -4965,24 +4957,24 @@
   FILM_STOCKS.forEach(film => { film.subtitle = FILM_SUBTITLES_EN[film.id]; });
 
   const FILM_GUIDE_META = {
-    'fuji-pro-400h': { scenes: ['portrait', 'daylight', 'japanese', 'coffee'], tip: 'Airy pastel teal for overcast portraits, weddings & minimal cafes.' },
-    'fuji-superia-400': { scenes: ['daylight', 'japanese'], tip: 'Everyday street stock with crisp Japanese greens & lively contrast (PnS / SLR).' },
-    'fuji-superia-premium-400': { scenes: ['portrait', 'daylight', 'japanese'], tip: 'Warmer Japanese skin tones and softer shadows than X-Tra 400.' },
-    'fuji-fujicolor-100': { scenes: ['daylight', 'japanese'], tip: 'Clean, tight fine-grain daylight roll for sunny city walks & architecture.' },
-    'fuji-classic-chrome': { scenes: ['daylight', 'portrait', 'coffee'], tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.' },
-    'kodak-portra-160': { scenes: ['portrait', 'daylight', 'japanese'], tip: 'Ultra-fine pastel grain for bright daylight fashion & soft sunlit skin.' },
-    'kodak-portra-400': { scenes: ['portrait', 'warm', 'coffee'], tip: 'All-around portrait & cafe champion with creamy skin tones & highlight latitude.' },
-    'kodak-portra-800': { scenes: ['warm', 'night', 'portrait', 'coffee'], tip: 'Richer sunset warmth and speed for twilight, cozy indoor cafes & golden hour.' },
-    'kodak-gold-200': { scenes: ['warm', 'daylight', 'coffee'], tip: 'Nostalgic amber glow made for golden hour, wooden cafes & late-afternoon sun.' },
-    'kodak-colorplus-200': { scenes: ['warm', 'daylight', 'coffee'], tip: 'Crisp retro contrast and sandy warmth for travel, vintage cafes & street.' },
-    'kodak-ultramax-400': { scenes: ['daylight', 'warm'], tip: 'Punchy deep blues and vibrant everyday color — great with Disposable / PnS.' },
-    'kodak-ektar-100': { scenes: ['daylight'], tip: 'Boldest saturation and ultra-fine detail for landscapes, nature & travel scenery.' },
-    'cinestill-800t': { scenes: ['night', 'japanese'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation.' },
-    'cyberpunk-640t': { scenes: ['night'], tip: 'Electric cyan-violet shadows & strong orange-red halo — great for night & 2×.' },
-    'lomo-800': { scenes: ['night', 'warm', 'coffee'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & parties.' },
-    'popho-luminar-100': { scenes: ['daylight', 'warm'], tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range.' },
-    'ilford-hp5': { scenes: ['bw'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
-    'agfa-apx-400': { scenes: ['bw', 'portrait', 'coffee'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
+    'fuji-pro-400h': { scenes: ['portrait', 'everyday'], tip: 'Airy pastel teal for overcast portraits, weddings & minimal cafes.' },
+    'fuji-superia-400': { scenes: ['everyday'], tip: 'Everyday street stock with crisp Japanese greens & lively contrast (PnS / SLR).' },
+    'fuji-superia-premium-400': { scenes: ['portrait', 'everyday'], tip: 'Warmer Japanese skin tones and softer shadows than X-Tra 400.' },
+    'fuji-fujicolor-100': { scenes: ['landscape', 'everyday'], tip: 'Clean, tight fine-grain daylight roll for sunny landscapes, city walks & architecture.' },
+    'fuji-classic-chrome': { scenes: ['everyday', 'portrait'], tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.' },
+    'kodak-portra-160': { scenes: ['portrait', 'landscape'], tip: 'Ultra-fine pastel grain for bright daylight portraits, fashion & soft sunlit scenery.' },
+    'kodak-portra-400': { scenes: ['portrait', 'everyday'], tip: 'All-around portrait & everyday champion with creamy skin tones & highlight latitude.' },
+    'kodak-portra-800': { scenes: ['portrait', 'everyday'], tip: 'Richer sunset warmth and speed for twilight portraits, cozy indoor cafes & golden hour.' },
+    'kodak-gold-200': { scenes: ['everyday', 'landscape'], tip: 'Nostalgic amber glow made for golden hour, travel landscapes & everyday sun.' },
+    'kodak-colorplus-200': { scenes: ['everyday', 'landscape'], tip: 'Crisp retro contrast and sandy warmth for travel, vintage cafes & street.' },
+    'kodak-ultramax-400': { scenes: ['everyday', 'landscape'], tip: 'Punchy deep blues and vibrant everyday color — great for street & travel.' },
+    'kodak-ektar-100': { scenes: ['landscape'], tip: 'Boldest saturation and ultra-fine detail for landscapes, nature & travel scenery.' },
+    'cinestill-800t': { scenes: ['everyday'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation for night streets.' },
+    'cyberpunk-640t': { scenes: ['everyday'], tip: 'Electric cyan-violet shadows & strong orange-red halo — great for night streets & 2×.' },
+    'lomo-800': { scenes: ['everyday'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.' },
+    'popho-luminar-100': { scenes: ['landscape'], tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range for landscapes.' },
+    'ilford-hp5': { scenes: ['everyday'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
+    'agfa-apx-400': { scenes: ['portrait', 'everyday'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
   };
 
   const TWEAK_DEFS = [
@@ -8017,7 +8009,7 @@
     });
 
     // 3. Film Stocks Track (active rolls by scene + extra rolls in Archived)
-    const validFilmFilters = new Set(['all', 'match', 'japanese', 'coffee', 'portrait', 'daylight', 'warm', 'night', 'bw', 'archived']);
+    const validFilmFilters = new Set(['all', 'match', 'portrait', 'everyday', 'landscape', 'archived']);
     if (!validFilmFilters.has(state.filmBrandFilter)) state.filmBrandFilter = 'all';
     const activeFilms = FILM_STOCKS.filter(f => !f.archived);
     const archivedFilms = FILM_STOCKS.filter(f => !!f.archived);
@@ -13217,7 +13209,7 @@
     if (stock?.archived) {
       filmGuideSceneFilter = 'archived';
     } else {
-      const activeScene = ['japanese', 'coffee', 'portrait', 'daylight', 'warm', 'night', 'bw', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
+      const activeScene = ['portrait', 'everyday', 'landscape', 'archived'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
       if (filmId && activeScene !== 'all' && activeScene !== 'archived') {
         const inActiveScene = (FILM_GUIDE_META[filmId]?.scenes || []).includes(activeScene);
         filmGuideSceneFilter = inActiveScene ? activeScene : 'all';
