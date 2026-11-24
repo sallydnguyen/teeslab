@@ -4682,7 +4682,7 @@
 
       <div class="picker-section" id="pickerSecFilm">
         <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (17)</button>
+          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (18)</button>
           <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (4)</button>
           <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
@@ -4751,7 +4751,7 @@
           <button class="btn-pill btn-ghost" id="btnCloseFilmGuide" type="button" style="height:26px;">✕</button>
         </div>
         <div class="h-scroll" id="filmGuideScenarios" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-gscene="all" type="button">All (17)</button>
+          <button class="filter-chip active" data-gscene="all" type="button">All (18)</button>
           <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-gscene="everyday" type="button">Everyday</button>
           <button class="filter-chip" data-gscene="landscape" type="button">Landscape</button>
@@ -4912,7 +4912,7 @@
 
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
-      { id: '20mm', mm: 20, minF: 1.8, maxF: 22, focusProfile: 'wide', focalTag: '20mm', aperture: 'f/1.8', label: '20mm f/1.8', short: '20mm', recScene: 'night', recScenes: ['night', 'landscape'], recFilms: ['cinestill-800t', 'lomo-800', 'kodak-portra-800', 'kodak-ektar-100'], tileSub: 'Night Sky · Ultra-wide', meta: '20mm f/1.8 · Ultra-wide fast prime for night sky, astrophotography & low-light landscapes', cropZoom: 1.0, barrelDistort: 0.020, apertureEV: 0.18, dofStrength: 0.34, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.14, edgeSoft: 0.014 },
+      { id: '20mm', mm: 20, minF: 1.8, maxF: 22, focusProfile: 'wide', focalTag: '20mm', aperture: 'f/1.8', label: '20mm f/1.8', short: '20mm', recScene: 'night', recScenes: ['night', 'landscape'], recFilms: ['cinestill-800t', 'kodak-vision3-500t', 'lomo-800', 'kodak-portra-800'], tileSub: 'Night Sky · Ultra-wide', meta: '20mm f/1.8 · Ultra-wide fast prime for night sky, astrophotography & low-light landscapes', cropZoom: 1.0, barrelDistort: 0.020, apertureEV: 0.18, dofStrength: 0.34, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.14, edgeSoft: 0.014 },
       { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
       { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: '85mm f/1.8 · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
@@ -4954,6 +4954,7 @@
 
     // Night & Low-Light
     { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.07, blackLift: 0.034, grainBase: 26, grainSize: 1.02, halationBase: 72, isBW: false },
+    { id: 'kodak-vision3-500t', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 500T', subtitle: 'Rich cinema tungsten & clean shadows', iso: 500, canisterColor: 'linear-gradient(180deg,#f59e0b,#0f766e,#111827)', edgeCode: 'KODAK 5219 500T   42', matrix: [0.96,0.02,0.02,-0.01,1.02,0.03,0.01,0.05,1.06], shadowTint: [-14,8,18], midTint: [-6,3,10], highlightTint: [11,6,-4], foliageShift: {gBoost:3,bShift:14,rShift:-10,satScale:0.95}, skyShift: {cyanBoost:18,bDepth:12}, redHueShift: -6, skinWarmth: 5, vibrance: 0.03, skinProtect: 0.78, saturation: 1.00, contrast: 1.01, blackLift: 0.038, grainBase: 22, grainSize: 0.96, halationBase: 14, isBW: false },
     { id: 'lomo-800', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, canisterColor: 'linear-gradient(180deg,#6d28d9,#dc2626,#eab308)', edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.08, blackLift: 0.022, grainBase: 29, grainSize: 1.08, halationBase: 28, isBW: false },
 
     // Black & White
@@ -4965,7 +4966,7 @@
     'kodak-gold-200': 'Warm golden-amber · Golden hour', 'kodak-colorplus-200': 'Soft vintage sand · Crisp contrast', 'fuji-superia-400': 'Signature Japanese greens', 'kodak-ultramax-400': 'Deep blue skies', 'fuji-classic-chrome': 'Muted vintage editorial',
     'kodak-portra-400': 'Smooth warm cream skin', 'kodak-portra-160': 'Fine pastel daylight skin', 'fuji-pro-400h': 'Pastel teal', 'fuji-superia-premium-400': 'Soft Japanese skin & greens', 'kodak-portra-800': 'Vivid warm sunsets',
     'kodak-ektar-100': 'Rich and ultra-fine', 'fuji-fujicolor-100': 'Crisp daylight cool-green', 'popho-luminar-100': 'Aerial warm reds & fine grain',
-    'cinestill-800t': 'Teal nights & red halation', 'lomo-800': 'Punchy warm night & amber',
+    'cinestill-800t': 'Teal nights & red halation', 'kodak-vision3-500t': 'Rich cinema tungsten & clean shadows', 'lomo-800': 'Punchy warm night & amber',
     'ilford-hp5': 'Documentary black & white', 'agfa-apx-400': 'Smooth silver monochrome'
   };
   FILM_STOCKS.forEach(film => { film.subtitle = FILM_SUBTITLES_EN[film.id]; });
@@ -4985,6 +4986,7 @@
     'fuji-fujicolor-100': { scenes: ['landscape', 'everyday'], tip: 'Clean, tight fine-grain daylight roll for sunny landscapes, city walks & architecture.' },
     'popho-luminar-100': { scenes: ['landscape'], tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range for landscapes.' },
     'cinestill-800t': { scenes: ['night', 'everyday'], tip: 'Tungsten cinema look with cool teal shadows & signature red neon halation for night streets.' },
+    'kodak-vision3-500t': { scenes: ['night', 'everyday'], tip: 'Motion picture 500T tungsten stock (5219) with remjet — wide dynamic range, cool night tones & clean highlights without heavy halation.' },
     'lomo-800': { scenes: ['night', 'everyday'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.' },
     'ilford-hp5': { scenes: ['everyday', 'night'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
     'agfa-apx-400': { scenes: ['portrait', 'everyday', 'night'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
