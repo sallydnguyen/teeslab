@@ -5347,6 +5347,12 @@
             g0 += ((src[pL2+1] + src[pR2+1] + src[pU2+1] + src[pD2+1]) * 0.25 - g0) * sf;
             b0 += ((src[pL2+2] + src[pR2+2] + src[pU2+2] + src[pD2+2]) * 0.25 - b0) * sf;
           }
+        } else if (!cfg.ecoPreview && width >= 1200 && x > 0 && x < width - 1 && y > 0 && y < height - 1) {
+          const pL = p - 4, pR = p + 4, pU = p - width * 4, pD = p + width * 4;
+          const acutance = 0.22;
+          r0 += (r0 - (src[pL] + src[pR] + src[pU] + src[pD]) * 0.25) * acutance;
+          g0 += (g0 - (src[pL+1] + src[pR+1] + src[pU+1] + src[pD+1]) * 0.25) * acutance;
+          b0 += (b0 - (src[pL+2] + src[pR+2] + src[pU+2] + src[pD+2]) * 0.25) * acutance;
         }
         if (phone.blueTame > 0 || phone.greenTame > 0 || phone.satScale !== 1) {
           const gray0 = 0.299 * r0 + 0.587 * g0 + 0.114 * b0;
@@ -9931,7 +9937,7 @@
 
   function getCameraCaptureDimensions(body, lens, src = null) {
     const ratio = getBodyAspect(body, lens);
-    let maxLong = 2560;
+    let maxLong = 3840;
     const srcW = src?.videoWidth || src?.width || 0;
     const srcH = src?.videoHeight || src?.height || 0;
     if (srcW > 0 && srcH > 0) {
@@ -9941,7 +9947,7 @@
       else sh = srcW / ratio;
       const z = Math.max(1, lens?.cropZoom || 1);
       const croppedLong = Math.max(sw / z, sh / z);
-      maxLong = Math.min(2560, Math.max(640, Math.round(croppedLong)));
+      maxLong = Math.min(3840, Math.max(640, Math.round(croppedLong)));
     }
     if (ratio >= 1) {
       const w = maxLong;
@@ -10244,10 +10250,10 @@
     const land = isCameraViewportLandscape();
     return {
       facingMode: state.camFacing,
-      width: { ideal: land ? (hiRes ? 1440 : 960) : (hiRes ? 1080 : 720) },
-      height: { ideal: land ? (hiRes ? 1080 : 720) : (hiRes ? 1440 : 960) },
+      width: { ideal: land ? (hiRes ? 4032 : 1440) : (hiRes ? 3024 : 1080) },
+      height: { ideal: land ? (hiRes ? 3024 : 1080) : (hiRes ? 4032 : 1440) },
       aspectRatio: { ideal: land ? (4 / 3) : (3 / 4) },
-      frameRate: { ideal: 12, max: 15 }
+      frameRate: { ideal: 15, max: 24 }
     };
   }
 
@@ -11224,8 +11230,8 @@
       }
       try {
         await track.applyConstraints({
-          width: { ideal: wantLandscape ? 1440 : 1080 },
-          height: { ideal: wantLandscape ? 1080 : 1440 },
+          width: { ideal: wantLandscape ? 4032 : 3024 },
+          height: { ideal: wantLandscape ? 3024 : 4032 },
           aspectRatio: { ideal: wantLandscape ? (4 / 3) : (3 / 4) }
         });
       } catch (ignored) {}
@@ -11308,7 +11314,7 @@
     let capW = 0, capH = 0;
 
     if (opts.mixCanvas) {
-      const mScale = Math.min(1, 2560 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
+      const mScale = Math.min(1, 3840 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
       capW = Math.max(1, Math.round(opts.mixCanvas.width * mScale));
       capH = Math.max(1, Math.round(opts.mixCanvas.height * mScale));
       capC.width = capW; capC.height = capH;
@@ -11335,7 +11341,7 @@
       blendDoubleExposureBuffers(srcData.data, mixData.data, opts.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
       cCtx.putImageData(srcData, 0, 0);
     } else if (opts.sourceCanvas) {
-      const scale = Math.min(1, 2560 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
+      const scale = Math.min(1, 3840 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
       capW = Math.max(1, Math.round(opts.sourceCanvas.width * scale));
       capH = Math.max(1, Math.round(opts.sourceCanvas.height * scale));
       capC.width = capW; capC.height = capH;
@@ -11343,7 +11349,7 @@
       cCtx.drawImage(opts.sourceCanvas, 0, 0, capW, capH);
     } else {
       const rawBitmap = await createImageBitmap(rawBlob);
-      const scale = Math.min(1, 2560 / Math.max(rawBitmap.width, rawBitmap.height));
+      const scale = Math.min(1, 3840 / Math.max(rawBitmap.width, rawBitmap.height));
       capW = Math.max(1, Math.round(rawBitmap.width * scale));
       capH = Math.max(1, Math.round(rawBitmap.height * scale));
       capC.width = capW; capC.height = capH;
@@ -11373,8 +11379,8 @@
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
         isDiptych: !!opts.isDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.96, transferBuffers: true }),
-      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.95)
+      }, { output: 'blob', quality: 0.98, transferBuffers: true }),
+      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.98)
     ]);
     const camSpec = buildFilmInfoSpec({
       fromCamera: true,
@@ -12088,11 +12094,14 @@
       const img = new Image();
       img.onload = () => {
         URL.revokeObjectURL(url);
-        const scale = Math.min(1, 3200 / Math.max(img.naturalWidth, img.naturalHeight));
+        const scale = Math.min(1, 4096 / Math.max(img.naturalWidth, img.naturalHeight));
         const c = document.createElement('canvas');
         c.width = Math.round(img.naturalWidth * scale);
         c.height = Math.round(img.naturalHeight * scale);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const iCtx = c.getContext('2d');
+        iCtx.imageSmoothingEnabled = true;
+        iCtx.imageSmoothingQuality = 'high';
+        iCtx.drawImage(img, 0, 0, c.width, c.height);
         if (state.sampleSheetTargetMode === 'cam-mx1') {
           state.sampleSheetTargetMode = 'primary';
           state.doubleExpMode = true;
@@ -12392,12 +12401,12 @@
     if (!state.fullSourceCanvas) return null;
     const key = getExportCacheKey();
     const hasMx = !state.labOriginalMode && !!state.labDoubleExpCanvas;
-    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 3072, false, 0, hasMx);
+    const src = buildLabCroppedCanvas(state.fullSourceCanvas, 4096, false, 0, hasMx);
     const { phone, body, lens, film } = getSelectedGear();
     const spec = buildFilmInfoSpec();
     let baseBlob;
     if (state.labOriginalMode) {
-      baseBlob = await canvasToJpegBlob(src, 0.96);
+      baseBlob = await canvasToJpegBlob(src, 0.98);
     } else {
       const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
       let mixImageData = null;
@@ -12411,7 +12420,7 @@
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.96, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+      }, { output: 'blob', quality: 0.98, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
       baseBlob = output?.blob;
     }
     if (!baseBlob) return null;
