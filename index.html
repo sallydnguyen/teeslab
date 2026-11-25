@@ -1832,7 +1832,7 @@
       opacity: 0;
       transition: opacity 0.15s ease;
     }
-    .vf-stage[data-vf-mode="slr"] .vf-corner { opacity: 0.92; }
+    .vf-stage[data-vf-mode="slr"] .vf-corner { opacity: 0; }
     .vf-stage[data-vf-mode="disposable"] .vf-corner { opacity: 0.85; }
     .vf-corner.tl { top: 8px; left: 8px; border-width: 1.8px 0 0 1.8px; }
     .vf-corner.tr { top: 8px; right: 8px; border-width: 1.8px 1.8px 0 0; }
@@ -2329,7 +2329,16 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
     }
 
-    /* SLR 3:2 — High-Contrast Matte Screen + Split-Prism Circle + Readable LED Exposure Meter */
+    /* SLR 3:2 (Nikon F6) — Optical Frame, Multi-CAM 2000 11-AF Screen, Right Bargraph Meter, Bottom Prism LCD */
+    .vf-stage[data-vf-mode="slr"] #cameraViewfinderCanvas,
+    .vf-stage[data-vf-mode="slr"] .vf-gl-canvas {
+      width: calc(100% - 28px);
+      height: calc(100% - 24px);
+      inset: 0 auto auto 0;
+    }
+    .vf-stage[data-vf-mode="slr"] .vf-mx-bar {
+      right: 34px;
+    }
     .vf-slr-overlay {
       position: absolute;
       inset: 0;
@@ -2337,217 +2346,191 @@
       pointer-events: none;
     }
     .vf-stage[data-vf-mode="slr"] .vf-slr-overlay { display: block; }
-    .vf-slr-matte {
+    .vf-slr-glass {
       position: absolute;
-      inset: 8px;
-      border: 1px solid rgba(255,255,255,0.28);
-      border-radius: 2px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.32), inset 0 0 20px rgba(0,0,0,0.22);
-    }
-    .vf-slr-tick {
-      position: absolute;
-      background: rgba(255,255,255,0.72);
-      box-shadow: 0 0 2px rgba(0,0,0,0.85);
-    }
-    .vf-slr-tick.t, .vf-slr-tick.b { left: 50%; width: 1.5px; height: 7px; transform: translateX(-50%); }
-    .vf-slr-tick.t { top: 0; }
-    .vf-slr-tick.b { display: none; }
-    .vf-slr-tick.l, .vf-slr-tick.r { top: 50%; height: 1.5px; width: 7px; transform: translateY(-50%); }
-    .vf-slr-tick.l { left: 0; }
-    .vf-slr-tick.r { right: 0; }
-    .vf-slr-focus-ring {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 72px;
-      height: 72px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.78);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.62), inset 0 0 0 1px rgba(0,0,0,0.45);
-      transition: border-color 0.14s ease, box-shadow 0.14s ease;
-    }
-    .vf-slr-focus-ring.in-focus {
-      border-color: rgba(74, 222, 128, 0.88);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.65), 0 0 12px rgba(74, 222, 128, 0.28);
-    }
-    .vf-slr-microprism {
-      position: absolute;
-      inset: 8px;
-      border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,0.58);
-      background: radial-gradient(circle, transparent 58%, rgba(255,255,255,0.08) 59%, transparent 62%);
-      transition: border-color 0.14s ease;
-    }
-    .vf-slr-focus-ring.mf-off .vf-slr-microprism {
-      border-color: rgba(251, 191, 36, 0.9);
-    }
-    .vf-slr-split {
-      position: absolute;
-      inset: 16px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.88);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.65);
+      inset: 0 28px 24px 0;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.22);
       overflow: hidden;
     }
-    .vf-slr-split::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 1.5px;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 0 3px rgba(0,0,0,0.85);
-    }
-    .vf-slr-split-half {
-      position: absolute;
-      left: 50%;
-      width: 2.5px;
-      height: 50%;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.75);
-      transition: transform 0.08s ease-out, opacity 0.12s ease;
-    }
-    .vf-slr-split-half.top {
-      top: 0;
-      transform: translateX(calc(-50% - var(--split-shift, 0px)));
-    }
-    .vf-slr-split-half.bot {
-      bottom: 0;
-      transform: translateX(calc(-50% + var(--split-shift, 0px)));
-    }
-    .vf-slr-focus-ring.in-focus .vf-slr-split-half {
-      background: #4ade80;
-    }
-    .vf-slr-focus-ring.mf-off .vf-slr-split-half {
-      background: #fbbf24;
-    }
-    .vf-slr-meter {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 54px;
-      height: 116px;
-      padding: 2px;
-      border-radius: 8px;
-      background: rgba(6, 8, 12, 0.72);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.48);
-    }
-    .vf-slr-meter-svg {
+    .vf-f6-reticle-svg {
       width: 100%;
       height: 100%;
       display: block;
-      overflow: visible;
     }
-    .vf-slr-meter .meter-num {
-      font-family: var(--mono);
-      font-size: 7.4px;
-      font-weight: 700;
-      fill: rgba(255,255,255,0.62);
+    .vf-f6-af-pt .af-back {
+      stroke: rgba(255, 255, 255, 0.24);
+      stroke-width: 2.0;
+      stroke-linecap: square;
     }
-    .vf-slr-meter .meter-sym {
+    .vf-f6-af-pt .af-ink {
+      stroke: rgba(14, 17, 22, 0.78);
+      stroke-width: 1.15;
+      stroke-linecap: square;
+      transition: stroke 0.14s ease, filter 0.14s ease;
+    }
+    .vf-f6-af-pt.active .af-ink {
+      stroke: #dc2626;
+      filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.45));
+    }
+
+    .vf-slr-right-bezel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 24px;
+      width: 28px;
+      background: #040507;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vf-slr-meter {
+      width: 28px;
+      height: min(156px, 86%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d6f826;
+    }
+    .vf-f6-meter-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 2px rgba(214, 248, 38, 0.35));
+    }
+    .vf-f6-meter-svg .f6-meter-sym {
       font-family: var(--mono);
       font-size: 11px;
       font-weight: 800;
-      fill: rgba(255,255,255,0.74);
+      fill: rgba(214, 248, 38, 0.85);
     }
-    .vf-slr-needle-arm {
-      transform-box: view-box;
-      transform-origin: 48px 60px;
-      transition: transform 0.18s cubic-bezier(0.22, 1.25, 0.36, 1);
+    .vf-f6-meter-svg .f6-meter-zero {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      fill: #d6f826;
     }
-    .vf-slr-meter[data-state="ok"] .meter-target-ring {
-      stroke: #4ade80;
-      filter: drop-shadow(0 0 3px rgba(74, 222, 128, 0.85));
+    .vf-f6-meter-svg .f6-scale-tick {
+      stroke: rgba(214, 248, 38, 0.82);
+      stroke-width: 1.3;
     }
-    .vf-slr-meter[data-state="ok"] .meter-notch {
-      stroke: #4ade80;
+    .vf-f6-meter-svg .f6-scale-tick.zero {
+      stroke: #d6f826;
+      stroke-width: 1.8;
     }
-    .vf-slr-meter[data-state="ok"] .vf-slr-needle-tip {
-      fill: #4ade80;
+    .vf-f6-meter-svg .f6-scale-dot {
+      fill: rgba(214, 248, 38, 0.72);
     }
-    .vf-slr-meter[data-state="over"] .meter-sym.plus {
+    .vf-f6-bar {
+      fill: rgba(214, 248, 38, 0.10);
+      transition: fill 0.12s ease;
+    }
+    .vf-f6-bar.lit {
+      fill: #d6f826;
+    }
+    .vf-f6-bar.lit.head {
+      fill: #e7ff4f;
+    }
+    .vf-slr-meter[data-state="over"] .f6-meter-sym.plus {
       fill: #f87171;
+      filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.65));
     }
-    .vf-slr-meter[data-state="over"] .vf-slr-needle-tip {
-      fill: #ef4444;
-    }
-    .vf-slr-meter[data-state="under"] .meter-sym.minus {
+    .vf-slr-meter[data-state="under"] .f6-meter-sym.minus {
       fill: #fbbf24;
-    }
-    .vf-slr-meter[data-state="under"] .vf-slr-needle-tip {
-      fill: #f59e0b;
+      filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.65));
     }
 
-    /* SLR Optical Viewfinder Aperture + Shutter Readout Bar */
-    .vf-slr-readout {
+    /* Bottom Optical Black LCD Bezel (Nikon F6 readout strip) */
+    .vf-slr-bottom-bezel {
       position: absolute;
-      left: 50%;
-      bottom: 8px;
-      transform: translateX(-50%);
-      display: inline-flex;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 24px;
+      background: #040507;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 2px 9px;
-      border-radius: 5px;
-      background: rgba(5, 7, 11, 0.82);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.16);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.52);
+      justify-content: center;
+      padding: 0 28px 0 10px;
+    }
+    .vf-slr-readout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      color: #d6f826;
+      text-shadow: 0 0 4px rgba(214, 248, 38, 0.35);
       font-family: var(--mono);
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 800;
-      line-height: 1.25;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
       white-space: nowrap;
     }
-    .vf-slr-mode {
-      font-size: 9px;
-      padding: 0 4px;
-      border-radius: 3px;
-      background: rgba(74, 222, 128, 0.14);
-      border: 1px solid rgba(74, 222, 128, 0.45);
-      color: #86efac;
+    .vf-f6-focus-dot {
+      font-size: 10px;
+      line-height: 1;
+      color: rgba(214, 248, 38, 0.42);
     }
-    .vf-slr-mode.is-manual {
-      background: rgba(34, 211, 238, 0.14);
-      border-color: rgba(34, 211, 238, 0.55);
-      color: var(--cyan-bright);
+    .vf-f6-focus-dot.in-focus {
+      color: #d6f826;
+    }
+    .vf-f6-focus-dot.mf-off {
+      color: #fbbf24;
+    }
+    .vf-f6-matrix-ico {
+      width: 14px;
+      height: 11px;
+      flex-shrink: 0;
+      color: #d6f826;
+    }
+    .vf-slr-mode {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #d6f826;
     }
     .vf-slr-shutter {
-      color: #4ade80;
-      text-shadow: 0 0 6px rgba(74, 222, 128, 0.42);
+      min-width: 24px;
+      text-align: right;
+      color: #d6f826;
     }
     .vf-slr-shutter.is-slow {
       color: #fbbf24;
-      text-shadow: 0 0 6px rgba(251, 191, 36, 0.45);
-    }
-    .vf-slr-sep {
-      color: rgba(255,255,255,0.34);
-      font-weight: 400;
+      text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
     }
     .vf-slr-aperture {
-      color: #f8fafc;
+      color: #d6f826;
+    }
+    .vf-f6-fchar {
+      font-size: 8.5px;
+      margin-right: 1px;
+      opacity: 0.92;
     }
     .vf-slr-bias {
       font-size: 9px;
-      padding: 0 4px;
+      padding: 0 3px;
       border-radius: 3px;
-      background: var(--cyan-dim);
-      border: 1px solid var(--cyan-border);
-      color: var(--cyan-bright);
+      border: 1px solid rgba(214, 248, 38, 0.5);
+      color: #d6f826;
     }
     .vf-slr-ael {
       font-size: 8.5px;
-      padding: 0 4px;
+      padding: 0 3px;
       border-radius: 3px;
-      background: rgba(34, 211, 238, 0.18);
-      border: 1px solid var(--cyan);
-      color: var(--cyan-bright);
+      background: rgba(214, 248, 38, 0.16);
+      border: 1px solid rgba(214, 248, 38, 0.6);
+      color: #e7ff4f;
+    }
+    .vf-f6-batt-ico {
+      width: 15px;
+      height: 9px;
+      flex-shrink: 0;
+      color: #d6f826;
+    }
+    .vf-f6-frame-cnt {
+      font-size: 10.5px;
+      color: #d6f826;
+      letter-spacing: 0.3px;
     }
 
     /* Rangefinder 3:2 — Wide Field + Outside-the-frame + Resizing Brightlines */
@@ -5389,56 +5372,92 @@
               <div class="vf-corner bl"></div>
               <div class="vf-corner br"></div>
 
-              <!-- SLR: Ground Glass Corners + Center Split-Prism Circle + LED Exposure Meter -->
+              <!-- SLR (Nikon F6): Multi-CAM 2000 11-Point AF Screen + Vertical LCD Meter + Bottom Prism LCD -->
               <div class="vf-slr-overlay">
-                <div class="vf-slr-matte">
-                  <span class="vf-slr-tick t"></span>
-                  <span class="vf-slr-tick b"></span>
-                  <span class="vf-slr-tick l"></span>
-                  <span class="vf-slr-tick r"></span>
-                </div>
-                <div class="vf-slr-focus-ring in-focus" id="vfSlrFocusRing">
-                  <div class="vf-slr-microprism"></div>
-                  <div class="vf-slr-split">
-                    <span class="vf-slr-split-half top"></span>
-                    <span class="vf-slr-split-half bot"></span>
-                  </div>
-                </div>
-                <!-- Classic SLR Analog Match-Needle Light Meter -->
-                <div class="vf-slr-meter" id="vfSlrMeter" data-state="ok" aria-hidden="true">
-                  <svg class="vf-slr-meter-svg" viewBox="0 0 56 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <text x="25" y="21" text-anchor="middle" class="meter-sym plus">+</text>
-                    <path d="M26.6 36.2 A32 32 0 0 0 26.6 83.8" stroke="rgba(255,255,255,0.22)" stroke-width="0.9" stroke-dasharray="1.8 2.2"/>
-                    <line x1="20.4" y1="36.9" x2="24.2" y2="40.1" stroke="rgba(255,255,255,0.58)" stroke-width="1.2"/>
-                    <text x="12.5" y="37" text-anchor="middle" class="meter-num">+2</text>
-                    <line x1="14.6" y1="47.9" x2="18.6" y2="49.3" stroke="rgba(255,255,255,0.48)" stroke-width="1.1"/>
-                    <text x="8" y="49" text-anchor="middle" class="meter-num">+1</text>
-                    <path d="M19 54.5 H22.5 V65.5 H19" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" fill="none" class="meter-notch"/>
-                    <circle cx="16" cy="60" r="3.4" stroke="rgba(255,255,255,0.72)" stroke-width="1.3" class="meter-target-ring"/>
-                    <line x1="14.6" y1="72.1" x2="18.6" y2="70.7" stroke="rgba(255,255,255,0.48)" stroke-width="1.1"/>
-                    <text x="8" y="76.5" text-anchor="middle" class="meter-num">-1</text>
-                    <line x1="20.4" y1="83.1" x2="24.2" y2="79.9" stroke="rgba(255,255,255,0.58)" stroke-width="1.2"/>
-                    <text x="12.5" y="89" text-anchor="middle" class="meter-num">-2</text>
-                    <text x="25" y="104" text-anchor="middle" class="meter-sym minus">−</text>
-                    <g id="vfSlrNeedleArm" class="vf-slr-needle-arm">
-                      <rect x="0" y="0" width="56" height="120" fill="transparent" opacity="0"/>
-                      <line x1="51" y1="60" x2="16" y2="60" stroke="rgba(0,0,0,0.7)" stroke-width="2.6" stroke-linecap="round"/>
-                      <line x1="51" y1="60" x2="16" y2="60" class="vf-slr-needle-shaft" stroke="#f8fafc" stroke-width="1.45" stroke-linecap="round"/>
-                      <circle cx="16" cy="60" r="2.0" class="vf-slr-needle-tip" fill="#4ade80"/>
-                    </g>
-                    <circle cx="48" cy="60" r="3.3" fill="#181c24" stroke="rgba(255,255,255,0.5)" stroke-width="1.1"/>
-                    <circle cx="48" cy="60" r="1.2" fill="#e2e8f0"/>
+                <div class="vf-slr-glass">
+                  <svg class="vf-f6-reticle-svg" id="vfSlrF6Reticle" viewBox="0 0 360 240" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- 12mm center-weighted reference circle -->
+                    <circle cx="180" cy="120" r="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.9"/>
+                    <circle cx="180" cy="120" r="45.2" stroke="rgba(12,16,20,0.42)" stroke-width="0.8"/>
+                    <!-- 11 Multi-CAM 2000 AF brackets (3 - 5 - 3 layout) -->
+                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.31"><path class="af-back" d="M124 68.5 H121 V79.5 H124 M132 68.5 H135 V79.5 H132"/><path class="af-ink" d="M124 68.5 H121 V79.5 H124 M132 68.5 H135 V79.5 H132"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.50" data-ny="0.31"><path class="af-back" d="M176 68.5 H173 V79.5 H176 M184 68.5 H187 V79.5 H184"/><path class="af-ink" d="M176 68.5 H173 V79.5 H176 M184 68.5 H187 V79.5 H184"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.31"><path class="af-back" d="M228 68.5 H225 V79.5 H228 M236 68.5 H239 V79.5 H236"/><path class="af-ink" d="M228 68.5 H225 V79.5 H228 M236 68.5 H239 V79.5 H236"/></g>
+
+                    <g class="vf-f6-af-pt" data-nx="0.23" data-ny="0.50"><path class="af-back" d="M80 114.5 H77 V125.5 H80 M88 114.5 H91 V125.5 H88"/><path class="af-ink" d="M80 114.5 H77 V125.5 H80 M88 114.5 H91 V125.5 H88"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.50"><path class="af-back" d="M124 114.5 H121 V125.5 H124 M132 114.5 H135 V125.5 H132"/><path class="af-ink" d="M124 114.5 H121 V125.5 H124 M132 114.5 H135 V125.5 H132"/></g>
+                    <g class="vf-f6-af-pt active" data-nx="0.50" data-ny="0.50"><path class="af-back" d="M176 114.5 H173 V125.5 H176 M184 114.5 H187 V125.5 H184"/><path class="af-ink" d="M176 114.5 H173 V125.5 H176 M184 114.5 H187 V125.5 H184"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.50"><path class="af-back" d="M228 114.5 H225 V125.5 H228 M236 114.5 H239 V125.5 H236"/><path class="af-ink" d="M228 114.5 H225 V125.5 H228 M236 114.5 H239 V125.5 H236"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.77" data-ny="0.50"><path class="af-back" d="M272 114.5 H269 V125.5 H272 M280 114.5 H283 V125.5 H280"/><path class="af-ink" d="M272 114.5 H269 V125.5 H272 M280 114.5 H283 V125.5 H280"/></g>
+
+                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.69"><path class="af-back" d="M124 160.5 H121 V171.5 H124 M132 160.5 H135 V171.5 H132"/><path class="af-ink" d="M124 160.5 H121 V171.5 H124 M132 160.5 H135 V171.5 H132"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.50" data-ny="0.69"><path class="af-back" d="M176 160.5 H173 V171.5 H176 M184 160.5 H187 V171.5 H184"/><path class="af-ink" d="M176 160.5 H173 V171.5 H176 M184 160.5 H187 V171.5 H184"/></g>
+                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.69"><path class="af-back" d="M228 160.5 H225 V171.5 H228 M236 160.5 H239 V171.5 H236"/><path class="af-ink" d="M228 160.5 H225 V171.5 H228 M236 160.5 H239 V171.5 H236"/></g>
                   </svg>
                 </div>
 
-                <!-- Classic SLR Optical Prism Aperture + Shutter Readout -->
-                <div class="vf-slr-readout" id="vfSlrReadout" aria-hidden="true">
-                  <span class="vf-slr-mode" id="vfSlrModeTag">A</span>
-                  <span class="vf-slr-shutter" id="vfSlrShutterVal">1/250</span>
-                  <span class="vf-slr-sep">·</span>
-                  <span class="vf-slr-aperture" id="vfSlrApertureVal">f/3.5</span>
-                  <span class="vf-slr-bias" id="vfSlrBiasVal" style="display:none;">+0.0</span>
-                  <span class="vf-slr-ael" id="vfSlrAelVal" style="display:none;">AE-L</span>
+                <!-- Right Prism Column: Nikon F6 Vertical Yellow-Lime Analog Bargraph Exposure Meter -->
+                <div class="vf-slr-right-bezel">
+                  <div class="vf-slr-meter" id="vfSlrMeter" data-state="ok" data-step="0" aria-hidden="true">
+                    <svg class="vf-f6-meter-svg" viewBox="0 0 28 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <text x="19" y="21" text-anchor="middle" class="f6-meter-sym plus">+</text>
+                      <!-- Scale track ticks & 1/3 EV dots -->
+                      <line x1="12" y1="29" x2="19.5" y2="29" class="f6-scale-tick major"/>
+                      <rect x="14.5" y="36.3" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <rect x="14.5" y="44.8" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <line x1="13" y1="54.5" x2="18.5" y2="54.5" class="f6-scale-tick"/>
+                      <rect x="14.5" y="61.8" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <rect x="14.5" y="70.3" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <line x1="11.5" y1="80" x2="19.5" y2="80" class="f6-scale-tick zero"/>
+                      <text x="23.5" y="83" text-anchor="middle" class="f6-meter-zero">0</text>
+                      <rect x="14.5" y="87.3" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <rect x="14.5" y="95.8" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <line x1="13" y1="105.5" x2="18.5" y2="105.5" class="f6-scale-tick"/>
+                      <rect x="14.5" y="112.8" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <rect x="14.5" y="121.3" width="2.4" height="2.4" class="f6-scale-dot"/>
+                      <line x1="12" y1="131" x2="19.5" y2="131" class="f6-scale-tick major"/>
+                      <text x="19" y="143.5" text-anchor="middle" class="f6-meter-sym minus">−</text>
+                      <!-- 13 Dynamic Exposure Bargraph Segments (+6 .. 0 .. -6) -->
+                      <g id="vfSlrBarSegments">
+                        <rect x="4" y="27.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="6"/>
+                        <rect x="4" y="36.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="5"/>
+                        <rect x="4" y="44.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="4"/>
+                        <rect x="4" y="53.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="3"/>
+                        <rect x="4" y="61.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="2"/>
+                        <rect x="4" y="70.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar lit" data-step="1"/>
+                        <rect x="3" y="78.7" width="6.8" height="2.8" rx="0.5" class="vf-f6-bar lit head" data-step="0"/>
+                        <rect x="4" y="87.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar lit" data-step="-1"/>
+                        <rect x="4" y="95.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-2"/>
+                        <rect x="4" y="104.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-3"/>
+                        <rect x="4" y="112.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-4"/>
+                        <rect x="4" y="121.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-5"/>
+                        <rect x="4" y="129.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-6"/>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Bottom Prism LCD Bezel: Focus Dot · Matrix Icon · Mode · Shutter · Aperture · Bias · Battery · [Frame] -->
+                <div class="vf-slr-bottom-bezel">
+                  <div class="vf-slr-readout" id="vfSlrReadout" aria-hidden="true">
+                    <span class="vf-f6-focus-dot in-focus" id="vfSlrFocusConfirm">●</span>
+                    <svg class="vf-f6-matrix-ico" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="0.8" y="0.8" width="12.4" height="9.4" rx="1.2" stroke="currentColor" stroke-width="1.2"/>
+                      <circle cx="7" cy="5.5" r="2.1" fill="currentColor"/>
+                    </svg>
+                    <span class="vf-slr-mode" id="vfSlrModeTag">A</span>
+                    <span class="vf-slr-shutter" id="vfSlrShutterVal">250</span>
+                    <span class="vf-slr-aperture" id="vfSlrApertureVal"><span class="vf-f6-fchar">F</span>3.5</span>
+                    <span class="vf-slr-bias" id="vfSlrBiasVal" style="display:none;">+0.0</span>
+                    <span class="vf-slr-ael" id="vfSlrAelVal" style="display:none;">AE-L</span>
+                    <svg class="vf-f6-batt-ico" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="0.8" y="1.2" width="12.5" height="7.6" rx="1" stroke="currentColor" stroke-width="1.15"/>
+                      <rect x="13.5" y="3.3" width="1.7" height="3.4" rx="0.5" fill="currentColor"/>
+                      <rect x="2.6" y="2.9" width="4" height="4.2" fill="currentColor"/>
+                      <rect x="7.5" y="2.9" width="4" height="4.2" fill="currentColor"/>
+                    </svg>
+                    <span class="vf-f6-frame-cnt" id="vfSlrFrameCount">[01]</span>
+                  </div>
                 </div>
               </div>
 
@@ -10624,11 +10643,25 @@
     const isMfOff = !lens.focusLocked && lens.focusMode === 'mf' && !inFocus;
     const clampedErr = Math.max(-1, Math.min(1, (lens.focusSignedErr || 0) * 2.4));
 
-    const slrRing = document.getElementById('vfSlrFocusRing');
-    if (slrRing) {
-      slrRing.classList.toggle('in-focus', inFocus);
-      slrRing.classList.toggle('mf-off', isMfOff);
-      slrRing.style.setProperty('--split-shift', `${(clampedErr * 7).toFixed(2)}px`);
+    const f6Confirm = document.getElementById('vfSlrFocusConfirm');
+    if (f6Confirm) {
+      f6Confirm.textContent = inFocus ? '●' : (clampedErr < 0 ? '◀' : '▶');
+      f6Confirm.classList.toggle('in-focus', inFocus);
+      f6Confirm.classList.toggle('mf-off', isMfOff);
+    }
+    const f6Pts = document.querySelectorAll('#vfSlrF6Reticle .vf-f6-af-pt');
+    if (f6Pts.length) {
+      const fx = Number.isFinite(state.focusPoint?.x) ? state.focusPoint.x : 0.5;
+      const fy = Number.isFinite(state.focusPoint?.y) ? state.focusPoint.y : 0.5;
+      let bestEl = f6Pts[5] || f6Pts[0];
+      let bestD = Infinity;
+      f6Pts.forEach(pt => {
+        const dx = (Number(pt.dataset.nx) || 0.5) - fx;
+        const dy = (Number(pt.dataset.ny) || 0.5) - fy;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) { bestD = d; bestEl = pt; }
+      });
+      f6Pts.forEach(pt => pt.classList.toggle('active', !lens.focusLocked && pt === bestEl));
     }
 
     const rfPatch = document.getElementById('vfRfPatch');
@@ -11630,20 +11663,30 @@
     const rawStops = info.isAuto
       ? evBias
       : (Math.log2(autoHz / Math.max(0.25, info.hz)) + evBias);
-    const clampedStops = Math.max(-2.3, Math.min(2.3, rawStops));
-    const angleDeg = clampedStops * 20;
+    const stepVal = Math.max(-6, Math.min(6, Math.round(rawStops * 3)));
     const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
 
     const meterEl = document.getElementById('vfSlrMeter');
-    const needleArm = document.getElementById('vfSlrNeedleArm');
-    if (meterEl) meterEl.dataset.state = meterState;
-    if (needleArm) needleArm.style.transform = `rotate(${angleDeg.toFixed(1)}deg)`;
+    if (meterEl) {
+      meterEl.dataset.state = meterState;
+      meterEl.dataset.step = String(stepVal);
+      meterEl.querySelectorAll('.vf-f6-bar[data-step]').forEach(bar => {
+        const s = Number(bar.dataset.step);
+        const lit = stepVal === 0
+          ? Math.abs(s) <= 1
+          : (stepVal > 0 ? (s >= 0 && s <= stepVal) : (s <= 0 && s >= stepVal));
+        const isHead = s === stepVal;
+        bar.classList.toggle('lit', lit);
+        bar.classList.toggle('head', isHead);
+      });
+    }
 
     const modeTag = document.getElementById('vfSlrModeTag');
     const shutterEl = document.getElementById('vfSlrShutterVal');
     const apEl = document.getElementById('vfSlrApertureVal');
     const biasEl = document.getElementById('vfSlrBiasVal');
     const aelEl = document.getElementById('vfSlrAelVal');
+    const frameCountEl = document.getElementById('vfSlrFrameCount');
 
     if (modeTag) {
       modeTag.textContent = info.isAuto ? 'A' : 'M';
@@ -11651,11 +11694,12 @@
     }
     if (shutterEl) {
       const sp = info.effectiveSpeed || '125';
-      shutterEl.textContent = (sp === '1"' || sp === '2"') ? sp : `1/${sp}`;
+      shutterEl.textContent = sp;
       shutterEl.classList.toggle('is-slow', info.shakeRisk >= 0.45);
     }
     if (apEl) {
-      apEl.textContent = formatApertureLabel(lens?.activeF || lens?.minF || 3.5);
+      const fVal = formatApertureLabel(lens?.activeF || lens?.minF || 3.5).replace(/^f\//i, '');
+      apEl.innerHTML = `<span class="vf-f6-fchar">F</span>${escapeHtml(fVal)}`;
     }
     if (biasEl) {
       if (Math.abs(evBias) >= 0.05) {
@@ -11666,6 +11710,10 @@
       }
     }
     if (aelEl) aelEl.style.display = state.camAELocked ? '' : 'none';
+    if (frameCountEl) {
+      const fNum = Math.min((state.camShotCount || 0) + 1, state.camMaxShots);
+      frameCountEl.textContent = state.camNeedsRewind ? '[E]' : `[${String(fNum).padStart(2, '0')}]`;
+    }
   }
 
   function layoutViewfinderStage() {
@@ -11685,11 +11733,18 @@
       const topReserve = topHud ? (topHud.offsetHeight + (isMobileLandscape ? 7 : 12)) : 8;
       const botReserve = botHud ? (botHud.offsetHeight + (isMobileLandscape ? 6 : 10)) : (isMobileLandscape ? 34 : 82);
       const availH = Math.max(120, bh - topReserve - botReserve);
+      const isSlrF6 = body.id === 'slr';
+      const bezelW = isSlrF6 ? 28 : 0;
+      const bezelH = isSlrF6 ? 24 : 0;
       let w = bw;
-      let h = w / targetRatio;
+      let photoW = Math.max(80, w - bezelW);
+      let photoH = photoW / targetRatio;
+      let h = photoH + bezelH;
       if (h > availH) {
         h = availH;
-        w = h * targetRatio;
+        photoH = Math.max(80, h - bezelH);
+        photoW = photoH * targetRatio;
+        w = Math.min(bw, photoW + bezelW);
       }
       stage.style.width = `${Math.round(w)}px`;
       stage.style.height = `${Math.round(h)}px`;
