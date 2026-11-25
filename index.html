@@ -825,7 +825,7 @@
       pointer-events: none;
     }
 
-    /* SINGLE-PANEL LAB DOCK (Gear | Tune | Frame | Date) */
+    /* SINGLE-PANEL LAB DOCK (Gear | Tune | Frame & Date) */
     .lab-panel-dock {
       flex: 1 1 auto;
       min-height: 0;
@@ -836,7 +836,7 @@
     }
     .lab-panel-tabs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       height: 36px;
       flex-shrink: 0;
       background: #090b10;
@@ -1348,7 +1348,15 @@
     }
     .frame-hf-box.visible { display: flex; }
 
-    /* Date Tab */
+    /* Merged Quartz Date Section inside Frame & Date Tab */
+    .frame-date-section {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding-top: 8px;
+      margin-top: 2px;
+      border-top: 1px solid #1b202b;
+    }
     .date-preview-banner {
       display: flex;
       align-items: center;
@@ -5155,13 +5163,12 @@
         </div>
       </div>
 
-      <!-- SINGLE ACTIVE LAB PANEL DOCK (Gear | Tune | Frame | Date) -->
+      <!-- SINGLE ACTIVE LAB PANEL DOCK (Gear | Tune | Frame & Date) -->
       <section class="lab-panel-dock" id="labPanelDock">
         <div class="lab-panel-tabs" role="tablist" aria-label="Lab tools">
           <button class="lab-tab-btn active" data-lab-tab="gear" role="tab" aria-selected="true" type="button">Gear</button>
           <button class="lab-tab-btn" data-lab-tab="tune" role="tab" aria-selected="false" type="button">Tune <span class="lab-tab-dot"></span></button>
-          <button class="lab-tab-btn" data-lab-tab="frame" role="tab" aria-selected="false" type="button">Frame <span class="lab-tab-dot"></span></button>
-          <button class="lab-tab-btn" data-lab-tab="date" role="tab" aria-selected="false" type="button">Date <span class="lab-tab-dot"></span></button>
+          <button class="lab-tab-btn" data-lab-tab="frame" role="tab" aria-selected="false" type="button">Frame &amp; Date <span class="lab-tab-dot"></span></button>
         </div>
 
         <div class="lab-panel-body" id="labPanelBody">
@@ -5240,7 +5247,7 @@
             </div>
           </div>
 
-          <!-- TAB 3: FRAME -->
+          <!-- TAB 3: FRAME & DATE -->
           <div class="lab-tab-panel" id="labPanelFrame" role="tabpanel">
             <div class="lab-gear-subhead">
               <span class="lab-gear-subnote">Select film print border &amp; sprocket style</span>
@@ -5254,34 +5261,33 @@
               </div>
               <button class="hf-mode-pill active" id="btnFrameHfModeToggle" type="button">2F · 2-in-1</button>
             </div>
-          </div>
 
-          <!-- TAB 4: DATE -->
-          <div class="lab-tab-panel" id="labPanelDate" role="tabpanel">
-            <div class="date-preview-banner">
-              <div style="min-width:0;">
-                <div style="font-size:11px;font-weight:700;color:var(--text-primary);">Quartz Date Imprint</div>
-                <div style="font-size:9.5px;color:var(--text-muted);">Stamps bottom-right corner on exported &amp; previewed film</div>
+            <div class="frame-date-section">
+              <div class="date-preview-banner">
+                <div style="min-width:0;">
+                  <div style="font-size:11px;font-weight:700;color:var(--text-primary);">Quartz Date Imprint</div>
+                  <div style="font-size:9.5px;color:var(--text-muted);">Stamps bottom-right corner on exported &amp; previewed film</div>
+                </div>
+                <span class="date-quartz-readout off" id="dateQuartzReadout">OFF</span>
               </div>
-              <span class="date-quartz-readout off" id="dateQuartzReadout">OFF</span>
-            </div>
-            <div class="date-option-grid" id="dateOptionGrid">
-              <button class="date-option-card active" data-date-mode="off" type="button">
-                <span class="date-opt-name">Off</span>
-                <span class="date-opt-sub">Clean corner</span>
-              </button>
-              <button class="date-option-card" data-date-mode="exif-or-today" type="button">
-                <span class="date-opt-name">Auto</span>
-                <span class="date-opt-sub">EXIF / Today</span>
-              </button>
-              <button class="date-option-card" data-date-mode="custom" type="button">
-                <span class="date-opt-name">Custom</span>
-                <span class="date-opt-sub">Pick date</span>
-              </button>
-            </div>
-            <div class="date-custom-row" id="dateCustomRow">
-              <label for="customDateInput" style="font-size:11px;font-weight:700;color:var(--text-secondary);">Custom stamp date</label>
-              <input type="date" id="customDateInput" class="dark-input" style="color-scheme:dark;" />
+              <div class="date-option-grid" id="dateOptionGrid">
+                <button class="date-option-card active" data-date-mode="off" type="button">
+                  <span class="date-opt-name">Off</span>
+                  <span class="date-opt-sub">Clean corner</span>
+                </button>
+                <button class="date-option-card" data-date-mode="exif-or-today" type="button">
+                  <span class="date-opt-name">Auto</span>
+                  <span class="date-opt-sub">EXIF / Today</span>
+                </button>
+                <button class="date-option-card" data-date-mode="custom" type="button">
+                  <span class="date-opt-name">Custom</span>
+                  <span class="date-opt-sub">Pick date</span>
+                </button>
+              </div>
+              <div class="date-custom-row" id="dateCustomRow">
+                <label for="customDateInput" style="font-size:11px;font-weight:700;color:var(--text-secondary);">Custom stamp date</label>
+                <input type="date" id="customDateInput" class="dark-input" style="color-scheme:dark;" />
+              </div>
             </div>
           </div>
         </div>
@@ -7696,7 +7702,8 @@
     state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
     state.dateStamp = ['off', 'exif-or-today', 'custom'].includes(settings.dateStamp) ? settings.dateStamp : 'off';
     state.customDate = typeof settings.customDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(settings.customDate) ? settings.customDate : '';
-    state.labPanelTab = ['gear', 'tune', 'frame', 'date'].includes(settings.labPanelTab) ? settings.labPanelTab : 'gear';
+    const rawPanelTab = settings.labPanelTab === 'date' ? 'frame' : settings.labPanelTab;
+    state.labPanelTab = ['gear', 'tune', 'frame'].includes(rawPanelTab) ? rawPanelTab : 'gear';
     state.labGearSubTab = ['camera', 'lens', 'film'].includes(settings.labGearSubTab) ? settings.labGearSubTab : 'film';
     state.histogramOpen = !!settings.histogramOpen;
     state.activeTab = settings.activeTab === 'darkroom' ? 'darkroom' : 'camera';
@@ -9446,8 +9453,9 @@
   }
 
   function switchLabPanelTab(tabId) {
-    const valid = ['gear', 'tune', 'frame', 'date'];
-    state.labPanelTab = valid.includes(tabId) ? tabId : 'gear';
+    const normalized = tabId === 'date' ? 'frame' : tabId;
+    const valid = ['gear', 'tune', 'frame'];
+    state.labPanelTab = valid.includes(normalized) ? normalized : 'gear';
     renderLabPanelUI();
     scheduleSaveLocalAppState();
   }
@@ -9815,7 +9823,12 @@
       frameHfBtn.classList.toggle('active', is2F);
       frameHfBtn.textContent = is2F ? '2F · 2-in-1' : '1F · Single';
     }
-    document.querySelector('.lab-tab-btn[data-lab-tab="frame"]')?.classList.toggle('has-badge', state.frameType !== 'none');
+    syncLabFrameDateBadge();
+  }
+
+  function syncLabFrameDateBadge() {
+    const hasBadge = state.frameType !== 'none' || state.dateStamp !== 'off';
+    document.querySelector('.lab-tab-btn[data-lab-tab="frame"]')?.classList.toggle('has-badge', hasBadge);
   }
 
   function renderLabDatePanel() {
@@ -9834,13 +9847,14 @@
       const targetVal = state.customDate || getDefaultDateIsoString();
       if (customInput.value !== targetVal) customInput.value = targetVal;
     }
-    document.querySelector('.lab-tab-btn[data-lab-tab="date"]')?.classList.toggle('has-badge', state.dateStamp !== 'off');
+    syncLabFrameDateBadge();
   }
 
   function renderLabPanelUI() {
-    const valid = ['gear', 'tune', 'frame', 'date'];
+    if (state.labPanelTab === 'date') state.labPanelTab = 'frame';
+    const valid = ['gear', 'tune', 'frame'];
     if (!valid.includes(state.labPanelTab)) state.labPanelTab = 'gear';
-    const panelMap = { gear: 'labPanelGear', tune: 'labPanelTune', frame: 'labPanelFrame', date: 'labPanelDate' };
+    const panelMap = { gear: 'labPanelGear', tune: 'labPanelTune', frame: 'labPanelFrame' };
     document.querySelectorAll('.lab-tab-btn[data-lab-tab]').forEach(btn => {
       const isAct = btn.dataset.labTab === state.labPanelTab;
       btn.classList.toggle('active', isAct);
@@ -15192,7 +15206,7 @@
     scheduleSaveLocalAppState();
   });
 
-  // Single Lab panel tabs (Gear | Tune | Frame | Date)
+  // Single Lab panel tabs (Gear | Tune | Frame & Date)
   document.querySelectorAll('.lab-tab-btn[data-lab-tab]').forEach(btn => {
     btn.addEventListener('click', () => switchLabPanelTab(btn.dataset.labTab));
   });
