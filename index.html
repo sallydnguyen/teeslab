@@ -2706,7 +2706,7 @@
       box-shadow: 0 0 6px rgba(239, 68, 68, 0.85);
     }
 
-    /* Rangefinder 3:2 — Wide Field + Outside-the-frame + Resizing Brightlines */
+    /* Rangefinder 3:2 (Leica M6 0.72×) — Wide 0.72× Field + 35mm Brightlines + Coincident Patch + Red LED Meter */
     .vf-rf-overlay {
       position: absolute;
       inset: 0;
@@ -2718,69 +2718,149 @@
     .vf-stage[data-vf-mode="rangefinder"] .vf-rf-overlay { display: flex; }
     .vf-rf-brightline {
       position: relative;
-      width: 70.4%;
-      height: 70.4%;
+      width: 78%;
+      height: 78%;
       outline: 600px solid rgba(0, 0, 0, 0.34);
-      border: 1px solid rgba(255, 255, 255, 0.35);
     }
     .vf-rf-bracket {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      border-color: rgba(255, 250, 235, 0.96);
+      width: 22px;
+      height: 22px;
+      border-color: rgba(255, 252, 240, 0.94);
       border-style: solid;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.55));
     }
-    .vf-rf-bracket.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-    .vf-rf-bracket.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-    .vf-rf-bracket.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-    .vf-rf-bracket.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+    .vf-rf-bracket.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+    .vf-rf-bracket.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+    .vf-rf-bracket.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+    .vf-rf-bracket.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+    /* Characteristic Leica M interrupted frame dashes between corners */
+    .vf-rf-mid-tick {
+      position: absolute;
+      background: rgba(255, 252, 240, 0.86);
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.55);
+    }
+    .vf-rf-mid-tick.t { top: 0; left: 50%; width: 22px; height: 2px; transform: translateX(-50%); }
+    .vf-rf-mid-tick.b { bottom: 0; left: 50%; width: 22px; height: 2px; transform: translateX(-50%); }
+    .vf-rf-mid-tick.l { left: 0; top: 50%; width: 2px; height: 18px; transform: translateY(-50%); }
+    .vf-rf-mid-tick.r { right: 0; top: 50%; width: 2px; height: 18px; transform: translateY(-50%); }
+    /* Paired faint 135mm inner frame tics native to Leica M6 0.72x 35/135 mask */
+    .vf-rf-sub135 {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 28%;
+      height: 28%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.38;
+    }
+    .vf-rf-sub135::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) top left / 7px 1px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) top left / 1px 7px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) top right / 7px 1px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) top right / 1px 7px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) bottom left / 7px 1px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) bottom left / 1px 7px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) bottom right / 7px 1px no-repeat,
+        linear-gradient(rgba(255, 252, 240, 0.85), rgba(255, 252, 240, 0.85)) bottom right / 1px 7px no-repeat;
+    }
     .vf-rf-patch {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 20px;
-      height: 13px;
+      width: 34px;
+      height: 20px;
+      border-radius: 1.5px;
       transform: translate(-50%, -50%);
-      border: 1px solid rgba(245, 196, 81, 0.72);
-      background: rgba(245, 196, 81, 0.12);
+      border: 1px solid rgba(245, 200, 96, 0.78);
+      background: rgba(245, 198, 92, 0.14);
+      box-shadow: inset 0 0 6px rgba(245, 198, 92, 0.14);
       overflow: hidden;
       transition: border-color 0.14s ease, box-shadow 0.14s ease;
     }
     .vf-rf-patch::before {
       content: "";
       position: absolute;
-      top: 1px;
-      bottom: 1px;
+      top: 2px;
+      bottom: 2px;
       left: 50%;
       width: 1.5px;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
     }
     .vf-rf-ghost {
       position: absolute;
-      top: 1px;
-      bottom: 1px;
+      top: 2px;
+      bottom: 2px;
       left: 50%;
-      width: 1.5px;
-      background: rgba(245, 166, 35, 0.95);
+      width: 1.6px;
+      background: rgba(245, 172, 42, 0.96);
+      box-shadow: 0 0 3px rgba(245, 172, 42, 0.65);
       transform: translateX(calc(-50% + var(--rf-shift, 0px)));
       transition: transform 0.08s ease-out, opacity 0.12s ease;
       opacity: 0;
     }
-    .vf-rf-patch.mf-off .vf-rf-ghost { opacity: 0.95; }
+    .vf-rf-patch.mf-off .vf-rf-ghost { opacity: 0.96; }
     .vf-rf-patch.in-focus {
-      border-color: rgba(74, 222, 128, 0.85);
-      box-shadow: 0 0 8px rgba(74, 222, 128, 0.35);
+      border-color: rgba(74, 222, 128, 0.88);
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.36);
     }
     .vf-rf-focal-tag {
       position: absolute;
-      top: 4px;
-      left: 6px;
+      top: 5px;
+      left: 7px;
       font-family: var(--mono);
       font-size: 8.5px;
       font-weight: 800;
-      color: rgba(255, 250, 235, 0.92);
-      text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+      letter-spacing: 0.04em;
+      color: rgba(255, 252, 240, 0.94);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    }
+    /* Leica M6 Bottom TTL Red LED Exposure Triad */
+    .vf-rf-meter {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(5, 7, 10, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      font-family: var(--mono);
+      line-height: 1;
+      z-index: 4;
+    }
+    .rf-led-dir {
+      font-size: 8px;
+      font-weight: 800;
+      color: rgba(148, 163, 184, 0.42);
+      transition: color 0.14s ease;
+    }
+    .vf-rf-meter[data-state="under"] .rf-led-dir.minus { color: rgba(248, 113, 113, 0.85); }
+    .vf-rf-meter[data-state="over"] .rf-led-dir.plus { color: rgba(248, 113, 113, 0.85); }
+    .rf-led-seg {
+      font-size: 9px;
+      font-weight: 900;
+      color: rgba(255, 70, 64, 0.16);
+      transition: color 0.12s ease, text-shadow 0.12s ease, transform 0.12s ease;
+    }
+    .rf-led-seg.dot { font-size: 8px; }
+    .rf-led-seg.lit {
+      color: #ff3b30;
+      text-shadow: 0 0 6px rgba(255, 59, 48, 0.88), 0 0 2px rgba(255, 130, 120, 0.9);
+    }
+    .rf-led-seg.dot.lit {
+      transform: scale(1.12);
     }
 
     /* Top-left Viewfinder Overlay (Frame Counter + Loaded Film Stock) */
@@ -5600,15 +5680,27 @@
                 </div>
               </div>
 
-              <!-- Rangefinder: Outside-the-frame matte + Dynamic Brightlines -->
+              <!-- Rangefinder (Leica M6 0.72×): Outside-the-frame 0.72× Field + 35mm Brightlines + Red LED Meter -->
               <div class="vf-rf-overlay">
                 <div class="vf-rf-brightline" id="vfRfBrightline">
                   <div class="vf-rf-bracket tl"></div>
                   <div class="vf-rf-bracket tr"></div>
                   <div class="vf-rf-bracket bl"></div>
                   <div class="vf-rf-bracket br"></div>
+                  <span class="vf-rf-mid-tick t"></span>
+                  <span class="vf-rf-mid-tick b"></span>
+                  <span class="vf-rf-mid-tick l"></span>
+                  <span class="vf-rf-mid-tick r"></span>
+                  <div class="vf-rf-sub135" aria-hidden="true"></div>
                   <div class="vf-rf-patch in-focus" id="vfRfPatch"><span class="vf-rf-ghost"></span></div>
-                  <span class="vf-rf-focal-tag" id="vfRfFocalTag">35mm</span>
+                  <span class="vf-rf-focal-tag" id="vfRfFocalTag">35mm · 0.72×</span>
+                </div>
+                <div class="vf-rf-meter" id="vfRfMeter" data-state="ok" aria-hidden="true">
+                  <span class="rf-led-dir minus">−</span>
+                  <span class="rf-led-seg tri left" id="vfRfLedMinus">◀</span>
+                  <span class="rf-led-seg dot lit" id="vfRfLedOk">●</span>
+                  <span class="rf-led-seg tri right" id="vfRfLedPlus">▶</span>
+                  <span class="rf-led-dir plus">+</span>
                 </div>
               </div>
 
@@ -6265,6 +6357,25 @@
       disposableCast: false
     },
     {
+      id: 'rangefinder',
+      name: 'Leica M6 0.72×',
+      formatLabel: '35mm Rangefinder',
+      aspect: 3 / 2,
+      meta: 'Leica M6 0.72× optical rangefinder · 35mm brightlines, coincident patch & TTL ◄ ● ► meter',
+      defaultFocalId: '35mm',
+      recLenses: ['35mm'],
+      recFilms: ['kodak-portra-400', 'ilford-hp5', 'kodak-gold-200', 'fuji-classic-chrome'],
+      blackLift: 0.018,
+      contrast: 1.07,
+      highlightRolloff: 0.22,
+      bodyWarmth: 0,
+      bodyTint: 0,
+      grainScale: 0.96,
+      softFocus: 0,
+      vignetteBoost: 0,
+      disposableCast: false
+    },
+    {
       id: 'pns',
       name: 'Nikon 35Ti',
       formatLabel: '35mm Compact · AF',
@@ -6329,6 +6440,9 @@
       { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160', 'kodak-vision3-250d'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
       { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-vision3-250d', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: '85mm f/1.8 · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
+    ],
+    rangefinder: [
+      { id: '35mm', mm: 35, minF: 2.0, maxF: 16, defaultAperture: 2.0, focusProfile: 'rf35', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', recScene: 'everyday', recFilms: ['kodak-portra-400', 'ilford-hp5', 'kodak-gold-200', 'fuji-classic-chrome'], tileSub: 'Everyday · 0.72× RF Prime', meta: '35mm f/2 · Compact M-mount wide-standard prime, crisp micro-contrast & 0.72× brightlines', cropZoom: 1.28, brightlinePct: 78, barrelDistort: 0.002, apertureEV: 0.14, dofStrength: 0.72, dofRadius: 0.38, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011 }
     ],
     pns: [
       { id: '35mm', mm: 35, minF: 2.8, maxF: 22, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', recScene: 'everyday', recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200'], tileSub: 'Everyday · Sharp prime', meta: '35mm f/2.8 (6 elements in 4 groups) · Edge-to-edge sharpness, crisp contrast & direct flash', cropZoom: 1.24, barrelDistort: 0.004, apertureEV: 0.06, dofStrength: 0.52, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 15, vignetteBase: 17, chromaticAb: 0.14, edgeSoft: 0.013 }
@@ -7855,7 +7969,8 @@
     if (VIEWFINDER_MODES.some(m => m.id === oldId)) return oldId;
     if (oldId === 'pocket-110') return 'pns';
     if (oldId === 'disposable') return 'pns';
-    if (oldId === 'leica-m6' || oldId === 'fuji-tx1' || oldId === 'rangefinder') return 'slr';
+    if (oldId === 'leica-m6') return 'rangefinder';
+    if (oldId === 'fuji-tx1') return 'slr';
     if (oldId === 'half-frame-single' || oldId === 'rollie-35' || oldId === 'contax-t2') return 'half-frame';
     if (oldId === 'hasselblad-500') return 'medium-format';
     return 'slr';
@@ -8217,6 +8332,16 @@
   }
 
   const FOCUS_SCALE_PROFILES = {
+    rf35: [
+      { pos: 0.00, label: '0.7', meters: 0.70, adrClass: 'adr-warm' },
+      { pos: 0.16, label: '0.8', meters: 0.80 },
+      { pos: 0.32, label: '1.0', meters: 1.0 },
+      { pos: 0.48, label: '1.2', meters: 1.2 },
+      { pos: 0.63, label: '2', meters: 2.0 },
+      { pos: 0.77, label: '3', meters: 3.0 },
+      { pos: 0.89, label: '5', meters: 5.0 },
+      { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
+    ],
     wide: [
       { pos: 0.00, label: '0.3', meters: 0.30, adrClass: 'adr-warm' },
       { pos: 0.14, label: '0.45', meters: 0.45 },
@@ -9594,7 +9719,7 @@
         ? 'FF'
         : (lens.focusMode === 'af' ? `AF ${lens.focusDistanceLabel}` : `MF ${lens.focusDistanceLabel}`);
       const mainTxt = body.id === 'rangefinder'
-        ? `Brightline ${Math.round(lens.brightlinePct)}%`
+        ? `Brightline ${Math.round(lens.brightlinePct || 78)}% (0.72×)`
         : (body.id === 'medium-format' ? `${lens.formatLabel || '120'} · ${lens.cropZoom.toFixed(2)}x` : `${lens.cropZoom.toFixed(2)}x`);
       statEl.textContent = `${apTxt}${focTxt} · ${mainTxt}`;
     }
@@ -11020,7 +11145,7 @@
     if (rfPatch) {
       rfPatch.classList.toggle('in-focus', inFocus);
       rfPatch.classList.toggle('mf-off', isMfOff);
-      rfPatch.style.setProperty('--rf-shift', `${(clampedErr * 6).toFixed(2)}px`);
+      rfPatch.style.setProperty('--rf-shift', `${(clampedErr * 9).toFixed(2)}px`);
     }
 
     const mfLoupe = document.getElementById('vfMfLoupe');
@@ -11105,14 +11230,15 @@
     syncViewfinderFocusAid(body, lens);
     if (typeof syncCameraExposureHudControls === 'function') syncCameraExposureHudControls(body, lens);
     if (typeof syncSlrMeterLed === 'function') syncSlrMeterLed(body, lens);
+    if (typeof syncRfMeterLed === 'function') syncRfMeterLed(body, lens);
     if (typeof syncPnsLcdUI === 'function') syncPnsLcdUI(body, lens);
     if (typeof syncVfMeterNeedle === 'function') syncVfMeterNeedle(body, lens);
 
     if (body.id === 'rangefinder') {
       const bl = document.getElementById('vfRfBrightline');
       const ft = document.getElementById('vfRfFocalTag');
-      if (bl) { bl.style.width = `${lens.brightlinePct || 70.4}%`; bl.style.height = `${lens.brightlinePct || 70.4}%`; }
-      if (ft) ft.textContent = lens.focalTag || lens.label;
+      if (bl) { bl.style.width = `${lens.brightlinePct || 78}%`; bl.style.height = `${lens.brightlinePct || 78}%`; }
+      if (ft) ft.textContent = `${lens.focalTag || lens.label} · 0.72×`;
     }
     if (needsLayout && document.getElementById('view-camera')?.classList.contains('active')) {
       layoutViewfinderStage();
@@ -11935,7 +12061,7 @@
 
   function getCameraExposureControlCaps(body = getSelectedGear().body, info = null) {
     const id = body?.id || 'slr';
-    if (id === 'half-frame') {
+    if (id === 'half-frame' || id === 'rangefinder') {
       return { isAuto: false, supportsEv: false, supportsAel: false };
     }
     const isAuto = info
@@ -12145,6 +12271,23 @@
     armEl.style.transform = `rotate(${needleDeg.toFixed(1)}deg)`;
   }
 
+  function syncRfMeterLed(body, lens) {
+    if (body?.id !== 'rangefinder') return;
+    const { film } = getSelectedGear();
+    const info = getEffectiveShutterInfo(lens, film);
+    const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
+    const rawStops = info.isAuto ? 0 : Math.log2(autoHz / Math.max(0.25, info.hz));
+    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
+    const meterEl = document.getElementById('vfRfMeter');
+    const minusLed = document.getElementById('vfRfLedMinus');
+    const okLed = document.getElementById('vfRfLedOk');
+    const plusLed = document.getElementById('vfRfLedPlus');
+    if (meterEl) meterEl.dataset.state = meterState;
+    minusLed?.classList.toggle('lit', rawStops < -0.35);
+    okLed?.classList.toggle('lit', Math.abs(rawStops) < 0.9);
+    plusLed?.classList.toggle('lit', rawStops > 0.35);
+  }
+
   function syncSlrMeterLed(body, lens) {
     if (body?.id !== 'slr') return;
     const { film } = getSelectedGear();
@@ -12276,15 +12419,16 @@
     if (body.id === 'rangefinder') {
       const bl = document.getElementById('vfRfBrightline');
       const ft = document.getElementById('vfRfFocalTag');
-      const pct = lens.brightlinePct || 70.4;
+      const pct = lens.brightlinePct || 78;
       if (bl) {
         bl.style.width = `${pct}%`;
         bl.style.height = `${pct}%`;
       }
-      if (ft) ft.textContent = lens.focalTag || lens.label;
+      if (ft) ft.textContent = `${lens.focalTag || lens.label} · 0.72×`;
     }
 
     syncSlrMeterLed(body, lens);
+    syncRfMeterLed(body, lens);
     syncPnsLcdUI(body, lens);
     syncVfMeterNeedle(body, lens);
     syncViewfinderFocusAid(body, lens);
@@ -12481,6 +12625,7 @@
 
     syncViewfinderFocusAid(body, lens);
     syncSlrMeterLed(body, lens);
+    syncRfMeterLed(body, lens);
     syncPnsLcdUI(body, lens);
     syncVfMeterNeedle(body, lens);
     syncLensBarrelWidgets();
@@ -13431,6 +13576,7 @@
             sceneMeanLum = sceneMeanLum * 0.45 + measured * 0.55;
             syncVfMeterNeedle(body, lens);
             if (body.id === 'slr') syncSlrMeterLed(body, lens);
+            else if (body.id === 'rangefinder') syncRfMeterLed(body, lens);
             else if (body.id === 'pns' || body.id === 'disposable') syncPnsLcdUI(body, lens);
           }
         } catch (ignored) {}
