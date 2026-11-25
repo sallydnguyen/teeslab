@@ -4321,7 +4321,6 @@
       </div>
       <div class="topbar-actions">
         <input type="file" id="fileInput" accept="image/*" hidden />
-        <button class="btn-icon-top" id="btnLabRandom" type="button" title="Randomize combo" aria-label="Randomize combo">🎲</button>
         <button class="btn-icon-top" id="btnLabShare" type="button" title="Copy shareable recipe link" aria-label="Share combo">🔗</button>
       </div>
     </header>
@@ -4757,7 +4756,6 @@
         <div class="picker-topbar-left">
           <span style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.6px;color:var(--text-secondary);" id="clapperSceneLabel">SCENE 01 · ROLL 01</span>
           <button class="filter-chip" id="btnTabSaved" type="button" style="padding:2px 8px;font-size:9.5px;">★ Saved</button>
-          <button class="filter-chip" id="btnRandomCombo" type="button" title="Randomize combo" style="padding:2px 7px;font-size:9.5px;">🎲</button>
           <button class="filter-chip" id="btnShareCombo" type="button" title="Copy shareable recipe link" style="padding:2px 7px;font-size:9.5px;">🔗</button>
         </div>
         <div class="picker-topbar-right">
@@ -13244,44 +13242,6 @@
   document.getElementById('btnTabSaved').addEventListener('click', () => {
     setPickerTab(state.pickerTab === 'saved' ? 'camera' : 'saved');
   });
-  function triggerRandomCombo() {
-    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-    const mode = pick(VIEWFINDER_MODES);
-    const rawLens = pick(getModeFocals(mode.id));
-    const activeFilms = FILM_STOCKS.filter(f => !f.archived);
-    const film = pick(activeFilms.length ? activeFilms : FILM_STOCKS);
-    state.bodyId = mode.id;
-    if (mode.id !== 'half-frame') clearPendingHalfFrame();
-    state.lensId = rawLens.id;
-    if (rawLens.isZoom) {
-      const steps = Array.isArray(rawLens.zoomSteps) && rawLens.zoomSteps.length ? rawLens.zoomSteps : [35, 50, 70];
-      state.zoomFocalMm = pick(steps);
-      state.lensAperture = getDefaultApertureForLens(rawLens, state.zoomFocalMm);
-    } else {
-      if (!rawLens.isFormatLens && !rawLens.isFixedAperture && rawLens.mm) {
-        state.lensFocalMm = rawLens.mm;
-      }
-      state.lensAperture = getDefaultApertureForLens(rawLens);
-    }
-    const rawMinF = rawLens.isZoom ? getZoomMinF(rawLens, state.zoomFocalMm) : (rawLens.minF || 2.8);
-    apPinnedWideOpen = Math.abs(state.lensAperture - rawMinF) < 0.04;
-    state.focusMode = 'af';
-    state.focusPoint = { x: 0.5, y: 0.48 };
-    updateAdaptiveAfTarget({ syncFocusToAf: true, center: state.focusPoint });
-    const resolved = getSelectedGear().lens;
-    state.filmId = film.id;
-    state.filmBrandFilter = 'all';
-    state.bloom = resolved.bloomBase;
-    state.vignette = resolved.vignetteBase;
-    state.grain = film.grainBase;
-    state.halation = film.halationBase;
-    syncAllUI();
-    renderPreview();
-    scrollActiveTileIntoView(state.pickerTab);
-    showToast(`🎲 ${mode.name} · ${shortLensLabel(resolved)} · ${film.name}`);
-  }
-  document.getElementById('btnRandomCombo')?.addEventListener('click', triggerRandomCombo);
-  document.getElementById('btnLabRandom')?.addEventListener('click', triggerRandomCombo);
 
   function encodeRecipePresetToken() {
     const payload = {
