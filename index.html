@@ -5129,7 +5129,7 @@
             <button class="stage-tool-pill" id="btnToggleHistogram" type="button" aria-expanded="false">◐ Histogram</button>
           </div>
           <div class="stage-tools-right">
-            <button class="stage-tool-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Camera Roll" aria-label="Delete photo from Camera Roll" style="display:none;">🗑 Delete</button>
+            <button class="stage-tool-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Film Roll" aria-label="Delete photo from Film Roll" style="display:none;">🗑 Delete</button>
             <span class="stage-gear-summary" id="liveGearBadge" title="Tap to open Gear tab">Nikon F6 · 50mm f/3.5 · <strong>Portra 400</strong></span>
           </div>
         </div>
@@ -5509,7 +5509,7 @@
               <img class="vf-mx-ghost" id="vfMxGhostImg" alt="" aria-hidden="true" />
               <div class="vf-mx-bar" id="vfMxBar">
                 <span id="vfMxLabel">Double Exp. · 1/2</span>
-                <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Pick a Camera Roll shot as base frame 1/2" style="display:none;">🎞️ Roll</button>
+                <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Pick a Film Roll shot as base frame 1/2" style="display:none;">🎞️ Roll</button>
                 <button type="button" id="btnCancelDoubleExp" title="Discard Double Exposure 1/2">✕</button>
               </div>
 
@@ -5634,7 +5634,7 @@
 
     <nav class="bottom-nav" role="tablist">
       <div class="bnav-group bnav-group-lab">
-        <button class="bnav-roll-btn" id="btnOpenContactSheet" type="button" title="Open camera roll" aria-label="Open camera roll">
+        <button class="bnav-roll-btn" id="btnOpenContactSheet" type="button" title="Open film roll" aria-label="Open film roll">
           <svg class="cam-deck-svg ico-film-roll" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect x="4.8" y="3" width="4.4" height="2.2" rx="0.9" fill="#9ca3af"/>
             <rect x="3" y="5.2" width="8" height="14.2" rx="1.8" fill="#1b2029" stroke="#e2e8f0" stroke-width="1.5"/>
@@ -5783,7 +5783,7 @@
 
         <div class="sample-source-tabs" id="sampleSourceTabs" role="tablist" aria-label="Photo source">
           <button class="lab-tab-btn active" data-sample-source="samples" role="tab" aria-selected="true" type="button">Samples (<span id="sampleCountTab">12</span>)</button>
-          <button class="lab-tab-btn" data-sample-source="roll" role="tab" aria-selected="false" type="button">Camera Roll (<span id="rollCountTab">0</span>)</button>
+          <button class="lab-tab-btn" data-sample-source="roll" role="tab" aria-selected="false" type="button">Film Roll (<span id="rollCountTab">0</span>)</button>
         </div>
 
         <div class="sample-panel-pane active" id="samplePanelSamples" role="tabpanel">
@@ -5808,11 +5808,11 @@
       </div>
     </div>
 
-    <!-- BOTTOM SHEET: CAMERA CONTACT SHEET -->
+    <!-- BOTTOM SHEET: FILM ROLL CONTACT SHEET -->
     <div class="sheet-backdrop" id="contactSheetBackdrop">
       <div class="sheet-card">
         <div class="sheet-head">
-          <span>🎞️ Camera Roll</span>
+          <span>🎞️ Film Roll</span>
           <div style="display:flex;gap:6px;">
             <button class="btn-pill btn-brass" id="btnSaveAllRollShots" type="button" style="height:26px;font-size:11px;display:none;">💾 Save All</button>
             <button class="btn-pill btn-ghost" id="btnCloseContactSheet" type="button" style="height:26px;">✕</button>
@@ -5885,7 +5885,7 @@
       </div>
     </div>
 
-    <!-- FULL-SCREEN CAMERA ROLL PHOTO VIEWER -->
+    <!-- FULL-SCREEN FILM ROLL PHOTO VIEWER -->
     <div class="photo-viewer-backdrop" id="photoViewerBackdrop" style="display:none;">
       <div class="photo-viewer-container" id="photoViewerContainer">
         <div class="photo-viewer-topbar">
@@ -5898,7 +5898,7 @@
         <div class="photo-viewer-stage" id="photoViewerStage">
           <button class="photo-viewer-nav btn-prev" id="btnViewerPrev" type="button" aria-label="Previous photo">‹</button>
           <div class="photo-viewer-img-wrap" id="photoViewerImgWrap">
-            <img id="photoViewerImg" class="photo-viewer-img" alt="Camera roll photo" />
+            <img id="photoViewerImg" class="photo-viewer-img" alt="Film roll photo" />
           </div>
           <button class="photo-viewer-nav btn-next" id="btnViewerNext" type="button" aria-label="Next photo">›</button>
         </div>
@@ -7593,7 +7593,7 @@
     return new Promise((resolve, reject) => {
       const request = database.transaction('camera-roll', 'readonly').objectStore('camera-roll').getAll();
       request.onsuccess = () => resolve(request.result.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)));
-      request.onerror = () => reject(request.error || new Error('Could not read camera roll'));
+      request.onerror = () => reject(request.error || new Error('Could not read film roll'));
     });
   }
   async function storeCameraRollShot(shot) {
@@ -7605,8 +7605,8 @@
       transaction.objectStore('camera-roll-files').put({ id, rawBlob, photoBlob });
       if (isDiptych && rollId) transaction.objectStore('camera-roll-files').delete(`pending-half-frame:${rollId}`);
       transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error || new Error('Could not save camera roll photo'));
-      transaction.onabort = () => reject(transaction.error || new Error('Camera roll save was interrupted'));
+      transaction.onerror = () => reject(transaction.error || new Error('Could not save film roll photo'));
+      transaction.onabort = () => reject(transaction.error || new Error('Film roll save was interrupted'));
     });
   }
   async function loadCameraRollFiles(id) {
@@ -7655,8 +7655,8 @@
       transaction.objectStore('camera-roll').clear();
       transaction.objectStore('camera-roll-files').clear();
       transaction.oncomplete = resolve;
-      transaction.onerror = () => reject(transaction.error || new Error('Could not clear camera roll'));
-      transaction.onabort = () => reject(transaction.error || new Error('Camera roll clear was interrupted'));
+      transaction.onerror = () => reject(transaction.error || new Error('Could not clear film roll'));
+      transaction.onabort = () => reject(transaction.error || new Error('Film roll clear was interrupted'));
     });
   }
   async function deleteCameraRollShotFromStorage(id) {
@@ -7666,8 +7666,8 @@
       transaction.objectStore('camera-roll').delete(id);
       transaction.objectStore('camera-roll-files').delete(id);
       transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error || new Error('Could not delete camera roll photo'));
-      transaction.onabort = () => reject(transaction.error || new Error('Camera roll delete was interrupted'));
+      transaction.onerror = () => reject(transaction.error || new Error('Could not delete film roll photo'));
+      transaction.onabort = () => reject(transaction.error || new Error('Film roll delete was interrupted'));
     });
   }
   const DEFAULT_LENS_APERTURE = 3.5;
@@ -8844,7 +8844,7 @@
     const tmpSample = state.activeSampleId;
     const tmpRoll = state.sourceFromCameraRoll;
     const tmpShotId = state.activeRollShotId;
-    const tmpRollLabel = SAMPLES.find(s => s.id === tmpSample)?.title || (tmpRoll ? 'Camera Roll' : 'Photo 1');
+    const tmpRollLabel = SAMPLES.find(s => s.id === tmpSample)?.title || (tmpRoll ? 'Film Roll' : 'Photo 1');
 
     state.fullSourceCanvas = state.labDoubleExpCanvas;
     state.previewSourceCanvas = state.labDoubleExpPreviewCanvas || makeScaledPreviewCanvas(state.labDoubleExpCanvas);
@@ -10068,7 +10068,7 @@
             document.getElementById('sampleSheetBackdrop').classList.remove('open');
             showToast(`Opened ${lblText}`);
           } catch (err) {
-            showToast('Could not load photo from Camera Roll');
+            showToast('Could not load photo from Film Roll');
           }
         };
         item.addEventListener('click', openItem);
