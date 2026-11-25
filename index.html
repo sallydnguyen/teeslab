@@ -1847,6 +1847,92 @@
       z-index: 3;
     }
 
+    /* Universal Analog Match-Needle Exposure Meter (All Camera Bodies — needle swings up/down) */
+    .vf-meter-needle-rail {
+      position: absolute;
+      right: 7px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 112px;
+      border-radius: 14px;
+      background: rgba(6, 9, 14, 0.36);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.34), inset 0 0 8px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .vf-stage[data-vf-mode="slr"] .vf-meter-needle-rail {
+      top: calc(50% + 12px);
+    }
+    .vf-stage[data-vf-mode="pns"] .vf-meter-needle-rail {
+      top: calc(50% - 12px);
+    }
+    .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
+      right: 14px;
+      height: 102px;
+    }
+    .vf-meter-needle-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .vf-meter-sym {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 800;
+      fill: rgba(255, 255, 255, 0.72);
+      transition: fill 0.14s ease, filter 0.14s ease;
+    }
+    .vf-meter-lbl {
+      font-family: var(--mono);
+      font-size: 6.2px;
+      font-weight: 700;
+      fill: rgba(255, 255, 255, 0.56);
+    }
+    .vf-meter-target-ring {
+      fill: rgba(6, 10, 14, 0.45);
+      stroke: rgba(255, 255, 255, 0.78);
+      stroke-width: 1.3;
+      transition: stroke 0.14s ease, filter 0.14s ease;
+    }
+    .vf-meter-needle-arm {
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    .vf-meter-needle-tip {
+      fill: #f8fafc;
+      stroke: #090b0f;
+      stroke-width: 0.7;
+      transition: fill 0.14s ease;
+    }
+    .vf-meter-needle-rail[data-state="ok"] .vf-meter-target-ring {
+      stroke: #4ade80;
+      filter: drop-shadow(0 0 3px rgba(74, 222, 128, 0.55));
+    }
+    .vf-meter-needle-rail[data-state="ok"] .vf-meter-needle-tip {
+      fill: #4ade80;
+    }
+    .vf-meter-needle-rail[data-state="over"] .vf-meter-sym.plus {
+      fill: #f87171;
+      filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.65));
+    }
+    .vf-meter-needle-rail[data-state="over"] .vf-meter-needle-tip {
+      fill: #f87171;
+    }
+    .vf-meter-needle-rail[data-state="under"] .vf-meter-sym.minus {
+      fill: #fbbf24;
+      filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.65));
+    }
+    .vf-meter-needle-rail[data-state="under"] .vf-meter-needle-tip {
+      fill: #fbbf24;
+    }
+
     /* Corner finder brackets (SLR ground-glass matte; PnS & Half Frame use dedicated brightframe corners) */
     .vf-corner {
       position: absolute;
@@ -5592,6 +5678,33 @@
                 <div class="vf-mf-grid-v2"></div>
                 <div class="vf-mf-loupe in-focus" id="vfMfLoupe"></div>
                 <span class="vf-mf-format-tag" id="vfMfFormatTag">120 · 6×6</span>
+              </div>
+
+              <!-- Universal Analog Match-Needle Exposure Meter (All Camera Models) -->
+              <div class="vf-meter-needle-rail" id="vfGlobalMeterNeedle" data-state="ok" data-stops="0.00" aria-hidden="true">
+                <svg class="vf-meter-needle-svg" viewBox="0 0 34 116" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <text x="20.5" y="16" text-anchor="middle" dominant-baseline="central" class="vf-meter-sym plus">+</text>
+                  <text x="15.5" y="31.5" text-anchor="middle" dominant-baseline="central" class="vf-meter-lbl">+2</text>
+                  <text x="10.0" y="44.5" text-anchor="middle" dominant-baseline="central" class="vf-meter-lbl">+1</text>
+                  <text x="10.0" y="71.5" text-anchor="middle" dominant-baseline="central" class="vf-meter-lbl">−1</text>
+                  <text x="15.5" y="84.5" text-anchor="middle" dominant-baseline="central" class="vf-meter-lbl">−2</text>
+                  <text x="20.5" y="100" text-anchor="middle" dominant-baseline="central" class="vf-meter-sym minus">−</text>
+
+                  <!-- Curved concentric meter scale ticks matching hinge (54, 58) -->
+                  <path d="M22.4 35.1 L26.5 38.0 M16.9 45.9 L21.7 47.5 M16.9 70.1 L21.7 68.5 M22.4 80.9 L26.5 78.0" stroke="rgba(0,0,0,0.45)" stroke-width="2.1" stroke-linecap="round"/>
+                  <path d="M22.4 35.1 L26.5 38.0 M16.9 45.9 L21.7 47.5 M16.9 70.1 L21.7 68.5 M22.4 80.9 L26.5 78.0" stroke="rgba(255,255,255,0.78)" stroke-width="1.15" stroke-linecap="round"/>
+                  <line x1="18.2" y1="58" x2="23.5" y2="58" stroke="rgba(255,255,255,0.84)" stroke-width="1.4" stroke-linecap="round"/>
+                  <circle class="vf-meter-target-ring" cx="14.5" cy="58" r="3.4"/>
+
+                  <!-- Moving galvanometer needle arm (pivoting around right hinge 54,58 -> tip moves up/down) -->
+                  <g transform="translate(54, 58)">
+                    <g class="vf-meter-needle-arm" id="vfGlobalMeterNeedleArm" style="transform: rotate(0deg);">
+                      <line x1="0" y1="0" x2="-38.2" y2="0" stroke="#090b0f" stroke-width="2.5" stroke-linecap="round"/>
+                      <line x1="0" y1="0" x2="-38.2" y2="0" stroke="rgba(248,250,252,0.94)" stroke-width="1.3" stroke-linecap="round"/>
+                      <circle class="vf-meter-needle-tip" cx="-39.5" cy="0" r="2.1"/>
+                    </g>
+                  </g>
+                </svg>
               </div>
 
               <div class="vf-focus-reticle" id="vfFocusReticle"></div>
@@ -10993,6 +11106,7 @@
     if (typeof syncCameraExposureHudControls === 'function') syncCameraExposureHudControls(body, lens);
     if (typeof syncSlrMeterLed === 'function') syncSlrMeterLed(body, lens);
     if (typeof syncPnsLcdUI === 'function') syncPnsLcdUI(body, lens);
+    if (typeof syncVfMeterNeedle === 'function') syncVfMeterNeedle(body, lens);
 
     if (body.id === 'rangefinder') {
       const bl = document.getElementById('vfRfBrightline');
@@ -12010,6 +12124,27 @@
     document.getElementById('pnsDialPTag')?.classList.toggle('active', !!info.isAuto);
   }
 
+  function syncVfMeterNeedle(body, lens) {
+    const railEl = document.getElementById('vfGlobalMeterNeedle');
+    const armEl = document.getElementById('vfGlobalMeterNeedleArm');
+    if (!railEl || !armEl) return;
+    const gear = (body && lens) ? { body, lens, film: getSelectedGear().film } : getSelectedGear();
+    const info = getEffectiveShutterInfo(gear.lens, gear.film);
+    const caps = getCameraExposureControlCaps(gear.body, info);
+    const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
+    const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
+    const rawStops = info.isAuto
+      ? evBias
+      : Math.log2(autoHz / Math.max(0.25, info.hz));
+    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
+    const clampedStops = Math.max(-2.5, Math.min(2.5, rawStops));
+    const needleDeg = (clampedStops / 2.5) * 44;
+
+    railEl.dataset.state = meterState;
+    railEl.dataset.stops = rawStops.toFixed(2);
+    armEl.style.transform = `rotate(${needleDeg.toFixed(1)}deg)`;
+  }
+
   function syncSlrMeterLed(body, lens) {
     if (body?.id !== 'slr') return;
     const { film } = getSelectedGear();
@@ -12151,6 +12286,7 @@
 
     syncSlrMeterLed(body, lens);
     syncPnsLcdUI(body, lens);
+    syncVfMeterNeedle(body, lens);
     syncViewfinderFocusAid(body, lens);
   }
 
@@ -12346,6 +12482,7 @@
     syncViewfinderFocusAid(body, lens);
     syncSlrMeterLed(body, lens);
     syncPnsLcdUI(body, lens);
+    syncVfMeterNeedle(body, lens);
     syncLensBarrelWidgets();
     updateSaveAllUI();
     layoutViewfinderStage();
@@ -13292,6 +13429,7 @@
           const measured = sum / 16;
           if (Number.isFinite(measured)) {
             sceneMeanLum = sceneMeanLum * 0.45 + measured * 0.55;
+            syncVfMeterNeedle(body, lens);
             if (body.id === 'slr') syncSlrMeterLed(body, lens);
             else if (body.id === 'pns' || body.id === 'disposable') syncPnsLcdUI(body, lens);
           }
