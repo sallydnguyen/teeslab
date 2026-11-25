@@ -2300,6 +2300,54 @@
       height: 13px;
     }
 
+    /* Nikon 35Ti Top-Plate Analog Display System (Watch-Dial Cluster in upper black bezel space) */
+    .vf-pns-analog-dial {
+      position: absolute;
+      left: 50%;
+      top: 34px;
+      transform: translateX(-50%);
+      width: clamp(206px, 60%, 248px);
+      aspect-ratio: 248 / 106;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 4;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.72));
+    }
+    .vf-stage[data-vf-mode="pns"] ~ .vf-pns-analog-dial,
+    .vf-stage[data-vf-mode="disposable"] ~ .vf-pns-analog-dial {
+      display: flex;
+    }
+    .app-shell.picker-open .vf-pns-analog-dial {
+      display: none !important;
+    }
+    @media (orientation: landscape) and (max-height: 580px) {
+      .vf-pns-analog-dial {
+        display: none !important;
+      }
+    }
+    .vf-pns-analog-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .pns-dial-needle {
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    .pns-dial-badge-box {
+      fill: #47443c;
+      transition: fill 0.16s ease;
+    }
+    .pns-dial-badge-txt {
+      fill: #f3efe2;
+      font-family: var(--mono);
+      font-weight: 800;
+    }
+    #pnsDialAfTag.active .pns-dial-badge-box { fill: #1e2421; }
+    #pnsDialPTag.active .pns-dial-badge-box { fill: #b45309; }
+
     /* Medium Format 120 — Waist-Level Ground Glass Etched Grid + High-Contrast Magnifier Loupe */
     .vf-mf-overlay {
       position: absolute;
@@ -5612,6 +5660,159 @@
                 <span class="cam-film-window-txt" id="camFilmWindowTxt">Pro 400H · 400</span>
               </button>
             </div>
+          </div>
+
+          <!-- Nikon 35Ti Analog Display System (Top-Plate Seiko Chronograph Instrument Cluster in Black Zone) -->
+          <div class="vf-pns-analog-dial" id="vfPnsAnalogDial" aria-hidden="true">
+            <svg class="vf-pns-analog-svg" viewBox="0 0 248 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="pnsTiBezel" x1="0" y1="0" x2="0" y2="106" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#aca496"/>
+                  <stop offset="28%" stop-color="#7c756a"/>
+                  <stop offset="68%" stop-color="#4e4a41"/>
+                  <stop offset="100%" stop-color="#8b8376"/>
+                </linearGradient>
+                <linearGradient id="pnsTiInner" x1="0" y1="6" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#2b2822"/>
+                  <stop offset="50%" stop-color="#534e44"/>
+                  <stop offset="100%" stop-color="#1e1c18"/>
+                </linearGradient>
+                <radialGradient id="pnsDialIvory" cx="50%" cy="42%" r="65%">
+                  <stop offset="0%" stop-color="#f5f2e8"/>
+                  <stop offset="68%" stop-color="#e9e4d3"/>
+                  <stop offset="100%" stop-color="#d8d1be"/>
+                </radialGradient>
+                <linearGradient id="pnsCrystalSheen" x1="20" y1="10" x2="180" y2="80" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+                  <stop offset="38%" stop-color="#ffffff" stop-opacity="0.06"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Brushed Titanium Outer Rim + Sunken Ivory Enamel Watch Face -->
+              <rect x="2" y="2" width="244" height="102" rx="51" fill="url(#pnsTiBezel)" stroke="#1e2024" stroke-width="1"/>
+              <rect x="6" y="6" width="236" height="94" rx="47" fill="url(#pnsTiInner)"/>
+              <rect x="9" y="8.5" width="230" height="89" rx="44.5" fill="url(#pnsDialIvory)" stroke="#48443c" stroke-width="0.8"/>
+              <rect x="11.5" y="11" width="225" height="84" rx="42" fill="none" stroke="rgba(68,64,56,0.38)" stroke-width="0.5"/>
+
+              <!-- LEFT ARC: FOCUS DISTANCE (m / ft) + AF + INFINITY -->
+              <path d="M41.8 80.4L38.6 84.3 M36.1 77.0L33.8 78.9 M33.8 70.7L29.5 73.1 M29.7 65.5L26.8 66.4 M29.8 58.8L24.9 59.5 M27.8 52.4L24.8 52.3 M30.4 46.2L25.5 45.1 M30.8 39.6L28.1 38.4 M35.4 34.7L31.3 31.9 M38.2 28.6L36.0 26.5 M44.2 25.7L41.3 21.6 M49.0 21.1L47.7 18.3 M55.7 20.5L54.4 15.7" stroke="#262825" stroke-width="0.95" stroke-linecap="round"/>
+              <path d="M49.5 88.2 L43.7 85.2" stroke="#c83c26" stroke-width="2.4" stroke-linecap="butt"/>
+              <g fill="#222522" font-family="var(--mono)" text-anchor="middle" dominant-baseline="central">
+                <text x="45.8" y="75.3" font-size="6.1" font-weight="800">0.4</text>
+                <text x="39.5" y="67.5" font-size="6.1" font-weight="800">0.7</text>
+                <text x="36.2" y="57.9" font-size="6.3" font-weight="800">1</text>
+                <text x="36.9" y="47.7" font-size="6.3" font-weight="800">2</text>
+                <text x="41.0" y="38.5" font-size="6.3" font-weight="800">3</text>
+                <text x="48.1" y="31.2" font-size="6.3" font-weight="800">5</text>
+                <g fill="#5b574d" font-size="3.6" font-weight="700">
+                  <text x="51.6" y="70.1">1.3</text>
+                  <text x="46.4" y="64.1">2.3</text>
+                  <text x="43.9" y="57.0">3.3</text>
+                  <text x="44.2" y="49.4">6.6</text>
+                  <text x="47.4" y="42.5">10</text>
+                  <text x="52.6" y="37.2">17</text>
+                  <text x="54.2" y="77.2" font-size="3.4">m</text>
+                  <text x="59.2" y="72.4" font-size="3.2">ft</text>
+                </g>
+              </g>
+              <!-- Infinity double mountain peaks icon -->
+              <path d="M53.2 28.5 L55.4 24.4 L57.4 28.5 M56.4 28.5 L58.6 24.4 L60.6 28.5" stroke="#222522" stroke-width="0.95" stroke-linejoin="round" fill="none"/>
+              <!-- [AF] top-left badge -->
+              <g class="active" id="pnsDialAfTag">
+                <rect class="pns-dial-badge-box" x="72" y="13.5" width="13.5" height="8.5" rx="1.5"/>
+                <text class="pns-dial-badge-txt" x="78.75" y="17.8" font-size="5.3" text-anchor="middle" dominant-baseline="central">AF</text>
+              </g>
+
+              <!-- TOP CENTER CIRCLE: FRAME COUNTER (E · 10 · 20 · 30) -->
+              <circle cx="124" cy="33" r="15.2" fill="rgba(222,216,198,0.45)" stroke="#5c574d" stroke-width="0.65"/>
+              <path d="M124.0 21.8L124.0 18.5 M127.5 20.9L128.0 19.1 M130.7 22.3L131.7 20.7 M133.4 24.6L134.8 23.3 M135.3 27.5L137.0 26.6 M135.0 31.1L138.3 30.5 M136.5 34.3L138.4 34.5 M135.7 37.7L137.4 38.4 M133.9 40.8L135.4 41.9 M131.4 43.2L132.5 44.7 M127.8 43.5L129.0 46.6 M124.9 45.6L125.0 47.5 M121.4 45.3L121.0 47.2 M118.1 44.1L117.2 45.8 M115.2 42.1L113.9 43.4 M114.3 38.6L111.4 40.2 M111.8 36.0L109.9 36.5 M111.4 32.6L109.5 32.5 M112.0 29.1L110.2 28.5" stroke="#282a27" stroke-width="0.75" stroke-linecap="round"/>
+              <g fill="#222522" font-family="var(--mono)" font-size="4.6" font-weight="800" text-anchor="middle" dominant-baseline="central">
+                <text x="124.0" y="24.2">E</text>
+                <text x="132.6" y="31.5">10</text>
+                <text x="127.0" y="40.9">20</text>
+                <text x="116.4" y="37.1">30</text>
+              </g>
+              <!-- Auxiliary L.T. / self-timer / rewind micro glyphs + [P] badge -->
+              <text x="102" y="18.2" fill="#3a3832" font-family="var(--mono)" font-size="4.4" font-weight="800" text-anchor="middle" dominant-baseline="central">L.T.</text>
+              <g stroke="#3a3832" stroke-width="0.7" fill="none" opacity="0.85">
+                <circle cx="99.5" cy="27.5" r="2.7"/>
+                <path d="M99.5 27.5 L99.5 25.6 M99.5 27.5 L101.0 27.5"/>
+                <circle cx="96.5" cy="36.2" r="2.1"/>
+                <path d="M100.2 36.2 L102.4 34.9 V37.5 Z" fill="#3a3832"/>
+              </g>
+              <g class="active" id="pnsDialPTag">
+                <rect class="pns-dial-badge-box" x="158" y="13.5" width="11.5" height="8.5" rx="1.5"/>
+                <text class="pns-dial-badge-txt" x="163.75" y="17.8" font-size="5.4" text-anchor="middle" dominant-baseline="central">P</text>
+              </g>
+
+              <!-- NIKON SCRIPT LOGO -->
+              <text x="124" y="57.2" fill="#1d201d" font-family="Georgia, 'Times New Roman', serif" font-size="8.2" font-weight="800" font-style="italic" text-anchor="middle" letter-spacing="-0.2">Nikon</text>
+
+              <!-- BOTTOM CENTER EV EXPOSURE COMPENSATION FAN (+2 · +1 · [+/-] · -1 · -2) -->
+              <path d="M111.5 76.2 Q124 81.8 136.5 76.2" stroke="rgba(68,64,56,0.45)" stroke-width="0.6" fill="none"/>
+              <path d="M115.2 77.1L112.7 80.5 M116.5 79.7L115.3 82.1 M119.4 79.3L118.1 83.3 M121.4 81.3L121.0 84.0 M124.0 80.0L124.0 84.2 M126.6 81.3L127.0 84.0 M128.6 79.3L129.9 83.3 M131.5 79.7L132.7 82.1 M132.8 77.1L135.3 80.5" stroke="#222522" stroke-width="0.85" stroke-linecap="round"/>
+              <g fill="#222522" font-family="var(--mono)" font-size="4.6" font-weight="800" text-anchor="middle" dominant-baseline="central">
+                <text x="108.5" y="84.2">+2</text>
+                <text x="115.8" y="87.6">+1</text>
+                <text x="132.2" y="87.6">-1</text>
+                <text x="139.5" y="84.2">-2</text>
+              </g>
+              <g transform="translate(120.2, 85.4)">
+                <rect x="0" y="0" width="7.6" height="5.2" rx="0.8" fill="#222522"/>
+                <path d="M1.2 1.8 H2.7 M1.95 1.05 V2.55 M5.6 1.1 L2.1 4.2 M4.7 3.7 H6.4" stroke="#f3efe2" stroke-width="0.72" stroke-linecap="round"/>
+              </g>
+              <text x="124" y="94.5" fill="#5b574e" font-family="var(--mono)" font-size="3.1" font-weight="700" text-anchor="middle" letter-spacing="0.4">NIKON ANALOG DISPLAY SYSTEM</text>
+
+              <!-- RIGHT ARC: APERTURE F-STOPS (2.8 · 4 · 5.6 · 8 · 11 · 16 · 22) -->
+              <path d="M209.6 30.9L213.4 27.6 M214.4 34.3L216.9 32.7 M215.5 40.0L220.1 37.9 M219.0 44.6L221.9 43.9 M218.3 50.4L223.3 49.9 M220.2 55.9L223.1 56.1 M217.7 61.2L222.6 62.2 M217.8 67.0L220.6 68.0 M213.9 71.2L218.2 73.8 M212.1 76.8L214.5 78.7 M207.1 79.6L210.4 83.4 M203.7 84.4L205.3 86.9 M198.0 85.5L200.1 90.1" stroke="#262825" stroke-width="0.95" stroke-linecap="round"/>
+              <g fill="#222522" font-family="var(--mono)" font-size="6.1" font-weight="800" text-anchor="middle" dominant-baseline="central">
+                <text x="203.5" y="35.9">2.8</text>
+                <text x="208.7" y="43.0">4</text>
+                <text x="210.2" y="51.2">5.6</text>
+                <text x="210.4" y="59.6">8</text>
+                <text x="207.1" y="67.5">11</text>
+                <text x="201.8" y="74.1">16</text>
+                <text x="195.0" y="78.7">22</text>
+              </g>
+
+              <!-- 4 LIVE CHRONOGRAPH WATCH NEEDLES -->
+              <!-- Focus distance needle (pivot 64, 54) -->
+              <g transform="translate(64, 54)">
+                <g class="pns-dial-needle" id="pnsDialNeedleFocus" style="transform: rotate(144deg);">
+                  <polygon points="-5,-0.9 0,-1.1 32.5,-0.25 32.5,0.25 0,1.1 -5,0.9" fill="#181b19"/>
+                </g>
+                <circle cx="0" cy="0" r="2.7" fill="#5c564a" stroke="#181b19" stroke-width="0.6"/>
+                <circle cx="0" cy="0" r="1.1" fill="#d8d1be"/>
+              </g>
+              <!-- Frame counter needle (pivot 124, 33) -->
+              <g transform="translate(124, 33)">
+                <g class="pns-dial-needle" id="pnsDialNeedleFrame" style="transform: rotate(-82deg);">
+                  <polygon points="-3.2,-0.7 0,-0.85 10.6,-0.2 10.6,0.2 0,0.85 -3.2,0.7" fill="#181b19"/>
+                </g>
+                <circle cx="0" cy="0" r="1.8" fill="#5c564a" stroke="#181b19" stroke-width="0.5"/>
+                <circle cx="0" cy="0" r="0.7" fill="#d8d1be"/>
+              </g>
+              <!-- EV comp needle (pivot 124, 65) -->
+              <g transform="translate(124, 65)">
+                <g class="pns-dial-needle" id="pnsDialNeedleEv" style="transform: rotate(90deg);">
+                  <polygon points="-3.5,-0.75 0,-0.95 16.0,-0.2 16.0,0.2 0,0.95 -3.5,0.75" fill="#181b19"/>
+                </g>
+                <circle cx="0" cy="0" r="2.0" fill="#5c564a" stroke="#181b19" stroke-width="0.55"/>
+                <circle cx="0" cy="0" r="0.8" fill="#d8d1be"/>
+              </g>
+              <!-- Aperture needle (pivot 184, 54) -->
+              <g transform="translate(184, 54)">
+                <g class="pns-dial-needle" id="pnsDialNeedleAperture" style="transform: rotate(-31deg);">
+                  <polygon points="-5,-0.9 0,-1.1 32.5,-0.25 32.5,0.25 0,1.1 -5,0.9" fill="#181b19"/>
+                </g>
+                <circle cx="0" cy="0" r="2.7" fill="#5c564a" stroke="#181b19" stroke-width="0.6"/>
+                <circle cx="0" cy="0" r="1.1" fill="#d8d1be"/>
+              </g>
+
+              <!-- Watch Crystal Glass Glare -->
+              <rect x="9" y="8.5" width="230" height="89" rx="44.5" fill="url(#pnsCrystalSheen)"/>
+            </svg>
           </div>
 
           <div class="vf-roll-done-bar" id="vfRollDoneBar">
@@ -11793,6 +11994,66 @@
 
     const flashIco = document.getElementById('vfPnsFlashIco');
     if (flashIco) flashIco.classList.toggle('active', !!state.camFlashOn);
+
+    // Nikon 35Ti Top-Plate Analog Display System (4 watch hands + mode badges)
+    const focusNeedle = document.getElementById('pnsDialNeedleFocus');
+    if (focusNeedle) {
+      const meters = (typeof focusPosToMeters === 'function')
+        ? focusPosToMeters(lens?.focusPos ?? state.focusPos ?? 0.45, lens?.focusStops)
+        : 1.5;
+      const stops = [
+        { m: 0.4, deg: 130 },
+        { m: 0.7, deg: 151 },
+        { m: 1.0, deg: 172 },
+        { m: 2.0, deg: 193 },
+        { m: 3.0, deg: 214 },
+        { m: 5.0, deg: 235 },
+        { m: 40.0, deg: 256 }
+      ];
+      let focusDeg = 256;
+      if (Number.isFinite(meters)) {
+        if (meters <= stops[0].m) {
+          focusDeg = Math.max(118, stops[0].deg - ((stops[0].m - meters) / 0.1) * 8);
+        } else {
+          for (let i = 0; i < stops.length - 1; i++) {
+            const a = stops[i], b = stops[i + 1];
+            if (meters <= b.m) {
+              const t = (meters - a.m) / Math.max(1e-4, b.m - a.m);
+              focusDeg = a.deg + t * (b.deg - a.deg);
+              break;
+            }
+          }
+        }
+      }
+      focusNeedle.style.transform = `rotate(${focusDeg.toFixed(1)}deg)`;
+    }
+
+    const frameNeedle = document.getElementById('pnsDialNeedleFrame');
+    if (frameNeedle) {
+      const maxShots = Math.max(1, Number(state.camMaxShots) || 36);
+      const shotFrame = state.camNeedsRewind
+        ? maxShots
+        : Math.min((state.camShotCount || 0) + 1, maxShots);
+      const frameFrac = Math.max(0, Math.min(36, (shotFrame / maxShots) * 36));
+      frameNeedle.style.transform = `rotate(${(-90 + frameFrac * 8).toFixed(1)}deg)`;
+    }
+
+    const evNeedle = document.getElementById('pnsDialNeedleEv');
+    if (evNeedle) {
+      const evDeg = 90 + Math.max(-2, Math.min(2, evBias)) * 18;
+      evNeedle.style.transform = `rotate(${evDeg.toFixed(1)}deg)`;
+    }
+
+    const apNeedle = document.getElementById('pnsDialNeedleAperture');
+    if (apNeedle) {
+      const curF = Math.max(2.0, Math.min(22, Number(lens?.activeF || lens?.minF || 3.5)));
+      const stopIdx = (Math.log2(curF) - 1.5) / 0.5;
+      const apDeg = Math.max(-50, Math.min(68, -42 + stopIdx * 18));
+      apNeedle.style.transform = `rotate(${apDeg.toFixed(1)}deg)`;
+    }
+
+    document.getElementById('pnsDialAfTag')?.classList.toggle('active', state.focusMode === 'af');
+    document.getElementById('pnsDialPTag')?.classList.toggle('active', !!info.isAuto);
   }
 
   function syncSlrMeterLed(body, lens) {
@@ -11868,15 +12129,24 @@
     const targetRatio = getCameraStageDimensions(body, lens).ratio;
     const bw = box.clientWidth;
     const bh = box.clientHeight;
+    const dialEl = document.getElementById('vfPnsAnalogDial');
+    const isSlrF6 = body.id === 'slr';
+    const isPns35Ti = body.id === 'pns' || body.id === 'disposable';
+    const isMobileLandscape = window.matchMedia?.('(orientation: landscape) and (max-height: 580px)')?.matches;
+    const isPickerOpen = document.getElementById('appShell')?.classList.contains('picker-open');
+    const showDial = !!(dialEl && isPns35Ti && !isMobileLandscape && !isPickerOpen && bw > 20 && bh >= 370);
+    if (dialEl) {
+      dialEl.style.display = isPns35Ti ? (showDial ? 'flex' : 'none') : '';
+    }
     if (bw > 20 && bh > 20) {
-      const isMobileLandscape = window.matchMedia?.('(orientation: landscape) and (max-height: 580px)')?.matches;
       const topHud = box.querySelector('.vf-top-hud');
       const botHud = box.querySelector('.vf-bottom-hud');
-      const topReserve = topHud ? (topHud.offsetHeight + (isMobileLandscape ? 7 : 12)) : 8;
+      const topHudBottom = topHud ? (topHud.offsetTop + topHud.offsetHeight) : 0;
+      const baseTopReserve = topHud ? (topHud.offsetHeight + (isMobileLandscape ? 7 : 12)) : 8;
+      const dialH = showDial ? (dialEl.offsetHeight || Math.round(dialEl.clientWidth * (106 / 248)) || 94) : 0;
+      const topReserve = showDial ? (baseTopReserve + dialH + 10) : baseTopReserve;
       const botReserve = botHud ? (botHud.offsetHeight + (isMobileLandscape ? 6 : 10)) : (isMobileLandscape ? 34 : 82);
       const availH = Math.max(120, bh - topReserve - botReserve);
-      const isSlrF6 = body.id === 'slr';
-      const isPns35Ti = body.id === 'pns' || body.id === 'disposable';
       const bezelW = isSlrF6 ? 28 : 0;
       const bezelH = (isSlrF6 || isPns35Ti) ? 24 : 0;
       let w = bw;
@@ -11893,6 +12163,15 @@
       stage.style.height = `${Math.round(h)}px`;
       const shiftY = Math.round((topReserve - botReserve) * 0.5);
       stage.style.transform = `translateY(${shiftY}px)`;
+      if (dialEl && showDial) {
+        const stageTop = (bh - h) * 0.5 + shiftY;
+        const dialTop = Math.round(topHudBottom + Math.max(4, (stageTop - topHudBottom - dialH) * 0.5));
+        dialEl.style.top = `${dialTop}px`;
+      } else if (dialEl) {
+        dialEl.style.top = '';
+      }
+    } else if (dialEl) {
+      dialEl.style.top = '';
     }
 
     if (body.id === 'rangefinder') {
