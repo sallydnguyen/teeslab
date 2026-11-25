@@ -3618,11 +3618,139 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
+    .sample-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .sample-source-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      height: 32px;
+      margin-bottom: 8px;
+      background: #0a0c11;
+      border: 1px solid #1b202b;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    .sample-source-tabs .lab-tab-btn {
+      font-size: 11px;
+    }
+    .sample-panel-pane {
+      display: none;
+    }
+    .sample-panel-pane.active {
+      display: block;
+    }
+    .sample-compact-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      padding: 6px 9px;
+      margin-bottom: 7px;
+      border-radius: 9px;
+      background: #131720;
+      border: 1px solid #262c3a;
+      cursor: pointer;
+      touch-action: pan-y;
+      user-select: none;
+      transition: border-color 0.14s ease, background 0.14s ease;
+    }
+    .sample-compact-box:active { transform: scale(0.99); }
+    .sample-compact-box.active {
+      border-color: var(--cyan);
+      background: rgba(34, 211, 238, 0.08);
+    }
+    .sample-box-meta {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .sample-box-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.45px;
+      color: var(--cyan);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sample-box-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sample-box-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .sample-box-count {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--cyan-bright);
+    }
+    .sample-box-toggle {
+      font-size: 10px;
+      font-weight: 700;
+      color: #cbd5e1;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #191f2a;
+      border: 1px solid #2b3242;
+      white-space: nowrap;
+    }
+    .sample-compact-box.active .sample-box-toggle {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      color: #041318;
+    }
+    .sample-strip-h {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 1px 0 3px;
+      scrollbar-width: none;
+    }
+    .sample-strip-h::-webkit-scrollbar { display: none; }
+    .sample-strip-h .sample-thumb {
+      flex: 0 0 82px;
+      width: 82px;
+      height: 54px;
+      aspect-ratio: auto;
+      border-radius: 7px;
+      border-width: 1.5px;
+    }
+    .sample-strip-h.expanded {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      overflow: visible;
+      padding: 1px 0 0;
+    }
+    .sample-strip-h.expanded .sample-thumb {
+      flex: initial;
+      width: auto;
+      height: auto;
+      aspect-ratio: 3 / 2;
+      border-radius: 7px;
+      border-width: 1.5px;
+    }
     .sample-thumb {
       position: relative;
-      border-radius: 8px;
+      border-radius: 7px;
       overflow: hidden;
-      border: 2px solid transparent;
+      border: 1.5px solid transparent;
       aspect-ratio: 3 / 2;
     }
     .sample-thumb.active { border-color: var(--cyan); }
@@ -3631,16 +3759,24 @@
       position: absolute;
       inset: auto 0 0 0;
       background: linear-gradient(transparent, rgba(0,0,0,0.88));
-      font-size: 9.5px;
-      font-weight: 600;
-      padding: 7px 5px 4px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      padding: 6px 4px 3px;
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    #sampleSheetBackdrop .thumb-del-btn {
+      width: 20px;
+      height: 20px;
+      top: 3px;
+      right: 3px;
+      font-size: 10px;
+    }
     .roll-sample-group {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .roll-sample-group:last-child {
       margin-bottom: 0;
@@ -3653,7 +3789,7 @@
       background: rgba(34, 211, 238, 0.08);
       border: 1px solid rgba(34, 211, 238, 0.28);
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 5px 9px;
       margin-bottom: 6px;
       color: var(--cyan-bright);
       font-size: 11px;
@@ -5480,7 +5616,7 @@
     <!-- BOTTOM SHEET: ADD PHOTO & SAMPLE SCENES -->
     <div class="sheet-backdrop" id="sampleSheetBackdrop">
       <div class="sheet-card">
-        <div class="sheet-head">
+        <div class="sheet-head" style="margin-bottom:8px;">
           <span id="sampleSheetTitle">🖼️ Add Photo</span>
           <button class="btn-pill btn-ghost" id="btnCloseSampleSheet" style="height:26px;">✕</button>
         </div>
@@ -5488,12 +5624,32 @@
           <button class="hf-target-chip active" id="btnSampleTarget1" data-hf-slot="1" type="button">1/2 Left Frame</button>
           <button class="hf-target-chip" id="btnSampleTarget2" data-hf-slot="2" type="button">2/2 Right Frame</button>
         </div>
-        <button class="btn-pill btn-cyan" id="btnSheetOpenPhoto" type="button" style="width:100%;height:36px;font-size:12.5px;border-radius:10px;margin-bottom:10px;">➕ Choose Photo from Library</button>
-        <div id="rollSamplesSection" style="display:none;margin-bottom:10px;">
-          <div id="rollSampleStrip"></div>
+        <button class="btn-pill btn-cyan" id="btnSheetOpenPhoto" type="button" style="width:100%;height:32px;font-size:12px;border-radius:9px;margin-bottom:8px;">➕ Choose Photo from Library</button>
+
+        <div class="sample-source-tabs" id="sampleSourceTabs" role="tablist" aria-label="Photo source">
+          <button class="lab-tab-btn active" data-sample-source="samples" role="tab" aria-selected="true" type="button">Samples (<span id="sampleCountTab">12</span>)</button>
+          <button class="lab-tab-btn" data-sample-source="roll" role="tab" aria-selected="false" type="button">Camera Roll (<span id="rollCountTab">0</span>)</button>
         </div>
-        <div style="font-size:10.5px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">Sample scenes</div>
-        <div class="sample-grid-3" id="sampleStrip"></div>
+
+        <div class="sample-panel-pane active" id="samplePanelSamples" role="tabpanel">
+          <div class="sample-compact-box" id="sampleCompactBox" role="button" tabindex="0" aria-expanded="false" title="Tap to toggle all 12 · Swipe left/right to switch sample">
+            <div class="sample-box-meta">
+              <span class="sample-box-label">SAMPLE PHOTOS · SWIPE OR TAP</span>
+              <span class="sample-box-val" id="sampleBoxActiveName">Coffee</span>
+            </div>
+            <div class="sample-box-actions">
+              <span class="sample-box-count" id="sampleBoxCount">01/12</span>
+              <span class="sample-box-toggle" id="sampleBoxToggleLbl">⊞ All ▾</span>
+            </div>
+          </div>
+          <div class="sample-strip-h" id="sampleStrip"></div>
+        </div>
+
+        <div class="sample-panel-pane" id="samplePanelRoll" role="tabpanel">
+          <div id="rollSamplesSection" style="display:none;margin-bottom:2px;">
+            <div id="rollSampleStrip"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -7191,6 +7347,8 @@
     labDoubleExpFromCameraRoll: false,
     labDoubleExpMix: 50,
     sampleSheetTargetMode: 'primary',
+    sampleSheetSourceTab: 'samples',
+    sampleGridExpanded: false,
     halfFrameFirstCanvas: null,
     halfFrameLabSecondCanvas: null,
     halfFrameLabSecondPreviewCanvas: null,
@@ -9669,7 +9827,7 @@
       `;
 
       const gridEl = document.createElement('div');
-      gridEl.className = 'sample-grid-3';
+      gridEl.className = 'sample-grid-4';
       if (!isOpen) gridEl.style.display = 'none';
 
       headerBtn.addEventListener('click', () => {
@@ -9761,19 +9919,122 @@
     });
   }
 
-  function renderSampleStrip() {
-    renderRollSampleStrip();
-    const strip = document.getElementById('sampleStrip');
-    strip.innerHTML = '';
+  function syncSampleSheetSourceUI() {
+    const rollShots = state.camRollShots || [];
+    const hasRoll = rollShots.length > 0;
+    const tabsEl = document.getElementById('sampleSourceTabs');
+    const rollCountEl = document.getElementById('rollCountTab');
+    const sampleCountEl = document.getElementById('sampleCountTab');
+    if (rollCountEl) rollCountEl.textContent = String(rollShots.length);
+    if (sampleCountEl) sampleCountEl.textContent = String(SAMPLES.length);
+    if (tabsEl) tabsEl.style.display = hasRoll ? '' : 'none';
+    if (!hasRoll) state.sampleSheetSourceTab = 'samples';
+    else if (!['samples', 'roll'].includes(state.sampleSheetSourceTab)) state.sampleSheetSourceTab = 'samples';
+    document.querySelectorAll('#sampleSourceTabs [data-sample-source]').forEach(btn => {
+      const isAct = btn.dataset.sampleSource === state.sampleSheetSourceTab;
+      btn.classList.toggle('active', isAct);
+      btn.setAttribute('aria-selected', isAct ? 'true' : 'false');
+    });
+    document.getElementById('samplePanelSamples')?.classList.toggle('active', state.sampleSheetSourceTab === 'samples');
+    document.getElementById('samplePanelRoll')?.classList.toggle('active', state.sampleSheetSourceTab === 'roll');
+  }
+
+  function getActiveSampleTargetId() {
     const isMx2 = state.sampleSheetTargetMode === 'mx2';
     const isCamMx1 = state.sampleSheetTargetMode === 'cam-mx1';
     const isHf2 = !isMx2 && !isCamMx1 && state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
-    const activeSample = isMx2
+    return isMx2
       ? state.labDoubleExpSampleId
       : (isHf2 ? state.halfFrameLabSecondSampleId : state.activeSampleId);
+  }
+
+  async function selectSampleByTarget(s, { closeSheet = true } = {}) {
+    if (!s) return;
+    try {
+      await ensureSampleLoaded(s);
+    } catch (err) {
+      showToast(`Could not load sample: ${s.title}`);
+      return;
+    }
+    if (state.sampleSheetTargetMode === 'cam-mx1') {
+      state.sampleSheetTargetMode = 'primary';
+      state.doubleExpMode = true;
+      state.doubleExpFirstCanvas = s.canvas;
+      if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
+      const mxGhost = document.getElementById('vfMxGhostImg');
+      if (mxGhost) mxGhost.src = s.canvas.toDataURL('image/jpeg', 0.72);
+      if (closeSheet) document.getElementById('sampleSheetBackdrop').classList.remove('open');
+      syncCameraHudUI();
+      if (closeSheet) switchMainTab('camera');
+      showToast(`🎞️ Base 1/2 loaded (${s.title}) — Take shot 2/2`);
+      return;
+    }
+    if (state.sampleSheetTargetMode === 'mx2') {
+      if (closeSheet) state.sampleSheetTargetMode = 'primary';
+      state.activeTweakKey = 'labDoubleExpMix';
+      loadLabDoubleExpCanvas(s.canvas, { sampleId: s.id, rollShotId: null, rollLabel: s.title, fromCameraRoll: false, forcePreviewRender: true });
+      renderSampleStrip();
+      if (closeSheet) document.getElementById('sampleSheetBackdrop').classList.remove('open');
+      showToast(`🎞️ 2× Layer 2: ${s.title}`);
+      return;
+    }
+    const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
+    if (isSlot2) {
+      loadHalfFrameSecondCanvas(s.canvas, { sampleId: s.id, fromCameraRoll: false, forcePreviewRender: true });
+      renderSampleStrip();
+      if (closeSheet) document.getElementById('sampleSheetBackdrop').classList.remove('open');
+      showToast(`🎞️ Photo 2/2: ${s.title}`);
+      return;
+    }
+    state.activeSampleId = s.id;
+    renderSampleStrip();
+    loadSourceCanvas(s.canvas, null);
+    if (closeSheet) document.getElementById('sampleSheetBackdrop').classList.remove('open');
+    showToast(`Sample: ${s.title}`);
+  }
+
+  function stepSampleScene(delta = 1) {
+    if (!SAMPLES.length) return;
+    const activeId = getActiveSampleTargetId();
+    const curIdx = SAMPLES.findIndex(s => s.id === activeId);
+    const nextIdx = curIdx >= 0
+      ? (curIdx + delta + SAMPLES.length) % SAMPLES.length
+      : (delta >= 0 ? 0 : SAMPLES.length - 1);
+    selectSampleByTarget(SAMPLES[nextIdx], { closeSheet: false });
+  }
+
+  function renderSampleStrip() {
+    renderRollSampleStrip();
+    syncSampleSheetSourceUI();
+    const strip = document.getElementById('sampleStrip');
+    if (!strip) return;
+    strip.innerHTML = '';
+    strip.classList.toggle('expanded', !!state.sampleGridExpanded);
+
+    const activeSampleId = getActiveSampleTargetId();
+    const activeIdx = SAMPLES.findIndex(s => s.id === activeSampleId);
+    const activeObj = activeIdx >= 0 ? SAMPLES[activeIdx] : null;
+
+    const box = document.getElementById('sampleCompactBox');
+    const nameEl = document.getElementById('sampleBoxActiveName');
+    const countEl = document.getElementById('sampleBoxCount');
+    const toggleEl = document.getElementById('sampleBoxToggleLbl');
+    if (box) {
+      box.classList.toggle('active', !!state.sampleGridExpanded);
+      box.setAttribute('aria-expanded', state.sampleGridExpanded ? 'true' : 'false');
+    }
+    if (nameEl) nameEl.textContent = activeObj ? activeObj.title : 'Choose scene';
+    if (countEl) countEl.textContent = activeIdx >= 0 ? `${String(activeIdx + 1).padStart(2, '0')}/${SAMPLES.length}` : `${SAMPLES.length} scenes`;
+    if (toggleEl) toggleEl.textContent = state.sampleGridExpanded ? '⊟ Strip ▴' : '⊞ All ▾';
+
+    let activeBtn = null;
     SAMPLES.forEach(s => {
       const item = document.createElement('button');
-      item.className = `sample-thumb ${activeSample === s.id ? 'active' : ''}`;
+      item.type = 'button';
+      item.dataset.sampleId = s.id;
+      const isAct = activeSampleId === s.id;
+      item.className = `sample-thumb ${isAct ? 'active' : ''}`;
+      if (isAct) activeBtn = item;
       const img = document.createElement('img');
       img.src = s.src;
       img.alt = s.title;
@@ -9781,51 +10042,12 @@
       const lbl = document.createElement('span');
       lbl.textContent = s.title;
       item.appendChild(img); item.appendChild(lbl);
-      item.addEventListener('click', async () => {
-        try {
-          await ensureSampleLoaded(s);
-        } catch (err) {
-          showToast(`Could not load sample: ${s.title}`);
-          return;
-        }
-        if (state.sampleSheetTargetMode === 'cam-mx1') {
-          state.sampleSheetTargetMode = 'primary';
-          state.doubleExpMode = true;
-          state.doubleExpFirstCanvas = s.canvas;
-          if (state.camNeedsWind && !state.camNeedsRewind) windFilmLever(false);
-          const mxGhost = document.getElementById('vfMxGhostImg');
-          if (mxGhost) mxGhost.src = s.canvas.toDataURL('image/jpeg', 0.72);
-          document.getElementById('sampleSheetBackdrop').classList.remove('open');
-          syncCameraHudUI();
-          switchMainTab('camera');
-          showToast(`🎞️ Base 1/2 loaded (${s.title}) — Take shot 2/2`);
-          return;
-        }
-        if (state.sampleSheetTargetMode === 'mx2') {
-          state.sampleSheetTargetMode = 'primary';
-          state.activeTweakKey = 'labDoubleExpMix';
-          loadLabDoubleExpCanvas(s.canvas, { sampleId: s.id, rollShotId: null, rollLabel: s.title, fromCameraRoll: false, forcePreviewRender: true });
-          renderSampleStrip();
-          document.getElementById('sampleSheetBackdrop').classList.remove('open');
-          showToast(`🎞️ 2× Layer 2: ${s.title}`);
-          return;
-        }
-        const isSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && state.halfFrameTargetSlot === 2;
-        if (isSlot2) {
-          loadHalfFrameSecondCanvas(s.canvas, { sampleId: s.id, fromCameraRoll: false, forcePreviewRender: true });
-          renderSampleStrip();
-          document.getElementById('sampleSheetBackdrop').classList.remove('open');
-          showToast(`🎞️ Photo 2/2: ${s.title}`);
-          return;
-        }
-        state.activeSampleId = s.id;
-        renderSampleStrip();
-        loadSourceCanvas(s.canvas, null);
-        document.getElementById('sampleSheetBackdrop').classList.remove('open');
-        showToast(`Sample: ${s.title}`);
-      });
+      item.addEventListener('click', () => selectSampleByTarget(s, { closeSheet: true }));
       strip.appendChild(item);
     });
+    if (activeBtn && !state.sampleGridExpanded) {
+      requestAnimationFrame(() => activeBtn.scrollIntoView({ block: 'nearest', inline: 'center' }));
+    }
   }
 
   function selectFilmStock(filmId) {
@@ -14873,6 +15095,7 @@
     stopCameraLoop();
     state.sampleSheetTargetMode = 'primary';
     state.halfFrameTargetSlot = slotNum === 2 ? 2 : 1;
+    state.sampleSheetSourceTab = (state.camRollShots?.length && state.sourceFromCameraRoll) ? 'roll' : 'samples';
     const titleEl = document.getElementById('sampleSheetTitle');
     if (titleEl) titleEl.textContent = '🖼️ Add Photo';
     renderHalfFrameLabUI();
@@ -14895,6 +15118,63 @@
     renderSampleStrip();
     sampleSheet.classList.add('open');
   }
+  document.querySelectorAll('#sampleSourceTabs [data-sample-source]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.sampleSheetSourceTab = btn.dataset.sampleSource === 'roll' ? 'roll' : 'samples';
+      syncSampleSheetSourceUI();
+    });
+  });
+  (() => {
+    const box = document.getElementById('sampleCompactBox');
+    if (!box) return;
+    let startX = 0, startY = 0, swiped = false, ptrActive = false;
+    box.addEventListener('pointerdown', e => {
+      ptrActive = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      swiped = false;
+    });
+    box.addEventListener('pointermove', e => {
+      if (!ptrActive || swiped) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) >= 22 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+        swiped = true;
+        ptrActive = false;
+        stepSampleScene(dx < 0 ? 1 : -1);
+      }
+    });
+    box.addEventListener('pointerup', e => {
+      if (!ptrActive) return;
+      ptrActive = false;
+      if (swiped) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) >= 22 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+        swiped = true;
+        stepSampleScene(dx < 0 ? 1 : -1);
+      }
+    });
+    box.addEventListener('pointercancel', () => { ptrActive = false; });
+    box.addEventListener('click', () => {
+      if (swiped) { swiped = false; return; }
+      state.sampleGridExpanded = !state.sampleGridExpanded;
+      renderSampleStrip();
+    });
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        state.sampleGridExpanded = !state.sampleGridExpanded;
+        renderSampleStrip();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        stepSampleScene(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        stepSampleScene(1);
+      }
+    });
+  })();
   document.getElementById('btnOpenSamples').addEventListener('click', () => {
     const autoSlot2 = state.bodyId === 'half-frame' && state.hfDiptychMode && !state.sourceIsDiptych && !state.halfFrameLabSecondCanvas;
     openSampleSheetForSlot(autoSlot2 ? 2 : 1);
@@ -15638,6 +15918,11 @@
 
     if (document.getElementById('exportSheetBackdrop')?.classList.contains('open')) {
       if (e.key === 'Escape') { e.preventDefault(); document.getElementById('exportSheetBackdrop').classList.remove('open'); }
+      return;
+    }
+
+    if (document.getElementById('sampleSheetBackdrop')?.classList.contains('open')) {
+      if (e.key === 'Escape') { e.preventDefault(); closeSampleSheet(); }
       return;
     }
 
