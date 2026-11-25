@@ -1129,7 +1129,7 @@
     /* Tune Tab: Direct Sliders + Rotate + Light Leak + Reset */
     .tune-action-row {
       display: grid;
-      grid-template-columns: minmax(0, 0.84fr) minmax(0, 0.84fr) minmax(0, 1.44fr) minmax(0, 0.88fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px;
       width: 100%;
     }
@@ -1150,15 +1150,22 @@
       transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease, transform 0.1s ease;
     }
     .mx-layers-ico {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 13px;
       flex-shrink: 0;
       display: inline-block;
       vertical-align: middle;
     }
+    .tune-action-btn .mx-layers-ico {
+      width: 16px;
+      height: 15px;
+    }
     .vf-badge-btn .mx-layers-ico {
-      width: 10px;
-      height: 10px;
+      width: 13px;
+      height: 12px;
+    }
+    .mx-btn-lbl:empty {
+      display: none;
     }
     .tune-action-btn:active { transform: scale(0.96); }
     .tune-action-btn.active {
@@ -5092,7 +5099,7 @@
               <span>★</span><span>Saved Combos</span><span class="menu-badge" id="menuSavedCount"></span>
             </button>
             <button class="topbar-menu-item" id="btnLabDoubleExp" type="button" role="menuitem">
-              <svg class="mx-layers-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4.5" width="8.5" height="8.5" rx="1.5"/><path d="M5.5 4.5V3.5A1.5 1.5 0 0 1 7 2h5.5A1.5 1.5 0 0 1 14 3.5V9a1.5 1.5 0 0 1-1.5 1.5h-1"/></svg><span id="menuDoubleExpLabel">Double Exposure</span>
+              <svg class="mx-layers-ico" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="9.5" height="9" rx="1.5"/><rect x="2" y="5" width="9.5" height="9" rx="1.5" fill="currentColor" fill-opacity="0.16"/></svg><span id="menuDoubleExpLabel">Double Exposure</span>
             </button>
             <button class="topbar-menu-item" id="btnMenuResetTweaks" type="button" role="menuitem">
               <span>↺</span><span>Reset Lab Tweaks</span>
@@ -5152,7 +5159,7 @@
           <button class="hf-mode-pill active" id="btnHfLabModeToggle" type="button" title="Toggle 2-in-1 Half Frame diptych or single frame">2F · 2-in-1</button>
         </div>
         <div class="mx-lab-bar" id="mxLabBar">
-          <button class="hf-slot-btn has-photo" id="btnMxLabPick" type="button" title="Replace Double Exposure Layer 2" style="flex:0 0 auto;max-width:136px;padding:0 8px;">Double Exp. · Photo 2</button>
+          <button class="hf-slot-btn has-photo" id="btnMxLabPick" type="button" title="Replace Double Exposure Layer 2" style="flex:0 0 auto;max-width:136px;padding:0 8px;display:inline-flex;align-items:center;gap:4px;"><svg class="mx-layers-ico" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="9.5" height="9" rx="1.5"/><rect x="2" y="5" width="9.5" height="9" rx="1.5" fill="currentColor" fill-opacity="0.16"/></svg><span class="mx-pick-lbl">Photo 2</span></button>
           <div class="mx-blend-wrap" title="Adjust Layer 2 exposure mix">
             <span>Mix</span>
             <input class="mx-blend-slider" id="mxBlendSlider" type="range" min="20" max="80" step="1" value="50" />
@@ -5196,7 +5203,7 @@
             <div class="tune-action-row">
               <button class="tune-action-btn" id="btnRotatePhoto" type="button" title="Rotate 90° counter-clockwise">↺ -90°</button>
               <button class="tune-action-btn" id="btnRotatePhotoCW" type="button" title="Rotate 90° clockwise">↻ +90°</button>
-              <button class="tune-action-btn" id="btnTuneDoubleExp" type="button" title="Double Exposure — blend two photos"><svg class="mx-layers-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4.5" width="8.5" height="8.5" rx="1.5"/><path d="M5.5 4.5V3.5A1.5 1.5 0 0 1 7 2h5.5A1.5 1.5 0 0 1 14 3.5V9a1.5 1.5 0 0 1-1.5 1.5h-1"/></svg><span>Double Exp.</span></button>
+              <button class="tune-action-btn" id="btnTuneDoubleExp" type="button" title="Double Exposure — blend two photos" aria-label="Double Exposure"><svg class="mx-layers-ico" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="9.5" height="9" rx="1.5"/><rect x="2" y="5" width="9.5" height="9" rx="1.5" fill="currentColor" fill-opacity="0.16"/></svg></button>
               <button class="tune-action-btn reset-btn" id="btnResetTweaks" type="button" title="Reset Lab adjustments to default">↺ Reset</button>
             </div>
 
@@ -5508,7 +5515,7 @@
               </div>
               <img class="vf-mx-ghost" id="vfMxGhostImg" alt="" aria-hidden="true" />
               <div class="vf-mx-bar" id="vfMxBar">
-                <span id="vfMxLabel">Double Exp. · 1/2</span>
+                <span id="vfMxLabel" style="display:inline-flex;align-items:center;gap:4px;"><svg class="mx-layers-ico" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="9.5" height="9" rx="1.5"/><rect x="2" y="5" width="9.5" height="9" rx="1.5" fill="currentColor" fill-opacity="0.16"/></svg><span class="mx-bar-step">1/2</span></span>
                 <button class="vf-mx-roll-btn" id="btnVfMxPickRoll" type="button" title="Pick a Film Roll shot as base frame 1/2" style="display:none;">🎞️ Roll</button>
                 <button type="button" id="btnCancelDoubleExp" title="Discard Double Exposure 1/2">✕</button>
               </div>
@@ -5584,7 +5591,7 @@
                 <button class="vf-badge-btn af-active" id="btnVfAutoFocus" type="button" title="Auto Focus — tap to return to AF">AF</button>
                 <button class="vf-badge-btn" id="btnVfZoomModeToggle" type="button" title="Switch between Prime & Pro Zoom lenses" style="display:none;">ZOOM</button>
                 <button class="vf-badge-btn" id="btnVfDiptychToggle" type="button" title="Switch between 1-frame and paired 2-frame diptych" style="display:none;">1F</button>
-                <button class="vf-badge-btn" id="btnVfDoubleExpToggle" type="button" title="Double Exposure — expose twice on one frame"><svg class="mx-layers-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4.5" width="8.5" height="8.5" rx="1.5"/><path d="M5.5 4.5V3.5A1.5 1.5 0 0 1 7 2h5.5A1.5 1.5 0 0 1 14 3.5V9a1.5 1.5 0 0 1-1.5 1.5h-1"/></svg><span class="mx-btn-lbl">Double Exp.</span></button>
+                <button class="vf-badge-btn" id="btnVfDoubleExpToggle" type="button" title="Double Exposure — expose twice on one frame" aria-label="Double Exposure"><svg class="mx-layers-ico" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="9.5" height="9" rx="1.5"/><rect x="2" y="5" width="9.5" height="9" rx="1.5" fill="currentColor" fill-opacity="0.16"/></svg><span class="mx-btn-lbl"></span></button>
                 <button class="vf-badge-btn" id="btnVfIso" type="button" title="Adjust ISO (Push / Pull film)">ISO 400</button>
               </div>
             </div>
@@ -11305,7 +11312,11 @@
     const pickBtn = document.getElementById('btnMxLabPick');
     const sTitle = SAMPLES.find(s => s.id === state.labDoubleExpSampleId)?.title;
     const lbl = state.labDoubleExpLabel || sTitle || 'Photo 2';
-    if (pickBtn) pickBtn.textContent = `Double Exp. · ${lbl}`;
+    if (pickBtn) {
+      const pickLbl = pickBtn.querySelector('.mx-pick-lbl');
+      if (pickLbl) pickLbl.textContent = lbl;
+      else pickBtn.textContent = lbl;
+    }
     const tuneMxCard = document.getElementById('tuneMxCard');
     if (tuneMxCard) tuneMxCard.classList.toggle('visible', hasLayer2);
     const tuneMxTitle = document.getElementById('tuneMxTitle');
@@ -11943,9 +11954,8 @@
     if (mxBtn) {
       mxBtn.classList.toggle('active', !!state.doubleExpMode);
       const mxBtnLbl = mxBtn.querySelector('.mx-btn-lbl');
-      const nextText = hasMxFirst ? 'Double Exp. 2/2' : 'Double Exp.';
+      const nextText = hasMxFirst ? '2/2' : '';
       if (mxBtnLbl) mxBtnLbl.textContent = nextText;
-      else mxBtn.textContent = nextText;
       mxBtn.title = hasMxFirst
         ? 'Double Exposure — waiting for shot 2/2 (tap to cancel)'
         : 'Double Exposure — expose twice on one frame';
@@ -11957,7 +11967,12 @@
     const mxCancelBtn = document.getElementById('btnCancelDoubleExp');
     if (mxGhost) mxGhost.classList.toggle('visible', hasMxFirst);
     if (mxBar) mxBar.classList.toggle('visible', !!state.doubleExpMode);
-    if (mxLabel) mxLabel.textContent = hasMxFirst ? 'Double Exp. · 2/2 READY' : 'Double Exp. · 1/2';
+    if (mxLabel) {
+      const stepEl = mxLabel.querySelector('.mx-bar-step');
+      const stepText = hasMxFirst ? '2/2 READY' : '1/2';
+      if (stepEl) stepEl.textContent = stepText;
+      else mxLabel.textContent = stepText;
+    }
     if (mxPickRollBtn) mxPickRollBtn.style.display = (state.doubleExpMode && state.camRollShots && state.camRollShots.length > 0) ? '' : 'none';
     if (mxCancelBtn) mxCancelBtn.style.display = hasMxFirst ? '' : 'none';
 
