@@ -2438,15 +2438,16 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
     }
 
-    /* SLR 3:2 (Nikon F6) — Optical Frame, Multi-CAM 2000 11-AF Screen, Right Bargraph Meter, Bottom Prism LCD */
+    /* SLR 3:2 (Nikon F3 HP DE-3) — 24px Top Optical Prism (Left Backlit LCD + Center ADR) + Type K Focusing Screen */
     .vf-stage[data-vf-mode="slr"] #cameraViewfinderCanvas,
     .vf-stage[data-vf-mode="slr"] .vf-gl-canvas {
-      width: calc(100% - 28px);
+      width: 100%;
       height: calc(100% - 24px);
-      inset: 0 auto auto 0;
+      inset: 24px auto auto 0;
     }
     .vf-stage[data-vf-mode="slr"] .vf-mx-bar {
-      right: 34px;
+      top: 30px;
+      right: 10px;
     }
     .vf-slr-overlay {
       position: absolute;
@@ -2457,189 +2458,166 @@
     .vf-stage[data-vf-mode="slr"] .vf-slr-overlay { display: block; }
     .vf-slr-glass {
       position: absolute;
-      inset: 0 28px 24px 0;
-      box-shadow: inset 0 0 18px rgba(0,0,0,0.22);
+      inset: 24px 0 0 0;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.24);
       overflow: hidden;
     }
-    .vf-f6-reticle-svg {
+    .vf-f3-screen-svg {
       width: 100%;
       height: 100%;
       display: block;
     }
-    .vf-f6-af-pt .af-back {
-      stroke: rgba(255, 255, 255, 0.24);
-      stroke-width: 2.0;
-      stroke-linecap: square;
+    .vf-f3-split-beam {
+      fill: none;
+      stroke: rgba(14, 17, 22, 0.72);
+      stroke-width: 1.4;
+      transition: transform 0.12s ease-out, stroke 0.14s ease;
     }
-    .vf-f6-af-pt .af-ink {
-      stroke: rgba(14, 17, 22, 0.78);
-      stroke-width: 1.15;
-      stroke-linecap: square;
-      transition: stroke 0.14s ease, filter 0.14s ease;
+    .vf-f3-split-beam-halo {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.36);
+      stroke-width: 2.5;
+      transition: transform 0.12s ease-out;
     }
-    .vf-f6-af-pt.active .af-ink {
-      stroke: #dc2626;
-      filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.45));
+    .vf-f3-split-top {
+      transform: translateX(calc(var(--f3-split, 0px) * -1));
     }
-
-    .vf-slr-right-bezel {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 24px;
-      width: 28px;
-      background: #040507;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .vf-f3-split-bot {
+      transform: translateX(var(--f3-split, 0px));
     }
-    .vf-slr-meter {
-      width: 28px;
-      height: min(156px, 86%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #d6f826;
-    }
-    .vf-f6-meter-svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      filter: drop-shadow(0 0 2px rgba(214, 248, 38, 0.35));
-    }
-    .vf-f6-meter-svg .f6-meter-sym {
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 800;
-      fill: rgba(214, 248, 38, 0.85);
-    }
-    .vf-f6-meter-svg .f6-meter-zero {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 800;
-      fill: #d6f826;
-    }
-    .vf-f6-meter-svg .f6-scale-tick {
-      stroke: rgba(214, 248, 38, 0.82);
-      stroke-width: 1.3;
-    }
-    .vf-f6-meter-svg .f6-scale-tick.zero {
-      stroke: #d6f826;
-      stroke-width: 1.8;
-    }
-    .vf-f6-meter-svg .f6-scale-dot {
-      fill: rgba(214, 248, 38, 0.72);
-    }
-    .vf-f6-bar {
-      fill: rgba(214, 248, 38, 0.10);
-      transition: fill 0.12s ease;
-    }
-    .vf-f6-bar.lit {
-      fill: #d6f826;
-    }
-    .vf-f6-bar.lit.head {
-      fill: #e7ff4f;
-    }
-    .vf-slr-meter[data-state="over"] .f6-meter-sym.plus {
-      fill: #f87171;
-      filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.65));
-    }
-    .vf-slr-meter[data-state="under"] .f6-meter-sym.minus {
-      fill: #fbbf24;
-      filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.65));
+    .vf-f3-screen-svg.mf-off .vf-f3-split-ring {
+      stroke: rgba(251, 191, 36, 0.78);
     }
 
-    /* Bottom Optical Black LCD Bezel (Nikon F6 readout strip) */
-    .vf-slr-bottom-bezel {
+    /* Top Black Optical Prism Strip (Nikon F3: Left Backlit LCD + Center ADR + Right Telemetry/Ready LED) */
+    .vf-slr-top-bezel {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
+      top: 0;
       height: 24px;
       background: #040507;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0 28px 0 10px;
+      justify-content: space-between;
+      padding: 2px 10px;
     }
-    .vf-slr-readout {
-      display: flex;
+    .vf-f3-lcd-box {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 9px;
-      width: 100%;
-      color: #d6f826;
-      text-shadow: 0 0 4px rgba(214, 248, 38, 0.35);
+      gap: 6px;
+      height: 17px;
+      min-width: 78px;
+      padding: 0 7px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #d0d9ce 0%, #c1ccc0 58%, #b2bdb1 100%);
+      border: 1px solid rgba(64, 72, 65, 0.9);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.36), inset 0 -1px 0 rgba(255, 255, 255, 0.24), 0 0 5px rgba(195, 210, 194, 0.16);
+      color: #121714;
+    }
+    .vf-f3-lcd-flags {
+      display: inline-flex;
+      align-items: center;
+      gap: 2.5px;
       font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      white-space: nowrap;
-    }
-    .vf-f6-focus-dot {
-      font-size: 10px;
+      font-size: 9.5px;
+      font-weight: 900;
       line-height: 1;
-      color: rgba(214, 248, 38, 0.42);
     }
-    .vf-f6-focus-dot.in-focus {
-      color: #d6f826;
+    .vf-f3-lcd-seg {
+      color: #121714;
+      opacity: 0.11;
+      transition: opacity 0.12s ease;
     }
-    .vf-f6-focus-dot.mf-off {
-      color: #fbbf24;
-    }
-    .vf-f6-matrix-ico {
-      width: 14px;
-      height: 11px;
-      flex-shrink: 0;
-      color: #d6f826;
-    }
-    .vf-slr-mode {
-      font-size: 10.5px;
-      font-weight: 800;
-      color: #d6f826;
+    .vf-f3-lcd-seg.active {
+      opacity: 0.96;
     }
     .vf-slr-shutter {
       min-width: 24px;
       text-align: right;
-      color: #d6f826;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.3px;
+      color: #121714;
+      line-height: 1;
     }
     .vf-slr-shutter.is-slow {
-      color: #fbbf24;
-      text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+      color: #7c2d12;
+      text-decoration: underline;
+      text-underline-thickness: 1.4px;
+      text-underline-offset: 1.5px;
+    }
+
+    /* Centered Aperture Direct Readout (ADR) Optical Prism Cutout */
+    .vf-f3-adr-window {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      height: 17px;
+      min-width: 30px;
+      padding: 0 6px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #101318 0%, #090b0f 100%);
+      border: 1px solid #3c4350;
+      box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.92), inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .vf-slr-aperture {
-      color: #d6f826;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      line-height: 1;
+      color: #f8fafc;
+      text-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
     }
-    .vf-f6-fchar {
-      font-size: 8.5px;
-      margin-right: 1px;
-      opacity: 0.92;
+
+    .vf-f3-top-right {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      min-width: 62px;
     }
     .vf-slr-bias {
+      font-family: var(--mono);
       font-size: 9px;
-      padding: 0 3px;
+      font-weight: 800;
+      padding: 1px 4px;
       border-radius: 3px;
-      border: 1px solid rgba(214, 248, 38, 0.5);
-      color: #d6f826;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      color: #e2e8f0;
+      line-height: 1.15;
     }
     .vf-slr-ael {
+      font-family: var(--mono);
       font-size: 8.5px;
-      padding: 0 3px;
+      font-weight: 800;
+      padding: 1px 4px;
       border-radius: 3px;
-      background: rgba(214, 248, 38, 0.16);
-      border: 1px solid rgba(214, 248, 38, 0.6);
-      color: #e7ff4f;
+      background: rgba(34, 211, 238, 0.14);
+      border: 1px solid rgba(34, 211, 238, 0.55);
+      color: #67e8f9;
+      line-height: 1.15;
     }
-    .vf-f6-batt-ico {
-      width: 15px;
-      height: 9px;
+    .vf-f3-flash-led {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2f1414;
+      border: 0.8px solid rgba(255, 255, 255, 0.14);
       flex-shrink: 0;
-      color: #d6f826;
+      transition: background 0.14s ease, box-shadow 0.14s ease;
     }
-    .vf-f6-frame-cnt {
-      font-size: 10.5px;
-      color: #d6f826;
-      letter-spacing: 0.3px;
+    .vf-f3-flash-led.lit {
+      background: #ef4444;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.85);
     }
 
     /* Rangefinder 3:2 — Wide Field + Outside-the-frame + Resizing Brightlines */
@@ -5219,7 +5197,7 @@
           </div>
           <div class="stage-tools-right">
             <button class="stage-tool-pill danger" id="btnLabDeleteRollShot" type="button" title="Delete this photo from Film Roll" aria-label="Delete photo from Film Roll" style="display:none;">🗑 Delete</button>
-            <span class="stage-gear-summary" id="liveGearBadge" title="Tap to open Gear tab">Nikon F6 · 50mm f/3.5 · <strong>Portra 400</strong></span>
+            <span class="stage-gear-summary" id="liveGearBadge" title="Tap to open Gear tab">Nikon F3 · 50mm f/3.5 · <strong>Portra 400</strong></span>
           </div>
         </div>
 
@@ -5266,7 +5244,7 @@
             <div class="gear-compact-grid" id="labGearCompactTrio">
               <button class="gear-pill-box" id="labGearBtnBody" data-lab-gear-open="camera" type="button" title="Tap to open Body list · Swipe to cycle">
                 <span class="gear-box-label"><span>BODY</span><span class="gear-box-caret">▾</span></span>
-                <span class="gear-box-val" id="labCardBodyName">Nikon F6</span>
+                <span class="gear-box-val" id="labCardBodyName">Nikon F3</span>
               </button>
               <button class="gear-pill-box" id="labGearBtnLens" data-lab-gear-open="lens" type="button" title="Tap to open Lens list · Swipe to cycle">
                 <span class="gear-box-label"><span>LENS</span><span class="gear-box-caret">▾</span></span>
@@ -5479,92 +5457,60 @@
               <div class="vf-corner bl"></div>
               <div class="vf-corner br"></div>
 
-              <!-- SLR (Nikon F6): Multi-CAM 2000 11-Point AF Screen + Vertical LCD Meter + Bottom Prism LCD -->
+              <!-- SLR (Nikon F3 HP DE-3): 24px Top Optical Prism (Backlit LCD + ADR Window) + Type K Split-Image Screen -->
               <div class="vf-slr-overlay">
-                <div class="vf-slr-glass">
-                  <svg class="vf-f6-reticle-svg" id="vfSlrF6Reticle" viewBox="0 0 360 240" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <!-- 12mm center-weighted reference circle -->
-                    <circle cx="180" cy="120" r="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.9"/>
-                    <circle cx="180" cy="120" r="45.2" stroke="rgba(12,16,20,0.42)" stroke-width="0.8"/>
-                    <!-- 11 Multi-CAM 2000 AF brackets (3 - 5 - 3 layout) -->
-                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.31"><path class="af-back" d="M124 68.5 H121 V79.5 H124 M132 68.5 H135 V79.5 H132"/><path class="af-ink" d="M124 68.5 H121 V79.5 H124 M132 68.5 H135 V79.5 H132"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.50" data-ny="0.31"><path class="af-back" d="M176 68.5 H173 V79.5 H176 M184 68.5 H187 V79.5 H184"/><path class="af-ink" d="M176 68.5 H173 V79.5 H176 M184 68.5 H187 V79.5 H184"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.31"><path class="af-back" d="M228 68.5 H225 V79.5 H228 M236 68.5 H239 V79.5 H236"/><path class="af-ink" d="M228 68.5 H225 V79.5 H228 M236 68.5 H239 V79.5 H236"/></g>
-
-                    <g class="vf-f6-af-pt" data-nx="0.23" data-ny="0.50"><path class="af-back" d="M80 114.5 H77 V125.5 H80 M88 114.5 H91 V125.5 H88"/><path class="af-ink" d="M80 114.5 H77 V125.5 H80 M88 114.5 H91 V125.5 H88"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.50"><path class="af-back" d="M124 114.5 H121 V125.5 H124 M132 114.5 H135 V125.5 H132"/><path class="af-ink" d="M124 114.5 H121 V125.5 H124 M132 114.5 H135 V125.5 H132"/></g>
-                    <g class="vf-f6-af-pt active" data-nx="0.50" data-ny="0.50"><path class="af-back" d="M176 114.5 H173 V125.5 H176 M184 114.5 H187 V125.5 H184"/><path class="af-ink" d="M176 114.5 H173 V125.5 H176 M184 114.5 H187 V125.5 H184"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.50"><path class="af-back" d="M228 114.5 H225 V125.5 H228 M236 114.5 H239 V125.5 H236"/><path class="af-ink" d="M228 114.5 H225 V125.5 H228 M236 114.5 H239 V125.5 H236"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.77" data-ny="0.50"><path class="af-back" d="M272 114.5 H269 V125.5 H272 M280 114.5 H283 V125.5 H280"/><path class="af-ink" d="M272 114.5 H269 V125.5 H272 M280 114.5 H283 V125.5 H280"/></g>
-
-                    <g class="vf-f6-af-pt" data-nx="0.35" data-ny="0.69"><path class="af-back" d="M124 160.5 H121 V171.5 H124 M132 160.5 H135 V171.5 H132"/><path class="af-ink" d="M124 160.5 H121 V171.5 H124 M132 160.5 H135 V171.5 H132"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.50" data-ny="0.69"><path class="af-back" d="M176 160.5 H173 V171.5 H176 M184 160.5 H187 V171.5 H184"/><path class="af-ink" d="M176 160.5 H173 V171.5 H176 M184 160.5 H187 V171.5 H184"/></g>
-                    <g class="vf-f6-af-pt" data-nx="0.65" data-ny="0.69"><path class="af-back" d="M228 160.5 H225 V171.5 H228 M236 160.5 H239 V171.5 H236"/><path class="af-ink" d="M228 160.5 H225 V171.5 H228 M236 160.5 H239 V171.5 H236"/></g>
-                  </svg>
-                </div>
-
-                <!-- Right Prism Column: Nikon F6 Vertical Yellow-Lime Analog Bargraph Exposure Meter -->
-                <div class="vf-slr-right-bezel">
-                  <div class="vf-slr-meter" id="vfSlrMeter" data-state="ok" data-step="0" aria-hidden="true">
-                    <svg class="vf-f6-meter-svg" viewBox="0 0 28 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <text x="19" y="21" text-anchor="middle" class="f6-meter-sym plus">+</text>
-                      <!-- Scale track ticks & 1/3 EV dots -->
-                      <line x1="12" y1="29" x2="19.5" y2="29" class="f6-scale-tick major"/>
-                      <rect x="14.5" y="36.3" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <rect x="14.5" y="44.8" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <line x1="13" y1="54.5" x2="18.5" y2="54.5" class="f6-scale-tick"/>
-                      <rect x="14.5" y="61.8" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <rect x="14.5" y="70.3" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <line x1="11.5" y1="80" x2="19.5" y2="80" class="f6-scale-tick zero"/>
-                      <text x="23.5" y="83" text-anchor="middle" class="f6-meter-zero">0</text>
-                      <rect x="14.5" y="87.3" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <rect x="14.5" y="95.8" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <line x1="13" y1="105.5" x2="18.5" y2="105.5" class="f6-scale-tick"/>
-                      <rect x="14.5" y="112.8" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <rect x="14.5" y="121.3" width="2.4" height="2.4" class="f6-scale-dot"/>
-                      <line x1="12" y1="131" x2="19.5" y2="131" class="f6-scale-tick major"/>
-                      <text x="19" y="143.5" text-anchor="middle" class="f6-meter-sym minus">−</text>
-                      <!-- 13 Dynamic Exposure Bargraph Segments (+6 .. 0 .. -6) -->
-                      <g id="vfSlrBarSegments">
-                        <rect x="4" y="27.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="6"/>
-                        <rect x="4" y="36.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="5"/>
-                        <rect x="4" y="44.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="4"/>
-                        <rect x="4" y="53.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="3"/>
-                        <rect x="4" y="61.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="2"/>
-                        <rect x="4" y="70.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar lit" data-step="1"/>
-                        <rect x="3" y="78.7" width="6.8" height="2.8" rx="0.5" class="vf-f6-bar lit head" data-step="0"/>
-                        <rect x="4" y="87.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar lit" data-step="-1"/>
-                        <rect x="4" y="95.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-2"/>
-                        <rect x="4" y="104.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-3"/>
-                        <rect x="4" y="112.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-4"/>
-                        <rect x="4" y="121.3" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-5"/>
-                        <rect x="4" y="129.8" width="5.8" height="2.5" rx="0.5" class="vf-f6-bar" data-step="-6"/>
-                      </g>
-                    </svg>
-                  </div>
-                </div>
-
-                <!-- Bottom Prism LCD Bezel: Focus Dot · Matrix Icon · Mode · Shutter · Aperture · Bias · Battery · [Frame] -->
-                <div class="vf-slr-bottom-bezel">
-                  <div class="vf-slr-readout" id="vfSlrReadout" aria-hidden="true">
-                    <span class="vf-f6-focus-dot in-focus" id="vfSlrFocusConfirm">●</span>
-                    <svg class="vf-f6-matrix-ico" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <rect x="0.8" y="0.8" width="12.4" height="9.4" rx="1.2" stroke="currentColor" stroke-width="1.2"/>
-                      <circle cx="7" cy="5.5" r="2.1" fill="currentColor"/>
-                    </svg>
-                    <span class="vf-slr-mode" id="vfSlrModeTag">A</span>
+                <div class="vf-slr-top-bezel">
+                  <div class="vf-f3-lcd-box" id="vfSlrReadout" data-mode="A" aria-hidden="true">
+                    <span class="vf-f3-lcd-flags" id="vfSlrMeter" data-state="ok" data-step="0">
+                      <span class="vf-f3-lcd-seg" id="vfSlrMeterMinus">−</span>
+                      <span class="vf-f3-lcd-seg" id="vfSlrModeTag">M</span>
+                      <span class="vf-f3-lcd-seg" id="vfSlrMeterPlus">+</span>
+                    </span>
                     <span class="vf-slr-shutter" id="vfSlrShutterVal">250</span>
-                    <span class="vf-slr-aperture" id="vfSlrApertureVal"><span class="vf-f6-fchar">F</span>3.5</span>
+                  </div>
+                  <div class="vf-f3-adr-window" aria-hidden="true">
+                    <span class="vf-slr-aperture" id="vfSlrApertureVal">3.5</span>
+                  </div>
+                  <div class="vf-f3-top-right" aria-hidden="true">
                     <span class="vf-slr-bias" id="vfSlrBiasVal" style="display:none;">+0.0</span>
                     <span class="vf-slr-ael" id="vfSlrAelVal" style="display:none;">AE-L</span>
-                    <svg class="vf-f6-batt-ico" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <rect x="0.8" y="1.2" width="12.5" height="7.6" rx="1" stroke="currentColor" stroke-width="1.15"/>
-                      <rect x="13.5" y="3.3" width="1.7" height="3.4" rx="0.5" fill="currentColor"/>
-                      <rect x="2.6" y="2.9" width="4" height="4.2" fill="currentColor"/>
-                      <rect x="7.5" y="2.9" width="4" height="4.2" fill="currentColor"/>
-                    </svg>
-                    <span class="vf-f6-frame-cnt" id="vfSlrFrameCount">[01]</span>
+                    <span class="vf-f3-flash-led" id="vfSlrFlashLed"></span>
                   </div>
+                </div>
+
+                <div class="vf-slr-glass">
+                  <svg class="vf-f3-screen-svg" id="vfSlrF3Screen" viewBox="0 0 360 240" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                      <clipPath id="vfF3SplitTopClip"><rect x="168" y="108" width="24" height="12"/></clipPath>
+                      <clipPath id="vfF3SplitBotClip"><rect x="168" y="120" width="24" height="12"/></clipPath>
+                    </defs>
+                    <!-- 12mm center-weighted 80/20 metering reference circle -->
+                    <circle cx="180" cy="120" r="46" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+                    <circle cx="180" cy="120" r="46" stroke="rgba(14,17,22,0.52)" stroke-width="0.85"/>
+                    <!-- 5mm microprism collar ring -->
+                    <circle cx="180" cy="120" r="19" stroke="rgba(255,255,255,0.18)" stroke-width="2.2" stroke-dasharray="1.1 1.7"/>
+                    <circle cx="180" cy="120" r="19" stroke="rgba(14,17,22,0.42)" stroke-width="1.8" stroke-dasharray="1.1 1.7"/>
+                    <circle cx="180" cy="120" r="20.2" stroke="rgba(14,17,22,0.34)" stroke-width="0.6"/>
+                    <!-- Center horizontal split-image rangefinder prism -->
+                    <circle cx="180" cy="120" r="11.5" stroke="rgba(255,255,255,0.28)" stroke-width="1.4"/>
+                    <circle class="vf-f3-split-ring" cx="180" cy="120" r="11.5" stroke="rgba(14,17,22,0.68)" stroke-width="0.95"/>
+                    <!-- Top & bottom split alignment beams (shift oppositely when defocused) -->
+                    <g clip-path="url(#vfF3SplitTopClip)">
+                      <g class="vf-f3-split-top">
+                        <line class="vf-f3-split-beam-halo" x1="180" y1="108.5" x2="180" y2="120"/>
+                        <line class="vf-f3-split-beam" x1="180" y1="108.5" x2="180" y2="120"/>
+                      </g>
+                    </g>
+                    <g clip-path="url(#vfF3SplitBotClip)">
+                      <g class="vf-f3-split-bot">
+                        <line class="vf-f3-split-beam-halo" x1="180" y1="120" x2="180" y2="131.5"/>
+                        <line class="vf-f3-split-beam" x1="180" y1="120" x2="180" y2="131.5"/>
+                      </g>
+                    </g>
+                    <!-- Crisp horizontal split dividing line across center rangefinder circle -->
+                    <line x1="168.5" y1="120" x2="191.5" y2="120" stroke="rgba(255,255,255,0.34)" stroke-width="1.8"/>
+                    <line x1="168.5" y1="120" x2="191.5" y2="120" stroke="rgba(14,17,22,0.72)" stroke-width="0.9"/>
+                  </svg>
                 </div>
               </div>
 
@@ -5973,7 +5919,7 @@
 
       <div class="picker-section active" id="pickerSecCamera">
         <div class="picker-spec-bar">
-          <span class="picker-spec-note" id="pickerBodyEffect">11-point AF + LCD meter</span>
+          <span class="picker-spec-note" id="pickerBodyEffect">Type K split-image + LCD shutter &amp; ADR</span>
           <span class="picker-spec-stat" id="pickerBodyStat">35mm · 3:2</span>
         </div>
         <div class="picker-match-bar" id="pickerBodyMatchBar">
@@ -6188,10 +6134,10 @@
   const VIEWFINDER_MODES = [
     {
       id: 'slr',
-      name: 'Nikon F6',
+      name: 'Nikon F3',
       formatLabel: '35mm SLR · 3:2',
       aspect: 3 / 2,
-      meta: 'Nikon F6 flagship 35mm SLR · 11-point AF + LCD exposure meter',
+      meta: 'Nikon F3 pro 35mm SLR · Type K split-image + top LCD meter & ADR',
       defaultFocalId: '50mm',
       recLenses: ['50mm', '24mm', '85mm'],
       recFilms: ['kodak-portra-400', 'fuji-superia-premium-400', 'kodak-gold-200', 'cinestill-800t'],
@@ -10949,25 +10895,12 @@
     const isMfOff = !lens.focusLocked && lens.focusMode === 'mf' && !inFocus;
     const clampedErr = Math.max(-1, Math.min(1, (lens.focusSignedErr || 0) * 2.4));
 
-    const f6Confirm = document.getElementById('vfSlrFocusConfirm');
-    if (f6Confirm) {
-      f6Confirm.textContent = inFocus ? '●' : (clampedErr < 0 ? '◀' : '▶');
-      f6Confirm.classList.toggle('in-focus', inFocus);
-      f6Confirm.classList.toggle('mf-off', isMfOff);
-    }
-    const f6Pts = document.querySelectorAll('#vfSlrF6Reticle .vf-f6-af-pt');
-    if (f6Pts.length) {
-      const fx = Number.isFinite(state.focusPoint?.x) ? state.focusPoint.x : 0.5;
-      const fy = Number.isFinite(state.focusPoint?.y) ? state.focusPoint.y : 0.5;
-      let bestEl = f6Pts[5] || f6Pts[0];
-      let bestD = Infinity;
-      f6Pts.forEach(pt => {
-        const dx = (Number(pt.dataset.nx) || 0.5) - fx;
-        const dy = (Number(pt.dataset.ny) || 0.5) - fy;
-        const d = dx * dx + dy * dy;
-        if (d < bestD) { bestD = d; bestEl = pt; }
-      });
-      f6Pts.forEach(pt => pt.classList.toggle('active', !lens.focusLocked && pt === bestEl));
+    const f3Screen = document.getElementById('vfSlrF3Screen');
+    if (f3Screen) {
+      f3Screen.classList.toggle('in-focus', inFocus);
+      f3Screen.classList.toggle('mf-off', isMfOff);
+      const splitShiftPx = isMfOff ? (clampedErr * 3.8) : 0;
+      f3Screen.style.setProperty('--f3-split', `${splitShiftPx.toFixed(2)}px`);
     }
 
     const rfPatch = document.getElementById('vfRfPatch');
@@ -12090,40 +12023,53 @@
     const stepVal = Math.max(-6, Math.min(6, Math.round(rawStops * 3)));
     const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
 
+    const readoutBox = document.getElementById('vfSlrReadout');
     const meterEl = document.getElementById('vfSlrMeter');
-    if (meterEl) {
-      meterEl.dataset.state = meterState;
-      meterEl.dataset.step = String(stepVal);
-      meterEl.querySelectorAll('.vf-f6-bar[data-step]').forEach(bar => {
-        const s = Number(bar.dataset.step);
-        const lit = stepVal === 0
-          ? Math.abs(s) <= 1
-          : (stepVal > 0 ? (s >= 0 && s <= stepVal) : (s <= 0 && s >= stepVal));
-        const isHead = s === stepVal;
-        bar.classList.toggle('lit', lit);
-        bar.classList.toggle('head', isHead);
-      });
-    }
-
+    const minusEl = document.getElementById('vfSlrMeterMinus');
+    const plusEl = document.getElementById('vfSlrMeterPlus');
     const modeTag = document.getElementById('vfSlrModeTag');
     const shutterEl = document.getElementById('vfSlrShutterVal');
     const apEl = document.getElementById('vfSlrApertureVal');
     const biasEl = document.getElementById('vfSlrBiasVal');
     const aelEl = document.getElementById('vfSlrAelVal');
-    const frameCountEl = document.getElementById('vfSlrFrameCount');
+    const flashLed = document.getElementById('vfSlrFlashLed');
 
-    if (modeTag) {
-      modeTag.textContent = info.isAuto ? 'A' : 'M';
-      modeTag.classList.toggle('is-manual', !info.isAuto);
+    if (readoutBox) readoutBox.dataset.mode = info.isAuto ? 'A' : 'M';
+    if (meterEl) {
+      meterEl.dataset.state = meterState;
+      meterEl.dataset.step = String(stepVal);
     }
+    if (modeTag) {
+      modeTag.textContent = 'M';
+      modeTag.classList.toggle('active', !info.isAuto);
+    }
+    // Authentic Nikon F3 LCD exposure signs: Manual lights '-', '+', or simultaneous '-+' for matched exposure; Auto lights extremes
+    const showMinus = !info.isAuto
+      ? (meterState === 'under' || meterState === 'ok')
+      : (rawStops < -4);
+    const showPlus = !info.isAuto
+      ? (meterState === 'over' || meterState === 'ok')
+      : (rawStops > 4);
+    minusEl?.classList.toggle('active', showMinus);
+    plusEl?.classList.toggle('active', showPlus);
+
     if (shutterEl) {
-      const sp = info.effectiveSpeed || '125';
+      const sp = info.effectiveSpeed || '250';
       shutterEl.textContent = sp;
       shutterEl.classList.toggle('is-slow', info.shakeRisk >= 0.45);
     }
     if (apEl) {
-      const fVal = formatApertureLabel(lens?.activeF || lens?.minF || 3.5).replace(/^f\//i, '');
-      apEl.innerHTML = `<span class="vf-f6-fchar">F</span>${escapeHtml(fVal)}`;
+      const numF = Number(lens?.activeF || lens?.minF || 3.5);
+      const fVal = formatApertureLabel(numF).replace(/^f\//i, '');
+      apEl.textContent = fVal;
+      let adrColor = '#f1f5f9';
+      if (numF >= 20) adrColor = '#60a5fa';
+      else if (numF >= 14) adrColor = '#fb923c';
+      else if (numF >= 10) adrColor = '#38bdf8';
+      else if (numF >= 7.5) adrColor = '#facc15';
+      else if (numF >= 5.2) adrColor = '#4ade80';
+      else if (numF <= 2.2) adrColor = '#fef08a';
+      apEl.style.color = adrColor;
     }
     if (biasEl) {
       if (caps.supportsEv && Math.abs(evBias) >= 0.05) {
@@ -12134,10 +12080,7 @@
       }
     }
     if (aelEl) aelEl.style.display = (caps.supportsAel && state.camAELocked) ? '' : 'none';
-    if (frameCountEl) {
-      const fNum = Math.min((state.camShotCount || 0) + 1, state.camMaxShots);
-      frameCountEl.textContent = state.camNeedsRewind ? '[E]' : `[${String(fNum).padStart(2, '0')}]`;
-    }
+    if (flashLed) flashLed.classList.toggle('lit', false);
   }
 
   function layoutViewfinderStage() {
@@ -12151,7 +12094,7 @@
     const bw = box.clientWidth;
     const bh = box.clientHeight;
     const dialEl = document.getElementById('vfPnsAnalogDial');
-    const isSlrF6 = body.id === 'slr';
+    const isSlrF3 = body.id === 'slr';
     const isPns35Ti = body.id === 'pns' || body.id === 'disposable';
     const isMobileLandscape = window.matchMedia?.('(orientation: landscape) and (max-height: 580px)')?.matches;
     const isPickerOpen = document.getElementById('appShell')?.classList.contains('picker-open');
@@ -12168,8 +12111,8 @@
       const topReserve = showDial ? (baseTopReserve + dialH + 10) : baseTopReserve;
       const botReserve = botHud ? (botHud.offsetHeight + (isMobileLandscape ? 6 : 10)) : (isMobileLandscape ? 34 : 82);
       const availH = Math.max(120, bh - topReserve - botReserve);
-      const bezelW = isSlrF6 ? 28 : 0;
-      const bezelH = (isSlrF6 || isPns35Ti) ? 24 : 0;
+      const bezelW = 0;
+      const bezelH = (isSlrF3 || isPns35Ti) ? 24 : 0;
       let w = bw;
       let photoW = Math.max(80, w - bezelW);
       let photoH = photoW / targetRatio;
