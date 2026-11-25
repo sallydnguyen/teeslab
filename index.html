@@ -5547,8 +5547,8 @@
           </div>
 
           <div class="vf-bottom-hud">
-            <div class="vf-ev-row">
-              <div class="vf-ev-ruler-wrap" title="Exposure compensation">
+            <div class="vf-ev-row" id="vfEvRow">
+              <div class="vf-ev-ruler-wrap" id="vfEvRulerWrap" title="Exposure compensation">
                 <div class="vf-ev-ticks"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div>
                 <input id="camExposureControl" type="range" min="-2" max="2" step="0.1" value="0" aria-label="Exposure compensation" />
               </div>
@@ -10626,14 +10626,16 @@
       applyX: (rawX, isRelease, prevDetent) => {
         const cx = Math.max(0, Math.min(maxX, rawX));
         const idx = Math.max(0, Math.min(speeds.length - 1, Math.round(cx / stepPx)));
+        const prevWasAuto = !state.camShutterSpeed || state.camShutterSpeed === 'auto';
         const nextSpeed = speeds[idx];
         const changedSpeed = state.camShutterSpeed !== nextSpeed;
         state.camShutterSpeed = nextSpeed;
+        const nextIsAuto = nextSpeed === 'auto';
         if (prevDetent !== undefined && prevDetent !== idx) {
           playShutterDialClickSound();
           try { navigator.vibrate?.(8); } catch (ignored) {}
         }
-        return { changed: changedSpeed || isRelease, needsLayout: false, detent: idx };
+        return { changed: changedSpeed || isRelease, needsLayout: prevWasAuto !== nextIsAuto, detent: idx };
       }
     };
   }
@@ -10748,6 +10750,7 @@
     renderComboCards();
     syncLensBarrelWidgets();
     syncViewfinderFocusAid(body, lens);
+    if (typeof syncCameraExposureHudControls === 'function') syncCameraExposureHudControls(body, lens);
     if (typeof syncSlrMeterLed === 'function') syncSlrMeterLed(body, lens);
 
     if (body.id === 'rangefinder') {
@@ -10910,7 +10913,8 @@
           if (state.camShutterSpeed !== 'auto') {
             state.camShutterSpeed = 'auto';
             playShutterDialClickSound();
-            syncLensLiveUI(false);
+            syncLensLiveUI(true);
+            scheduleCameraSettingsApply();
             scheduleSaveLocalAppState();
             showToast('⏱️ Shutter: Auto (A)');
           }
@@ -11164,7 +11168,8 @@
         if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
         e.preventDefault();
         if (ringKind === 'focus') track.classList.remove('snap-af');
-        const step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 12 : -12;
+        const baseStep = ringKind === 'shutter' ? 28 : 12;
+        const step = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? baseStep : -baseStep;
         const res = spec.applyX(spec.getCurX() + step, true, undefined);
         if (res.changed) {
           syncLensLiveUI(res.needsLayout);
@@ -11569,6 +11574,31 @@
     return `1/${speed}s`;
   }
 
+  function getCameraExposureControlCaps(body = getSelectedGear().body, info = null) {
+    const id = body?.id || 'slr';
+    if (id === 'half-frame') {
+      return { isAuto: false, supportsEv: false, supportsAel: false };
+    }
+    const isAuto = info
+      ? info.isAuto !== false
+      : (!CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) || state.camShutterSpeed === 'auto');
+    if (!isAuto) {
+      return { isAuto: false, supportsEv: false, supportsAel: false };
+    }
+    if (id === 'slr' || id === 'medium-format') {
+      return { isAuto: true, supportsEv: true, supportsAel: true };
+    }
+    if (id === 'pns') {
+      return { isAuto: true, supportsEv: true, supportsAel: false };
+    }
+    return { isAuto: true, supportsEv: false, supportsAel: false };
+  }
+
+  function getEffectiveCamExposureBias(body = getSelectedGear().body, info = null) {
+    const caps = getCameraExposureControlCaps(body, info);
+    return caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
+  }
+
   function computeAutoShutterRec(lens = getSelectedGear().lens, film = getSelectedGear().film) {
     const lum = Math.max(0.03, Math.min(1.0, Number(sceneMeanLum) || 0.5));
     const lumStops = Math.log2(lum / 0.45);
@@ -11577,7 +11607,7 @@
     const curF = Math.max(1.2, Number(lens?.activeF || lens?.minF || 2.8));
     const apStopsFrom28 = 2 * Math.log2(curF / 2.8);
     const focusDropStops = lens?.closeFocusEV || 0;
-    const evBias = Number(state.camExposureEV) || 0;
+    const evBias = getEffectiveCamExposureBias(getSelectedGear().body);
     const idealHz = 500 * Math.pow(2, lumStops + isoStops - apStopsFrom28 + focusDropStops - evBias);
 
     let bestSpeed = '250';
@@ -11606,19 +11636,21 @@
     const shakeRisk = hz < safeHandheldHz
       ? Math.min(1, Math.log2(safeHandheldHz / Math.max(0.25, hz)) * 0.36)
       : 0;
+    const evBias = getEffectiveCamExposureBias(getSelectedGear().body, { isAuto });
     const meterDiffEV = isAuto
-      ? (Number(state.camExposureEV) || 0)
-      : Math.log2(autoHz / Math.max(0.25, hz)) * 0.52 + (Number(state.camExposureEV) || 0);
+      ? evBias
+      : Math.log2(autoHz / Math.max(0.25, hz)) * 0.52;
     return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, meterDiffEV };
   }
 
   function cameraExposureEV() {
-    const { lens, film } = getSelectedGear();
+    const { body, lens, film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
+    const evBias = getEffectiveCamExposureBias(body, info);
     const isoEv = state.camAppliedHardware?.iso ? 0 : getCameraIsoStops(film) * 0.32;
     const closeEv = lens?.closeFocusEV || 0;
-    const manualShutterEv = info.isAuto ? 0 : (info.meterDiffEV - (Number(state.camExposureEV) || 0));
-    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : state.camExposureEV) + isoEv + closeEv + manualShutterEv;
+    const manualShutterEv = info.isAuto ? 0 : info.meterDiffEV;
+    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : evBias) + isoEv + closeEv + manualShutterEv;
   }
 
   function getCameraStageDimensions(body, lens) {
@@ -11658,11 +11690,12 @@
     if (body?.id !== 'slr') return;
     const { film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
+    const caps = getCameraExposureControlCaps(body, info);
     const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
-    const evBias = Number(state.camExposureEV) || 0;
+    const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
     const rawStops = info.isAuto
       ? evBias
-      : (Math.log2(autoHz / Math.max(0.25, info.hz)) + evBias);
+      : Math.log2(autoHz / Math.max(0.25, info.hz));
     const stepVal = Math.max(-6, Math.min(6, Math.round(rawStops * 3)));
     const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
 
@@ -11702,14 +11735,14 @@
       apEl.innerHTML = `<span class="vf-f6-fchar">F</span>${escapeHtml(fVal)}`;
     }
     if (biasEl) {
-      if (Math.abs(evBias) >= 0.05) {
+      if (caps.supportsEv && Math.abs(evBias) >= 0.05) {
         biasEl.style.display = '';
         biasEl.textContent = `${evBias > 0 ? '+' : ''}${evBias.toFixed(1)}`;
       } else {
         biasEl.style.display = 'none';
       }
     }
-    if (aelEl) aelEl.style.display = state.camAELocked ? '' : 'none';
+    if (aelEl) aelEl.style.display = (caps.supportsAel && state.camAELocked) ? '' : 'none';
     if (frameCountEl) {
       const fNum = Math.min((state.camShotCount || 0) + 1, state.camMaxShots);
       frameCountEl.textContent = state.camNeedsRewind ? '[E]' : `[${String(fNum).padStart(2, '0')}]`;
@@ -11779,6 +11812,40 @@
     if (ghost) {
       ghost.classList.remove('visible');
       ghost.removeAttribute('src');
+    }
+  }
+
+  function syncCameraExposureHudControls(body = getSelectedGear().body, lens = getSelectedGear().lens, film = getSelectedGear().film) {
+    const info = getEffectiveShutterInfo(lens, film);
+    const expCaps = getCameraExposureControlCaps(body, info);
+    if (!expCaps.supportsAel && state.camAELocked) {
+      state.camAELocked = false;
+      state.camLockedEV = null;
+    }
+
+    const evRow = document.getElementById('vfEvRow');
+    const evRulerWrap = document.getElementById('vfEvRulerWrap');
+    const aeBtn = document.getElementById('btnVfAeLock');
+    const reticle = document.getElementById('vfFocusReticle');
+    const evSlider = document.getElementById('camExposureControl');
+    const evBadge = document.getElementById('camExposureValue');
+
+    if (evRow) evRow.style.display = (expCaps.supportsEv || expCaps.supportsAel) ? '' : 'none';
+    if (evRulerWrap) evRulerWrap.style.display = expCaps.supportsEv ? '' : 'none';
+    if (aeBtn) {
+      aeBtn.style.display = expCaps.supportsAel ? '' : 'none';
+      aeBtn.classList.toggle('active', expCaps.supportsAel && !!state.camAELocked);
+    }
+    if (reticle) reticle.classList.toggle('locked', expCaps.supportsAel && !!state.camAELocked);
+    if (evSlider) {
+      evSlider.disabled = !expCaps.supportsEv;
+      evSlider.value = expCaps.supportsEv ? state.camExposureEV : 0;
+    }
+    if (evBadge) {
+      evBadge.style.display = expCaps.supportsEv ? '' : 'none';
+      const val = expCaps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
+      evBadge.textContent = `${val > 0 ? '+' : ''}${val.toFixed(1)}`;
+      evBadge.classList.toggle('active', expCaps.supportsEv && Math.abs(val) > 0.04);
     }
   }
 
@@ -11873,19 +11940,7 @@
       flashBtn.textContent = state.camFlashOn ? '⚡ FLASH' : '⚡ OFF';
     }
 
-    const aeBtn = document.getElementById('btnVfAeLock');
-    if (aeBtn) aeBtn.classList.toggle('active', !!state.camAELocked);
-    const reticle = document.getElementById('vfFocusReticle');
-    if (reticle) reticle.classList.toggle('locked', !!state.camAELocked);
-
-    const evSlider = document.getElementById('camExposureControl');
-    const evBadge = document.getElementById('camExposureValue');
-    if (evSlider) evSlider.value = state.camExposureEV;
-    if (evBadge) {
-      const val = Number(state.camExposureEV) || 0;
-      evBadge.textContent = `${val > 0 ? '+' : ''}${val.toFixed(1)}`;
-      evBadge.classList.toggle('active', Math.abs(val) > 0.04);
-    }
+    syncCameraExposureHudControls(body, lens, film);
 
     const srcBtn = document.getElementById('camSourceStatus');
     const isoBtn = document.getElementById('btnVfIso');
@@ -11955,13 +12010,14 @@
     state.camTrackCapabilities = capabilities;
     if (!capabilities) return;
 
+    const { body, lens, film } = getSelectedGear();
     const advanced = {};
     if (capabilities.exposureCompensation) {
       const min = capabilities.exposureCompensation.min ?? -2;
       const max = capabilities.exposureCompensation.max ?? 2;
-      advanced.exposureCompensation = Math.max(min, Math.min(max, Number(state.camExposureEV) || 0));
+      const evBias = getEffectiveCamExposureBias(body);
+      advanced.exposureCompensation = Math.max(min, Math.min(max, evBias));
     }
-    const { lens, film } = getSelectedGear();
     const effectiveISO = getEffectiveCameraISO(film);
     if (capabilities.iso && Number.isFinite(capabilities.iso.min) && Number.isFinite(capabilities.iso.max)) {
       advanced.iso = Math.max(capabilities.iso.min, Math.min(capabilities.iso.max, effectiveISO));
@@ -15781,41 +15837,6 @@
 
     showVfFocusReticle(`${(nx * 100).toFixed(1)}%`, `${(ny * 100).toFixed(1)}%`, 1600);
 
-    if (!state.camAELocked) {
-      const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
-      const src = hasLiveVideo ? camVideo : state.previewSourceCanvas;
-      if (src) {
-        try {
-          const { body, lens } = getSelectedGear();
-          const stageDim = getCameraStageDimensions(body, lens);
-          const srcW = src.videoWidth || src.width || stageDim.w;
-          const srcH = src.videoHeight || src.height || stageDim.h;
-          const srcRatio = srcW / Math.max(1, srcH);
-          let sw = srcW, sh = srcH;
-          if (srcRatio > stageDim.ratio) sw = srcH * stageDim.ratio;
-          else sh = srcW / stageDim.ratio;
-          const z = body.id === 'rangefinder' ? 1.0 : (lens.cropZoom || 1.0);
-          sw /= z; sh /= z;
-          const sxCenter = (srcW - sw) * 0.5 + nx * sw;
-          const syCenter = (srcH - sh) * 0.5 + ny * sh;
-          const patchW = Math.max(8, Math.round(sw * 0.14));
-          const patchH = Math.max(8, Math.round(sh * 0.14));
-          const psx = Math.max(0, Math.min(srcW - patchW, Math.round(sxCenter - patchW * 0.5)));
-          const psy = Math.max(0, Math.min(srcH - patchH, Math.round(syCenter - patchH * 0.5)));
-          const mC = document.createElement('canvas');
-          mC.width = 8; mC.height = 8;
-          const mCtx = mC.getContext('2d');
-          mCtx.drawImage(src, psx, psy, patchW, patchH, 0, 0, 8, 8);
-          const md = mCtx.getImageData(0, 0, 8, 8).data;
-          let sum = 0;
-          for (let i = 0; i < md.length; i += 4) sum += (0.299 * md[i] + 0.587 * md[i + 1] + 0.114 * md[i + 2]) / 255;
-          const zoneLum = sum / 64;
-          const targetEV = Math.max(-1.6, Math.min(1.6, Math.round(((0.46 - zoneLum) * 2.2) * 10) / 10));
-          state.camExposureEV = targetEV;
-        } catch (ignored) {}
-      }
-    }
-
     const track = cameraTrack();
     if (track?.applyConstraints && state.focusMode !== 'mf') {
       try {
@@ -15835,6 +15856,7 @@
   document.getElementById('btnVfAutoFocus')?.addEventListener('click', () => activateAutoFocus(true));
 
   document.getElementById('btnVfAeLock')?.addEventListener('click', () => {
+    if (!getCameraExposureControlCaps().supportsAel) return;
     state.camAELocked = !state.camAELocked;
     state.camLockedEV = state.camAELocked ? state.camExposureEV : null;
     if (state.camAELocked && vfFocusReticle) vfFocusReticle.classList.add('active');
@@ -15896,16 +15918,20 @@
   // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, Pro Zoom Toggle, Flash)
   const camExposureControl = document.getElementById('camExposureControl');
   camExposureControl.addEventListener('input', e => {
+    if (!getCameraExposureControlCaps().supportsEv) return;
     state.camExposureEV = Number(e.target.value);
     if (state.camAELocked) state.camLockedEV = state.camExposureEV;
     syncCameraHudUI();
     scheduleCameraSettingsApply();
+    scheduleSaveLocalAppState();
   });
   document.getElementById('camExposureValue').addEventListener('click', () => {
+    if (!getCameraExposureControlCaps().supportsEv) return;
     state.camExposureEV = 0;
     if (state.camAELocked) state.camLockedEV = 0;
     syncCameraHudUI();
     scheduleCameraSettingsApply();
+    scheduleSaveLocalAppState();
     showToast('EV reset to 0.0');
   });
   document.getElementById('btnVfIso')?.addEventListener('click', () => {
