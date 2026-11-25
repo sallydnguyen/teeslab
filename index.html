@@ -10584,30 +10584,172 @@
     renderPreview();
   }
 
+  let camNoiseBuffer = null;
+  let camAudioBus = null;
+  function ensureCamAudioContext() {
+    if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = state.audioCtx;
+    if (!camNoiseBuffer || camNoiseBuffer.sampleRate !== ctx.sampleRate) {
+      const len = Math.max(2048, Math.floor(ctx.sampleRate * 1.0));
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const ch = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+      camNoiseBuffer = buf;
+    }
+    if (!camAudioBus || camAudioBus.context !== ctx) {
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -12;
+      comp.knee.value = 10;
+      comp.ratio.value = 4.5;
+      comp.attack.value = 0.002;
+      comp.release.value = 0.075;
+      const master = ctx.createGain();
+      master.gain.value = 0.95;
+      comp.connect(master);
+      master.connect(ctx.destination);
+      camAudioBus = comp;
+    }
+    return { ctx, out: camAudioBus };
+  }
+
+  function withCamAudio(fn, resumeIfSuspended = false) {
+    if (!state.camSound) return;
+    try {
+      const { ctx, out } = ensureCamAudioContext();
+      if (ctx.state === 'suspended') {
+        if (resumeIfSuspended) ctx.resume().then(() => fn(ctx, out)).catch(() => {});
+        return;
+      }
+      fn(ctx, out);
+    } catch (e) {}
+  }
+
+  function mechNoiseBurst(ctx, out, start, dur, filterType, freq, q, peak, sweepFreq = null) {
+    if (!camNoiseBuffer || peak <= 0.0002 || dur <= 0.001) return;
+    const src = ctx.createBufferSource();
+    src.buffer = camNoiseBuffer;
+    const maxOffset = Math.max(0, camNoiseBuffer.duration - dur - 0.02);
+    const offset = maxOffset > 0.01 ? Math.random() * maxOffset : 0;
+    const filter = ctx.createBiquadFilter();
+    filter.type = filterType || 'bandpass';
+    filter.frequency.setValueAtTime(Math.max(60, freq), start);
+    if (sweepFreq && sweepFreq !== freq) {
+      filter.frequency.exponentialRampToValueAtTime(Math.max(60, sweepFreq), start + dur);
+    }
+    filter.Q.value = q || 1.4;
+    const gain = ctx.createGain();
+    const atk = Math.min(0.0022, dur * 0.22);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), start + atk);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(out);
+    src.start(start, offset, dur + 0.01);
+    src.stop(start + dur + 0.012);
+  }
+
+  function mechKnockTone(ctx, out, start, dur, f0, f1, peak, type = 'triangle') {
+    if (!peak || peak <= 0.0002 || dur <= 0.002) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(Math.max(30, f0), start);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(24, f1 || f0 * 0.55), start + dur);
+    const atk = Math.min(0.0028, dur * 0.25);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), start + atk);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(gain);
+    gain.connect(out);
+    osc.start(start);
+    osc.stop(start + dur + 0.008);
+  }
+
   let lastLensClickAt = 0;
-  function playLensClickSound(heavy = false) {
+  function playLensClickSound(heavy = false, kind = 'aperture') {
     if (!state.camSound) return;
     const nowMs = performance.now();
-    if (nowMs - lastLensClickAt < 28) return;
+    const minGap = kind === 'focus' ? 36 : (kind === 'ev' ? 32 : 24);
+    if (nowMs - lastLensClickAt < minGap) return;
     lastLensClickAt = nowMs;
-    try {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = state.audioCtx;
-      if (ctx.state === 'suspended') return;
-      const t = ctx.currentTime + 0.001;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(heavy ? 1900 : 2650, t);
-      osc.frequency.exponentialRampToValueAtTime(heavy ? 640 : 960, t + 0.011);
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(heavy ? 0.045 : 0.025, t + 0.002);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.012);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.014);
-    } catch (e) {}
+
+    withCamAudio((ctx, out) => {
+      const now = ctx.currentTime + 0.001;
+      const bid = state.bodyId || 'slr';
+
+      if (kind === 'focus') {
+        // Silky helicoid damping grease brush + subtle major-distance cam notch
+        if (heavy) {
+          mechNoiseBurst(ctx, out, now, 0.012, 'bandpass', 1240, 1.35, 0.075, 820);
+          mechNoiseBurst(ctx, out, now + 0.001, 0.005, 'bandpass', 3050, 2.0, 0.032);
+        } else {
+          mechNoiseBurst(ctx, out, now, 0.014, 'bandpass', 940, 0.95, 0.036, 680);
+        }
+        return;
+      }
+
+      if (kind === 'zoom') {
+        if (heavy) {
+          mechNoiseBurst(ctx, out, now, 0.014, 'bandpass', 1050, 1.25, 0.14, 680);
+          mechNoiseBurst(ctx, out, now + 0.002, 0.006, 'bandpass', 3100, 1.9, 0.09);
+          mechKnockTone(ctx, out, now, 0.016, 310, 155, 0.055, 'triangle');
+        } else {
+          mechNoiseBurst(ctx, out, now, 0.012, 'bandpass', 1380, 1.1, 0.055, 920);
+        }
+        return;
+      }
+
+      if (kind === 'af') {
+        const isAfCam = bid === 'pns' || bid === 'medium-format';
+        if (isAfCam) {
+          mechNoiseBurst(ctx, out, now, 0.022, 'bandpass', 2400, 1.8, 0.075, 3100);
+          mechNoiseBurst(ctx, out, now + 0.024, 0.007, 'bandpass', 3850, 2.3, 0.12, 2200);
+          mechKnockTone(ctx, out, now + 0.024, 0.012, 420, 230, 0.038, 'sine');
+        } else {
+          mechNoiseBurst(ctx, out, now, 0.009, 'bandpass', 2150, 1.6, 0.13, 1280);
+          mechKnockTone(ctx, out, now, 0.014, 390, 190, 0.05, 'triangle');
+        }
+        return;
+      }
+
+      if (kind === 'ev') {
+        mechNoiseBurst(ctx, out, now, 0.007, 'bandpass', heavy ? 3550 : 4150, 2.2, heavy ? 0.14 : 0.095, 2200);
+        if (heavy) mechKnockTone(ctx, out, now, 0.012, 540, 250, 0.045, 'triangle');
+        return;
+      }
+
+      if (kind === 'mount') {
+        // Bayonet lens mount seating + spring locking pin snick
+        mechNoiseBurst(ctx, out, now, 0.016, 'bandpass', 1420, 1.25, 0.18, 860);
+        mechKnockTone(ctx, out, now, 0.022, 270, 120, 0.09, 'triangle');
+        mechNoiseBurst(ctx, out, now + 0.022, 0.009, 'bandpass', 4350, 2.2, 0.20, 2400);
+        return;
+      }
+
+      if (kind === 'film') {
+        mechNoiseBurst(ctx, out, now, 0.010, 'bandpass', 2650, 1.6, 0.12, 1650);
+        mechKnockTone(ctx, out, now, 0.014, 340, 175, 0.05, 'sine');
+        return;
+      }
+
+      // Default: Aperture ring — precision steel ball-bearing detent into brass index slot
+      const isRf = bid === 'rangefinder';
+      const isElec = bid === 'pns' || bid === 'medium-format';
+      if (isElec) {
+        mechNoiseBurst(ctx, out, now, 0.006, 'bandpass', 4200, 2.3, heavy ? 0.12 : 0.075, 2700);
+        if (heavy) mechKnockTone(ctx, out, now, 0.011, 560, 290, 0.032, 'sine');
+        return;
+      }
+      if (heavy) {
+        mechNoiseBurst(ctx, out, now, 0.007, 'bandpass', isRf ? 4650 : 4100, 2.3, 0.20, 2800);
+        mechNoiseBurst(ctx, out, now + 0.002, 0.012, 'bandpass', 1520, 1.5, 0.14, 820);
+        mechKnockTone(ctx, out, now, 0.014, isRf ? 460 : 410, 210, 0.052, 'triangle');
+      } else {
+        mechNoiseBurst(ctx, out, now, 0.005, 'bandpass', isRf ? 5000 : 4550, 2.4, 0.095, 3100);
+        mechKnockTone(ctx, out, now, 0.009, 520, 280, 0.024, 'sine');
+      }
+    }, kind === 'mount' || kind === 'af' || kind === 'film' || kind === 'ev');
   }
 
   function buildTopScaleSpec(body, resolvedLens) {
@@ -10680,7 +10822,7 @@
         const bucketSpan = zSpan > 80 ? 10 : 5;
         const detentBucket = Math.round(nextMm / bucketSpan);
         if (prevDetent !== undefined && prevDetent !== detentBucket) {
-          playLensClickSound(detSteps.some(s => Math.abs(s - detentBucket * bucketSpan) <= bucketSpan * 0.4));
+          playLensClickSound(detSteps.some(s => Math.abs(s - detentBucket * bucketSpan) <= bucketSpan * 0.4), 'zoom');
         }
         return { changed: true, needsLayout: false, detent: detentBucket };
       }
@@ -10790,7 +10932,7 @@
         apPinnedWideOpen = state.lensAperture <= curMinF + 0.04;
         const halfStepSlot = Math.round(cx / (STOP_SPACING_PX * 0.5));
         if (prevDetent !== undefined && prevDetent !== halfStepSlot) {
-          playLensClickSound(halfStepSlot % 2 === 0);
+          playLensClickSound(halfStepSlot % 2 === 0, 'aperture');
         }
         return { changed: true, needsLayout: false, detent: halfStepSlot };
       }
@@ -10865,7 +11007,7 @@
         state.focusPos = Number(trackXToFocusPos(cx).toFixed(4));
         const detentSlot = Math.round(cx / 16);
         if (prevDetent !== undefined && prevDetent !== detentSlot) {
-          playLensClickSound(detentSlot % 3 === 0);
+          playLensClickSound(detentSlot % 3 === 0, 'focus');
         }
         return { changed: true, needsLayout: false, detent: detentSlot };
       }
@@ -10919,7 +11061,7 @@
         state.camShutterSpeed = nextSpeed;
         const nextIsAuto = nextSpeed === 'auto';
         if (prevDetent !== undefined && prevDetent !== idx) {
-          playShutterDialClickSound();
+          playShutterDialClickSound(nextSpeed);
           try { navigator.vibrate?.(8); } catch (ignored) {}
         }
         return { changed: changedSpeed || isRelease, needsLayout: prevWasAuto !== nextIsAuto, detent: idx };
@@ -11012,7 +11154,7 @@
     }
 
     const nextResolvedLens = getSelectedGear().lens;
-    playLensClickSound(true);
+    playLensClickSound(true, 'af');
     syncLensLiveUI(false);
     syncViewfinderFocusAid(body, nextResolvedLens);
     scheduleCameraSettingsApply();
@@ -11158,7 +11300,7 @@
           let nextIdx = steps.findIndex(s => s > curMm + 1.2);
           if (nextIdx < 0) nextIdx = 0;
           const nextStep = steps[nextIdx];
-          playLensClickSound(true);
+          playLensClickSound(true, 'zoom');
           selectZoomFocalMm(nextStep);
           scheduleSaveLocalAppState();
           showToast(`🔭 Zoom: ${nextStep}mm (${shortLensLabel(getSelectedGear().lens)})`);
@@ -11179,7 +11321,7 @@
           if (state.focusMode === 'af') {
             state.focusMode = 'mf';
             track.classList.remove('snap-af');
-            playLensClickSound(false);
+            playLensClickSound(false, 'focus');
             syncLensLiveUI(false);
             scheduleCameraSettingsApply();
             scheduleSaveLocalAppState();
@@ -11192,7 +11334,7 @@
           e.stopPropagation();
           if (state.camShutterSpeed !== 'auto') {
             state.camShutterSpeed = 'auto';
-            playShutterDialClickSound();
+            playShutterDialClickSound('auto');
             syncLensLiveUI(true);
             scheduleCameraSettingsApply();
             scheduleSaveLocalAppState();
@@ -11628,168 +11770,265 @@
   const camVideo = document.getElementById('camVideo');
 
   const SHUTTER_SOUND_PROFILES = {
-    slr: { level: 1.32, clickFreq: 3600, clickLevel: 0.21, impactDelay: 0.003, impactDuration: 0.056, impactFreq: 980, impactLevel: 0.44, curtainDelay: 0.016, curtainFreq: 3100, curtainLevel: 0.28, returnDelay: 0.082, returnFreq: 3450, returnLevel: 0.17, bodyFreq: 138, bodyLevel: 0.11, bodyTail: 0.12 },
-    rangefinder: { level: 1.02, clickFreq: 3150, clickLevel: 0.16, impactDelay: 0.007, impactDuration: 0.046, impactFreq: 720, impactLevel: 0.28, curtainDelay: 0.026, curtainFreq: 2150, curtainLevel: 0.19, returnDelay: 0.088, returnFreq: 2800, returnLevel: 0.11, bodyFreq: 122, bodyLevel: 0.07, bodyTail: 0.095 },
-    'half-frame': { level: 1.00, clickFreq: 3950, clickLevel: 0.18, impactDelay: 0.003, impactDuration: 0.032, impactFreq: 1750, impactLevel: 0.24, curtainDelay: 0.013, curtainFreq: 3050, curtainLevel: 0.16, returnDelay: 0.060, returnFreq: 3600, returnLevel: 0.09, bodyFreq: 205, bodyLevel: 0.055, bodyTail: 0.062 },
-    pns: { level: 1.05, clickFreq: 3800, clickLevel: 0.22, impactDelay: 0.002, impactDuration: 0.026, impactFreq: 1800, impactLevel: 0.26, curtainDelay: 0.012, curtainFreq: 3200, curtainLevel: 0.18, returnDelay: 0.045, returnFreq: 3800, returnLevel: 0.10, bodyFreq: 220, bodyLevel: 0.06, bodyTail: 0.05 },
-    disposable: { level: 0.98, clickFreq: 4800, clickLevel: 0.24, impactDelay: 0.001, impactDuration: 0.020, impactFreq: 2800, impactLevel: 0.22, curtainDelay: 0.008, curtainFreq: 4100, curtainLevel: 0.15, returnDelay: 0.038, returnFreq: 4400, returnLevel: 0.08, bodyFreq: 310, bodyLevel: 0.028, bodyTail: 0.038 },
-    'medium-format': { level: 1.42, clickFreq: 2900, clickLevel: 0.20, impactDelay: 0.004, impactDuration: 0.072, impactFreq: 740, impactLevel: 0.50, curtainDelay: 0.020, curtainFreq: 2400, curtainLevel: 0.30, returnDelay: 0.098, returnFreq: 2650, returnLevel: 0.18, bodyFreq: 98, bodyLevel: 0.14, bodyTail: 0.15 }
+    // Nikon F3 HP — titanium horizontal curtain, damped mirror slap & mechanical clockwork slow escapement
+    slr: {
+      level: 1.24, hasMirror: true, hasEscapement: true,
+      clickFreq: 4100, clickLevel: 0.16,
+      mirrorDelay: 0.004, mirrorFreq: 720, mirrorLevel: 0.36, mirrorBodyF0: 118, mirrorBodyF1: 58, mirrorBodyLevel: 0.15,
+      curtainDelay: 0.015, curtainDur: 0.024, curtainFreq: 3350, curtainLevel: 0.30,
+      closeDur: 0.024, closeFreq: 2920, closeLevel: 0.27,
+      returnOffset: 0.036, returnFreq: 1720, returnLevel: 0.20, returnBodyF0: 148, returnBodyF1: 82, returnBodyLevel: 0.09,
+      escapementHz: 28, escapementFreq: 2850, escapementLevel: 0.068
+    },
+    // Leica M6 0.72× — mirrorless hushed rubberized silk curtains + ultra-refined brass slow gear escapement
+    rangefinder: {
+      level: 0.94, hasMirror: false, hasEscapement: true,
+      clickFreq: 2450, clickLevel: 0.11,
+      curtainDelay: 0.005, curtainDur: 0.025, curtainFreq: 1420, curtainLevel: 0.26, clothBodyF0: 255, clothBodyF1: 122, clothBodyLevel: 0.075,
+      closeDur: 0.023, closeFreq: 1300, closeLevel: 0.24, closeTailFreq: 110,
+      escapementHz: 30, escapementFreq: 2550, escapementLevel: 0.052
+    },
+    // Nikon 35Ti — Copal 7-blade programmed micro-leaf lens shutter inside compact titanium shell
+    pns: {
+      level: 0.96, hasMirror: false, hasEscapement: false,
+      clickFreq: 4450, clickLevel: 0.11,
+      curtainDelay: 0.004, curtainDur: 0.009, curtainFreq: 4250, curtainLevel: 0.25, clothBodyF0: 310, clothBodyF1: 185, clothBodyLevel: 0.055,
+      closeDur: 0.009, closeFreq: 3750, closeLevel: 0.22
+    },
+    // Contax 645 — oversized 6×4.5 damped mirror slab + vertical titanium curtain focal-plane shutter
+    'medium-format': {
+      level: 1.38, hasMirror: true, hasEscapement: false,
+      clickFreq: 2950, clickLevel: 0.18,
+      mirrorDelay: 0.005, mirrorFreq: 460, mirrorLevel: 0.48, mirrorBodyF0: 86, mirrorBodyF1: 44, mirrorBodyLevel: 0.21,
+      curtainDelay: 0.021, curtainDur: 0.030, curtainFreq: 2100, curtainLevel: 0.30,
+      closeDur: 0.028, closeFreq: 1840, closeLevel: 0.28,
+      returnOffset: 0.048, returnFreq: 1160, returnLevel: 0.26, returnBodyF0: 112, returnBodyF1: 58, returnBodyLevel: 0.13
+    },
+    // Olympus Pen FT — snappy sideways porroprism mirror & rotary titanium sector shutter
+    'half-frame': {
+      level: 1.04, hasMirror: true, hasEscapement: true,
+      clickFreq: 3750, clickLevel: 0.16,
+      mirrorDelay: 0.004, mirrorFreq: 1480, mirrorLevel: 0.26, mirrorBodyF0: 205, mirrorBodyF1: 115, mirrorBodyLevel: 0.09,
+      curtainDelay: 0.012, curtainDur: 0.018, curtainFreq: 3450, curtainLevel: 0.25,
+      closeDur: 0.018, closeFreq: 2920, closeLevel: 0.23,
+      returnOffset: 0.024, returnFreq: 2280, returnLevel: 0.16, returnBodyF0: 230, returnBodyF1: 130, returnBodyLevel: 0.06,
+      escapementHz: 32, escapementFreq: 3250, escapementLevel: 0.058
+    }
   };
 
   function playShutterSound(durationSec = null) {
     if (!state.camSound) return;
     const dur = Number.isFinite(durationSec) ? durationSec : getEffectiveShutterInfo().durationSec;
-    try {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = state.audioCtx;
-      const play = () => {
-        const now = ctx.currentTime + 0.004;
-        const sound = SHUTTER_SOUND_PROFILES[state.bodyId] || SHUTTER_SOUND_PROFILES.slr;
-        const noiseClick = (offset, duration, frequency, q, peak) => {
-          const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
-          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-          const samples = buffer.getChannelData(0);
-          for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
-          const source = ctx.createBufferSource(); source.buffer = buffer;
-          const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = frequency; filter.Q.value = q;
-          const gain = ctx.createGain(), start = now + offset;
-          gain.gain.setValueAtTime(0.0001, start);
-          gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak * sound.level), start + Math.min(0.0025, duration * 0.2));
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-          source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-          source.start(start); source.stop(start + duration + 0.005);
-        };
+    withCamAudio((ctx, out) => {
+      const now = ctx.currentTime + 0.003;
+      const sound = SHUTTER_SOUND_PROFILES[state.bodyId] || SHUTTER_SOUND_PROFILES.slr;
+      const lvl = sound.level || 1.0;
 
-        const slowDelay = dur >= 0.05 ? Math.max(0, dur - 0.028) : 0;
+      // 1. Release plunger / diaphragm stop-down snap
+      mechNoiseBurst(ctx, out, now, 0.007, 'bandpass', sound.clickFreq, 1.5, sound.clickLevel * lvl, sound.clickFreq * 0.72);
 
-        noiseClick(0, 0.016, sound.clickFreq, 0.8, sound.clickLevel);
-        noiseClick(sound.impactDelay, sound.impactDuration, sound.impactFreq, 0.55, sound.impactLevel);
-        noiseClick(sound.curtainDelay + slowDelay, 0.032, sound.curtainFreq, 1.1, sound.curtainLevel);
-        noiseClick(sound.returnDelay + slowDelay, 0.024, sound.returnFreq, 0.9, sound.returnLevel);
+      // 2. SLR mirror slap (if reflex body)
+      if (sound.hasMirror) {
+        mechNoiseBurst(ctx, out, now + sound.mirrorDelay, 0.026, 'bandpass', sound.mirrorFreq, 0.85, sound.mirrorLevel * lvl, sound.mirrorFreq * 0.62);
+        mechKnockTone(ctx, out, now + sound.mirrorDelay, 0.048, sound.mirrorBodyF0, sound.mirrorBodyF1, sound.mirrorBodyLevel * lvl, 'triangle');
+      }
 
-        const resonance = ctx.createOscillator(), bodyGain = ctx.createGain();
-        resonance.type = 'triangle';
-        resonance.frequency.setValueAtTime(sound.bodyFreq, now + 0.006);
-        resonance.frequency.exponentialRampToValueAtTime(sound.bodyFreq * 0.68, now + sound.bodyTail);
-        bodyGain.gain.setValueAtTime(0.0001, now + 0.006);
-        bodyGain.gain.exponentialRampToValueAtTime(sound.bodyLevel * sound.level, now + 0.014);
-        bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + sound.bodyTail);
-        resonance.connect(bodyGain); bodyGain.connect(ctx.destination);
-        resonance.start(now + 0.006); resonance.stop(now + sound.bodyTail + 0.005);
-      };
-      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
-      else play();
-    } catch (e) {}
+      // 3. First curtain / leaf open
+      mechNoiseBurst(ctx, out, now + sound.curtainDelay, sound.curtainDur, 'bandpass', sound.curtainFreq, 1.05, sound.curtainLevel * lvl, sound.curtainFreq * 0.78);
+      if (!sound.hasMirror && sound.clothBodyF0) {
+        mechKnockTone(ctx, out, now + sound.curtainDelay, 0.032, sound.clothBodyF0, sound.clothBodyF1, sound.clothBodyLevel * lvl, 'sine');
+      }
+
+      // 4. Slow-speed hold & mechanical clockwork escapement gear train (1/15s .. 2s on mechanical bodies)
+      const slowDelay = dur >= 0.055 ? Math.max(0.028, Math.min(2.05, dur - 0.024)) : 0;
+      if (sound.hasEscapement && slowDelay >= 0.035) {
+        const escStart = sound.curtainDelay + 0.016;
+        const escEnd = sound.curtainDelay + slowDelay - 0.010;
+        const step = 1 / Math.max(18, sound.escapementHz || 28);
+        let idx = 0;
+        for (let t = escStart; t < escEnd && idx < 56; t += step, idx++) {
+          const jitter = ((idx % 2 === 0 ? 1 : -1) * 0.0014);
+          const toneShift = 1 + ((idx % 3) - 1) * 0.045;
+          const tailLift = (t - escStart) / Math.max(0.05, escEnd - escStart);
+          const f = (sound.escapementFreq || 2800) * toneShift * (0.96 + 0.08 * tailLift);
+          mechNoiseBurst(ctx, out, now + t + jitter, 0.008, 'bandpass', f, 2.3, (sound.escapementLevel || 0.06) * lvl, f * 0.85);
+        }
+      }
+
+      // 5. Second curtain close / leaf snap
+      const closeT = now + sound.curtainDelay + (slowDelay > 0 ? slowDelay : (sound.hasMirror ? 0.018 : 0.012));
+      mechNoiseBurst(ctx, out, closeT, sound.closeDur || 0.022, 'bandpass', sound.closeFreq, 1.1, sound.closeLevel * lvl, sound.closeFreq * 0.75);
+      if (!sound.hasMirror && sound.closeTailFreq) {
+        mechKnockTone(ctx, out, closeT, 0.028, sound.closeTailFreq, sound.closeTailFreq * 0.55, 0.05 * lvl, 'sine');
+      }
+
+      // 6. Reflex mirror return spring clack
+      if (sound.hasMirror) {
+        const retT = closeT + (sound.returnOffset || 0.034);
+        mechNoiseBurst(ctx, out, retT, 0.020, 'bandpass', sound.returnFreq, 1.0, sound.returnLevel * lvl, sound.returnFreq * 0.72);
+        mechKnockTone(ctx, out, retT, 0.036, sound.returnBodyF0, sound.returnBodyF1, sound.returnBodyLevel * lvl, 'triangle');
+      }
+    }, true);
   }
 
-  function playShutterDialClickSound() {
+  function playShutterDialClickSound(targetSpeed = null) {
     if (!state.camSound) return;
-    try {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = state.audioCtx;
-      const play = () => {
-        const now = ctx.currentTime + 0.002;
-        const duration = 0.009;
-        const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
-        const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-        const samples = buffer.getChannelData(0);
-        for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
-        const source = ctx.createBufferSource(); source.buffer = buffer;
-        const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 3900; filter.Q.value = 2.4;
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.18, now + 0.0015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-        source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-        source.start(now); source.stop(now + duration + 0.004);
-      };
-      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
-      else play();
-    } catch (e) {}
+    withCamAudio((ctx, out) => {
+      const now = ctx.currentTime + 0.001;
+      const isElec = state.bodyId === 'pns' || state.bodyId === 'medium-format';
+      const isLockBoundary = targetSpeed === 'auto';
+      if (isElec) {
+        mechNoiseBurst(ctx, out, now, 0.008, 'bandpass', 4150, 2.2, 0.14, 2400);
+        mechKnockTone(ctx, out, now, 0.014, 620, 290, 0.04, 'sine');
+        return;
+      }
+      // Mechanical knurled steel speed dial: pawl lift + notched detent drop + top-plate seat
+      mechNoiseBurst(ctx, out, now, 0.006, 'bandpass', 4750, 2.1, 0.12, 3200);
+      mechNoiseBurst(ctx, out, now + 0.0045, 0.012, 'bandpass', 2550, 1.5, 0.24, 1320);
+      mechKnockTone(ctx, out, now + 0.004, 0.020, 490, 190, 0.095, 'triangle');
+      if (isLockBoundary) {
+        mechNoiseBurst(ctx, out, now + 0.009, 0.007, 'bandpass', 5500, 2.6, 0.13, 3900);
+      }
+    }, true);
   }
 
   function playFilmWindSound() {
     if (!state.camSound) return;
-    try {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = state.audioCtx;
-      const play = () => {
-        const now = ctx.currentTime + 0.004;
-        const ratchetTick = (offset, freq, peak) => {
-          const duration = 0.011;
-          const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
-          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-          const samples = buffer.getChannelData(0);
-          for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
-          const source = ctx.createBufferSource(); source.buffer = buffer;
-          const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = freq; filter.Q.value = 1.9;
-          const gain = ctx.createGain(), start = now + offset;
-          gain.gain.setValueAtTime(0.0001, start);
-          gain.gain.exponentialRampToValueAtTime(peak, start + 0.0018);
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-          source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-          source.start(start); source.stop(start + duration + 0.004);
-        };
+    withCamAudio((ctx, out) => {
+      const now = ctx.currentTime + 0.003;
+      const bid = state.bodyId || 'slr';
 
-        if (state.bodyId === 'pns') {
-          // Motorized electric gear whine for Point & Shoot
-          const motorOsc = ctx.createOscillator();
-          const motorGain = ctx.createGain();
-          const motorFilter = ctx.createBiquadFilter();
-          motorOsc.type = 'sawtooth';
-          motorOsc.frequency.setValueAtTime(440, now);
-          motorOsc.frequency.linearRampToValueAtTime(560, now + 0.07);
-          motorOsc.frequency.exponentialRampToValueAtTime(380, now + 0.22);
-          motorFilter.type = 'lowpass';
-          motorFilter.frequency.value = 1700;
-          motorGain.gain.setValueAtTime(0.0001, now);
-          motorGain.gain.exponentialRampToValueAtTime(0.11, now + 0.012);
-          motorGain.gain.setValueAtTime(0.11, now + 0.17);
-          motorGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-          motorOsc.connect(motorFilter); motorFilter.connect(motorGain); motorGain.connect(ctx.destination);
-          motorOsc.start(now); motorOsc.stop(now + 0.23);
-          const motorTicks = [0.03, 0.07, 0.11, 0.15, 0.19];
-          motorTicks.forEach(t => ratchetTick(t, 3200, 0.08));
-          ratchetTick(0.21, 4200, 0.22);
-          return;
+      if (bid === 'pns' || bid === 'medium-format') {
+        const isMf = bid === 'medium-format';
+        const dur = isMf ? 0.34 : 0.24;
+        const fBase = isMf ? 138 : 196;
+        const fPeak = isMf ? 182 : 258;
+        const fEnd = isMf ? 122 : 162;
+
+        // Coreless DC planetary autowinder motor purr (no raw harsh sawtooth beep)
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(isMf ? 520 : 880, now);
+        filter.Q.value = 1.05;
+        const mGain = ctx.createGain();
+        mGain.gain.setValueAtTime(0.0001, now);
+        mGain.gain.exponentialRampToValueAtTime(isMf ? 0.14 : 0.11, now + 0.018);
+        mGain.gain.setValueAtTime(isMf ? 0.13 : 0.10, now + dur - 0.045);
+        mGain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+        const o1 = ctx.createOscillator();
+        const o2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        g2.gain.value = 0.42;
+        o1.type = 'triangle';
+        o2.type = 'sine';
+        o1.frequency.setValueAtTime(fBase, now);
+        o1.frequency.linearRampToValueAtTime(fPeak, now + dur * 0.38);
+        o1.frequency.exponentialRampToValueAtTime(fEnd, now + dur);
+        o2.frequency.setValueAtTime(fBase * 2.04, now);
+        o2.frequency.linearRampToValueAtTime(fPeak * 2.04, now + dur * 0.38);
+        o2.frequency.exponentialRampToValueAtTime(fEnd * 2.04, now + dur);
+
+        o1.connect(filter);
+        o2.connect(g2); g2.connect(filter);
+        filter.connect(mGain); mGain.connect(out);
+        o1.start(now); o2.start(now);
+        o1.stop(now + dur + 0.01); o2.stop(now + dur + 0.01);
+
+        // Planetary pinion flutter & film gate whisper + optical end-of-frame stop click
+        mechNoiseBurst(ctx, out, now + 0.012, dur - 0.03, 'bandpass', isMf ? 2150 : 3100, 1.3, 0.048, isMf ? 2750 : 3800);
+        const pinStep = isMf ? 0.036 : 0.030;
+        for (let t = 0.024, i = 0; t < dur - 0.025; t += pinStep, i++) {
+          mechNoiseBurst(ctx, out, now + t, 0.009, 'bandpass', (isMf ? 1950 : 2850) + (i % 2) * 260, 1.8, 0.055);
         }
+        mechNoiseBurst(ctx, out, now + dur - 0.006, 0.013, 'bandpass', isMf ? 2450 : 3950, 1.7, 0.21, isMf ? 1400 : 2200);
+        mechKnockTone(ctx, out, now + dur - 0.006, 0.024, isMf ? 142 : 240, isMf ? 78 : 130, isMf ? 0.11 : 0.07, 'triangle');
+        return;
+      }
 
-        const steps = [0.00, 0.022, 0.044, 0.068, 0.095, 0.125, 0.160];
-        steps.forEach((t, idx) => ratchetTick(t, 2400 + idx * 185, 0.16 + idx * 0.018));
-        ratchetTick(0.205, 3950, 0.32);
-      };
-      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
-      else play();
-    } catch (e) {}
+      // Manual mechanical film advance lever (Leica M6, Nikon F3, Olympus Pen FT)
+      const isRf = bid === 'rangefinder';
+      const isHf = bid === 'half-frame';
+      const strokeTimes = isRf
+        ? [0.000, 0.020, 0.039, 0.058, 0.078, 0.100, 0.123, 0.148, 0.175]
+        : (isHf
+          ? [0.000, 0.017, 0.035, 0.054, 0.075, 0.098, 0.124]
+          : [0.000, 0.019, 0.038, 0.059, 0.081, 0.106, 0.133, 0.163]);
+      const baseFreq = isRf ? 1880 : (isHf ? 2750 : 2250);
+      const stepDelta = isRf ? 115 : (isHf ? 195 : 155);
+
+      // Subtle continuous film-perforation & sprocket glide underneath the advance stroke
+      const glideDur = strokeTimes[strokeTimes.length - 1] + 0.015;
+      mechNoiseBurst(ctx, out, now + 0.01, glideDur, 'bandpass', isRf ? 2750 : 3350, 1.25, isRf ? 0.034 : 0.042, isRf ? 3550 : 4450);
+
+      // Brass/steel ratchet teeth along accelerating thumb throw
+      strokeTimes.forEach((t, idx) => {
+        const freq = baseFreq + idx * stepDelta;
+        const pk = (isRf ? 0.11 : 0.135) + Math.min(0.07, idx * 0.009);
+        mechNoiseBurst(ctx, out, now + t, 0.011, 'bandpass', freq, 2.0, pk, freq * 0.78);
+      });
+
+      // Final shutter tension catch latch + spring-return thumb lever bumper
+      const latchT = now + glideDur + 0.008;
+      mechNoiseBurst(ctx, out, latchT, 0.016, 'bandpass', isRf ? 2550 : (isHf ? 4150 : 3250), 1.4, isRf ? 0.22 : 0.27, isRf ? 1480 : 1950);
+      mechKnockTone(ctx, out, latchT, 0.028, isRf ? 185 : (isHf ? 265 : 215), isRf ? 95 : 120, isRf ? 0.085 : 0.105, 'triangle');
+
+      const retT = latchT + (isHf ? 0.038 : 0.048);
+      mechNoiseBurst(ctx, out, retT, 0.014, 'bandpass', isRf ? 1120 : 1450, 1.1, isRf ? 0.075 : 0.10, 720);
+      mechKnockTone(ctx, out, retT, 0.020, 155, 90, 0.045, 'sine');
+    }, true);
   }
 
   function playFilmRewindSound() {
     if (!state.camSound) return;
-    try {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = state.audioCtx;
-      const play = () => {
-        const now = ctx.currentTime + 0.004;
-        for (let idx = 0; idx < 11; idx++) {
-          const offset = idx * 0.026;
-          const duration = 0.012;
-          const length = Math.max(1, Math.floor(ctx.sampleRate * duration));
-          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
-          const samples = buffer.getChannelData(0);
-          for (let i = 0; i < length; i++) samples[i] = Math.random() * 2 - 1;
-          const source = ctx.createBufferSource(); source.buffer = buffer;
-          const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 3400 - idx * 140; filter.Q.value = 2.0;
-          const gain = ctx.createGain(), start = now + offset;
-          gain.gain.setValueAtTime(0.0001, start);
-          gain.gain.exponentialRampToValueAtTime(0.18, start + 0.002);
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-          source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-          source.start(start); source.stop(start + duration + 0.004);
-        }
-      };
-      if (ctx.state === 'suspended') ctx.resume().then(play).catch(() => {});
-      else play();
-    } catch (e) {}
+    withCamAudio((ctx, out) => {
+      const now = ctx.currentTime + 0.003;
+      const isElec = state.bodyId === 'pns' || state.bodyId === 'medium-format';
+
+      if (isElec) {
+        // Motorized high-speed rewind rising as spool empties, ending with leader release snap
+        const dur = 0.40;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass'; filter.frequency.value = 920; filter.Q.value = 1.1;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+        gain.gain.setValueAtTime(0.12, now + dur - 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+        const o = ctx.createOscillator();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(215, now);
+        o.frequency.exponentialRampToValueAtTime(365, now + dur * 0.86);
+        o.frequency.exponentialRampToValueAtTime(280, now + dur);
+        o.connect(filter); filter.connect(gain); gain.connect(out);
+        o.start(now); o.stop(now + dur + 0.01);
+
+        mechNoiseBurst(ctx, out, now + 0.015, dur - 0.03, 'bandpass', 3400, 1.2, 0.055, 4400);
+        // Film tongue flick-free snap + motor cutoff relay click
+        mechNoiseBurst(ctx, out, now + dur - 0.045, 0.014, 'bandpass', 4350, 1.8, 0.22, 1600);
+        mechNoiseBurst(ctx, out, now + dur - 0.005, 0.012, 'bandpass', 2600, 1.6, 0.16, 1300);
+        return;
+      }
+
+      // Manual rewind crank: 4 cyclical crank sweeps + light-trap felt swoosh + film leader pop!
+      mechNoiseBurst(ctx, out, now + 0.01, 0.39, 'bandpass', 3100, 1.15, 0.048, 3950);
+      const turns = 4;
+      for (let turn = 0; turn < turns; turn++) {
+        const baseT = turn * 0.095;
+        const crankClicks = [0.000, 0.020, 0.042, 0.068];
+        crankClicks.forEach((dt, j) => {
+          const f = 3250 - turn * 150 + (j === 1 ? 240 : 0);
+          const pk = j === 1 ? 0.16 : 0.105;
+          mechNoiseBurst(ctx, out, now + baseT + dt, 0.011, 'bandpass', f, 1.9, pk, f * 0.72);
+        });
+      }
+      // Iconic film leader detachment flitter-pop + clutch release
+      const popT = now + 0.405;
+      mechNoiseBurst(ctx, out, popT, 0.016, 'bandpass', 4250, 1.6, 0.25, 1350);
+      mechKnockTone(ctx, out, popT, 0.024, 310, 135, 0.09, 'triangle');
+      mechNoiseBurst(ctx, out, popT + 0.028, 0.012, 'bandpass', 2400, 1.5, 0.14);
+    }, true);
   }
 
   let autoWindTimer = 0;
@@ -13637,22 +13876,22 @@
     shutterBusy = true;
     const shutterButton = document.getElementById('btnShutter');
     shutterButton.disabled = true;
-    await cameraRollReady;
-
-    const { body, lens, film } = getSelectedGear();
-    const shutterInfo = getEffectiveShutterInfo(lens, film);
-    const exposureWaitMs = shutterInfo.durationSec >= 0.06 ? Math.min(2200, Math.round(shutterInfo.durationSec * 1000)) : 0;
-    const blackoutMs = Math.max(110, exposureWaitMs);
-    const fl = document.getElementById('shutterFlash');
-    fl.classList.add('active'); setTimeout(() => fl.classList.remove('active'), blackoutMs);
-    playShutterSound(shutterInfo.durationSec);
-    const exposureTimer = exposureWaitMs > 0 ? new Promise(resolve => setTimeout(resolve, exposureWaitMs)) : null;
-
     let stillBitmap = null;
     let boostedVideoForShot = false;
-    const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
-    const track = hasLiveVideo ? cameraTrack() : null;
+    let track = null;
     try {
+      await cameraRollReady;
+      const { body, lens, film } = getSelectedGear();
+      const shutterInfo = getEffectiveShutterInfo(lens, film);
+      const exposureWaitMs = shutterInfo.durationSec >= 0.06 ? Math.min(2200, Math.round(shutterInfo.durationSec * 1000)) : 0;
+      const blackoutMs = Math.max(110, exposureWaitMs);
+      const fl = document.getElementById('shutterFlash');
+      fl.classList.add('active'); setTimeout(() => fl.classList.remove('active'), blackoutMs);
+      playShutterSound(shutterInfo.durationSec);
+      const exposureTimer = exposureWaitMs > 0 ? new Promise(resolve => setTimeout(resolve, exposureWaitMs)) : null;
+
+      const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
+      track = hasLiveVideo ? cameraTrack() : null;
       const stillPromise = (track && typeof ImageCapture === 'function')
         ? Promise.race([
             (async () => {
@@ -15111,6 +15350,8 @@
       e.stopPropagation();
       const kind = btn.dataset.stepGear;
       const dir = Number(btn.dataset.stepDir) || 1;
+      if (kind === 'body' || kind === 'lens') playLensClickSound(true, 'mount');
+      else playLensClickSound(false, 'film');
       if (kind === 'body') stepBodyMode(dir);
       else if (kind === 'lens') stepFocalOption(dir);
       else if (kind === 'film') stepFilmStock(dir);
@@ -16117,7 +16358,7 @@
       state.bloom = lens.bloomBase;
       state.vignette = lens.vignetteBase;
       const nextBucket = Math.round(nextMm / ((zMax - zMin) > 80 ? 10 : 5));
-      if (nextBucket !== prevBucket) playLensClickSound(false);
+      if (nextBucket !== prevBucket) playLensClickSound(false, 'zoom');
       syncLensLiveUI(false);
       syncCameraHudUI();
       scheduleCameraSettingsApply();
@@ -16281,9 +16522,16 @@
 
   // Camera Viewfinder HUD Events (EV Ruler, DATE toggle, FRAME toggle, Pro Zoom Toggle, Flash)
   const camExposureControl = document.getElementById('camExposureControl');
+  let lastEvSoundBucket = Math.round((Number(state.camExposureEV) || 0) * 2);
   camExposureControl.addEventListener('input', e => {
     if (!getCameraExposureControlCaps().supportsEv) return;
-    state.camExposureEV = Number(e.target.value);
+    const nextEv = Number(e.target.value);
+    state.camExposureEV = nextEv;
+    const nextEvBucket = Math.round(nextEv * 2);
+    if (nextEvBucket !== lastEvSoundBucket) {
+      lastEvSoundBucket = nextEvBucket;
+      playLensClickSound(nextEvBucket === 0 || nextEvBucket % 2 === 0, 'ev');
+    }
     if (state.camAELocked) state.camLockedEV = state.camExposureEV;
     syncCameraHudUI();
     scheduleCameraSettingsApply();
@@ -16291,7 +16539,11 @@
   });
   document.getElementById('camExposureValue').addEventListener('click', () => {
     if (!getCameraExposureControlCaps().supportsEv) return;
+    if (Math.abs(Number(state.camExposureEV) || 0) >= 0.05) {
+      playLensClickSound(true, 'ev');
+    }
     state.camExposureEV = 0;
+    lastEvSoundBucket = 0;
     if (state.camAELocked) state.camLockedEV = 0;
     syncCameraHudUI();
     scheduleCameraSettingsApply();
@@ -16306,6 +16558,7 @@
     const idx = steps.indexOf(cur);
     const next = steps[(idx + 1) % steps.length];
     state.camISO = next === boxIso ? null : next;
+    playLensClickSound(true, 'ev');
     syncCameraHudUI();
     scheduleCameraSettingsApply();
     const stops = getCameraIsoStops(film);
@@ -16315,12 +16568,14 @@
   document.getElementById('btnVfDateToggle')?.addEventListener('click', () => {
     state.dateStamp = state.dateStamp === 'off' ? 'exif-or-today' : 'off';
     cameraLastStaticKey = '';
+    playLensClickSound(false, 'ev');
     syncAllUI();
     renderPreview();
   });
   document.getElementById('btnVfFrameToggle').addEventListener('click', () => {
     const order = ['none', 'darkroom-white', '35mm-sprocket', 'polaroid'];
     state.frameType = order[(order.indexOf(state.frameType) + 1) % order.length];
+    playLensClickSound(false, 'ev');
     syncAllUI();
     renderPreview();
   });
@@ -16329,7 +16584,7 @@
     const zooms = focals.filter(f => f.isZoom);
     if (!zooms.length) return;
     const curZoomIdx = zooms.findIndex(z => z.id === state.lensId);
-    playLensClickSound(true);
+    playLensClickSound(true, 'mount');
     if (curZoomIdx < 0) {
       selectFocalOption(zooms[0].id);
       scheduleSaveLocalAppState();
@@ -16354,6 +16609,7 @@
   });
   document.getElementById('btnVfFlashToggle').addEventListener('click', () => {
     state.camFlashOn = !state.camFlashOn;
+    playLensClickSound(false, 'ev');
     syncAllUI();
     renderPreview();
     showToast(state.camFlashOn ? '⚡ Flash: ON (Direct fill burst)' : '⚡ Flash: OFF');
