@@ -2245,12 +2245,12 @@
     }
 
 
-    /* Nikon 35Ti Quartz Date (PnS) — Optical Brightframe Glass + 24px Bottom Illuminated LCD Window */
+    /* Nikon 35Ti Quartz Date (PnS) — Optical Brightframe Glass + 32px Pitch-Black Amber/Cyan Backlit LCD */
     .vf-stage[data-vf-mode="pns"] .vf-corner { opacity: 0; }
     .vf-stage[data-vf-mode="pns"] #cameraViewfinderCanvas,
     .vf-stage[data-vf-mode="pns"] .vf-gl-canvas {
       width: 100%;
-      height: calc(100% - 24px);
+      height: calc(100% - 32px);
       inset: 0 auto auto 0;
     }
     .vf-pns-overlay, .vf-disp-overlay {
@@ -2263,130 +2263,175 @@
     .vf-stage[data-vf-mode="disposable"] .vf-disp-overlay { display: block; }
     .vf-pns-glass {
       position: absolute;
-      inset: 0 0 24px 0;
-      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.22);
+      inset: 0 0 32px 0;
       overflow: hidden;
     }
+    .vf-pns-glass::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 99% 97% at 50% 49%, rgba(0, 0, 0, 0) 64%, rgba(0, 0, 0, 0.34) 84%, rgba(0, 0, 0, 0.88) 100%);
+      box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.40), inset 0 -10px 18px rgba(0, 0, 0, 0.54);
+    }
     .vf-pns-frame-svg {
+      position: relative;
+      z-index: 1;
       width: 100%;
       height: 100%;
       display: block;
     }
     .vf-pns-frame-svg .pns-etch-back {
       fill: none;
-      stroke: rgba(0, 0, 0, 0.44);
+      stroke: rgba(0, 0, 0, 0.48);
+      stroke-width: 3.8;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
+    }
+    .vf-pns-frame-svg .pns-etch-fringe {
+      fill: none;
+      stroke: rgba(110, 215, 250, 0.44);
       stroke-width: 2.3;
-      stroke-linecap: square;
+      stroke-linecap: butt;
       stroke-linejoin: miter;
     }
     .vf-pns-frame-svg .pns-etch-ink {
       fill: none;
-      stroke: rgba(248, 250, 252, 0.88);
-      stroke-width: 1.15;
-      stroke-linecap: square;
+      stroke: rgba(247, 234, 182, 0.90);
+      stroke-width: 2.15;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
+    }
+    .vf-pns-frame-svg .pns-etch-subtle {
+      fill: none;
+      stroke: rgba(246, 232, 184, 0.24);
+      stroke-width: 1.25;
+      stroke-linecap: butt;
       stroke-linejoin: miter;
     }
     .vf-pns-af-oval .pns-af-back {
       fill: none;
-      stroke: rgba(0, 0, 0, 0.52);
-      stroke-width: 2.6;
+      stroke: rgba(0, 0, 0, 0.46);
+      stroke-width: 3.6;
       transition: stroke 0.14s ease;
+    }
+    .vf-pns-af-oval .pns-af-fringe {
+      fill: none;
+      stroke: rgba(125, 211, 252, 0.34);
+      stroke-width: 2.2;
     }
     .vf-pns-af-oval .pns-af-ink {
       fill: none;
-      stroke: rgba(248, 250, 252, 0.90);
-      stroke-width: 1.3;
+      stroke: rgba(246, 233, 184, 0.86);
+      stroke-width: 2.0;
       transition: stroke 0.14s ease, filter 0.14s ease;
     }
     .vf-pns-af-oval.in-focus .pns-af-ink {
-      stroke: rgba(134, 239, 172, 0.95);
-      filter: drop-shadow(0 0 2.5px rgba(74, 222, 128, 0.42));
+      stroke: rgba(234, 244, 198, 0.92);
+      filter: drop-shadow(0 0 2.5px rgba(134, 239, 172, 0.36));
     }
     .vf-pns-af-oval.mf-off .pns-af-ink {
       stroke: rgba(251, 191, 36, 0.92);
-      filter: drop-shadow(0 0 2.5px rgba(245, 158, 11, 0.35));
+      filter: drop-shadow(0 0 2.5px rgba(245, 158, 11, 0.40));
     }
 
-    /* Bottom Optical Black Bezel + Illuminated Nikon 35Ti LCD Window */
+    /* Bottom Optical Pitch-Black Readout Mask + Glowing Nikon 35Ti Dichromatic EL Segments */
     .vf-pns-bottom-bezel {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      height: 24px;
-      background: #040507;
+      height: 32px;
+      background: #020305;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2px 10px;
+      padding: 2px 10px 4px;
     }
     .vf-pns-lcd-window {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 11px;
-      height: 18px;
-      min-width: 156px;
-      padding: 0 11px;
-      border-radius: 2.5px;
-      background: linear-gradient(180deg, #d7e0d4 0%, #c6d1c3 55%, #b9c5b6 100%);
-      border: 1px solid rgba(55, 65, 58, 0.85);
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.36), inset 0 -1px 0 rgba(255, 255, 255, 0.25), 0 0 6px rgba(196, 212, 192, 0.20);
-      color: #121815;
+      gap: 9px;
+      height: 24px;
+      padding: 0 8px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
     }
     .vf-pns-fmt-marks {
       display: inline-flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 1.5px;
+      gap: 6px;
       flex-shrink: 0;
     }
-    .vf-pns-fmt-full {
-      width: 11px;
-      height: 7px;
-      border-radius: 0.5px;
-      background: #141a17;
+    .vf-pns-fmt-full-svg {
+      width: 24px;
+      height: 18px;
+      display: block;
+      filter: drop-shadow(0 0 3px rgba(248, 226, 134, 0.36));
     }
-    .vf-pns-fmt-pano {
-      width: 11px;
-      height: 2.5px;
-      border-radius: 0.5px;
-      background: rgba(20, 26, 23, 0.16);
+    .vf-pns-fmt-pano-svg {
+      width: 20px;
+      height: 14px;
+      display: block;
+      opacity: 0.34;
     }
     .vf-pns-lcd-val {
-      font-family: var(--mono);
-      font-size: 11.5px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.35px;
-      line-height: 1;
-      min-width: 24px;
-      text-align: right;
-      color: #121815;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 20px;
+      min-width: 48px;
     }
-    .vf-pns-lcd-val.is-slow {
-      color: #7c2d12;
-      text-decoration: underline;
-      text-underline-thickness: 1.5px;
-      text-underline-offset: 1.5px;
+    .vf-pns-lcd-sr {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      font-size: 1px;
+      line-height: 1;
+      opacity: 0.001;
+      pointer-events: none;
+    }
+    .vf-pns-seg-svg {
+      height: 19px;
+      width: auto;
+      display: block;
+      overflow: visible;
+      filter: drop-shadow(0 0 3.5px rgba(250, 204, 21, 0.34));
+    }
+    .vf-pns-lcd-val.is-slow .vf-pns-seg-svg {
+      filter: drop-shadow(0 0 4.5px rgba(249, 115, 22, 0.56));
     }
     .vf-pns-lcd-ico {
       flex-shrink: 0;
-      color: #141a17;
-      opacity: 0.16;
-      transition: opacity 0.14s ease;
+      color: #4a1e1a;
+      opacity: 0.42;
+      transition: color 0.14s ease, opacity 0.14s ease, filter 0.14s ease;
     }
     .vf-pns-lcd-ico.active {
-      opacity: 0.96;
+      color: #f6c945;
+      opacity: 0.98;
+      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.62));
     }
     .vf-pns-ev-ico {
-      width: 15px;
-      height: 12px;
+      width: 18px;
+      height: 15px;
     }
     .vf-pns-flash-ico {
-      width: 10px;
-      height: 13px;
+      width: 12px;
+      height: 15px;
+      margin-left: -3px;
+    }
+    .vf-pns-flash-ico.active {
+      color: #fb923c;
+      filter: drop-shadow(0 0 4.5px rgba(249, 115, 22, 0.68));
     }
 
     /* Medium Format 120 — Waist-Level Ground Glass Etched Grid + High-Contrast Magnifier Loupe */
@@ -5682,30 +5727,42 @@
               </div>
 
 
-              <!-- Nikon 35Ti Quartz Date (PnS): Optical Brightframe Glass + Center AF Oval + Bottom LCD Window -->
+              <!-- Nikon 35Ti Quartz Date (PnS): Optical Albada Brightframe Glass + Center AF Oval + Pitch-Black Backlit LCD -->
               <div class="vf-pns-overlay vf-disp-overlay" aria-hidden="true">
                 <div class="vf-pns-glass">
                   <svg class="vf-pns-frame-svg" id="vfPnsFrameSvg" viewBox="0 0 360 240" preserveAspectRatio="none">
-                    <path class="pns-etch-back" d="M 16 32 V 13 H 36 M 324 13 H 344 V 32 M 16 208 V 227 H 36 M 324 227 H 344 V 208 M 28 43 V 27 H 46 M 39 53 V 40 H 54 M 28 66 H 35 M 28 66 V 204 H 42 M 52 214 V 224 M 64 214 V 224 M 332 42 H 344 M 332 52 H 344 M 325 66 H 332 V 204 H 325 M 332 120 H 343" />
-                    <path class="pns-etch-ink" d="M 16 32 V 13 H 36 M 324 13 H 344 V 32 M 16 208 V 227 H 36 M 324 227 H 344 V 208 M 28 43 V 27 H 46 M 39 53 V 40 H 54 M 28 66 H 35 M 28 66 V 204 H 42 M 52 214 V 224 M 64 214 V 224 M 332 42 H 344 M 332 52 H 344 M 325 66 H 332 V 204 H 325 M 332 120 H 343" />
+                    <!-- Main 35mm optical brightline brackets with subtle optical contrast & cyan prism dispersion -->
+                    <path class="pns-etch-back" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
+                    <path class="pns-etch-fringe" transform="translate(0.9, 0.7)" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
+                    <path class="pns-etch-ink" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
+                    <!-- Subtle etched panorama crop ticks & close-focus parallax hints -->
+                    <path class="pns-etch-subtle" d="M 34 50 H 46 M 314 50 H 326 M 34 190 H 46 M 314 190 H 326 M 50 64 V 44 H 78 M 282 44 H 310 V 64" />
                     <g class="vf-pns-af-oval in-focus" id="vfPnsAfBracket">
-                      <rect class="pns-af-back" x="159" y="109" width="42" height="22" rx="11" />
-                      <rect class="pns-af-ink" x="159" y="109" width="42" height="22" rx="11" />
+                      <rect class="pns-af-back" x="160" y="109" width="40" height="22" rx="11" />
+                      <rect class="pns-af-fringe" transform="translate(0.7, 0.6)" x="160" y="109" width="40" height="22" rx="11" />
+                      <rect class="pns-af-ink" x="160" y="109" width="40" height="22" rx="11" />
                     </g>
                   </svg>
                 </div>
                 <div class="vf-pns-bottom-bezel">
                   <div class="vf-pns-lcd-window" id="vfPnsLcdBar">
                     <span class="vf-pns-fmt-marks">
-                      <span class="vf-pns-fmt-full"></span>
-                      <span class="vf-pns-fmt-pano"></span>
+                      <svg class="vf-pns-fmt-full-svg" viewBox="0 0 26 20" aria-hidden="true">
+                        <path d="M 2 6.5 V 2.5 H 7 M 19 2.5 H 24 V 6.5 M 2 13.5 V 17.5 H 7 M 19 17.5 H 24 V 13.5" fill="none" stroke="rgba(125,211,252,0.88)" stroke-width="1.6" stroke-linecap="square" />
+                        <rect x="5" y="4.5" width="16" height="11" rx="1.1" fill="#f9e696" stroke="rgba(125,211,252,0.45)" stroke-width="0.65" />
+                      </svg>
+                      <svg class="vf-pns-fmt-pano-svg" viewBox="0 0 22 14" aria-hidden="true">
+                        <path d="M 1.5 5 V 2 H 5.5 M 16.5 2 H 20.5 V 5 M 1.5 9 V 12 H 5.5 M 16.5 12 H 20.5 V 9" fill="none" stroke="#8b3b34" stroke-width="1.35" stroke-linecap="square" />
+                        <rect x="4" y="4.5" width="14" height="5" rx="0.8" fill="#6b2923" />
+                      </svg>
                     </span>
-                    <span class="vf-pns-lcd-val" id="vfPnsLcdVal">250</span>
-                    <svg class="vf-pns-lcd-ico vf-pns-ev-ico" id="vfPnsEvIco" viewBox="0 0 18 14" aria-hidden="true">
-                      <path d="M 2 4 H 7 M 4.5 1.5 V 6.5 M 13.5 2 L 4.5 12 M 11 10.5 H 16" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" />
+                    <span class="vf-pns-lcd-val" id="vfPnsLcdVal"><span class="vf-pns-lcd-sr">250</span></span>
+                    <svg class="vf-pns-lcd-ico vf-pns-ev-ico" id="vfPnsEvIco" viewBox="0 0 20 18" aria-hidden="true">
+                      <rect x="1.5" y="1.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.45" />
+                      <path d="M 15.2 3.2 L 4.8 14.8 M 4.4 6.5 H 8.4 M 6.4 4.5 V 8.5 M 11.6 12 H 15.6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" />
                     </svg>
-                    <svg class="vf-pns-lcd-ico vf-pns-flash-ico" id="vfPnsFlashIco" viewBox="0 0 12 14" aria-hidden="true">
-                      <polygon points="7.2,0.8 1.5,7.8 5.6,7.8 4.2,13.2 10.5,6.2 6.3,6.2" fill="currentColor" />
+                    <svg class="vf-pns-lcd-ico vf-pns-flash-ico" id="vfPnsFlashIco" viewBox="0 0 14 18" aria-hidden="true">
+                      <polygon points="8.8,1 2.0,9.8 6.8,9.8 4.9,17 12.2,8.0 7.4,8.0" fill="currentColor" />
                     </svg>
                   </div>
                 </div>
@@ -12161,6 +12218,61 @@
     return { w: Math.max(420, Math.round(h * ratio)), h, ratio };
   }
 
+  const PNS_SEG_MAP = {
+    '0': 'abcdef', '1': 'bc', '2': 'abdeg', '3': 'abcdg', '4': 'bcfg',
+    '5': 'acdfg', '6': 'acdefg', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg',
+    '-': 'g', 'A': 'abcefg', 'H': 'bcefg', 'L': 'def', ' ': ''
+  };
+  const PNS_SEG_POLYS = {
+    a: '3.2,1.6 13.8,1.6 11.7,4.1 5.3,4.1',
+    b: '14.3,2.2 15.8,3.6 14.9,11.6 12.6,10.3 13.3,4.4',
+    c: '12.5,12.7 14.8,11.8 13.9,19.8 12.3,21.2 11.5,19.0',
+    d: '2.9,21.6 11.9,21.6 10.6,19.1 4.8,19.1',
+    e: '2.0,12.6 4.2,13.6 3.5,18.9 1.3,21.0 0.7,19.6',
+    f: '3.0,2.3 5.0,4.4 4.3,10.2 2.1,11.4 1.6,10.0',
+    g: '3.4,11.6 4.9,10.3 11.5,10.3 12.9,11.6 11.4,12.9 4.8,12.9'
+  };
+
+  function buildPnsSevenSegSvg(speedStr, isSlow) {
+    const raw = String(speedStr || '250').trim();
+    const tokens = [];
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw[i];
+      if (ch === '.' && tokens.length > 0) tokens[tokens.length - 1].dot = true;
+      else if (PNS_SEG_MAP[ch] !== undefined) tokens.push({ ch, dot: false });
+    }
+    while (tokens.length < 3) tokens.unshift({ ch: ' ', dot: false });
+    const stepW = 19.5;
+    const totalW = Math.round(tokens.length * stepW + 4);
+    const vColor = isSlow ? '#fb923c' : '#f7ca44';
+    const hColor = isSlow ? '#fdba74' : '#f9df6e';
+    const hRim = isSlow ? 'rgba(254, 215, 170, 0.45)' : 'rgba(103, 215, 250, 0.46)';
+    const offFill = 'rgba(106, 44, 34, 0.25)';
+
+    let digitsMarkup = '';
+    tokens.forEach((tok, idx) => {
+      const ox = (idx * stepW + 2).toFixed(1);
+      const lit = PNS_SEG_MAP[tok.ch] || '';
+      let segs = '';
+      for (const [key, pts] of Object.entries(PNS_SEG_POLYS)) {
+        const isLit = lit.includes(key);
+        const isHoriz = key === 'a' || key === 'd' || key === 'g';
+        if (isLit) {
+          segs += isHoriz
+            ? `<polygon points="${pts}" fill="${hColor}" stroke="${hRim}" stroke-width="0.55" stroke-linejoin="round" />`
+            : `<polygon points="${pts}" fill="${vColor}" />`;
+        } else {
+          segs += `<polygon points="${pts}" fill="${offFill}" />`;
+        }
+      }
+      segs += tok.dot
+        ? `<circle cx="15.8" cy="20.4" r="1.45" fill="${hColor}" />`
+        : `<circle cx="15.8" cy="20.4" r="1.2" fill="${offFill}" />`;
+      digitsMarkup += `<g transform="translate(${ox}, 0) skewX(-5)">${segs}</g>`;
+    });
+    return `<svg class="vf-pns-seg-svg" viewBox="0 0 ${totalW} 23" aria-hidden="true">${digitsMarkup}</svg>`;
+  }
+
   function syncPnsLcdUI(body, lens) {
     if (body?.id !== 'pns' && body?.id !== 'disposable') return;
     const { film } = getSelectedGear();
@@ -12170,8 +12282,14 @@
 
     const valEl = document.getElementById('vfPnsLcdVal');
     if (valEl) {
-      valEl.textContent = info.effectiveSpeed || '250';
-      valEl.classList.toggle('is-slow', info.shakeRisk >= 0.45);
+      const speedTxt = String(info.effectiveSpeed || '250');
+      const isSlow = info.shakeRisk >= 0.45;
+      const key = `${speedTxt}|${isSlow ? 1 : 0}`;
+      if (valEl.dataset.segKey !== key) {
+        valEl.dataset.segKey = key;
+        valEl.innerHTML = `<span class="vf-pns-lcd-sr">${escapeHtml(speedTxt)}</span>${buildPnsSevenSegSvg(speedTxt, isSlow)}`;
+      }
+      valEl.classList.toggle('is-slow', isSlow);
     }
     const evIco = document.getElementById('vfPnsEvIco');
     if (evIco) evIco.classList.toggle('active', !!(caps.supportsEv && Math.abs(evBias) >= 0.05));
@@ -12314,7 +12432,7 @@
       const botReserve = botHud ? (botHud.offsetHeight + (isMobileLandscape ? 6 : 10)) : (isMobileLandscape ? 34 : 82);
       const availH = Math.max(120, bh - topReserve - botReserve);
       const bezelW = 0;
-      const bezelH = (isSlrF3 || isPns35Ti) ? 24 : 0;
+      const bezelH = isSlrF3 ? 24 : (isPns35Ti ? 32 : 0);
       let w = bw;
       let photoW = Math.max(80, w - bezelW);
       let photoH = photoW / targetRatio;
