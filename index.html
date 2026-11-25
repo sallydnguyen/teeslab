@@ -3220,77 +3220,226 @@
       font-size: 10px;
     }
 
-    /* Film Roll Guide Sheet */
-    .film-guide-list {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      margin-top: 8px;
-    }
-    .film-guide-card {
-      width: 100%;
+    /* Film Info Sheet & Real Sample Photos */
+    .film-info-hero {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: #13161d;
-      border: 1px solid var(--border);
-      text-align: left;
-      cursor: pointer;
-      transition: border-color 0.14s ease, background 0.14s ease;
+      gap: 12px;
+      padding: 10px 11px;
+      border-radius: 12px;
+      background: #151821;
+      border: 1px solid #262b38;
+      margin-bottom: 10px;
     }
-    .film-guide-card.active {
-      border-color: #f5a623;
-      background: rgba(245, 166, 35, 0.1);
-    }
-    .film-guide-art {
-      flex: 0 0 30px;
-      height: 46px;
+    .film-info-art {
+      flex: 0 0 42px;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .film-guide-art img {
-      max-height: 44px;
-      max-width: 28px;
+    .film-info-art img,
+    .film-info-art svg {
+      max-height: 56px;
+      max-width: 40px;
       object-fit: contain;
     }
-    .film-guide-body {
+    .film-info-meta {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
-    .film-guide-head {
+    .film-info-title-row {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
-    .film-guide-name {
-      font-size: 12px;
-      font-weight: 700;
+    .film-info-name {
+      font-size: 14.5px;
+      font-weight: 800;
       color: var(--text-primary);
+      letter-spacing: -0.1px;
     }
-    .film-guide-iso {
+    .film-info-badge {
       font-family: var(--mono);
       font-size: 9px;
-      padding: 1px 5px;
+      font-weight: 700;
+      padding: 2px 6px;
       border-radius: 5px;
       background: rgba(255, 255, 255, 0.08);
       color: #cbd5e1;
     }
-    .film-guide-tone {
-      font-size: 10.5px;
-      font-weight: 600;
+    .film-info-badge.best {
+      background: rgba(245, 166, 35, 0.16);
+      border: 1px solid rgba(245, 166, 35, 0.45);
+      color: #fbbf24;
+    }
+    .film-info-tone {
+      font-size: 11.5px;
+      font-weight: 700;
       color: #f5a623;
     }
-    .film-guide-tip {
+    .film-info-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 1px;
+    }
+    .film-info-tag {
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #1c202c;
+      border: 1px solid #2c3242;
+      color: #cbd5e1;
+    }
+    .film-info-tip {
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: #d1d5db;
+      background: #13161d;
+      border: 1px solid #222734;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+    }
+    .film-info-specs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .film-info-specs .export-info-cell {
+      padding: 6px 6px;
+    }
+    .film-info-specs .export-info-val {
       font-size: 10.5px;
-      line-height: 1.35;
-      color: var(--text-secondary);
+    }
+    .film-sample-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+    .film-sample-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+    .film-sample-hint {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+    .film-sample-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .film-sample-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0b0d12;
+      border: 1px solid #262c3a;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.14s ease, transform 0.12s ease;
+    }
+    .film-sample-card:hover {
+      border-color: rgba(245, 166, 35, 0.55);
+    }
+    .film-sample-card:active {
+      transform: scale(0.985);
+    }
+    .film-sample-img-wrap {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background: #07090d;
+      overflow: hidden;
+    }
+    .film-sample-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 32%;
+      display: block;
+    }
+    .film-sample-meta {
+      padding: 5px 7px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: #12151d;
+      border-top: 1px solid #1e2330;
+    }
+    .film-sample-cap {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #f3f4f6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .film-sample-credit {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .film-sample-lightbox {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 7, 10, 0.96);
+      z-index: 95;
+      display: none;
+      flex-direction: column;
+    }
+    .film-sample-lightbox.open {
+      display: flex;
+    }
+    .film-sample-lb-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      gap: 8px;
+    }
+    .film-sample-lb-stage {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      position: relative;
+    }
+    .film-sample-lb-stage img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65);
+    }
+    .film-sample-lb-bot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px calc(14px + env(safe-area-inset-bottom));
+      border-top: 1px solid #1f2430;
+      background: rgba(12, 14, 19, 0.92);
     }
 
     /* Full-Screen Camera Roll Photo Viewer */
@@ -3585,10 +3734,6 @@
     .picker-info-btn:active {
       transform: scale(0.9);
       background: rgba(245, 166, 35, 0.24);
-    }
-    .film-guide-card.focused {
-      border-color: #f5a623;
-      box-shadow: 0 0 0 1px rgba(245, 166, 35, 0.55), 0 0 14px rgba(245, 166, 35, 0.22);
     }
     .picker-match-bar {
       display: flex;
@@ -4688,7 +4833,6 @@
           <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
           <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
           <button class="filter-chip" data-fbrand="night" type="button">Night</button>
-          <button class="filter-chip" id="btnOpenFilmGuide" type="button" title="Film rolls guide & shooting tips" style="color:#f5a623;border-color:rgba(245,166,35,0.45);">? Guide</button>
         </div>
         <div class="h-scroll" id="pickerFilmTrack"></div>
       </div>
@@ -4743,21 +4887,36 @@
       </div>
     </div>
 
-    <!-- BOTTOM SHEET: FILM ROLL GUIDE -->
-    <div class="sheet-backdrop" id="filmGuideBackdrop">
+    <!-- BOTTOM SHEET: FILM INFO & SAMPLE SHOTS -->
+    <div class="sheet-backdrop" id="filmInfoBackdrop">
       <div class="sheet-card">
         <div class="sheet-head">
-          <span>🎞️ Film Roll Guide</span>
-          <button class="btn-pill btn-ghost" id="btnCloseFilmGuide" type="button" style="height:26px;">✕</button>
+          <span id="filmInfoSheetTitle">🎞️ Film Info</span>
+          <button class="btn-pill btn-ghost" id="btnCloseFilmInfo" type="button" style="height:26px;">✕</button>
         </div>
-        <div class="h-scroll" id="filmGuideScenarios" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-gscene="all" type="button">All (18)</button>
-          <button class="filter-chip" data-gscene="portrait" type="button">Portrait</button>
-          <button class="filter-chip" data-gscene="everyday" type="button">Everyday</button>
-          <button class="filter-chip" data-gscene="landscape" type="button">Landscape</button>
-          <button class="filter-chip" data-gscene="night" type="button">Night</button>
+        <div id="filmInfoBody"></div>
+      </div>
+    </div>
+
+    <!-- FULL-SCREEN SAMPLE PHOTO LIGHTBOX -->
+    <div class="film-sample-lightbox" id="filmSampleLightbox" role="dialog" aria-modal="true" aria-label="Film sample photo preview">
+      <div class="film-sample-lb-top">
+        <div class="photo-viewer-info">
+          <span class="photo-viewer-title" id="filmSampleLbTitle">Film Sample</span>
+          <span class="photo-viewer-counter" id="filmSampleLbCounter">1 / 2</span>
         </div>
-        <div class="film-guide-list" id="filmGuideList"></div>
+        <button class="photo-viewer-close" id="btnCloseFilmSampleLb" type="button" title="Close preview">✕</button>
+      </div>
+      <div class="film-sample-lb-stage" id="filmSampleLbStage">
+        <button class="photo-viewer-nav btn-prev" id="btnFilmSamplePrev" type="button" aria-label="Previous sample">‹</button>
+        <img id="filmSampleLbImg" alt="Real film sample photo" />
+        <button class="photo-viewer-nav btn-next" id="btnFilmSampleNext" type="button" aria-label="Next sample">›</button>
+      </div>
+      <div class="film-sample-lb-bot">
+        <div style="min-width:0;">
+          <div id="filmSampleLbCaption" style="font-size:12px;font-weight:700;color:#f3f4f6;"></div>
+          <div id="filmSampleLbCredit" style="font-family:var(--mono);font-size:9.5px;color:#94a3b8;margin-top:2px;"></div>
+        </div>
       </div>
     </div>
 
@@ -4990,6 +5149,81 @@
     'lomo-800': { scenes: ['night', 'everyday'], tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.' },
     'ilford-hp5': { scenes: ['everyday', 'night'], tip: 'Classic gritty documentary monochrome for bold street shadows & stark contrast.' },
     'agfa-apx-400': { scenes: ['portrait', 'everyday', 'night'], tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.' }
+  };
+
+  const FILM_SAMPLE_PHOTOS = {
+    'kodak-gold-200': [
+      { src: './assets/film-samples/kodak-gold-200-1.jpg', caption: 'Sunlit vintage cars', credit: 'Joe Valtierra' },
+      { src: './assets/film-samples/kodak-gold-200-2.jpg', caption: 'Golden hour portrait', credit: 'Sai Mr.' }
+    ],
+    'kodak-colorplus-200': [
+      { src: './assets/film-samples/kodak-colorplus-200-1.jpg', caption: 'Warm desert peaks', credit: 'Andres Papp' },
+      { src: './assets/film-samples/kodak-colorplus-200-2.jpg', caption: 'Street storefront', credit: 'Nick Page' }
+    ],
+    'fuji-superia-400': [
+      { src: './assets/film-samples/fuji-superia-400-1.jpg', caption: 'Street moment', credit: 'Stas Rozhkov' },
+      { src: './assets/film-samples/fuji-superia-400-2.jpg', caption: 'Sidewalk cafe', credit: 'Bezalel Ben-Chaim' }
+    ],
+    'kodak-ultramax-400': [
+      { src: './assets/film-samples/kodak-ultramax-400-1.jpg', caption: 'Dusk city skyline', credit: 'Marketa' },
+      { src: './assets/film-samples/kodak-ultramax-400-2.jpg', caption: 'Evening food stall', credit: 'John Lambert Pearson' }
+    ],
+    'fuji-classic-chrome': [
+      { src: './assets/film-samples/fuji-classic-chrome-1.jpg', caption: 'Rainy car window', credit: 'Jonas Rask' },
+      { src: './assets/film-samples/fuji-classic-chrome-2.jpg', caption: 'Editorial street', credit: 'Jonas Rask' }
+    ],
+    'kodak-portra-400': [
+      { src: './assets/film-samples/kodak-portra-400-1.jpg', caption: 'Misty valley sunrise', credit: '::ErWin' },
+      { src: './assets/film-samples/kodak-portra-400-2.jpg', caption: 'Creamy bokeh portrait', credit: 'minka6' }
+    ],
+    'kodak-portra-160': [
+      { src: './assets/film-samples/kodak-portra-160-1.jpg', caption: 'Pastel sunset reeds', credit: 'Kristina Kupstienė' },
+      { src: './assets/film-samples/kodak-portra-160-2.jpg', caption: 'Soft window light', credit: 'Q_V_H' }
+    ],
+    'fuji-pro-400h': [
+      { src: './assets/film-samples/fuji-pro-400h-1.jpg', caption: 'Misty forest deer', credit: 'anfoxyang' },
+      { src: './assets/film-samples/fuji-pro-400h-2.jpg', caption: 'Airy natural portrait', credit: 'Cristian Leonardo' }
+    ],
+    'fuji-superia-premium-400': [
+      { src: './assets/film-samples/fuji-superia-premium-400-1.jpg', caption: 'Sakura daylight portrait', credit: 'Danilo Allen' },
+      { src: './assets/film-samples/fuji-superia-premium-400-2.jpg', caption: 'Tokyo crossing', credit: 'Danilo Allen' }
+    ],
+    'kodak-portra-800': [
+      { src: './assets/film-samples/kodak-portra-800-1.jpg', caption: 'Warm indoor portrait', credit: 'Antiporda Productions' },
+      { src: './assets/film-samples/kodak-portra-800-2.jpg', caption: 'Classic coupe glow', credit: 'avramdeluxe' }
+    ],
+    'kodak-ektar-100': [
+      { src: './assets/film-samples/kodak-ektar-100-1.jpg', caption: 'Golden street cyclist', credit: 'Kristoffer Trolle' },
+      { src: './assets/film-samples/kodak-ektar-100-2.jpg', caption: 'Harbor gulls & vivid reds', credit: 'bryan...' }
+    ],
+    'fuji-fujicolor-100': [
+      { src: './assets/film-samples/fuji-fujicolor-100-1.jpg', caption: 'Crisp coastal horizon', credit: 'The Darkroom' },
+      { src: './assets/film-samples/fuji-fujicolor-100-2.jpg', caption: 'Garden daylight portrait', credit: 'The Darkroom' }
+    ],
+    'popho-luminar-100': [
+      { src: './assets/film-samples/popho-luminar-100-1.jpg', caption: 'Clean daylight portrait', credit: 'Keith Wee' },
+      { src: './assets/film-samples/popho-luminar-100-2.jpg', caption: 'Vibrant street reds', credit: 'Keith Wee' }
+    ],
+    'cinestill-800t': [
+      { src: './assets/film-samples/cinestill-800t-1.jpg', caption: 'Night gas station halation', credit: 'Dane' },
+      { src: './assets/film-samples/cinestill-800t-2.jpg', caption: 'Neon diner window', credit: 'Felipe Neves' }
+    ],
+    'kodak-vision3-500t': [
+      { src: './assets/film-samples/kodak-vision3-500t-1.jpg', caption: 'Tungsten night interior', credit: 'ShutterGroove' },
+      { src: './assets/film-samples/kodak-vision3-500t-2.jpg', caption: 'Twilight glass reflection', credit: 'ShutterGroove' }
+    ],
+    'lomo-800': [
+      { src: './assets/film-samples/lomo-800-1.jpg', caption: 'Punchy seaside sun', credit: 'Simon Greening' },
+      { src: './assets/film-samples/lomo-800-2.jpg', caption: 'Subway amber low-light', credit: 'Konstantin Surovov' }
+    ],
+    'ilford-hp5': [
+      { src: './assets/film-samples/ilford-hp5-1.jpg', caption: 'Misty forest light', credit: 'naql' },
+      { src: './assets/film-samples/ilford-hp5-2.jpg', caption: 'Documentary portrait', credit: 'Christopher Michel' }
+    ],
+    'agfa-apx-400': [
+      { src: './assets/film-samples/agfa-apx-400-1.jpg', caption: 'Harbor boathouse', credit: 'darksida' },
+      { src: './assets/film-samples/agfa-apx-400-2.jpg', caption: 'Silver-slate portrait', credit: 'darksida' }
+    ]
   };
 
   const TWEAK_DEFS = [
@@ -7257,7 +7491,12 @@
     return `<img src="./assets/gear/bodies/${safeId}.webp" alt="${safeAlt}" data-folder="bodies" data-id="${safeId}" loading="eager" decoding="async" onerror="window.__gearImgErr(this)" />`;
   }
 
+  const FILM_ART_SVG_ONLY = new Set(['kodak-vision3-500t']);
   function renderFilmArt(id, alt) {
+    if (FILM_ART_SVG_ONLY.has(id)) {
+      const film = FILM_STOCKS.find(f => f.id === id) || { brand: 'cinema' };
+      return svgFilmCanister(film);
+    }
     const safeId = escapeHtml(id);
     const safeAlt = escapeHtml(alt || id);
     return `<img src="./assets/gear/films/${safeId}.webp" alt="${safeAlt}" data-folder="films" data-id="${safeId}" loading="eager" decoding="async" onerror="window.__gearImgErr(this)" />`;
@@ -8076,7 +8315,7 @@
           ? '<span class="picker-rec-badge" title="Recommended for this body">★ Best</span>'
           : '';
         btn.innerHTML = `
-          <button class="picker-info-btn" type="button" title="${escapeHtml(f.name)} guide" aria-label="${escapeHtml(f.name)} guide">i</button>
+          <button class="picker-info-btn" type="button" title="${escapeHtml(f.name)} info" aria-label="${escapeHtml(f.name)} info">i</button>
           ${badgeHtml}
           <div class="combo-card-art">${renderFilmArt(f.id, f.name)}</div>
           <span class="picker-tile-name">${escapeHtml(f.name)}</span>
@@ -8084,7 +8323,7 @@
         `;
         btn.querySelector('.picker-info-btn').addEventListener('click', e => {
           e.stopPropagation();
-          openFilmGuideForStock(f.id);
+          openFilmInfoForStock(f.id);
         });
         btn.addEventListener('click', () => selectFilmStock(f.id));
         btn.addEventListener('keydown', e => {
@@ -13196,83 +13435,194 @@
     });
   });
 
-  // Film Roll Guide modal (? Guide or 'i' button on any film roll)
-  const filmGuideBackdrop = document.getElementById('filmGuideBackdrop');
-  let filmGuideSceneFilter = 'all';
-  let filmGuideFocusedId = null;
-  function renderFilmGuide() {
-    const listEl = document.getElementById('filmGuideList');
-    if (!listEl) return;
-    document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(chip => {
-      if (chip.dataset.gscene === 'all') chip.textContent = `All (${FILM_STOCKS.length})`;
-      chip.classList.toggle('active', chip.dataset.gscene === filmGuideSceneFilter);
-    });
-    const rows = filmGuideSceneFilter === 'all'
-      ? FILM_STOCKS
-      : FILM_STOCKS.filter(f => (FILM_GUIDE_META[f.id]?.scenes || []).includes(filmGuideSceneFilter));
-    listEl.innerHTML = '';
-    rows.forEach(f => {
-      const meta = FILM_GUIDE_META[f.id] || {};
-      const card = document.createElement('button');
-      card.type = 'button';
-      const isFocused = filmGuideFocusedId === f.id;
-      card.className = `film-guide-card${f.id === state.filmId ? ' active' : ''}${isFocused ? ' focused' : ''}`;
-      card.dataset.filmId = f.id;
-      card.innerHTML = `
-        <div class="film-guide-art">${renderFilmArt(f.id, f.name)}</div>
-        <div class="film-guide-body">
-          <div class="film-guide-head">
-            <span class="film-guide-name">${escapeHtml(f.name)}</span>
-            <span class="film-guide-iso">${escapeHtml(f.brandLabel)} · ISO ${f.iso}</span>
+  // Film Info modal ('i' button on any film roll — shows film details + 2 real sample photos immediately)
+  const filmInfoBackdrop = document.getElementById('filmInfoBackdrop');
+  const filmSampleLightbox = document.getElementById('filmSampleLightbox');
+  let activeFilmInfoId = null;
+  let activeSampleLbFilm = null;
+  let activeSampleLbIndex = 0;
+
+  function describeFilmContrast(f) {
+    if (f.contrast >= 1.10) return 'High';
+    if (f.contrast <= 0.96) return 'Soft / Low';
+    return 'Balanced';
+  }
+  function describeFilmGrain(f) {
+    if (f.grainBase <= 14) return 'Ultra-fine';
+    if (f.grainBase <= 21) return 'Fine';
+    if (f.grainBase <= 26) return 'Medium';
+    return 'Rich / Bold';
+  }
+  function describeFilmProcess(f) {
+    if (f.isBW) return 'True B&W';
+    if (f.id === 'kodak-vision3-500t') return 'ECN-2 Cine';
+    if (f.id === 'fuji-classic-chrome') return 'Slide / Chrome';
+    return 'C-41 Color';
+  }
+  function describeFilmHalation(f) {
+    if (f.halationBase >= 40) return 'Strong Red';
+    if (f.halationBase >= 22) return 'Warm Glow';
+    return 'Subtle';
+  }
+
+  function closeFilmInfoSheet() {
+    filmInfoBackdrop?.classList.remove('open');
+    resumeCameraLoopIfVisible();
+  }
+
+  function renderFilmSampleLightbox() {
+    const f = activeSampleLbFilm;
+    if (!f) return;
+    const samples = FILM_SAMPLE_PHOTOS[f.id] || [];
+    const item = samples[activeSampleLbIndex];
+    if (!item) return;
+    const imgEl = document.getElementById('filmSampleLbImg');
+    const titleEl = document.getElementById('filmSampleLbTitle');
+    const counterEl = document.getElementById('filmSampleLbCounter');
+    const capEl = document.getElementById('filmSampleLbCaption');
+    const creditEl = document.getElementById('filmSampleLbCredit');
+    const prevBtn = document.getElementById('btnFilmSamplePrev');
+    const nextBtn = document.getElementById('btnFilmSampleNext');
+    if (imgEl) {
+      imgEl.src = item.src;
+      imgEl.alt = `${f.name} — ${item.caption}`;
+    }
+    if (titleEl) titleEl.textContent = `${f.name} · ISO ${f.iso}`;
+    if (counterEl) counterEl.textContent = `${activeSampleLbIndex + 1} / ${samples.length}`;
+    if (capEl) capEl.textContent = item.caption || 'Real film example';
+    if (creditEl) creditEl.textContent = item.credit ? `Shot by ${item.credit}` : 'Real film photograph';
+    if (prevBtn) prevBtn.disabled = activeSampleLbIndex <= 0;
+    if (nextBtn) nextBtn.disabled = activeSampleLbIndex >= samples.length - 1;
+  }
+
+  function openFilmSampleLightbox(filmId, index = 0) {
+    const f = FILM_STOCKS.find(x => x.id === filmId);
+    const samples = FILM_SAMPLE_PHOTOS[filmId] || [];
+    if (!f || !samples.length || !filmSampleLightbox) return;
+    activeSampleLbFilm = f;
+    activeSampleLbIndex = Math.max(0, Math.min(samples.length - 1, index));
+    renderFilmSampleLightbox();
+    filmSampleLightbox.classList.add('open');
+  }
+
+  function closeFilmSampleLightbox() {
+    filmSampleLightbox?.classList.remove('open');
+  }
+
+  function stepFilmSampleLightbox(dir) {
+    const samples = activeSampleLbFilm ? (FILM_SAMPLE_PHOTOS[activeSampleLbFilm.id] || []) : [];
+    if (!samples.length) return;
+    const next = Math.max(0, Math.min(samples.length - 1, activeSampleLbIndex + dir));
+    if (next !== activeSampleLbIndex) {
+      activeSampleLbIndex = next;
+      renderFilmSampleLightbox();
+    }
+  }
+
+  function openFilmInfoForStock(filmId) {
+    const f = FILM_STOCKS.find(x => x.id === filmId) || FILM_STOCKS.find(x => x.id === state.filmId) || FILM_STOCKS[0];
+    if (!f || !filmInfoBackdrop) return;
+    activeFilmInfoId = f.id;
+    stopCameraLoop();
+
+    const { body, lens } = getSelectedGear();
+    const recFilmList = (Array.isArray(lens?.recFilms) && lens.recFilms.length) ? lens.recFilms : (body?.recFilms || []);
+    const isBest = recFilmList.includes(f.id);
+    const isLoaded = f.id === state.filmId;
+    const meta = FILM_GUIDE_META[f.id] || {};
+    const scenes = Array.isArray(meta.scenes) ? meta.scenes : [];
+    const sceneNames = { portrait: 'Portrait', everyday: 'Everyday', landscape: 'Landscape', night: 'Night' };
+    const samples = FILM_SAMPLE_PHOTOS[f.id] || [];
+
+    const headTitle = document.getElementById('filmInfoSheetTitle');
+    if (headTitle) headTitle.textContent = `🎞️ ${f.name}`;
+
+    const bodyEl = document.getElementById('filmInfoBody');
+    if (bodyEl) {
+      const tagsHtml = scenes.map(s => `<span class="film-info-tag">${escapeHtml(sceneNames[s] || s)}</span>`).join('');
+      const samplesHtml = samples.map((s, idx) => `
+        <button class="film-sample-card" type="button" data-sample-idx="${idx}" title="Tap to view larger">
+          <div class="film-sample-img-wrap">
+            <img src="${escapeHtml(s.src)}" alt="${escapeHtml(f.name)} sample ${idx + 1}: ${escapeHtml(s.caption)}" loading="eager" decoding="async" />
           </div>
-          <div class="film-guide-tone">${escapeHtml(f.subtitle)}</div>
-          <div class="film-guide-tip">${escapeHtml(meta.tip || '')}</div>
+          <div class="film-sample-meta">
+            <span class="film-sample-cap">${escapeHtml(s.caption)}</span>
+            <span class="film-sample-credit">${escapeHtml(s.credit ? `by ${s.credit}` : 'Real film shot')}</span>
+          </div>
+        </button>
+      `).join('');
+
+      bodyEl.innerHTML = `
+        <div class="film-info-hero">
+          <div class="film-info-art">${renderFilmArt(f.id, f.name)}</div>
+          <div class="film-info-meta">
+            <div class="film-info-title-row">
+              <span class="film-info-name">${escapeHtml(f.name)}</span>
+              <span class="film-info-badge">${escapeHtml(f.brandLabel)} · ISO ${f.iso}</span>
+              ${isBest ? '<span class="film-info-badge best">★ Best Match</span>' : ''}
+            </div>
+            <div class="film-info-tone">${escapeHtml(f.subtitle)}</div>
+            ${tagsHtml ? `<div class="film-info-tags">${tagsHtml}</div>` : ''}
+          </div>
         </div>
+        ${meta.tip ? `<div class="film-info-tip">${escapeHtml(meta.tip)}</div>` : ''}
+        <div class="film-info-specs">
+          <div class="export-info-cell">
+            <div class="export-info-lbl">Type</div>
+            <div class="export-info-val">${escapeHtml(describeFilmProcess(f))}</div>
+          </div>
+          <div class="export-info-cell">
+            <div class="export-info-lbl">Contrast</div>
+            <div class="export-info-val">${escapeHtml(describeFilmContrast(f))}</div>
+          </div>
+          <div class="export-info-cell">
+            <div class="export-info-lbl">Grain</div>
+            <div class="export-info-val">${escapeHtml(describeFilmGrain(f))}</div>
+          </div>
+          <div class="export-info-cell">
+            <div class="export-info-lbl">Halation</div>
+            <div class="export-info-val">${escapeHtml(describeFilmHalation(f))}</div>
+          </div>
+        </div>
+        <div class="film-sample-head">
+          <span class="film-sample-title">📸 Real Film Sample Photos (${samples.length})</span>
+          <span class="film-sample-hint">Tap photo to zoom</span>
+        </div>
+        <div class="film-sample-grid">${samplesHtml}</div>
+        <button class="btn-pill ${isLoaded ? 'btn-ghost' : 'btn-brass'}" id="btnLoadFilmFromInfo" type="button" style="width:100%;height:36px;justify-content:center;font-size:12.5px;border-radius:10px;">
+          ${isLoaded ? `✓ ${escapeHtml(f.name)} Loaded` : `🎞️ Load ${escapeHtml(f.name)}`}
+        </button>
       `;
-      card.addEventListener('click', () => {
-        selectFilmStock(f.id);
-        filmGuideFocusedId = null;
-        filmGuideBackdrop?.classList.remove('open');
-        showToast(`🎞️ Loaded ${f.name}`);
+
+      bodyEl.querySelectorAll('.film-sample-card[data-sample-idx]').forEach(card => {
+        card.addEventListener('click', () => {
+          const idx = Number(card.dataset.sampleIdx || 0);
+          openFilmSampleLightbox(f.id, idx);
+        });
       });
-      listEl.appendChild(card);
-    });
-  }
-  function openFilmGuideForStock(filmId = null) {
-    filmGuideFocusedId = filmId || null;
-    const activeScene = ['portrait', 'everyday', 'landscape', 'night'].includes(state.filmBrandFilter) ? state.filmBrandFilter : 'all';
-    if (filmId && activeScene !== 'all') {
-      const inActiveScene = (FILM_GUIDE_META[filmId]?.scenes || []).includes(activeScene);
-      filmGuideSceneFilter = inActiveScene ? activeScene : 'all';
-    } else {
-      filmGuideSceneFilter = activeScene;
-    }
-    renderFilmGuide();
-    filmGuideBackdrop?.classList.add('open');
-    if (filmId) {
-      requestAnimationFrame(() => {
-        const target = document.querySelector(`#filmGuideList .film-guide-card[data-film-id="${CSS.escape(filmId)}"]`);
-        target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      bodyEl.querySelector('#btnLoadFilmFromInfo')?.addEventListener('click', () => {
+        if (f.id !== state.filmId) {
+          selectFilmStock(f.id);
+          showToast(`🎞️ Loaded ${f.name}`);
+        }
+        closeFilmInfoSheet();
       });
     }
+
+    filmInfoBackdrop.classList.add('open');
+    const cardEl = filmInfoBackdrop.querySelector('.sheet-card');
+    if (cardEl) cardEl.scrollTop = 0;
   }
-  document.getElementById('btnOpenFilmGuide')?.addEventListener('click', () => openFilmGuideForStock(null));
-  document.getElementById('btnCloseFilmGuide')?.addEventListener('click', () => {
-    filmGuideFocusedId = null;
-    filmGuideBackdrop?.classList.remove('open');
+
+  document.getElementById('btnCloseFilmInfo')?.addEventListener('click', closeFilmInfoSheet);
+  filmInfoBackdrop?.addEventListener('click', e => {
+    if (e.target === filmInfoBackdrop) closeFilmInfoSheet();
   });
-  filmGuideBackdrop?.addEventListener('click', e => {
-    if (e.target === filmGuideBackdrop) {
-      filmGuideFocusedId = null;
-      filmGuideBackdrop.classList.remove('open');
-    }
-  });
-  document.querySelectorAll('#filmGuideScenarios .filter-chip[data-gscene]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      filmGuideFocusedId = null;
-      filmGuideSceneFilter = btn.dataset.gscene || 'all';
-      renderFilmGuide();
-    });
+  document.getElementById('btnCloseFilmSampleLb')?.addEventListener('click', closeFilmSampleLightbox);
+  document.getElementById('btnFilmSamplePrev')?.addEventListener('click', () => stepFilmSampleLightbox(-1));
+  document.getElementById('btnFilmSampleNext')?.addEventListener('click', () => stepFilmSampleLightbox(1));
+  filmSampleLightbox?.addEventListener('click', e => {
+    if (e.target === filmSampleLightbox || e.target.id === 'filmSampleLbStage') closeFilmSampleLightbox();
   });
 
   // Collapsible Tweak Drawer events
@@ -14104,6 +14454,19 @@
       return;
     }
 
+    const sampleLb = document.getElementById('filmSampleLightbox');
+    if (sampleLb && sampleLb.classList.contains('open')) {
+      if (e.key === 'Escape') { e.preventDefault(); closeFilmSampleLightbox(); return; }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); stepFilmSampleLightbox(-1); return; }
+      if (e.key === 'ArrowRight') { e.preventDefault(); stepFilmSampleLightbox(1); return; }
+      return;
+    }
+
+    if (document.getElementById('filmInfoBackdrop')?.classList.contains('open')) {
+      if (e.key === 'Escape') { e.preventDefault(); closeFilmInfoSheet(); }
+      return;
+    }
+
     if (document.getElementById('exportSheetBackdrop')?.classList.contains('open')) {
       if (e.key === 'Escape') { e.preventDefault(); document.getElementById('exportSheetBackdrop').classList.remove('open'); }
       return;
@@ -14113,7 +14476,7 @@
         && !document.getElementById('comboSheetBackdrop')?.classList.contains('open')
         && !document.getElementById('sampleSheetBackdrop')?.classList.contains('open')
         && !document.getElementById('contactSheetBackdrop')?.classList.contains('open')
-        && !document.getElementById('filmGuideBackdrop')?.classList.contains('open')) {
+        && !document.getElementById('filmInfoBackdrop')?.classList.contains('open')) {
       if (e.key === 'ArrowLeft') { e.preventDefault(); stepLabPhoto(-1); return; }
       if (e.key === 'ArrowRight') { e.preventDefault(); stepLabPhoto(1); return; }
     }

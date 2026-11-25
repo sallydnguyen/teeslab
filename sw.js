@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v178';
+const CACHE_NAME = 'tees-lab-shell-v179';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -38,7 +38,43 @@ const WARM_FILES = [
   './assets/samples/architecture.jpg',
   './assets/samples/flower.jpg',
   './assets/samples/venice.jpg',
-  './assets/samples/night-car.jpg'
+  './assets/samples/night-car.jpg',
+  './assets/film-samples/kodak-gold-200-1.jpg',
+  './assets/film-samples/kodak-gold-200-2.jpg',
+  './assets/film-samples/kodak-colorplus-200-1.jpg',
+  './assets/film-samples/kodak-colorplus-200-2.jpg',
+  './assets/film-samples/fuji-superia-400-1.jpg',
+  './assets/film-samples/fuji-superia-400-2.jpg',
+  './assets/film-samples/kodak-ultramax-400-1.jpg',
+  './assets/film-samples/kodak-ultramax-400-2.jpg',
+  './assets/film-samples/fuji-classic-chrome-1.jpg',
+  './assets/film-samples/fuji-classic-chrome-2.jpg',
+  './assets/film-samples/kodak-portra-400-1.jpg',
+  './assets/film-samples/kodak-portra-400-2.jpg',
+  './assets/film-samples/kodak-portra-160-1.jpg',
+  './assets/film-samples/kodak-portra-160-2.jpg',
+  './assets/film-samples/fuji-pro-400h-1.jpg',
+  './assets/film-samples/fuji-pro-400h-2.jpg',
+  './assets/film-samples/fuji-superia-premium-400-1.jpg',
+  './assets/film-samples/fuji-superia-premium-400-2.jpg',
+  './assets/film-samples/kodak-portra-800-1.jpg',
+  './assets/film-samples/kodak-portra-800-2.jpg',
+  './assets/film-samples/kodak-ektar-100-1.jpg',
+  './assets/film-samples/kodak-ektar-100-2.jpg',
+  './assets/film-samples/fuji-fujicolor-100-1.jpg',
+  './assets/film-samples/fuji-fujicolor-100-2.jpg',
+  './assets/film-samples/popho-luminar-100-1.jpg',
+  './assets/film-samples/popho-luminar-100-2.jpg',
+  './assets/film-samples/cinestill-800t-1.jpg',
+  './assets/film-samples/cinestill-800t-2.jpg',
+  './assets/film-samples/kodak-vision3-500t-1.jpg',
+  './assets/film-samples/kodak-vision3-500t-2.jpg',
+  './assets/film-samples/lomo-800-1.jpg',
+  './assets/film-samples/lomo-800-2.jpg',
+  './assets/film-samples/ilford-hp5-1.jpg',
+  './assets/film-samples/ilford-hp5-2.jpg',
+  './assets/film-samples/agfa-apx-400-1.jpg',
+  './assets/film-samples/agfa-apx-400-2.jpg'
 ];
 
 self.addEventListener('install', event => {
