@@ -1847,7 +1847,7 @@
       z-index: 3;
     }
 
-    /* Universal Analog Match-Needle Exposure Meter (All Camera Bodies — needle swings up/down) */
+    /* Universal Analog Match-Needle Exposure Meter (Hidden on Leica M6 rangefinder which uses bottom LEDs) */
     .vf-meter-needle-rail {
       position: absolute;
       right: 7px;
@@ -1876,6 +1876,9 @@
     .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
       right: 14px;
       height: 102px;
+    }
+    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail {
+      display: none;
     }
     .vf-meter-needle-svg {
       width: 100%;
@@ -12234,6 +12237,9 @@
     const armEl = document.getElementById('vfGlobalMeterNeedleArm');
     if (!railEl || !armEl) return;
     const gear = (body && lens) ? { body, lens, film: getSelectedGear().film } : getSelectedGear();
+    const isRangefinder = gear.body?.id === 'rangefinder';
+    railEl.hidden = isRangefinder;
+    if (isRangefinder) return;
     const info = getEffectiveShutterInfo(gear.lens, gear.film);
     const caps = getCameraExposureControlCaps(gear.body, info);
     const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
