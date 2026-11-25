@@ -1,6 +1,6 @@
 # Real Film Sample Photo Credits
 
-These locally bundled real-film sample photographs (2 per film roll across all 18 film stocks) are resized to max 960px for fast offline display inside the Film Info sheet.
+These locally bundled real-film sample photographs (2 per film roll across all 19 film stocks) are resized to max 960px for fast offline display inside the Film Info sheet.
 
 | File | Film Stock | Subject | Credit / Source |
 | --- | --- | --- | --- |
@@ -14,6 +14,8 @@ These locally bundled real-film sample photographs (2 per film roll across all 1
 | `kodak-ultramax-400-2.jpg` | Kodak UltraMax 400 | Evening food stall | John Lambert Pearson (Flickr / Filmtypes) |
 | `fuji-classic-chrome-1.jpg` | Fujifilm Classic Chrome | Rainy car window | Jonas Rask |
 | `fuji-classic-chrome-2.jpg` | Fujifilm Classic Chrome | Editorial street | Jonas Rask |
+| `kodak-vision3-250d-1.jpg` | Kodak Vision3 250D | Highland valley daylight | Alex Roddie |
+| `kodak-vision3-250d-2.jpg` | Kodak Vision3 250D | Daylight travel portrait | ShutterGroove |
 | `kodak-portra-400-1.jpg` | Kodak Portra 400 | Misty valley sunrise | ::ErWin (Flickr / Filmtypes) |
 | `kodak-portra-400-2.jpg` | Kodak Portra 400 | Creamy bokeh portrait | minka6 (Flickr / Filmtypes) |
 | `kodak-portra-160-1.jpg` | Kodak Portra 160 | Pastel sunset reeds | Kristina Kupstienė (Flickr / Filmtypes) |

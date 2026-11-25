@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v179';
+const CACHE_NAME = 'tees-lab-shell-v180';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -23,6 +23,8 @@ const WARM_FILES = [
   './assets/gear/films/kodak-colorplus-200.webp',
   './assets/gear/films/kodak-ultramax-400.webp',
   './assets/gear/films/kodak-ektar-100.webp',
+  './assets/gear/films/kodak-vision3-250d.webp',
+  './assets/gear/films/kodak-vision3-500t.webp',
   './assets/gear/films/cinestill-800t.webp',
   './assets/gear/films/lomo-800.webp',
   './assets/gear/films/popho-luminar-100.webp',
@@ -49,6 +51,8 @@ const WARM_FILES = [
   './assets/film-samples/kodak-ultramax-400-2.jpg',
   './assets/film-samples/fuji-classic-chrome-1.jpg',
   './assets/film-samples/fuji-classic-chrome-2.jpg',
+  './assets/film-samples/kodak-vision3-250d-1.jpg',
+  './assets/film-samples/kodak-vision3-250d-2.jpg',
   './assets/film-samples/kodak-portra-400-1.jpg',
   './assets/film-samples/kodak-portra-400-2.jpg',
   './assets/film-samples/kodak-portra-160-1.jpg',

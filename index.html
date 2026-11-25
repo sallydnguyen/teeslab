@@ -4827,7 +4827,7 @@
 
       <div class="picker-section" id="pickerSecFilm">
         <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (18)</button>
+          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (19)</button>
           <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (4)</button>
           <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
           <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
@@ -5072,8 +5072,8 @@
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
       { id: '20mm', mm: 20, minF: 1.8, maxF: 22, focusProfile: 'wide', focalTag: '20mm', aperture: 'f/1.8', label: '20mm f/1.8', short: '20mm', recScene: 'night', recScenes: ['night', 'landscape'], recFilms: ['cinestill-800t', 'kodak-vision3-500t', 'lomo-800', 'kodak-portra-800'], tileSub: 'Night Sky · Ultra-wide', meta: '20mm f/1.8 · Ultra-wide fast prime for night sky, astrophotography & low-light landscapes', cropZoom: 1.0, barrelDistort: 0.020, apertureEV: 0.18, dofStrength: 0.34, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.14, edgeSoft: 0.014 },
-      { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
-      { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
+      { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160', 'kodak-vision3-250d'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
+      { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-vision3-250d', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: '85mm f/1.8 · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
     ],
     pns: [
@@ -5098,6 +5098,7 @@
     { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.05, blackLift: 0.026, grainBase: 25, grainSize: 1.02, halationBase: 16, isBW: false },
     { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
     { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
+    { id: 'kodak-vision3-250d', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 250D', subtitle: 'Warm daylight cinema & smooth skin', iso: 250, canisterColor: 'linear-gradient(180deg,#dc2626,#ea580c,#fbbf24)', edgeCode: 'KODAK 5207 250D   25A', matrix: [1.04,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.02,0.97], shadowTint: [-3,3,4], midTint: [6,4,-3], highlightTint: [13,8,-5], foliageShift: {gBoost:4,bShift:-2,rShift:5,satScale:1.00}, skyShift: {cyanBoost:8,bDepth:11}, redHueShift: -7, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.86, saturation: 1.03, contrast: 0.99, blackLift: 0.036, grainBase: 17, grainSize: 0.90, halationBase: 13, isBW: false },
 
     // Portrait & Skin
     { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
@@ -5122,7 +5123,7 @@
   ];
 
   const FILM_SUBTITLES_EN = {
-    'kodak-gold-200': 'Warm golden-amber · Golden hour', 'kodak-colorplus-200': 'Soft vintage sand · Crisp contrast', 'fuji-superia-400': 'Signature Japanese greens', 'kodak-ultramax-400': 'Deep blue skies', 'fuji-classic-chrome': 'Muted vintage editorial',
+    'kodak-gold-200': 'Warm golden-amber · Golden hour', 'kodak-colorplus-200': 'Soft vintage sand · Crisp contrast', 'fuji-superia-400': 'Signature Japanese greens', 'kodak-ultramax-400': 'Deep blue skies', 'fuji-classic-chrome': 'Muted vintage editorial', 'kodak-vision3-250d': 'Warm daylight cinema & smooth skin',
     'kodak-portra-400': 'Smooth warm cream skin', 'kodak-portra-160': 'Fine pastel daylight skin', 'fuji-pro-400h': 'Pastel teal', 'fuji-superia-premium-400': 'Soft Japanese skin & greens', 'kodak-portra-800': 'Vivid warm sunsets',
     'kodak-ektar-100': 'Rich and ultra-fine', 'fuji-fujicolor-100': 'Crisp daylight cool-green', 'popho-luminar-100': 'Aerial warm reds & fine grain',
     'cinestill-800t': 'Teal nights & red halation', 'kodak-vision3-500t': 'Rich cinema tungsten & clean shadows', 'lomo-800': 'Punchy warm night & amber',
@@ -5136,6 +5137,7 @@
     'fuji-superia-400': { scenes: ['everyday'], tip: 'Everyday street stock with crisp Japanese greens & lively contrast (PnS / SLR).' },
     'kodak-ultramax-400': { scenes: ['everyday', 'landscape', 'night'], tip: 'Punchy deep blues and vibrant everyday color — great for street & travel.' },
     'fuji-classic-chrome': { scenes: ['everyday', 'portrait'], tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.' },
+    'kodak-vision3-250d': { scenes: ['everyday', 'portrait', 'landscape'], tip: 'Motion picture 250D daylight stock (5207) with remjet — natural vivid daylight color, flattering skin tones & huge cinema highlight latitude.' },
     'kodak-portra-400': { scenes: ['portrait', 'everyday'], tip: 'All-around portrait & everyday champion with creamy skin tones & highlight latitude.' },
     'kodak-portra-160': { scenes: ['portrait', 'landscape'], tip: 'Ultra-fine pastel grain for bright daylight portraits, fashion & soft sunlit scenery.' },
     'fuji-pro-400h': { scenes: ['portrait', 'everyday'], tip: 'Airy pastel teal for overcast portraits, weddings & minimal cafes.' },
@@ -5171,6 +5173,10 @@
     'fuji-classic-chrome': [
       { src: './assets/film-samples/fuji-classic-chrome-1.jpg', caption: 'Rainy car window', credit: 'Jonas Rask' },
       { src: './assets/film-samples/fuji-classic-chrome-2.jpg', caption: 'Editorial street', credit: 'Jonas Rask' }
+    ],
+    'kodak-vision3-250d': [
+      { src: './assets/film-samples/kodak-vision3-250d-1.jpg', caption: 'Highland valley daylight', credit: 'Alex Roddie' },
+      { src: './assets/film-samples/kodak-vision3-250d-2.jpg', caption: 'Daylight travel portrait', credit: 'ShutterGroove' }
     ],
     'kodak-portra-400': [
       { src: './assets/film-samples/kodak-portra-400-1.jpg', caption: 'Misty valley sunrise', credit: '::ErWin' },
@@ -7491,7 +7497,7 @@
     return `<img src="./assets/gear/bodies/${safeId}.webp" alt="${safeAlt}" data-folder="bodies" data-id="${safeId}" loading="eager" decoding="async" onerror="window.__gearImgErr(this)" />`;
   }
 
-  const FILM_ART_SVG_ONLY = new Set(['kodak-vision3-500t']);
+  const FILM_ART_SVG_ONLY = new Set();
   function renderFilmArt(id, alt) {
     if (FILM_ART_SVG_ONLY.has(id)) {
       const film = FILM_STOCKS.find(f => f.id === id) || { brand: 'cinema' };
@@ -13455,7 +13461,7 @@
   }
   function describeFilmProcess(f) {
     if (f.isBW) return 'True B&W';
-    if (f.id === 'kodak-vision3-500t') return 'ECN-2 Cine';
+    if (f.id === 'kodak-vision3-500t' || f.id === 'kodak-vision3-250d') return 'ECN-2 Cine';
     if (f.id === 'fuji-classic-chrome') return 'Slide / Chrome';
     return 'C-41 Color';
   }
