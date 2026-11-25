@@ -6077,7 +6077,7 @@
         </div>
         <div class="contact-grid-2" id="contactSheetGrid"></div>
         <div class="sheet-foot" style="display:flex;align-items:center;justify-content:flex-start;margin-top:12px;padding-top:10px;border-top:1px solid #222630;">
-          <button class="btn-pill btn-ghost" id="btnClearRollShots" type="button" style="height:28px;font-size:11px;">🔄 Reset Roll</button>
+          <button class="btn-pill btn-ghost" id="btnClearRollShots" type="button" style="height:28px;font-size:11px;" title="Reset the latest film roll">🔄 Reset Roll</button>
         </div>
       </div>
     </div>
@@ -7914,6 +7914,27 @@
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error || new Error('Could not clear film roll'));
       transaction.onabort = () => reject(transaction.error || new Error('Film roll clear was interrupted'));
+    });
+  }
+  async function deleteRollShotsFromStorage(shotIds = [], pendingRollIds = []) {
+    if ((!shotIds || shotIds.length === 0) && (!pendingRollIds || pendingRollIds.length === 0)) return;
+    const database = await openRollDatabase();
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(['camera-roll', 'camera-roll-files'], 'readwrite');
+      const rollStore = transaction.objectStore('camera-roll');
+      const filesStore = transaction.objectStore('camera-roll-files');
+      (shotIds || []).forEach(id => {
+        if (!id) return;
+        rollStore.delete(id);
+        filesStore.delete(id);
+      });
+      (pendingRollIds || []).forEach(rid => {
+        if (!rid) return;
+        filesStore.delete(`pending-half-frame:${rid}`);
+      });
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error || new Error('Could not reset latest roll'));
+      transaction.onabort = () => reject(transaction.error || new Error('Latest roll reset was interrupted'));
     });
   }
   async function deleteCameraRollShotFromStorage(id) {
@@ -13808,8 +13829,8 @@
     try {
       const files = s.rawBlob ? s : await loadCameraRollFiles(s.id);
       if (!files?.rawBlob) throw new Error('Original photo is unavailable');
-      closePhotoViewer();
-      document.getElementById('contactSheetBackdrop').classList.remove('open');
+      if (!opts.keepPhotoViewer) closePhotoViewer();
+      if (!opts.keepContactSheet) document.getElementById('contactSheetBackdrop').classList.remove('open');
       const foundIdx = state.camRollShots.findIndex(item => item.id === s.id);
       if (foundIdx >= 0) viewerCurrentIndex = foundIdx;
       const bitmap = await createImageBitmap(files.rawBlob);
@@ -13818,7 +13839,7 @@
       source.getContext('2d').drawImage(bitmap, 0, 0);
       bitmap.close();
       loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, rollShotId: s.id, frameSeed: s.frameSeed, forcePreviewRender: !!opts.forcePreviewRender });
-      switchMainTab('darkroom');
+      if (!opts.keepActiveTab) switchMainTab('darkroom');
       if (!opts.silent) showToast(`Shot #${s.num} opened in Lab`);
     } catch (error) { showToast('Could not open the original photo'); }
   }
@@ -14032,7 +14053,7 @@
       if (state.sourceFromCameraRoll && state.activeRollShotId === shot.id) {
         if (state.camRollShots.length > 0) {
           const nextLabShot = state.camRollShots[Math.min(idx >= 0 ? idx : 0, state.camRollShots.length - 1)];
-          await openShotInLab(nextLabShot, { silent: true, forcePreviewRender: true });
+          await openShotInLab(nextLabShot, { silent: true, forcePreviewRender: true, keepActiveTab: true, keepContactSheet: true, keepPhotoViewer: true });
         } else if (SAMPLES[0]) {
           state.activeRollShotId = null;
           state.sourceFromCameraRoll = false;
@@ -16421,23 +16442,93 @@
   document.getElementById('btnVfRewindRoll')?.addEventListener('click', () => {
     if (state.camNeedsRewind) windFilmLever(true);
   });
+  let resetRollBusy = false;
   document.getElementById('btnClearRollShots').addEventListener('click', async () => {
-    try { await clearCameraRollStorage(); } catch (error) { showToast('Could not reset roll photos'); return; }
-    state.camRollShots = [];
-    state.camShotCount = 0;
-    state.camNeedsWind = false;
-    state.camNeedsRewind = false;
-    state.lastCompletedRollId = null;
-    state.camRollNumber = 1;
-    state.camRollId = createRollId();
-    state.activeRollShotId = null;
-    state.sourceFromCameraRoll = false;
-    closePhotoViewer();
-    saveCameraRollMeta();
-    renderContactSheet();
-    renderRollSampleStrip();
-    syncAllUI();
-    showToast(`🎞️ Roll reset to Roll #01 (0/${state.camMaxShots})`);
+    if (resetRollBusy) return;
+    resetRollBusy = true;
+    try {
+      const curRollShots = state.camRollShots.filter(s => s.rollId
+        ? s.rollId === state.camRollId
+        : (s.rollNumber || 1) === (state.camRollNumber || 1));
+      const hasPendingCur = !!state.halfFrameFirstCanvas;
+      let targetRollId = state.camRollId;
+      let targetRollNumber = Math.max(1, Number(state.camRollNumber) || 1);
+      let resettingCurrentRoll = true;
+      if (curRollShots.length === 0 && (state.camShotCount || 0) === 0 && !hasPendingCur && state.camRollShots.length > 0) {
+        const latestShot = state.camRollShots[0];
+        targetRollId = latestShot.rollId || null;
+        targetRollNumber = Math.max(1, Number(latestShot.rollNumber) || 1);
+        resettingCurrentRoll = false;
+      }
+
+      const shotsToDelete = state.camRollShots.filter(s => targetRollId
+        ? s.rollId === targetRollId
+        : (!s.rollId && (s.rollNumber || 1) === targetRollNumber));
+      const shotIdsToDelete = shotsToDelete.map(s => s.id).filter(Boolean);
+      const pendingIdsToDelete = [];
+      if (resettingCurrentRoll && state.camRollId) pendingIdsToDelete.push(state.camRollId);
+      if (targetRollId && !pendingIdsToDelete.includes(targetRollId)) pendingIdsToDelete.push(targetRollId);
+
+      try {
+        await deleteRollShotsFromStorage(shotIdsToDelete, pendingIdsToDelete);
+      } catch (error) {
+        showToast('Could not reset roll photos');
+        return;
+      }
+
+      const deletedIds = new Set(shotIdsToDelete);
+      state.camRollShots = state.camRollShots.filter(s => !deletedIds.has(s.id));
+      if (state.labDoubleExpRollShotId && deletedIds.has(state.labDoubleExpRollShotId)) {
+        state.labDoubleExpRollShotId = null;
+      }
+      if (resettingCurrentRoll && state.halfFrameFirstCanvas) {
+        state.halfFrameFirstCanvas = null;
+        const ghost = document.getElementById('vfHfGhostImg');
+        if (ghost) {
+          ghost.classList.remove('visible');
+          ghost.removeAttribute('src');
+        }
+      }
+
+      state.camShotCount = 0;
+      state.camNeedsWind = false;
+      state.camNeedsRewind = false;
+      if (!targetRollId || state.lastCompletedRollId === targetRollId) {
+        state.lastCompletedRollId = null;
+      }
+      state.camRollNumber = state.camRollShots.length === 0 ? 1 : Math.max(1, targetRollNumber);
+      state.camRollId = createRollId();
+
+      const viewerOpen = document.getElementById('photoViewerBackdrop')?.classList.contains('open');
+      if (viewerOpen && (state.camRollShots.length === 0 || (typeof viewerActiveShotId !== 'undefined' && deletedIds.has(viewerActiveShotId)))) {
+        closePhotoViewer();
+      }
+      if (state.activeRollShotId && deletedIds.has(state.activeRollShotId)) {
+        state.activeRollShotId = null;
+        if (state.sourceFromCameraRoll) {
+          if (state.camRollShots.length > 0) {
+            await openShotInLab(state.camRollShots[0], { silent: true, forcePreviewRender: true, keepActiveTab: true, keepContactSheet: true, keepPhotoViewer: true });
+          } else if (SAMPLES[0]) {
+            state.sourceFromCameraRoll = false;
+            state.activeSampleId = SAMPLES[0].id;
+            await ensureSampleLoaded(SAMPLES[0]);
+            loadSourceCanvas(SAMPLES[0].canvas, null, { sampleId: SAMPLES[0].id, fromCameraRoll: false, forcePreviewRender: true });
+          }
+        }
+      }
+
+      saveCameraRollMeta();
+      renderContactSheet();
+      renderRollSampleStrip();
+      syncAllUI();
+      const rollTag = `#${String(state.camRollNumber).padStart(2, '0')}`;
+      const keptCount = state.camRollShots.length;
+      showToast(keptCount > 0
+        ? `🎞️ Roll ${rollTag} reset (0/${state.camMaxShots}) · ${keptCount} earlier photo${keptCount === 1 ? '' : 's'} kept`
+        : `🎞️ Roll reset to Roll ${rollTag} (0/${state.camMaxShots})`);
+    } finally {
+      resetRollBusy = false;
+    }
   });
   document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
 
