@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v200';
+const CACHE_NAME = 'tees-lab-shell-v201';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -41,6 +41,7 @@ const WARM_FILES = [
   './assets/samples/flower.jpg',
   './assets/samples/venice.jpg',
   './assets/samples/night-car.jpg',
+  './assets/samples/galaxy.jpg',
   './assets/film-samples/kodak-gold-200-1.jpg',
   './assets/film-samples/kodak-gold-200-2.jpg',
   './assets/film-samples/kodak-colorplus-200-1.jpg',

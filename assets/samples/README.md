@@ -16,5 +16,6 @@ These locally bundled sample photographs are served by Unsplash and are included
 | `flower.jpg` | https://images.unsplash.com/photo-1604085572504-a392ddf0d86a |
 | `venice.jpg` | https://images.unsplash.com/photo-1603491543570-f7df3c9a12c1 |
 | `night-car.jpg` | https://images.unsplash.com/photo-1776614816997-5179dfbf45aa |
+| `galaxy.jpg` | https://www.eso.org/public/images/epod-cc-rf18284/ (ESO / Stéphane Guisard, CC BY 4.0) |
 
 Unsplash license: https://unsplash.com/license
