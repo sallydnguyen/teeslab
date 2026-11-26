@@ -6204,7 +6204,7 @@
       aspect: 3 / 2,
       meta: 'Nikon F2 Photomic (DP-1) pro 35mm SLR · Type A/K split-image + bottom DP-1 match-needle & ADR',
       defaultFocalId: '50mm',
-      recLenses: ['50mm', '24mm', '85mm'],
+      recLenses: ['50mm', '28mm', '35mm'],
       recFilms: ['kodak-portra-400', 'fuji-superia-premium-400', 'kodak-gold-200', 'cinestill-800t'],
       blackLift: 0.024,
       contrast: 1.08,
@@ -6296,8 +6296,8 @@
 
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
-      { id: '20mm', mm: 20, minF: 1.8, maxF: 22, focusProfile: 'wide', focalTag: '20mm', aperture: 'f/1.8', label: '20mm f/1.8', short: '20mm', recScene: 'night', recScenes: ['night', 'landscape'], recFilms: ['cinestill-800t', 'kodak-vision3-500t', 'lomo-800', 'kodak-portra-800'], tileSub: 'Night Sky · Ultra-wide', meta: '20mm f/1.8 · Ultra-wide fast prime for night sky, astrophotography & low-light landscapes', cropZoom: 1.0, barrelDistort: 0.020, apertureEV: 0.18, dofStrength: 0.34, dofRadius: 0.58, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 22, chromaticAb: 0.14, edgeSoft: 0.014 },
-      { id: '24mm', mm: 24, minF: 2.8, maxF: 22, focusProfile: 'wide', focalTag: '24mm', aperture: 'f/2.8', label: '24mm f/2.8', short: '24mm', recScene: 'landscape', recFilms: ['kodak-ektar-100', 'fuji-fujicolor-100', 'popho-luminar-100', 'kodak-portra-160', 'kodak-vision3-250d'], tileSub: 'Landscape · Fast AF', meta: '24mm f/2.8 · Compact, wide enough for landscapes & fast autofocus', cropZoom: 1.0, barrelDistort: 0.014, apertureEV: 0.02, dofStrength: 0.44, dofRadius: 0.52, shakeSens: 0, skinFlatter: 0, coatingWarmth: 1, coatingTint: 0, bloomBase: 16, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.016 },
+      { id: '28mm', mm: 28, minF: 2.0, maxF: 22, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/2', label: '28mm f/2', short: '28mm', recScene: 'night', recScenes: ['night', 'landscape', 'everyday'], recFilms: ['cinestill-800t', 'kodak-vision3-500t', 'kodak-ektar-100', 'ilford-hp5', 'kodak-portra-800'], tileSub: 'Night Street · Sharp f/2', meta: 'Nikkor 28mm f/2 AI-S · Crisp edge sharpness & strong micro-contrast even wide open at f/2 for night landscapes, architecture & complex street lights', cropZoom: 1.08, barrelDistort: 0.008, apertureEV: 0.08, dofStrength: 0.50, dofRadius: 0.50, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 8, vignetteBase: 17, chromaticAb: 0.07, edgeSoft: 0.004, lensContrast: 1.11, softFocus: 0, bokehCatScale: 1.0 },
+      { id: '35mm', mm: 35, minF: 1.4, maxF: 16, focusProfile: 'wide', focalTag: '35mm', aperture: 'f/1.4', label: '35mm f/1.4', short: '35mm', recScene: 'portrait', recScenes: ['portrait', 'night', 'everyday'], recFilms: ['kodak-portra-800', 'cinestill-800t', 'kodak-portra-400', 'kodak-vision3-500t', 'ilford-hp5'], tileSub: 'Night Portrait · 9-Blade', meta: 'Nikkor 35mm f/1.4 AI-S (9-blade) · Dreamy wide-open film softness & shimmering round bokeh orbs for environmental night street portraits', cropZoom: 1.32, barrelDistort: 0.004, apertureEV: 0.22, dofStrength: 0.86, dofRadius: 0.35, shakeSens: 0, skinFlatter: 0.10, coatingWarmth: 1.5, coatingTint: 0, bloomBase: 32, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.024, lensContrast: 0.96, softFocus: 0.30, bokehCatScale: 0.45 },
       { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-vision3-250d', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
       { id: '85mm', mm: 85, minF: 1.8, maxF: 22, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Creamy bokeh', meta: '85mm f/1.8 · Fast AF, lightweight portrait prime with smooth creamy bokeh', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
     ],
@@ -6715,7 +6715,7 @@
     const outData = new Uint8ClampedArray(src.length);
     const str = strength / 100;
     const effectiveEV = exposureEV + (cfg.meteredCamera ? 0 : (lens.apertureEV || 0));
-    const totalContrast = body.contrast * (1 - phone.contrastSoften) * film.contrast;
+    const totalContrast = body.contrast * (lens.lensContrast || 1) * (1 - phone.contrastSoften) * film.contrast;
     const totalLift = Math.min(0.14, body.blackLift + film.blackLift * 0.76 + phone.shadowLift * 0.25);
     const totalRolloff = body.highlightRolloff + phone.highlightRecover;
     const totalWarmth = warmth + phone.warmthOffset + body.bodyWarmth + lens.coatingWarmth;
@@ -6730,7 +6730,7 @@
     const skinWarm = (film.skinWarmth || 0) * filmColorMix;
     const vib = (film.vibrance || 0) * filmColorMix;
     const filmSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
-    const softFocus = body.softFocus || 0;
+    const softFocus = Math.max(body.softFocus || 0, lens.softFocus || 0);
     const deSharp = Math.min(0.85, phone.deSharpen + lens.edgeSoft * 0.45 + softFocus * 0.65);
     const hasCA = lens.chromaticAb > 0.2, caStr = lens.chromaticAb * (width / 900);
     const barrelK = lens.barrelDistort || 0;
@@ -7038,7 +7038,7 @@
           const rCorner2 = nx * nx + ny * ny;
           let catStr = 0, rDirX = 1, rDirY = 0;
           if (rCorner2 > 0.08 && mfDefocus <= 0.015) {
-            catStr = Math.min(0.36, dofStr * 0.30) * Math.min(1, (rCorner2 - 0.08) * 0.45);
+            catStr = Math.min(0.36, dofStr * 0.30 * (lens.bokehCatScale ?? 1.0)) * Math.min(1, (rCorner2 - 0.08) * 0.45);
             const invLen = 1 / Math.sqrt(rCorner2);
             rDirX = nx * invLen;
             rDirY = ny * invLen;
@@ -7843,9 +7843,9 @@
     const list = FOCAL_OPTIONS_BY_MODE[modeId] || FOCAL_OPTIONS_BY_MODE.slr;
     if (list.some(f => f.id === oldFocal)) return oldFocal;
     if (modeId === 'slr') {
-      if (oldFocal === '28mm' || oldFocal === '24-70mm') return '24mm';
+      if (oldFocal === '20mm' || oldFocal === '24mm' || oldFocal === '24-70mm') return '28mm';
       if (oldFocal === '135mm' || oldFocal === '70-200mm') return '85mm';
-      if (oldFocal === '35mm' || oldFocal === '35-70mm') return '50mm';
+      if (oldFocal === '35-70mm') return '35mm';
     } else if (modeId === 'half-frame') {
       if (oldFocal === '22mm' || oldFocal === '28mm') return '25mm';
       if (oldFocal === '35mm' || oldFocal === '50mm' || oldFocal === '60mm') return '38mm';
@@ -8182,6 +8182,12 @@
     const bloomBase = Math.max(4, Math.round((props.bloomBase || 20) * (1 - 0.44 * Math.min(1, stopsClosed / 2.5))));
     const edgeSoft = (props.edgeSoft || 0.02) * (1 - 0.65 * sweet);
     const chromaticAb = (props.chromaticAb || 0.2) * (1 - 0.60 * sweet);
+    const softFocus = (props.softFocus || 0) * Math.pow(0.28, stopsClosed);
+    const baseContrast = props.lensContrast ?? 1.0;
+    const lensContrast = baseContrast < 1.0
+      ? baseContrast + (1.02 - baseContrast) * Math.min(1, stopsClosed / 2.0)
+      : baseContrast;
+    const bokehCatScale = props.bokehCatScale ?? 1.0;
 
     return {
       ...props,
@@ -8191,7 +8197,10 @@
       vignetteBase,
       bloomBase,
       edgeSoft,
-      chromaticAb
+      chromaticAb,
+      softFocus,
+      lensContrast,
+      bokehCatScale
     };
   }
 
@@ -13039,6 +13048,7 @@
       uniform float uDofStr;
       uniform float uDofRad;
       uniform float uMfDefocus;
+      uniform float uCatScale;
 
       float evalCoC(vec2 uv, out vec2 nPos) {
         nPos = vec2(uv.x * 2.0 - 1.0, 1.0 - 2.0 * uv.y);
@@ -13083,7 +13093,7 @@
 
         float rCorner2 = dot(nPos, nPos);
         float catStr = (rCorner2 > 0.08 && uMfDefocus <= 0.015)
-          ? min(0.36, uDofStr * 0.30) * min(1.0, (rCorner2 - 0.08) * 0.45)
+          ? min(0.36, uDofStr * 0.30 * uCatScale) * min(1.0, (rCorner2 - 0.08) * 0.45)
           : 0.0;
         vec2 rDir = rCorner2 > 1e-4 ? normalize(nPos) : vec2(1.0, 0.0);
 
@@ -13362,7 +13372,7 @@
         const { phone, body, lens, film, strength, exposureEV, warmth, grainAmt, halationAmt, bloomAmt, vignetteAmt, flashBurst } = cfg;
         const str = strength / 100;
         const effectiveEV = exposureEV + (cfg.meteredCamera ? 0 : (lens.apertureEV || 0));
-        const totalContrast = body.contrast * (1 - phone.contrastSoften) * film.contrast;
+        const totalContrast = body.contrast * (lens.lensContrast || 1) * (1 - phone.contrastSoften) * film.contrast;
         const totalLift = Math.min(0.14, body.blackLift + film.blackLift * 0.76 + phone.shadowLift * 0.25);
         const totalRolloff = body.highlightRolloff + phone.highlightRecover;
         const totalWarmth = warmth + phone.warmthOffset + body.bodyWarmth + lens.coatingWarmth;
@@ -13411,7 +13421,7 @@
           m[6] * filmColorMix, m[7] * filmColorMix, 1 + (m[8] - 1) * filmColorMix
         ];
         const previewSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
-        const softFocus = body.softFocus || 0;
+        const softFocus = Math.max(body.softFocus || 0, lens.softFocus || 0);
         const deSharp = Math.min(0.85, phone.deSharpen + (lens.edgeSoft || 0) * 0.45 + softFocus * 0.65);
         const ug = pGrade.u;
         gl.useProgram(pGrade.prog);
@@ -13474,6 +13484,7 @@
           gl.uniform1f(pBokeh.u.uDofStr, dofStr);
           gl.uniform1f(pBokeh.u.uDofRad, lens.dofRadius ?? 0.42);
           gl.uniform1f(pBokeh.u.uMfDefocus, effMfDefocus);
+          gl.uniform1f(pBokeh.u.uCatScale, lens.bokehCatScale ?? 1.0);
           drawQuad(pBokeh, fboDof.fbo, curHw, curHh);
 
           gl.bindTexture(gl.TEXTURE_2D, fboBase.tex);
@@ -13647,7 +13658,7 @@
         phone, body, lens, film, strength: 85, exposureEV: cameraExposureEV(), shutterShakeRisk: shutterInfo.shakeRisk, warmth: 0,
         grainAmt: Math.round(getEffectiveCameraGrain(film) * 0.72),
         halationAmt: 0,
-        bloomAmt: 0,
+        bloomAmt: (lens.softFocus || 0) > 0.1 ? Math.round((lens.bloomBase || 0) * 0.55) : 0,
         ecoPreview: true,
         meteredCamera: true,
         vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
