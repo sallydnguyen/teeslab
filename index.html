@@ -15454,7 +15454,11 @@
     const prevBtn = document.getElementById('btnViewerPrev');
     const nextBtn = document.getElementById('btnViewerNext');
 
-    if (titleEl) titleEl.textContent = `Roll #${s.rollNumber || 1} · Shot #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
+    const shotNum = Number.isFinite(Number(s.num))
+      ? Number(s.num)
+      : (Number.isFinite(Number(s.shotNum)) ? Number(s.shotNum) : (state.camRollShots.length - index));
+    const rollNum = Number.isFinite(Number(s.rollNumber)) ? Number(s.rollNumber) : (state.camRollNumber || 1);
+    if (titleEl) titleEl.textContent = `Roll #${String(rollNum).padStart(2, '0')} · Shot #${String(shotNum).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
     if (counterEl) counterEl.textContent = `${index + 1} / ${state.camRollShots.length}`;
     if (tagEl) tagEl.textContent = '';
     renderPhotoViewerExif(s);
@@ -18397,7 +18401,7 @@
   await loadSampleScenePhotos();
   loadSourceCanvas(SAMPLES[0].canvas, null, { sampleId: SAMPLES[0].id, forcePreviewRender: state.activeTab === 'darkroom' });
   if (hasUrlPreset) showToast('🔗 Applied shared film recipe');
-  window.__TEES_LAB = { FILM_STOCKS, POPULAR_BEST_FILM_IDS, FILM_GUIDE_META, FILM_SAMPLE_PHOTOS, describeFilmProcess, openFilmInfoForStock, closeFilmInfoSheet, openComboPicker, renderComboPickerSheet, state };
+  window.__TEES_LAB = { FILM_STOCKS, POPULAR_BEST_FILM_IDS, FILM_GUIDE_META, FILM_SAMPLE_PHOTOS, describeFilmProcess, openFilmInfoForStock, closeFilmInfoSheet, openComboPicker, renderComboPickerSheet, openPhotoViewer, closePhotoViewer, state };
 })();
 </script>
 </body>
