@@ -1,6 +1,6 @@
 # Real Film Sample Photo Credits
 
-These locally bundled real-film sample photographs (2 per film roll across all 19 film stocks) are resized to max 960px for fast offline display inside the Film Info sheet.
+These locally bundled real-film sample photographs (2 per film roll across all 27 film stocks) are resized to max 960px for fast offline display inside the Film Info sheet.
 
 | File | Film Stock | Subject | Credit / Source |
 | --- | --- | --- | --- |
@@ -42,3 +42,20 @@ These locally bundled real-film sample photographs (2 per film roll across all 1
 | `ilford-hp5-2.jpg` | Ilford HP5 | Documentary portrait | Christopher Michel (Flickr / Filmtypes) |
 | `agfa-apx-400-1.jpg` | Agfa APX 400 | Harbor boathouse | darksida (Flickr / Filmtypes) |
 | `agfa-apx-400-2.jpg` | Agfa APX 400 | Silver-slate portrait | darksida (Flickr / Filmtypes) |
+| `fuji-c200-1.jpg` | Fujifilm Fujicolor C200 | Sunlit countryside & green foliage | Dan Evan (Flickr / Filmtypes) |
+| `fuji-c200-2.jpg` | Fujifilm Fujicolor C200 | Summer storefront daylight | oldstrat (Flickr / Filmtypes) |
+| `cinestill-400d-1.jpg` | CineStill 400D | Daylight service station & vintage car | Daniel McDonald (CineStill / Kosmo Foto) |
+| `cinestill-400d-2.jpg` | CineStill 400D | Golden cinema natural portrait | Ryan Muirhead (CineStill / Kosmo Foto) |
+| `kodak-ektachrome-e100-1.jpg` | Kodak Ektachrome E100 | Lakeside morning & deep blue water | Joe Benjamin (Flickr / Filmtypes) |
+| `kodak-ektachrome-e100-2.jpg` | Kodak Ektachrome E100 | European architecture & azure sky | bierlos (Flickr / Filmtypes) |
+| `fuji-velvia-50-1.jpg` | Fujifilm Velvia 50 | Alpine emerald forest & vibrant peaks | Pacheco Photography (Flickr / Filmtypes) |
+| `fuji-velvia-50-2.jpg` | Fujifilm Velvia 50 | Dramatic sunset sky & water reflection | Erdnie (Flickr / Filmtypes) |
+| `fuji-provia-100f-1.jpg` | Fujifilm Provia 100F | Alpine ridge & clean neutral daylight | 9177053@N05 (Flickr / Filmtypes) |
+| `fuji-provia-100f-2.jpg` | Fujifilm Provia 100F | Harbor boats & pure sky blue | clarobuk (Flickr / Filmtypes) |
+| `kodak-tri-x-400-1.jpg` | Kodak Tri-X 400 | Classic street auto & punchy shadows | South Beach Cars (Flickr / Filmtypes) |
+| `kodak-tri-x-400-2.jpg` | Kodak Tri-X 400 | Urban architecture shadows & silver grain | purplecamel (Flickr / Filmtypes) |
+| `ilford-delta-100-1.jpg` | Ilford Delta 100 | Silky coastal horizon & fine acutance | Andrew Basterfield (Flickr / Filmtypes) |
+| `ilford-delta-100-2.jpg` | Ilford Delta 100 | Studio portrait & smooth tonal gradation | Chris McPhee (Flickr / Filmtypes) |
+| `ilford-delta-3200-1.jpg` | Ilford Delta 3200 | Night street rain & gritty atmospheric grain | boklm (Flickr / Filmtypes) |
+| `ilford-delta-3200-2.jpg` | Ilford Delta 3200 | Low-light indoor jazz & dramatic grain | Colin Poe (Flickr / Filmtypes) |
+

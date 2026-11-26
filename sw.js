@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v216';
+const CACHE_NAME = 'tees-lab-shell-v217';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -11,25 +11,33 @@ const CORE_FILES = [
   './assets/gear/bodies/medium-format.webp'
 ];
 const WARM_FILES = [
+  './assets/gear/films/fuji-c200.webp',
+  './assets/gear/films/fuji-classic-chrome.webp',
+  './assets/gear/films/fuji-fujicolor-100.webp',
   './assets/gear/films/fuji-pro-400h.webp',
+  './assets/gear/films/fuji-provia-100f.webp',
   './assets/gear/films/fuji-superia-400.webp',
   './assets/gear/films/fuji-superia-premium-400.webp',
-  './assets/gear/films/fuji-fujicolor-100.webp',
-  './assets/gear/films/fuji-classic-chrome.webp',
+  './assets/gear/films/fuji-velvia-50.webp',
+  './assets/gear/films/kodak-colorplus-200.webp',
+  './assets/gear/films/kodak-ektachrome-e100.webp',
+  './assets/gear/films/kodak-ektar-100.webp',
+  './assets/gear/films/kodak-gold-200.webp',
   './assets/gear/films/kodak-portra-160.webp',
   './assets/gear/films/kodak-portra-400.webp',
   './assets/gear/films/kodak-portra-800.webp',
-  './assets/gear/films/kodak-gold-200.webp',
-  './assets/gear/films/kodak-colorplus-200.webp',
+  './assets/gear/films/kodak-tri-x-400.webp',
   './assets/gear/films/kodak-ultramax-400.webp',
-  './assets/gear/films/kodak-ektar-100.webp',
   './assets/gear/films/kodak-vision3-250d.webp',
   './assets/gear/films/kodak-vision3-500t.webp',
+  './assets/gear/films/cinestill-400d.webp',
   './assets/gear/films/cinestill-800t.webp',
-  './assets/gear/films/lomo-800.webp',
-  './assets/gear/films/popho-luminar-100.webp',
+  './assets/gear/films/ilford-delta-100.webp',
+  './assets/gear/films/ilford-delta-3200.webp',
   './assets/gear/films/ilford-hp5.webp',
   './assets/gear/films/agfa-apx-400.webp',
+  './assets/gear/films/lomo-800.webp',
+  './assets/gear/films/popho-luminar-100.webp',
   './assets/samples/golden-hour.jpg',
   './assets/samples/neon-street.jpg',
   './assets/samples/forest.jpg',
@@ -79,7 +87,23 @@ const WARM_FILES = [
   './assets/film-samples/ilford-hp5-1.jpg',
   './assets/film-samples/ilford-hp5-2.jpg',
   './assets/film-samples/agfa-apx-400-1.jpg',
-  './assets/film-samples/agfa-apx-400-2.jpg'
+  './assets/film-samples/agfa-apx-400-2.jpg',
+  './assets/film-samples/fuji-c200-1.jpg',
+  './assets/film-samples/fuji-c200-2.jpg',
+  './assets/film-samples/cinestill-400d-1.jpg',
+  './assets/film-samples/cinestill-400d-2.jpg',
+  './assets/film-samples/kodak-ektachrome-e100-1.jpg',
+  './assets/film-samples/kodak-ektachrome-e100-2.jpg',
+  './assets/film-samples/fuji-velvia-50-1.jpg',
+  './assets/film-samples/fuji-velvia-50-2.jpg',
+  './assets/film-samples/fuji-provia-100f-1.jpg',
+  './assets/film-samples/fuji-provia-100f-2.jpg',
+  './assets/film-samples/kodak-tri-x-400-1.jpg',
+  './assets/film-samples/kodak-tri-x-400-2.jpg',
+  './assets/film-samples/ilford-delta-100-1.jpg',
+  './assets/film-samples/ilford-delta-100-2.jpg',
+  './assets/film-samples/ilford-delta-3200-1.jpg',
+  './assets/film-samples/ilford-delta-3200-2.jpg'
 ];
 
 self.addEventListener('install', event => {
