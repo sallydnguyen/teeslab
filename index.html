@@ -4601,35 +4601,22 @@
       color: var(--text-muted);
     }
     .photo-viewer-close {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      min-height: 34px;
+      width: 30px;
+      height: 30px;
       padding: 0;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 14px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #e5e7eb;
       cursor: pointer;
-      position: relative;
-      touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: background 0.15s ease, transform 0.08s ease;
-    }
-    .photo-viewer-close::before {
-      content: "";
-      position: absolute;
-      inset: -8px;
-      border-radius: inherit;
+      transition: background 0.15s ease;
     }
     .photo-viewer-close:active {
-      background: rgba(255, 255, 255, 0.22);
-      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.2);
     }
     .photo-viewer-stage {
       flex: 1;
@@ -4810,8 +4797,7 @@
     }
     .photo-viewer-actions {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
@@ -6389,9 +6375,9 @@
         <div class="photo-viewer-botbar">
           <div class="photo-viewer-tag" id="photoViewerFilmTag" style="display:none;"></div>
           <div class="photo-viewer-actions">
-            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="min-width:44px;min-height:38px;padding:0 12px;font-size:16px;">🗑</button>
-            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" title="Edit in Lab" aria-label="Edit in Lab" style="min-width:44px;min-height:38px;padding:0 12px;font-size:16px;">✏️</button>
-            <button class="btn-pill btn-save-icon" id="btnViewerSave" type="button" title="Save photo" aria-label="Save photo" style="min-width:48px;min-height:38px;padding:0 14px;font-size:17px;">💾</button>
+            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="width:34px;height:30px;padding:0;font-size:14px;">🗑</button>
+            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" title="Edit in Lab" aria-label="Edit in Lab" style="width:34px;height:30px;padding:0;font-size:14px;">✏️</button>
+            <button class="btn-pill btn-save-icon" id="btnViewerSave" type="button" title="Save photo" aria-label="Save photo" style="width:34px;height:30px;padding:0;font-size:14px;">💾</button>
           </div>
         </div>
       </div>
