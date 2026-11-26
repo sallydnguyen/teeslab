@@ -6349,9 +6349,9 @@
         <div class="photo-viewer-botbar">
           <div class="photo-viewer-tag" id="photoViewerFilmTag">🎞️ Film photo</div>
           <div class="photo-viewer-actions">
-            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" style="height:28px;padding:0 10px;font-size:11.5px;">🗑 Delete</button>
-            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">🧪 Edit in Lab</button>
-            <button class="btn-pill btn-brass" id="btnViewerSave" type="button" style="height:28px;padding:0 12px;font-size:11.5px;">💾 Save</button>
+            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="width:34px;height:30px;padding:0;font-size:14px;">🗑</button>
+            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" title="Edit in Lab" aria-label="Edit in Lab" style="width:34px;height:30px;padding:0;font-size:14px;">✏️</button>
+            <button class="btn-pill btn-brass" id="btnViewerSave" type="button" title="Save photo" aria-label="Save photo" style="width:34px;height:30px;padding:0;font-size:14px;">💾</button>
           </div>
         </div>
       </div>
@@ -15471,7 +15471,7 @@
         <button class="shot-del-btn" type="button" title="Delete ${shotLabel}" aria-label="Delete ${shotLabel}">🗑</button>
         <div class="shot-foot">
           <span>${shotLabel}</span>
-          <button class="btn-pill btn-brass btn-save-shot" type="button" style="height:24px;padding:0 9px;font-size:10.5px;">Save</button>
+          <button class="btn-pill btn-brass btn-save-shot" type="button" title="Save ${shotLabel}" aria-label="Save ${shotLabel}" style="width:30px;height:24px;padding:0;font-size:12.5px;">💾</button>
         </div>
       `;
       card.querySelector('img').addEventListener('click', () => openPhotoViewer(idx));
