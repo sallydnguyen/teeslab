@@ -24,12 +24,9 @@
     :root {
       --bg-void: #050608;
       --bg-shell: #0c0e12;
-      --bg-dock: #14171d;
       --bg-card: #1c2028;
-      --bg-elevated: #262c36;
       --bg-input: #0e1015;
       --border: #2a303c;
-      --border-light: #3b4454;
       --text-primary: #f3f4f6;
       --text-secondary: #a1aab8;
       --text-muted: #6c7586;
@@ -38,17 +35,12 @@
       --cyan-dim: rgba(34, 211, 238, 0.14);
       --cyan-border: rgba(34, 211, 238, 0.56);
       --brass: #22d3ee;
-      --brass-dim: rgba(34, 211, 238, 0.14);
-      --accent: #22d3ee;
       --save-orange: #f97316;
       --save-orange-deep: #ea580c;
       --save-orange-glow: rgba(249, 115, 22, 0.34);
       --fuji: #10b981;
-      --fuji-dim: rgba(16, 185, 129, 0.16);
       --kodak: #f59e0b;
-      --kodak-dim: rgba(245, 158, 11, 0.16);
       --cinema: #06b6d4;
-      --cinema-dim: rgba(6, 182, 212, 0.16);
       --danger: #ef4444;
       --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
       --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Inter, sans-serif;
@@ -221,7 +213,6 @@
       font-weight: 800;
       box-shadow: 0 2px 10px rgba(34, 211, 238, 0.25);
     }
-    .btn-primary,
     .btn-brass,
     .btn-save {
       background: linear-gradient(135deg, var(--save-orange), var(--save-orange-deep));
@@ -360,11 +351,6 @@
     .combo-card:active {
       transform: scale(0.98);
       border-color: var(--cyan);
-    }
-    #camComboTrio .combo-card {
-      padding: 4px 4px 4px;
-      gap: 1px;
-      cursor: pointer;
     }
     .combo-card-tag {
       font-family: var(--mono);
@@ -1516,7 +1502,7 @@
       font-size: 12.5px;
     }
 
-    .dark-input, .dark-select {
+    .dark-input {
       background: var(--bg-input);
       border: 1px solid var(--border);
       color: var(--text-primary);
@@ -1740,6 +1726,7 @@
       height: auto;
       padding: 4px 4px 4px;
       gap: 1px;
+      cursor: pointer;
       border-radius: 8px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 6px rgba(0,0,0,0.4);
     }
@@ -2909,12 +2896,6 @@
       color: #a1aab8;
       letter-spacing: 0.4px;
     }
-    .vf-control-support {
-      font-size: 7px;
-      letter-spacing: -0.2px;
-      white-space: nowrap;
-      opacity: 0.88;
-    }
     .vf-badge-btn svg {
       width: 10px;
       height: 10px;
@@ -3009,30 +2990,6 @@
       pointer-events: auto;
     }
     .vf-hud-left { flex-shrink: 0; }
-    .vf-source-status {
-      flex-shrink: 0;
-      pointer-events: auto;
-      cursor: pointer;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(10, 12, 16, 0.72);
-      border: 1px solid rgba(255,255,255,0.16);
-      color: rgba(255,255,255,0.72);
-      text-shadow: 0 1px 3px #000;
-      letter-spacing: 0.2px;
-    }
-    .vf-source-status.live {
-      color: #4ade80;
-      border-color: rgba(74, 222, 128, 0.62);
-      background: rgba(22, 101, 52, 0.36);
-    }
-    .vf-stage[data-vf-mode="half-frame"] ~ .vf-bottom-hud .vf-source-status {
-      font-size: 8.5px;
-      padding: 2px 4px;
-    }
 
     /* Mechanical Knurled Lens Barrel Controller (ZOOM [zoom lenses only] / FOCUS+AF / APERTURE) */
     .lens-barrel-dock {
@@ -3929,11 +3886,6 @@
       font-weight: 700;
     }
 
-    .sample-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
     .sample-grid-4 {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4668,22 +4620,6 @@
       border-radius: 4px;
       pointer-events: none;
     }
-    .picker-arch-badge {
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      font-family: var(--mono);
-      font-size: 6.5px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      color: #94a3b8;
-      background: rgba(148, 163, 184, 0.14);
-      border: 1px solid rgba(148, 163, 184, 0.34);
-      padding: 0 3px;
-      line-height: 1.35;
-      border-radius: 4px;
-      pointer-events: none;
-    }
     .picker-info-btn {
       position: absolute;
       top: 3px;
@@ -4783,8 +4719,7 @@
         left: 6px;
         right: 6px;
       }
-      .vf-bottom-hud .vf-badge-btn,
-      .vf-bottom-hud .vf-source-status {
+      .vf-bottom-hud .vf-badge-btn {
         font-size: 8.5px;
         padding: 2px 4px;
       }
@@ -6321,29 +6256,29 @@
 
   const FILM_STOCKS = [
     // Kodak (alphabetical)
-    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, canisterColor: 'linear-gradient(180deg,#eab308,#dc2626,#7c2d12)', edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.09, blackLift: 0.027, grainBase: 24, grainSize: 1.00, halationBase: 14, isBW: false },
-    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, canisterColor: 'linear-gradient(180deg,#dc2626,#f59e0b,#111827)', edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.14, blackLift: 0.012, grainBase: 10, grainSize: 0.76, halationBase: 13, isBW: false },
-    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, canisterColor: 'linear-gradient(180deg,#fbbf24,#a855f7,#dc2626)', edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.03, blackLift: 0.030, grainBase: 21, grainSize: 0.96, halationBase: 22, isBW: false },
-    { id: 'kodak-portra-160', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, canisterColor: 'linear-gradient(180deg,#fbbf24,#fef3c7,#b45309)', edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.89, blackLift: 0.052, grainBase: 12, grainSize: 0.80, halationBase: 13, isBW: false },
-    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#fef3c7,#d97706)', edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
-    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, canisterColor: 'linear-gradient(180deg,#ea580c,#fbbf24,#78350f)', edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.05, blackLift: 0.035, grainBase: 28, grainSize: 1.06, halationBase: 26, isBW: false },
-    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, canisterColor: 'linear-gradient(180deg,#f59e0b,#2563eb,#dc2626)', edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
-    { id: 'kodak-vision3-250d', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 250D', subtitle: 'Warm daylight cinema & smooth skin', iso: 250, canisterColor: 'linear-gradient(180deg,#dc2626,#ea580c,#fbbf24)', edgeCode: 'KODAK 5207 250D   25A', matrix: [1.04,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.02,0.97], shadowTint: [-3,3,4], midTint: [6,4,-3], highlightTint: [13,8,-5], foliageShift: {gBoost:4,bShift:-2,rShift:5,satScale:1.00}, skyShift: {cyanBoost:8,bDepth:11}, redHueShift: -7, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.86, saturation: 1.03, contrast: 0.99, blackLift: 0.036, grainBase: 17, grainSize: 0.90, halationBase: 13, isBW: false },
-    { id: 'kodak-vision3-500t', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 500T', subtitle: 'Rich cinema tungsten & clean shadows', iso: 500, canisterColor: 'linear-gradient(180deg,#f59e0b,#0f766e,#111827)', edgeCode: 'KODAK 5219 500T   42', matrix: [0.96,0.02,0.02,-0.01,1.02,0.03,0.01,0.05,1.06], shadowTint: [-14,8,18], midTint: [-6,3,10], highlightTint: [11,6,-4], foliageShift: {gBoost:3,bShift:14,rShift:-10,satScale:0.95}, skyShift: {cyanBoost:18,bDepth:12}, redHueShift: -6, skinWarmth: 5, vibrance: 0.03, skinProtect: 0.78, saturation: 1.00, contrast: 1.01, blackLift: 0.038, grainBase: 22, grainSize: 0.96, halationBase: 14, isBW: false },
+    { id: 'kodak-colorplus-200', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.09, blackLift: 0.027, grainBase: 24, grainSize: 1.00, halationBase: 14, isBW: false },
+    { id: 'kodak-ektar-100', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.14, blackLift: 0.012, grainBase: 10, grainSize: 0.76, halationBase: 13, isBW: false },
+    { id: 'kodak-gold-200', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.03, blackLift: 0.030, grainBase: 21, grainSize: 0.96, halationBase: 22, isBW: false },
+    { id: 'kodak-portra-160', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.89, blackLift: 0.052, grainBase: 12, grainSize: 0.80, halationBase: 13, isBW: false },
+    { id: 'kodak-portra-400', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
+    { id: 'kodak-portra-800', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.05, blackLift: 0.035, grainBase: 28, grainSize: 1.06, halationBase: 26, isBW: false },
+    { id: 'kodak-ultramax-400', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
+    { id: 'kodak-vision3-250d', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 250D', subtitle: 'Warm daylight cinema & smooth skin', iso: 250, edgeCode: 'KODAK 5207 250D   25A', matrix: [1.04,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.02,0.97], shadowTint: [-3,3,4], midTint: [6,4,-3], highlightTint: [13,8,-5], foliageShift: {gBoost:4,bShift:-2,rShift:5,satScale:1.00}, skyShift: {cyanBoost:8,bDepth:11}, redHueShift: -7, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.86, saturation: 1.03, contrast: 0.99, blackLift: 0.036, grainBase: 17, grainSize: 0.90, halationBase: 13, isBW: false },
+    { id: 'kodak-vision3-500t', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 500T', subtitle: 'Rich cinema tungsten & clean shadows', iso: 500, edgeCode: 'KODAK 5219 500T   42', matrix: [0.96,0.02,0.02,-0.01,1.02,0.03,0.01,0.05,1.06], shadowTint: [-14,8,18], midTint: [-6,3,10], highlightTint: [11,6,-4], foliageShift: {gBoost:3,bShift:14,rShift:-10,satScale:0.95}, skyShift: {cyanBoost:18,bDepth:12}, redHueShift: -6, skinWarmth: 5, vibrance: 0.03, skinProtect: 0.78, saturation: 1.00, contrast: 1.01, blackLift: 0.038, grainBase: 22, grainSize: 0.96, halationBase: 14, isBW: false },
 
     // Fujifilm (alphabetical)
-    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, canisterColor: 'linear-gradient(180deg,#374151,#6b7280,#065f46)', edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
-    { id: 'fuji-fujicolor-100', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor 100', subtitle: 'Crisp daylight cool-green', iso: 100, canisterColor: 'linear-gradient(180deg,#16a34a,#f8fafc,#15803d)', edgeCode: 'FUJICOLOR 100     07', matrix: [0.97,0.02,0.01,-0.02,1.03,0.02,-0.01,0.03,1.02], shadowTint: [-10,12,11], midTint: [-2,4,4], highlightTint: [5,7,4], foliageShift: {gBoost:14,bShift:12,rShift:-12,satScale:1.00}, skyShift: {cyanBoost:16,bDepth:10}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 0.99, contrast: 1.03, blackLift: 0.022, grainBase: 11, grainSize: 0.80, halationBase: 11, isBW: false },
-    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, canisterColor: 'linear-gradient(180deg,#10b981,#e5e7eb,#059669)', edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-12,16,15], midTint: [-3,7,6], highlightTint: [4,7,5], foliageShift: {gBoost:10,bShift:20,rShift:-16,satScale:0.84}, skyShift: {cyanBoost:22,bDepth:-4}, redHueShift: 5, skinWarmth: 3, vibrance: -0.07, skinProtect: 0.84, saturation: 0.90, contrast: 0.93, blackLift: 0.048, grainBase: 17, grainSize: 0.92, halationBase: 12, isBW: false },
-    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, canisterColor: 'linear-gradient(180deg,#059669,#10b981,#dc2626)', edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.05, blackLift: 0.026, grainBase: 25, grainSize: 1.02, halationBase: 16, isBW: false },
-    { id: 'fuji-superia-premium-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Premium 400', subtitle: 'Soft Japanese skin & greens', iso: 400, canisterColor: 'linear-gradient(180deg,#991b1b,#059669,#fbbf24)', edgeCode: 'FUJI PREMIUM 400  19', matrix: [1.00,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,0.98], shadowTint: [-8,11,10], midTint: [6,5,1], highlightTint: [11,8,1], foliageShift: {gBoost:14,bShift:12,rShift:-11,satScale:0.98}, skyShift: {cyanBoost:13,bDepth:4}, redHueShift: 2, skinWarmth: 6, vibrance: 0.02, skinProtect: 0.86, saturation: 1.01, contrast: 0.98, blackLift: 0.038, grainBase: 20, grainSize: 0.95, halationBase: 16, isBW: false },
+    { id: 'fuji-classic-chrome', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
+    { id: 'fuji-fujicolor-100', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor 100', subtitle: 'Crisp daylight cool-green', iso: 100, edgeCode: 'FUJICOLOR 100     07', matrix: [0.97,0.02,0.01,-0.02,1.03,0.02,-0.01,0.03,1.02], shadowTint: [-10,12,11], midTint: [-2,4,4], highlightTint: [5,7,4], foliageShift: {gBoost:14,bShift:12,rShift:-12,satScale:1.00}, skyShift: {cyanBoost:16,bDepth:10}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 0.99, contrast: 1.03, blackLift: 0.022, grainBase: 11, grainSize: 0.80, halationBase: 11, isBW: false },
+    { id: 'fuji-pro-400h', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-12,16,15], midTint: [-3,7,6], highlightTint: [4,7,5], foliageShift: {gBoost:10,bShift:20,rShift:-16,satScale:0.84}, skyShift: {cyanBoost:22,bDepth:-4}, redHueShift: 5, skinWarmth: 3, vibrance: -0.07, skinProtect: 0.84, saturation: 0.90, contrast: 0.93, blackLift: 0.048, grainBase: 17, grainSize: 0.92, halationBase: 12, isBW: false },
+    { id: 'fuji-superia-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.05, blackLift: 0.026, grainBase: 25, grainSize: 1.02, halationBase: 16, isBW: false },
+    { id: 'fuji-superia-premium-400', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Premium 400', subtitle: 'Soft Japanese skin & greens', iso: 400, edgeCode: 'FUJI PREMIUM 400  19', matrix: [1.00,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,0.98], shadowTint: [-8,11,10], midTint: [6,5,1], highlightTint: [11,8,1], foliageShift: {gBoost:14,bShift:12,rShift:-11,satScale:0.98}, skyShift: {cyanBoost:13,bDepth:4}, redHueShift: 2, skinWarmth: 6, vibrance: 0.02, skinProtect: 0.86, saturation: 1.01, contrast: 0.98, blackLift: 0.038, grainBase: 20, grainSize: 0.95, halationBase: 16, isBW: false },
 
     // Other Brands (Agfa, CineStill, Ilford, Lomography, PoPho)
-    { id: 'agfa-apx-400', brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, canisterColor: 'linear-gradient(180deg,#18181b,#dc2626,#e5e7eb)', edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.06, blackLift: 0.030, grainBase: 23, grainSize: 0.96, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] },
-    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, canisterColor: 'linear-gradient(180deg,#dc2626,#0e7490,#090a0c)', edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.07, blackLift: 0.034, grainBase: 26, grainSize: 1.02, halationBase: 72, isBW: false },
-    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, canisterColor: 'linear-gradient(180deg,#111827,#10b981,#e5e7eb)', edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.12, blackLift: 0.044, grainBase: 31, grainSize: 1.08, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
-    { id: 'lomo-800', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, canisterColor: 'linear-gradient(180deg,#6d28d9,#dc2626,#eab308)', edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.08, blackLift: 0.022, grainBase: 29, grainSize: 1.08, halationBase: 28, isBW: false },
-    { id: 'popho-luminar-100', brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, canisterColor: 'linear-gradient(180deg,#fef3c7,#f59e0b,#0d9488)', edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.98, blackLift: 0.026, grainBase: 10, grainSize: 0.76, halationBase: 18, isBW: false }
+    { id: 'agfa-apx-400', brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.06, blackLift: 0.030, grainBase: 23, grainSize: 0.96, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] },
+    { id: 'cinestill-800t', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.07, blackLift: 0.034, grainBase: 26, grainSize: 1.02, halationBase: 72, isBW: false },
+    { id: 'ilford-hp5', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.12, blackLift: 0.044, grainBase: 31, grainSize: 1.08, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
+    { id: 'lomo-800', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.08, blackLift: 0.022, grainBase: 29, grainSize: 1.08, halationBase: 28, isBW: false },
+    { id: 'popho-luminar-100', brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.98, blackLift: 0.026, grainBase: 10, grainSize: 0.76, halationBase: 18, isBW: false }
   ];
 
   const FILM_SUBTITLES_EN = {
@@ -6585,7 +6520,7 @@
       ...scene,
       loaded: false,
       _promise: null,
-      canvas: Object.assign(document.createElement('canvas'), { width: 900, height: 600 })
+      canvas: Object.assign(document.createElement('canvas'), { width: 1200, height: 800 })
     }));
   }
 
@@ -6597,6 +6532,8 @@
       const image = new Image();
       image.onload = () => {
         const canvas = scene.canvas, ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         const scale = Math.max(canvas.width / image.width, canvas.height / image.height);
         const width = image.width * scale, height = image.height * scale;
         ctx.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
@@ -6709,10 +6646,450 @@
     return { lutR, lutG, lutB };
   }
 
+  function applyTetraLut3dFast(s, d, l32, n) {
+    for (let p = 0; p < n; p += 4) {
+      const r0 = s[p], g0 = s[p + 1], b0 = s[p + 2];
+      const ir = r0 >= 255 ? 31 : (r0 >> 3), ig = g0 >= 255 ? 31 : (g0 >> 3), ib = b0 >= 255 ? 31 : (b0 >> 3);
+      const fr = r0 >= 255 ? 8 : (r0 & 7), fg = g0 >= 255 ? 8 : (g0 & 7), fb = b0 >= 255 ? 8 : (b0 & 7);
+      const idx = (ir * 33 + ig) * 33 + ib;
+      let c1, c2, w1, w2, w3;
+      if (fr >= fg) {
+        if (fg >= fb) { w1 = fr - fg; w2 = fg - fb; w3 = fb; c1 = idx + 1089; c2 = c1 + 33; }
+        else if (fr >= fb) { w1 = fr - fb; w2 = fb - fg; w3 = fg; c1 = idx + 1089; c2 = c1 + 1; }
+        else { w1 = fb - fr; w2 = fr - fg; w3 = fg; c1 = idx + 1; c2 = c1 + 1089; }
+      } else {
+        if (fb >= fg) { w1 = fb - fg; w2 = fg - fr; w3 = fr; c1 = idx + 1; c2 = c1 + 33; }
+        else if (fb >= fr) { w1 = fg - fb; w2 = fb - fr; w3 = fr; c1 = idx + 33; c2 = c1 + 1; }
+        else { w1 = fg - fr; w2 = fr - fb; w3 = fb; c1 = idx + 33; c2 = c1 + 1089; }
+      }
+      const w0 = 8 - (w1 + w2 + w3);
+      const p0 = l32[idx], p1 = l32[c1], p2 = l32[c2], p3 = l32[idx + 1123];
+      d[p] = ((p0 & 255) * w0 + (p1 & 255) * w1 + (p2 & 255) * w2 + (p3 & 255) * w3 + 4) >> 3;
+      d[p + 1] = (((p0 >> 8) & 255) * w0 + ((p1 >> 8) & 255) * w1 + ((p2 >> 8) & 255) * w2 + ((p3 >> 8) & 255) * w3 + 4) >> 3;
+      d[p + 2] = (((p0 >> 16) & 255) * w0 + ((p1 >> 16) & 255) * w1 + ((p2 >> 16) & 255) * w2 + ((p3 >> 16) & 255) * w3 + 4) >> 3;
+      d[p + 3] = 255;
+    }
+  }
+
+  function applyAcutanceCopyFast(s, d, w, h, rad, gain) {
+    d.set(s);
+    const s4 = rad * 4, rs = w * 4, rStep = rad * rs;
+    const xEnd = w - rad, yEnd = h - rad;
+    for (let y = rad; y < yEnd; y++) {
+      let p = y * rs + s4;
+      for (let x = rad; x < xEnd; x++, p += 4) {
+        const lC = (s[p] * 77 + s[p + 1] * 150 + s[p + 2] * 29) >> 8;
+        const pL = p - s4, pR = p + s4, pU = p - rStep, pD = p + rStep;
+        const lA = ((s[pL] + s[pR] + s[pU] + s[pD]) * 77 + (s[pL + 1] + s[pR + 1] + s[pU + 1] + s[pD + 1]) * 150 + (s[pL + 2] + s[pR + 2] + s[pU + 2] + s[pD + 2]) * 29) >> 10;
+        const diff = lC - lA;
+        const ad = diff < 0 ? -diff : diff;
+        if (ad > 2) {
+          const c = ad - 2;
+          const dy = (((c / (1 + c * 0.042)) * gain) + 0.5) | 0;
+          if (dy > 0) {
+            const sdy = diff < 0 ? -dy : dy;
+            d[p] = s[p] + sdy;
+            d[p + 1] = s[p + 1] + sdy;
+            d[p + 2] = s[p + 2] + sdy;
+          }
+        }
+      }
+    }
+  }
+
+  function compositeBokehFeatherFast(outData, width, height, bw, bh, cocMap, dofBuf, maxRadPx) {
+    const invH = 1 / height, invW = 1 / width;
+    const bwM1 = bw - 1, bhM1 = bh - 1;
+    for (let y = 0; y < height; y++) {
+      const gyf = (y * invH) * bhM1, gy0 = gyf | 0, gy1 = gy0 < bhM1 ? gy0 + 1 : gy0, fy = gyf - gy0, omy = 1 - fy;
+      let sp = y * width * 4;
+      for (let x = 0; x < width; x++, sp += 4) {
+        const gxf = (x * invW) * bwM1, gx0 = gxf | 0, gx1 = gx0 < bwM1 ? gx0 + 1 : gx0, fx = gxf - gx0, omx = 1 - fx;
+        const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
+        const c00 = gy0 * bw + gx0, c10 = gy0 * bw + gx1, c01 = gy1 * bw + gx0, c11 = gy1 * bw + gx1;
+        const coc = cocMap[c00] * w00 + cocMap[c10] * w10 + cocMap[c01] * w01 + cocMap[c11] * w11;
+        const radPx = coc * maxRadPx;
+        if (radPx <= 0.1) continue;
+        let mix = 1;
+        if (radPx < 5.5) {
+          const t = (radPx - 0.1) / 5.4;
+          mix = t * (2 - t) * 0.4 + t * t * (3 - 2 * t) * 0.6;
+        }
+        const p00 = c00 * 3, p10 = c10 * 3, p01 = c01 * 3, p11 = c11 * 3;
+        const br = dofBuf[p00] * w00 + dofBuf[p10] * w10 + dofBuf[p01] * w01 + dofBuf[p11] * w11;
+        const bg = dofBuf[p00 + 1] * w00 + dofBuf[p10 + 1] * w10 + dofBuf[p01 + 1] * w01 + dofBuf[p11 + 1] * w11;
+        const bb = dofBuf[p00 + 2] * w00 + dofBuf[p10 + 2] * w10 + dofBuf[p01 + 2] * w01 + dofBuf[p11 + 2] * w11;
+        const r = outData[sp] + (br - outData[sp]) * mix;
+        const g = outData[sp + 1] + (bg - outData[sp + 1]) * mix;
+        const b = outData[sp + 2] + (bb - outData[sp + 2]) * mix;
+        outData[sp] = r < 0 ? 0 : (r > 255 ? 255 : r);
+        outData[sp + 1] = g < 0 ? 0 : (g > 255 ? 255 : g);
+        outData[sp + 2] = b < 0 ? 0 : (b > 255 ? 255 : b);
+      }
+    }
+  }
+
+  function applyHalationCompositeFast(outData, width, height, gw, gh, halBuf, bloomBuf, halGain, bloomGain) {
+    const invGh = 1 / height, invGw = 1 / width, ghM1 = gh - 1, gwM1 = gw - 1;
+    for (let y = 0; y < height; y++) {
+      const gyf = (y * invGh) * ghM1, gy0 = gyf | 0, gy1 = gy0 < ghM1 ? gy0 + 1 : gy0, fy = gyf - gy0, omy = 1 - fy;
+      let sp = y * width * 4;
+      for (let x = 0; x < width; x++, sp += 4) {
+        const gxf = (x * invGw) * gwM1, gx0 = gxf | 0, gx1 = gx0 < gwM1 ? gx0 + 1 : gx0, fx = gxf - gx0, omx = 1 - fx;
+        const p00 = (gy0 * gw + gx0) * 3, p10 = (gy0 * gw + gx1) * 3, p01 = (gy1 * gw + gx0) * 3, p11 = (gy1 * gw + gx1) * 3;
+        const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
+        let r = outData[sp], g = outData[sp + 1], b = outData[sp + 2];
+        if (halBuf) {
+          let hr = (halBuf[p00] * w00 + halBuf[p10] * w10 + halBuf[p01] * w01 + halBuf[p11] * w11) * halGain;
+          let hg = (halBuf[p00 + 1] * w00 + halBuf[p10 + 1] * w10 + halBuf[p01 + 1] * w01 + halBuf[p11 + 1] * w11) * halGain;
+          let hb = (halBuf[p00 + 2] * w00 + halBuf[p10 + 2] * w10 + halBuf[p01 + 2] * w01 + halBuf[p11 + 2] * w11) * halGain;
+          hr = hr < 0 ? 0 : (hr > 255 ? 255 : hr);
+          hg = hg < 0 ? 0 : (hg > 255 ? 255 : hg);
+          hb = hb < 0 ? 0 : (hb > 255 ? 255 : hb);
+          r = 255 - ((255 - r) * (255 - hr)) * 0.00392156862745098;
+          g = 255 - ((255 - g) * (255 - hg)) * 0.00392156862745098;
+          b = 255 - ((255 - b) * (255 - hb)) * 0.00392156862745098;
+        }
+        if (bloomBuf) {
+          let brV = (bloomBuf[p00] * w00 + bloomBuf[p10] * w10 + bloomBuf[p01] * w01 + bloomBuf[p11] * w11) * bloomGain;
+          let bgV = (bloomBuf[p00 + 1] * w00 + bloomBuf[p10 + 1] * w10 + bloomBuf[p01 + 1] * w01 + bloomBuf[p11 + 1] * w11) * bloomGain;
+          let bbV = (bloomBuf[p00 + 2] * w00 + bloomBuf[p10 + 2] * w10 + bloomBuf[p01 + 2] * w01 + bloomBuf[p11 + 2] * w11) * bloomGain;
+          brV = brV < 0 ? 0 : (brV > 255 ? 255 : brV);
+          bgV = bgV < 0 ? 0 : (bgV > 255 ? 255 : bgV);
+          bbV = bbV < 0 ? 0 : (bbV > 255 ? 255 : bbV);
+          r = 255 - ((255 - r) * (255 - brV)) * 0.00392156862745098;
+          g = 255 - ((255 - g) * (255 - bgV)) * 0.00392156862745098;
+          b = 255 - ((255 - b) * (255 - bbV)) * 0.00392156862745098;
+        }
+        outData[sp] = r < 0 ? 0 : (r > 255 ? 255 : r);
+        outData[sp + 1] = g < 0 ? 0 : (g > 255 ? 255 : g);
+        outData[sp + 2] = b < 0 ? 0 : (b > 255 ? 255 : b);
+      }
+    }
+  }
+
+  function applyGrainVignetteFast(outData, width, height, invW, invH, grainScale, grainGain, vigStr, vigPowLut, isBWFilm, flashBurst, grainTile) {
+    const grainMask = GRAIN_SIZE - 1;
+    const hasGrain = grainGain > 0.2;
+    const hasVig = vigStr > 0.01;
+    let gxLut = null;
+    if (hasGrain) {
+      gxLut = new Int32Array(width);
+      for (let x = 0; x < width; x++) gxLut[x] = ((x * grainScale) | 0) & grainMask;
+    }
+    const inv255G = 1 / 255;
+    for (let y = 0; y < height; y++) {
+      const ny = (y * invH - 0.5) * 2, ny2 = ny * ny;
+      const gRow = hasGrain ? ((((y * grainScale) | 0) & grainMask) * GRAIN_SIZE) : 0;
+      let sp = y * width * 4;
+      for (let x = 0; x < width; x++, sp += 4) {
+        let r = outData[sp], g = outData[sp + 1], b = outData[sp + 2];
+        const nx = (x * invW - 0.5) * 2;
+        const r2 = nx * nx + ny2;
+        if (flashBurst) {
+          const fMask = Math.max(0, 1 - r2 * 0.56);
+          const curLum = (0.299 * r + 0.587 * g + 0.114 * b) * inv255G;
+          const fillHeadroom = Math.max(0.06, 1 - curLum * curLum * 0.90);
+          const fGain = 1 + fMask * 0.16 * fillHeadroom;
+          r = r * fGain + fMask * 7.5 * fillHeadroom;
+          g = g * fGain + fMask * 7.0 * fillHeadroom;
+          b = b * fGain + fMask * 5.5 * fillHeadroom;
+        }
+        if (hasVig) {
+          const vigIdx = r2 >= 2 ? 256 : ((r2 * 128) | 0);
+          const vig = Math.max(0.18, 1 - vigStr * vigPowLut[vigIdx]);
+          r *= vig; g *= vig; b *= vig;
+        }
+        if (hasGrain) {
+          const lumN = (0.299 * r + 0.587 * g + 0.114 * b) * inv255G;
+          const n = grainTile[gRow + gxLut[x]] * grainGain * (0.30 + 2.1 * lumN * (1 - lumN));
+          if (isBWFilm) { r += n; g += n; b += n; }
+          else { r += n * 1.02; g += n * 0.98; b += n * 1.03; }
+        }
+        outData[sp] = r < 0 ? 0 : (r > 255 ? 255 : r);
+        outData[sp + 1] = g < 0 ? 0 : (g > 255 ? 255 : g);
+        outData[sp + 2] = b < 0 ? 0 : (b > 255 ? 255 : b);
+      }
+    }
+  }
+
+  function applySpatialSampleFast(src, outData, width, height, barrelK, hasCA, caStr, shakeMix, shakePx, deSharp, edgeSoft, softFocus) {
+    const invW = 1 / width, invH = 1 / height;
+    const wM1 = width - 1, hM1 = height - 1;
+    const rowStride = width * 4;
+    const doBarrel = barrelK > 0.002;
+    const barrelDenom = 1 / (1 + 2 * barrelK);
+    const doShake = shakeMix > 0.03;
+    const doDeSharp = deSharp > 0.02;
+    const doSoft2 = softFocus > 0.25;
+    const sf = softFocus * 0.52;
+    for (let y = 0; y < height; y++) {
+      const ny = (y * invH - 0.5) * 2;
+      const ny2 = ny * ny;
+      const yStride = y * rowStride;
+      const yInner = y > 0 && y < hM1;
+      const yInner2 = y > 1 && y < height - 2;
+      for (let x = 0; x < width; x++) {
+        const p = yStride + x * 4;
+        const nx = (x * invW - 0.5) * 2;
+        const dist2 = nx * nx + ny2;
+        let r0, g0, b0;
+        if (doBarrel) {
+          const distScale = (1 + barrelK * dist2) * barrelDenom;
+          const fx = (0.5 + 0.5 * nx * distScale) * wM1;
+          const fy = (0.5 + 0.5 * ny * distScale) * hM1;
+          const x0 = fx | 0, y0 = fy | 0;
+          const x1 = x0 < wM1 ? x0 + 1 : x0;
+          const y1 = y0 < hM1 ? y0 + 1 : y0;
+          const tx = fx - x0, ty = fy - y0;
+          const y0Off = y0 * rowStride, y1Off = y1 * rowStride;
+          const p00 = y0Off + x0 * 4, p10 = y0Off + x1 * 4;
+          const p01 = y1Off + x0 * 4, p11 = y1Off + x1 * 4;
+          const omx = 1 - tx, omy = 1 - ty;
+          const w00 = omx * omy, w10 = tx * omy, w01 = omx * ty, w11 = tx * ty;
+          g0 = src[p00 + 1] * w00 + src[p10 + 1] * w10 + src[p01 + 1] * w01 + src[p11 + 1] * w11;
+          if (hasCA && dist2 > 0.25) {
+            const shift = caStr * dist2;
+            const rRaw = (fx - nx * shift + 0.5) | 0;
+            const bRaw = (fx + nx * shift + 0.5) | 0;
+            const rx = rRaw < 0 ? 0 : (rRaw > wM1 ? wM1 : rRaw);
+            const bx = bRaw < 0 ? 0 : (bRaw > wM1 ? wM1 : bRaw);
+            r0 = src[y0Off + rx * 4];
+            b0 = src[y0Off + bx * 4 + 2];
+          } else {
+            r0 = src[p00] * w00 + src[p10] * w10 + src[p01] * w01 + src[p11] * w11;
+            b0 = src[p00 + 2] * w00 + src[p10 + 2] * w10 + src[p01 + 2] * w01 + src[p11 + 2] * w11;
+          }
+        } else {
+          r0 = src[p]; g0 = src[p + 1]; b0 = src[p + 2];
+          if (hasCA && dist2 > 0.25) {
+            const shift = (caStr * dist2 + 0.5) | 0;
+            if (shift >= 1) {
+              const rRaw = (x - nx * shift + 0.5) | 0;
+              const bRaw = (x + nx * shift + 0.5) | 0;
+              const rx = rRaw < 0 ? 0 : (rRaw > wM1 ? wM1 : rRaw);
+              const bx = bRaw < 0 ? 0 : (bRaw > wM1 ? wM1 : bRaw);
+              r0 = src[yStride + rx * 4];
+              b0 = src[yStride + bx * 4 + 2];
+            }
+          }
+          if (doShake) {
+            const sxL = x > shakePx ? x - shakePx : 0;
+            const sxR = x + shakePx < wM1 ? x + shakePx : wM1;
+            const pSL = yStride + sxL * 4, pSR = yStride + sxR * 4;
+            r0 += ((src[pSL] + src[pSR]) * 0.5 - r0) * shakeMix;
+            g0 += ((src[pSL + 1] + src[pSR + 1]) * 0.5 - g0) * shakeMix;
+            b0 += ((src[pSL + 2] + src[pSR + 2]) * 0.5 - b0) * shakeMix;
+          }
+        }
+        if (doDeSharp && yInner && x > 0 && x < wM1) {
+          const pL = p - 4, pR = p + 4, pU = p - rowStride, pD = p + rowStride;
+          const efRaw = deSharp * (1 + dist2 * edgeSoft * 2);
+          const ef = efRaw > 1 ? 1 : efRaw;
+          r0 += ((src[pL] + src[pR] + src[pU] + src[pD]) * 0.25 - r0) * ef;
+          g0 += ((src[pL + 1] + src[pR + 1] + src[pU + 1] + src[pD + 1]) * 0.25 - g0) * ef;
+          b0 += ((src[pL + 2] + src[pR + 2] + src[pU + 2] + src[pD + 2]) * 0.25 - b0) * ef;
+          if (doSoft2 && yInner2 && x > 1 && x < width - 2) {
+            const pL2 = p - 8, pR2 = p + 8, pU2 = p - rowStride * 2, pD2 = p + rowStride * 2;
+            r0 += ((src[pL2] + src[pR2] + src[pU2] + src[pD2]) * 0.25 - r0) * sf;
+            g0 += ((src[pL2 + 1] + src[pR2 + 1] + src[pU2 + 1] + src[pD2 + 1]) * 0.25 - g0) * sf;
+            b0 += ((src[pL2 + 2] + src[pR2 + 2] + src[pU2 + 2] + src[pD2 + 2]) * 0.25 - b0) * sf;
+          }
+        }
+        outData[p] = r0 <= 0 ? 0 : (r0 >= 255 ? 255 : (r0 | 0));
+        outData[p + 1] = g0 <= 0 ? 0 : (g0 >= 255 ? 255 : (g0 | 0));
+        outData[p + 2] = b0 <= 0 ? 0 : (b0 >= 255 ? 255 : (b0 | 0));
+        outData[p + 3] = 255;
+      }
+    }
+  }
+
+  function computeBokehDofFast(outData, width, height, div, bokehTbl, dofStr, dofRad, fxC, fyC, isDiptychDof, ax, ayBase, falloff, maxCoCScale, mfCoCBase, mfDefocus, catScale) {
+    const bw = Math.max(48, Math.floor(width / div)), bh = Math.max(48, Math.floor(height / div));
+    const bw2 = Math.max(24, bw >> 1), bh2 = Math.max(24, bh >> 1);
+    const bw4 = Math.max(12, bw2 >> 1), bh4 = Math.max(12, bh2 >> 1);
+    const lin1 = new Float32Array(bw * bh * 3);
+    const cocMap = new Float32Array(bw * bh);
+    const { linLut, nTaps, ox, oy, ow } = bokehTbl;
+    const invBw = 1 / bw, invBh = 1 / bh;
+
+    for (let by = 0; by < bh; by++) {
+      const sy0 = Math.min(height - 1, Math.floor((by * height) / bh));
+      const sy1 = div > 1 ? Math.min(height - 1, sy0 + Math.floor(div * 0.5)) : sy0;
+      const ny = ((by + 0.5) * invBh - 0.5) * 2;
+      const dyRaw = ny - fyC;
+      const dy = dyRaw * ayBase * (dyRaw < 0 ? 1.08 : 0.72);
+      const dy2 = dy * dy;
+      for (let bx = 0; bx < bw; bx++) {
+        const sx0 = Math.min(width - 1, Math.floor((bx * width) / bw));
+        const sx1 = div > 1 ? Math.min(width - 1, sx0 + Math.floor(div * 0.5)) : sx0;
+        const p00 = (sy0 * width + sx0) * 4;
+        const bp = (by * bw + bx) * 3;
+        if (div === 1) {
+          lin1[bp] = linLut[outData[p00]];
+          lin1[bp + 1] = linLut[outData[p00 + 1]];
+          lin1[bp + 2] = linLut[outData[p00 + 2]];
+        } else {
+          const p10 = (sy0 * width + sx1) * 4;
+          const p01 = (sy1 * width + sx0) * 4;
+          const p11 = (sy1 * width + sx1) * 4;
+          lin1[bp] = (linLut[outData[p00]] + linLut[outData[p10]] + linLut[outData[p01]] + linLut[outData[p11]]) * 0.25;
+          lin1[bp + 1] = (linLut[outData[p00 + 1]] + linLut[outData[p10 + 1]] + linLut[outData[p01 + 1]] + linLut[outData[p11 + 1]]) * 0.25;
+          lin1[bp + 2] = (linLut[outData[p00 + 2]] + linLut[outData[p10 + 2]] + linLut[outData[p01 + 2]] + linLut[outData[p11 + 2]]) * 0.25;
+        }
+        const u = (bx + 0.5) * invBw;
+        const nx = isDiptychDof ? ((u < 0.5 ? u * 2 : (u - 0.5) * 2) - 0.5) * 2 : (u - 0.5) * 2;
+        const dx = (nx - fxC) * ax;
+        const d = Math.sqrt(dx * dx + dy2);
+        let radCoC = 0;
+        if (dofStr > 0.04 && d > dofRad) {
+          const t = Math.min(1, (d - dofRad) / falloff);
+          radCoC = t * (0.62 + 0.38 * t) * maxCoCScale;
+        }
+        cocMap[by * bw + bx] = radCoC > mfCoCBase ? radCoC : mfCoCBase;
+      }
+    }
+
+    const lin2 = new Float32Array(bw2 * bh2 * 3);
+    for (let y2 = 0; y2 < bh2; y2++) {
+      const sy0 = Math.min(bh - 1, y2 * 2), sy1 = Math.min(bh - 1, sy0 + 1);
+      for (let x2 = 0; x2 < bw2; x2++) {
+        const sx0 = Math.min(bw - 1, x2 * 2), sx1 = Math.min(bw - 1, sx0 + 1);
+        const a = (sy0 * bw + sx0) * 3, b = (sy0 * bw + sx1) * 3, c = (sy1 * bw + sx0) * 3, d = (sy1 * bw + sx1) * 3;
+        const dst = (y2 * bw2 + x2) * 3;
+        lin2[dst] = (lin1[a] + lin1[b] + lin1[c] + lin1[d]) * 0.25;
+        lin2[dst + 1] = (lin1[a + 1] + lin1[b + 1] + lin1[c + 1] + lin1[d + 1]) * 0.25;
+        lin2[dst + 2] = (lin1[a + 2] + lin1[b + 2] + lin1[c + 2] + lin1[d + 2]) * 0.25;
+      }
+    }
+    const lin4 = new Float32Array(bw4 * bh4 * 3);
+    for (let y4 = 0; y4 < bh4; y4++) {
+      const sy0 = Math.min(bh2 - 1, y4 * 2), sy1 = Math.min(bh2 - 1, sy0 + 1);
+      for (let x4 = 0; x4 < bw4; x4++) {
+        const sx0 = Math.min(bw2 - 1, x4 * 2), sx1 = Math.min(bw2 - 1, sx0 + 1);
+        const a = (sy0 * bw2 + sx0) * 3, b = (sy0 * bw2 + sx1) * 3, c = (sy1 * bw2 + sx0) * 3, d = (sy1 * bw2 + sx1) * 3;
+        const dst = (y4 * bw4 + x4) * 3;
+        lin4[dst] = (lin2[a] + lin2[b] + lin2[c] + lin2[d]) * 0.25;
+        lin4[dst + 1] = (lin2[a + 1] + lin2[b + 1] + lin2[c + 1] + lin2[d + 1]) * 0.25;
+        lin4[dst + 2] = (lin2[a + 2] + lin2[b + 2] + lin2[c + 2] + lin2[d + 2]) * 0.25;
+      }
+    }
+
+    const blurEffort = Math.max(dofStr, mfDefocus * 1.2);
+    const maxRadPx = Math.max(4, bw * (0.015 + blurEffort * 0.026));
+    const dofBuf = new Float32Array(bw * bh * 3);
+    const bwM1 = bw - 1, bhM1 = bh - 1, bw2M1 = bw2 - 1, bh2M1 = bh2 - 1, bw4M1 = bw4 - 1, bh4M1 = bh4 - 1;
+    const s2x = bw2 / bw, s2y = bh2 / bh, s4x = bw4 / bw, s4y = bh4 / bh;
+
+    for (let by = 0; by < bh; by++) {
+      const ny = ((by + 0.5) * invBh - 0.5) * 2;
+      for (let bx = 0; bx < bw; bx++) {
+        const cIdx = by * bw + bx;
+        const coc = cocMap[cIdx];
+        if (coc < 0.004) continue;
+        const radPx = coc * maxRadPx;
+        const nx = ((bx + 0.5) * invBw - 0.5) * 2;
+        const rCorner2 = nx * nx + ny * ny;
+        let catStr = 0, rDirX = 1, rDirY = 0;
+        if (rCorner2 > 0.08 && mfDefocus <= 0.015) {
+          catStr = Math.min(0.36, dofStr * 0.30 * catScale) * Math.min(1, (rCorner2 - 0.08) * 0.45);
+          const invLen = 1 / Math.sqrt(rCorner2);
+          rDirX = nx * invLen;
+          rDirY = ny * invLen;
+        }
+        const subR = radPx * 0.23;
+        const lod = Math.max(0, Math.min(2, Math.log2(Math.max(1, subR * 1.15))));
+        const lodFloor = lod < 1 ? 0 : (lod < 2 ? 1 : 2);
+        const mipFrac = lod - lodFloor;
+        const mipA = lodFloor === 0 ? lin1 : (lodFloor === 1 ? lin2 : lin4);
+        const mwA = lodFloor === 0 ? bw : (lodFloor === 1 ? bw2 : bw4);
+        const mwAM1 = lodFloor === 0 ? bwM1 : (lodFloor === 1 ? bw2M1 : bw4M1);
+        const mhAM1 = lodFloor === 0 ? bhM1 : (lodFloor === 1 ? bh2M1 : bh4M1);
+        const msxA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2x : s4x);
+        const msyA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2y : s4y);
+        const hasBlend = mipFrac > 0.04 && lodFloor < 2;
+        const mipB = lodFloor === 0 ? lin2 : lin4;
+        const mwB = lodFloor === 0 ? bw2 : bw4;
+        const mwBM1 = lodFloor === 0 ? bw2M1 : bw4M1;
+        const mhBM1 = lodFloor === 0 ? bh2M1 : bh4M1;
+        const msxB = lodFloor === 0 ? s2x : s4x;
+        const msyB = lodFloor === 0 ? s2y : s4y;
+
+        let accR = 0, accG = 0, accB = 0, wSum = 0;
+        for (let k = 0; k < nTaps; k++) {
+          let tx = ox[k], ty = oy[k];
+          if (catStr > 0.001) {
+            const proj = tx * rDirX + ty * rDirY;
+            tx -= rDirX * proj * catStr;
+            ty -= rDirY * proj * catStr;
+          }
+          const sx = Math.max(0, Math.min(bwM1, bx + tx * radPx));
+          const sy = Math.max(0, Math.min(bhM1, by + ty * radPx));
+          const w = ow[k];
+          const mx = sx * msxA, my = sy * msyA;
+          const mx0 = mx | 0, my0 = my | 0;
+          const mx1 = mx0 < mwAM1 ? mx0 + 1 : mx0;
+          const my1 = my0 < mhAM1 ? my0 + 1 : my0;
+          const fx = mx - mx0, fy = my - my0;
+          const omx = 1 - fx, omy = 1 - fy;
+          const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
+          const q00 = (my0 * mwA + mx0) * 3, q10 = (my0 * mwA + mx1) * 3;
+          const q01 = (my1 * mwA + mx0) * 3, q11 = (my1 * mwA + mx1) * 3;
+          let sr = mipA[q00] * w00 + mipA[q10] * w10 + mipA[q01] * w01 + mipA[q11] * w11;
+          let sg = mipA[q00 + 1] * w00 + mipA[q10 + 1] * w10 + mipA[q01 + 1] * w01 + mipA[q11 + 1] * w11;
+          let sb = mipA[q00 + 2] * w00 + mipA[q10 + 2] * w10 + mipA[q01 + 2] * w01 + mipA[q11 + 2] * w11;
+          if (hasBlend) {
+            const bxM = sx * msxB, byM = sy * msyB;
+            const bx0 = bxM | 0, by0 = byM | 0;
+            const bx1 = bx0 < mwBM1 ? bx0 + 1 : bx0;
+            const by1 = by0 < mhBM1 ? by0 + 1 : by0;
+            const bfx = bxM - bx0, bfy = byM - by0;
+            const bomx = 1 - bfx, bomy = 1 - bfy;
+            const bw00 = bomx * bomy, bw10 = bfx * bomy, bw01 = bomx * bfy, bw11 = bfx * bfy;
+            const bq00 = (by0 * mwB + bx0) * 3, bq10 = (by0 * mwB + bx1) * 3;
+            const bq01 = (by1 * mwB + bx0) * 3, bq11 = (by1 * mwB + bx1) * 3;
+            const srB = mipB[bq00] * bw00 + mipB[bq10] * bw10 + mipB[bq01] * bw01 + mipB[bq11] * bw11;
+            const sgB = mipB[bq00 + 1] * bw00 + mipB[bq10 + 1] * bw10 + mipB[bq01 + 1] * bw01 + mipB[bq11 + 1] * bw11;
+            const sbB = mipB[bq00 + 2] * bw00 + mipB[bq10 + 2] * bw10 + mipB[bq01 + 2] * bw01 + mipB[bq11 + 2] * bw11;
+            sr += (srB - sr) * mipFrac;
+            sg += (sgB - sg) * mipFrac;
+            sb += (sbB - sb) * mipFrac;
+          }
+          accR += sr * w; accG += sg * w; accB += sb * w; wSum += w;
+        }
+        const invW = 1 / Math.max(1e-4, wSum);
+        let lr = accR * invW, lg = accG * invW, lb = accB * invW;
+        if (lr > 1) lr = lr / (1 + (lr - 1) * 0.45);
+        if (lg > 1) lg = lg / (1 + (lg - 1) * 0.45);
+        if (lb > 1) lb = lb / (1 + (lb - 1) * 0.45);
+        const dp = cIdx * 3;
+        dofBuf[dp] = Math.min(255, Math.sqrt(Math.max(0, lr)) * 255);
+        dofBuf[dp + 1] = Math.min(255, Math.sqrt(Math.max(0, lg)) * 255);
+        dofBuf[dp + 2] = Math.min(255, Math.sqrt(Math.max(0, lb)) * 255);
+      }
+    }
+    return { bw, bh, cocMap, dofBuf, maxRadPx };
+  }
+
+  function extractHalationBloomFast(outData, width, height, gw, gh, halBuf, bloomBuf) {
+    for (let gy = 0; gy < gh; gy++) {
+      const sy = Math.min(height - 1, gy * 4 + 1);
+      const yBase = sy * width, gRow = gy * gw;
+      for (let gx = 0; gx < gw; gx++) {
+        const sp = (yBase + Math.min(width - 1, gx * 4 + 1)) * 4;
+        const gp = (gRow + gx) * 3;
+        const r = outData[sp], g = outData[sp + 1], b = outData[sp + 2];
+        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        if (halBuf && lum > 195) { const t = (lum - 195) / 60; halBuf[gp] = 255 * t; halBuf[gp + 1] = 52 * t; halBuf[gp + 2] = 14 * t; }
+        if (bloomBuf && lum > 175) { const t = (lum - 175) / 80; bloomBuf[gp] = r * t; bloomBuf[gp + 1] = g * t; bloomBuf[gp + 2] = b * t; }
+      }
+    }
+  }
+
   function processFilmCanvas(sourceImgData, width, height, cfg) {
     const { phone, body, lens, film, strength, exposureEV, warmth, grainAmt, halationAmt, bloomAmt, vignetteAmt, leakType, leakAmt, frameType, dateStampText, frameNumberStr, flashBurst } = cfg;
     const src = sourceImgData.data;
-    const outData = new Uint8ClampedArray(src.length);
+    let outData = new Uint8ClampedArray(src.length);
     const str = strength / 100;
     const effectiveEV = exposureEV + (cfg.meteredCamera ? 0 : (lens.apertureEV || 0));
     const totalContrast = body.contrast * (lens.lensContrast || 1) * (1 - phone.contrastSoften) * film.contrast;
@@ -6720,22 +7097,149 @@
     const totalRolloff = body.highlightRolloff + phone.highlightRecover;
     const totalWarmth = warmth + phone.warmthOffset + body.bodyWarmth + lens.coatingWarmth;
     const totalTint = phone.tintOffset + body.bodyTint + lens.coatingTint;
-    const { lutR, lutG, lutB } = buildToneLUT(effectiveEV, totalContrast, totalLift, totalRolloff, totalWarmth, totalTint);
 
     // Keep stock character clear while preserving soft, natural developed-print gradations.
     const m = film.matrix, sT = film.shadowTint, mT = film.midTint, hT = film.highlightTint;
     const filmColorMix = 0.70;
     const filmTintMix = 0.70;
+    const inv255 = 1 / 255;
+    const rowStride = width * 4;
+    const fm00 = 1 + (m[0] - 1) * filmColorMix, fm01 = m[1] * filmColorMix, fm02 = m[2] * filmColorMix;
+    const fm10 = m[3] * filmColorMix, fm11 = 1 + (m[4] - 1) * filmColorMix, fm12 = m[5] * filmColorMix;
+    const fm20 = m[6] * filmColorMix, fm21 = m[7] * filmColorMix, fm22 = 1 + (m[8] - 1) * filmColorMix;
+    const sT0 = sT[0], sT1 = sT[1], sT2 = sT[2];
+    const mT0 = mT[0], mT1 = mT[1], mT2 = mT[2];
+    const hT0 = hT[0], hT1 = hT[1], hT2 = hT[2];
+    const isBWFilm = !!film.isBW;
+    const bwWeights = film.bwWeights || [0.30, 0.59, 0.11];
+    const bw0 = bwWeights[0], bw1 = bwWeights[1], bw2 = bwWeights[2];
+    const dispCast = !!body.disposableCast;
+    const foliageFs = film.foliageShift;
+    const foliageRShift = foliageFs ? foliageFs.rShift * filmColorMix : 0;
+    const foliageGBoost = foliageFs ? foliageFs.gBoost * filmColorMix : 0;
+    const foliageBShift = foliageFs ? foliageFs.bShift * filmColorMix : 0;
+    const foliageSatScale = foliageFs ? foliageFs.satScale : 1;
+    const skyShift = film.skyShift;
+    const skyCyanBoost = skyShift ? skyShift.cyanBoost * filmColorMix : 0;
+    const skyBDepth = skyShift ? skyShift.bDepth * filmColorMix : 0;
     const redShift = (film.redHueShift || 0) * filmColorMix;
     const skinWarm = (film.skinWarmth || 0) * filmColorMix;
     const vib = (film.vibrance || 0) * filmColorMix;
     const filmSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
     const softFocus = Math.max(body.softFocus || 0, lens.softFocus || 0);
     const deSharp = Math.min(0.85, phone.deSharpen + lens.edgeSoft * 0.45 + softFocus * 0.65);
+    const acutanceEnable = !cfg.ecoPreview && width >= 1200 && deSharp <= 0.02;
+    const sharpRad = width >= 2800 ? 2 : 1;
+    const acutanceGain = width >= 2800 ? 0.56 : 0.34;
+    const hasPhoneTame = phone.blueTame > 0 || phone.greenTame > 0 || phone.satScale !== 1;
+    const phoneSat = phone.satScale;
+    const phoneBlueFactor = 1 - phone.blueTame * 0.45;
+    const phoneGreenFactor = 1 - phone.greenTame * 0.45;
     const hasCA = lens.chromaticAb > 0.2, caStr = lens.chromaticAb * (width / 900);
     const barrelK = lens.barrelDistort || 0;
     const skinFlatter = lens.skinFlatter || 0;
+    const hasSkin = (film.skinProtect > 0 || skinFlatter > 0);
+    const skinProtectScale = (film.skinProtect || 0) * 0.48;
     const invW = 1 / width, invH = 1 / height;
+
+    const lut3dKey = `${film.id || ''}|${isBWFilm ? 1 : 0}|${dispCast ? 1 : 0}|${effectiveEV.toFixed(4)}|${totalContrast.toFixed(4)}|${totalLift.toFixed(4)}|${totalRolloff.toFixed(4)}|${totalWarmth.toFixed(3)}|${totalTint.toFixed(3)}|${hasPhoneTame ? `${phoneSat.toFixed(3)},${phoneBlueFactor.toFixed(3)},${phoneGreenFactor.toFixed(3)}` : '0'}|${skinFlatter.toFixed(3)}|${str.toFixed(4)}|${filmSaturation.toFixed(3)}|${vib.toFixed(3)}|${(film.skinProtect || 0).toFixed(3)}`;
+    let lut32 = globalThis.__filmLut32;
+    if (!lut32 || globalThis.__filmLut3dKey !== lut3dKey) {
+      const { lutR, lutG, lutB } = buildToneLUT(effectiveEV, totalContrast, totalLift, totalRolloff, totalWarmth, totalTint);
+      if (!lut32) lut32 = globalThis.__filmLut32 = new Uint32Array(33 * 33 * 33);
+      let idx = 0;
+      for (let ri = 0; ri < 33; ri++) {
+        const rv = ri === 32 ? 255 : (ri << 3);
+        for (let gi = 0; gi < 33; gi++) {
+          const gv = gi === 32 ? 255 : (gi << 3);
+          for (let bi = 0; bi < 33; bi++, idx++) {
+            const bv = bi === 32 ? 255 : (bi << 3);
+            let r0 = rv, g0 = gv, b0 = bv;
+            if (hasPhoneTame) {
+              const gray0 = 0.299 * r0 + 0.587 * g0 + 0.114 * b0;
+              let satF = phoneSat;
+              if (b0 > r0 && b0 > g0) satF *= phoneBlueFactor;
+              if (g0 > r0 && g0 > b0) satF *= phoneGreenFactor;
+              r0 = gray0 + (r0 - gray0) * satF;
+              g0 = gray0 + (g0 - gray0) * satF;
+              b0 = gray0 + (b0 - gray0) * satF;
+            }
+            const rBase = r0 <= 0 ? 0 : (r0 >= 255 ? 255 : (r0 | 0));
+            const gBase = g0 <= 0 ? 0 : (g0 >= 255 ? 255 : (g0 | 0));
+            const bBase = b0 <= 0 ? 0 : (b0 >= 255 ? 255 : (b0 | 0));
+            let r = lutR[rBase], g = lutG[gBase], b = lutB[bBase];
+            if (isBWFilm) {
+              const mono = r * bw0 + g * bw1 + b * bw2;
+              const lum = mono * inv255, wS = (1 - lum) * (1 - lum), wM = 4 * lum * (1 - lum), wH = lum * lum;
+              r = mono + (sT0 * wS + mT0 * wM + hT0 * wH) * filmTintMix;
+              g = mono + (sT1 * wS + mT1 * wM + hT1 * wH) * filmTintMix;
+              b = mono + (sT2 * wS + mT2 * wM + hT2 * wH) * filmTintMix;
+            } else {
+              let mr = r * fm00 + g * fm01 + b * fm02;
+              let mg = r * fm10 + g * fm11 + b * fm12;
+              let mb = r * fm20 + g * fm21 + b * fm22;
+              const lum = (0.299 * mr + 0.587 * mg + 0.114 * mb) * inv255;
+              const wS = (1 - lum) * (1 - lum), wM = 4 * lum * (1 - lum), wH = lum * lum;
+              mr += (sT0 * wS + mT0 * wM + hT0 * wH) * filmTintMix;
+              mg += (sT1 * wS + mT1 * wM + hT1 * wH) * filmTintMix;
+              mb += (sT2 * wS + mT2 * wM + hT2 * wH) * filmTintMix;
+              if (dispCast) {
+                mr -= 4 * wS;
+                mg += 6 * wS + 2 * wM;
+                mb += 5 * wS - 2 * wH;
+              }
+              if (foliageFs && mg > mr && mg > mb) {
+                const gDom = Math.min(1, (mg - (mr > mb ? mr : mb)) / 62);
+                mr += foliageRShift * gDom; mg += foliageGBoost * gDom; mb += foliageBShift * gDom;
+                if (foliageSatScale !== 1) {
+                  const gg = 0.299 * mr + 0.587 * mg + 0.114 * mb, mix = 1 + (foliageSatScale - 1) * gDom * filmColorMix;
+                  mr = gg + (mr - gg) * mix; mg = gg + (mg - gg) * mix; mb = gg + (mb - gg) * mix;
+                }
+              }
+              if (skyShift && mb > mr * 1.05 && mb > mg) {
+                const bDom = Math.min(1, (mb - (mr > mg ? mr : mg)) / 68);
+                mg += skyCyanBoost * bDom; mb += skyBDepth * bDom;
+              }
+              if (redShift !== 0 && mr > mg * 1.12 && mr > mb * 1.15) {
+                const rDom = Math.min(1, (mr - (mg > mb ? mg : mb)) / 72);
+                mg -= redShift * 0.65 * rDom;
+                mb += redShift * 0.85 * rDom;
+              }
+              if (hasSkin && rv > gv && gv > bv && (rv - bv) > 14 && lum > 0.18 && lum < 0.88) {
+                const sw = Math.max(0, 1 - Math.abs((rv - gv) - 28) / 48) * skinProtectScale;
+                mr += ((rv * 1.03 + skinWarm * 0.85) - mr) * sw;
+                mg += ((gv * 0.99 + skinWarm * 0.38) - mg) * sw;
+                mb += ((bv * 0.94 - skinWarm * 0.35) - mb) * sw;
+                if (skinFlatter > 0) {
+                  mr += skinFlatter * 22 * wM;
+                  mg += skinFlatter * 12 * wM;
+                  mb += skinFlatter * 6 * wM;
+                }
+              }
+              if (filmSaturation !== 1 || vib !== 0) {
+                const gray = 0.299 * mr + 0.587 * mg + 0.114 * mb;
+                const maxC = Math.max(mr, mg, mb), minC = Math.min(mr, mg, mb);
+                const curSat = Math.min(1, (maxC - minC) / 210);
+                const hiDesat = lum > 0.72 ? (lum - 0.72) * 0.42 : 0;
+                const effSat = Math.max(0, (filmSaturation + vib * (1 - curSat * 0.85)) * (1 - hiDesat));
+                mr = gray + (mr - gray) * effSat;
+                mg = gray + (mg - gray) * effSat;
+                mb = gray + (mb - gray) * effSat;
+              }
+              r = mr; g = mg; b = mb;
+            }
+            if (str < 0.999) {
+              r = rBase + (r - rBase) * str; g = gBase + (g - gBase) * str; b = bBase + (b - bBase) * str;
+            }
+            const ro = r <= 0 ? 0 : (r >= 255 ? 255 : (r + 0.5) | 0);
+            const go = g <= 0 ? 0 : (g >= 255 ? 255 : (g + 0.5) | 0);
+            const bo = b <= 0 ? 0 : (b >= 255 ? 255 : (b + 0.5) | 0);
+            lut32[idx] = ro | (go << 8) | (bo << 16);
+          }
+        }
+      }
+      globalThis.__filmLut3dKey = lut3dKey;
+    }
 
     let shakeMix = 0, shakePx = 0;
     const shutterShake = Number(cfg.shutterShakeRisk) || 0;
@@ -6743,7 +7247,7 @@
       let lumSum = 0, lumCnt = 0;
       const step = Math.max(4, Math.floor((width * height) / 2400)) * 4;
       for (let i = 0; i < src.length; i += step) {
-        lumSum += (0.299 * src[i] + 0.587 * src[i + 1] + 0.114 * src[i + 2]) / 255;
+        lumSum += (0.299 * src[i] + 0.587 * src[i + 1] + 0.114 * src[i + 2]) * inv255;
         lumCnt++;
       }
       const meanLum = lumCnt > 0 ? lumSum / lumCnt : 0.5;
@@ -6757,155 +7261,19 @@
       }
     }
 
-    for (let y = 0; y < height; y++) {
-      const ny = (y * invH - 0.5) * 2;
-      for (let x = 0; x < width; x++) {
-        const p = (y * width + x) * 4;
-        const nx = (x * invW - 0.5) * 2;
-        const dist2 = nx * nx + ny * ny;
-        let r0, g0, b0;
-
-        if (barrelK > 0.002) {
-          const distScale = (1 + barrelK * dist2) / (1 + 2 * barrelK);
-          const fx = (0.5 + 0.5 * nx * distScale) * (width - 1);
-          const fy = (0.5 + 0.5 * ny * distScale) * (height - 1);
-          const x0 = fx | 0, y0 = fy | 0;
-          const x1 = x0 < width - 1 ? x0 + 1 : x0;
-          const y1 = y0 < height - 1 ? y0 + 1 : y0;
-          const tx = fx - x0, ty = fy - y0;
-          const p00 = (y0 * width + x0) * 4, p10 = (y0 * width + x1) * 4;
-          const p01 = (y1 * width + x0) * 4, p11 = (y1 * width + x1) * 4;
-          const w00 = (1 - tx) * (1 - ty), w10 = tx * (1 - ty), w01 = (1 - tx) * ty, w11 = tx * ty;
-          g0 = src[p00 + 1] * w00 + src[p10 + 1] * w10 + src[p01 + 1] * w01 + src[p11 + 1] * w11;
-          if (hasCA && dist2 > 0.25) {
-            const shift = caStr * dist2;
-            const rx = Math.max(0, Math.min(width - 1, Math.round(fx - nx * shift)));
-            const bx = Math.max(0, Math.min(width - 1, Math.round(fx + nx * shift)));
-            r0 = src[(y0 * width + rx) * 4];
-            b0 = src[(y0 * width + bx) * 4 + 2];
-          } else {
-            r0 = src[p00] * w00 + src[p10] * w10 + src[p01] * w01 + src[p11] * w11;
-            b0 = src[p00 + 2] * w00 + src[p10 + 2] * w10 + src[p01 + 2] * w01 + src[p11 + 2] * w11;
-          }
-        } else {
-          r0 = src[p]; g0 = src[p + 1]; b0 = src[p + 2];
-          if (hasCA && dist2 > 0.25) {
-            const shift = Math.round(caStr * dist2);
-            if (shift >= 1) {
-              r0 = src[(y * width + Math.max(0, Math.min(width - 1, Math.round(x - nx * shift)))) * 4];
-              b0 = src[(y * width + Math.max(0, Math.min(width - 1, Math.round(x + nx * shift)))) * 4 + 2];
-            }
-          }
-          if (shakeMix > 0.03) {
-            const sxL = Math.max(0, x - shakePx), sxR = Math.min(width - 1, x + shakePx);
-            const pSL = (y * width + sxL) * 4, pSR = (y * width + sxR) * 4;
-            r0 += ((src[pSL] + src[pSR]) * 0.5 - r0) * shakeMix;
-            g0 += ((src[pSL + 1] + src[pSR + 1]) * 0.5 - g0) * shakeMix;
-            b0 += ((src[pSL + 2] + src[pSR + 2]) * 0.5 - b0) * shakeMix;
-          }
-        }
-
-        if (deSharp > 0.02 && x > 0 && x < width - 1 && y > 0 && y < height - 1) {
-          const pL = p - 4, pR = p + 4, pU = p - width * 4, pD = p + width * 4;
-          const ef = Math.min(1, deSharp * (1 + dist2 * lens.edgeSoft * 2));
-          r0 += ((src[pL] + src[pR] + src[pU] + src[pD]) * 0.25 - r0) * ef;
-          g0 += ((src[pL+1] + src[pR+1] + src[pU+1] + src[pD+1]) * 0.25 - g0) * ef;
-          b0 += ((src[pL+2] + src[pR+2] + src[pU+2] + src[pD+2]) * 0.25 - b0) * ef;
-          if (softFocus > 0.25 && x > 1 && x < width - 2 && y > 1 && y < height - 2) {
-            const pL2 = p - 8, pR2 = p + 8, pU2 = p - width * 8, pD2 = p + width * 8;
-            const sf = softFocus * 0.52;
-            r0 += ((src[pL2] + src[pR2] + src[pU2] + src[pD2]) * 0.25 - r0) * sf;
-            g0 += ((src[pL2+1] + src[pR2+1] + src[pU2+1] + src[pD2+1]) * 0.25 - g0) * sf;
-            b0 += ((src[pL2+2] + src[pR2+2] + src[pU2+2] + src[pD2+2]) * 0.25 - b0) * sf;
-          }
-        } else if (!cfg.ecoPreview && width >= 1200 && x > 0 && x < width - 1 && y > 0 && y < height - 1) {
-          const pL = p - 4, pR = p + 4, pU = p - width * 4, pD = p + width * 4;
-          const acutance = 0.22;
-          r0 += (r0 - (src[pL] + src[pR] + src[pU] + src[pD]) * 0.25) * acutance;
-          g0 += (g0 - (src[pL+1] + src[pR+1] + src[pU+1] + src[pD+1]) * 0.25) * acutance;
-          b0 += (b0 - (src[pL+2] + src[pR+2] + src[pU+2] + src[pD+2]) * 0.25) * acutance;
-        }
-        if (phone.blueTame > 0 || phone.greenTame > 0 || phone.satScale !== 1) {
-          const gray0 = 0.299 * r0 + 0.587 * g0 + 0.114 * b0;
-          let satF = phone.satScale;
-          if (b0 > r0 && b0 > g0) satF *= (1 - phone.blueTame * 0.45);
-          if (g0 > r0 && g0 > b0) satF *= (1 - phone.greenTame * 0.45);
-          r0 = gray0 + (r0 - gray0) * satF;
-          g0 = gray0 + (g0 - gray0) * satF;
-          b0 = gray0 + (b0 - gray0) * satF;
-        }
-
-        const rBase = clamp255(r0), gBase = clamp255(g0), bBase = clamp255(b0);
-        let r = lutR[rBase | 0], g = lutG[gBase | 0], b = lutB[bBase | 0];
-
-        if (film.isBW) {
-          const w = film.bwWeights;
-          const mono = r * w[0] + g * w[1] + b * w[2];
-          const lum = mono / 255, wS = (1 - lum) * (1 - lum), wM = 4 * lum * (1 - lum), wH = lum * lum;
-          r = mono + (sT[0]*wS + mT[0]*wM + hT[0]*wH) * filmTintMix;
-          g = mono + (sT[1]*wS + mT[1]*wM + hT[1]*wH) * filmTintMix;
-          b = mono + (sT[2]*wS + mT[2]*wM + hT[2]*wH) * filmTintMix;
-        } else {
-          let mr = r*(1 + (m[0] - 1)*filmColorMix) + g*m[1]*filmColorMix + b*m[2]*filmColorMix;
-          let mg = r*m[3]*filmColorMix + g*(1 + (m[4] - 1)*filmColorMix) + b*m[5]*filmColorMix;
-          let mb = r*m[6]*filmColorMix + g*m[7]*filmColorMix + b*(1 + (m[8] - 1)*filmColorMix);
-          const lum = (0.299*mr + 0.587*mg + 0.114*mb) / 255;
-          const wS = (1 - lum) * (1 - lum), wM = 4 * lum * (1 - lum), wH = lum * lum;
-          mr += (sT[0]*wS + mT[0]*wM + hT[0]*wH) * filmTintMix;
-          mg += (sT[1]*wS + mT[1]*wM + hT[1]*wH) * filmTintMix;
-          mb += (sT[2]*wS + mT[2]*wM + hT[2]*wH) * filmTintMix;
-
-          if (body.disposableCast) {
-            mr -= 4 * wS;
-            mg += 6 * wS + 2 * wM;
-            mb += 5 * wS - 2 * wH;
-          }
-
-          if (film.foliageShift && mg > mr && mg > mb) {
-            const gDom = Math.min(1, (mg - Math.max(mr, mb)) / 62);
-            const fs = film.foliageShift;
-            mr += fs.rShift * gDom * filmColorMix; mg += fs.gBoost * gDom * filmColorMix; mb += fs.bShift * gDom * filmColorMix;
-            if (fs.satScale !== 1) {
-              const gg = 0.299*mr + 0.587*mg + 0.114*mb, mix = 1 + (fs.satScale - 1) * gDom * filmColorMix;
-              mr = gg + (mr - gg) * mix; mg = gg + (mg - gg) * mix; mb = gg + (mb - gg) * mix;
-            }
-          }
-          if (film.skyShift && mb > mr * 1.05 && mb > mg) {
-            const bDom = Math.min(1, (mb - Math.max(mr, mg)) / 68);
-            mg += film.skyShift.cyanBoost * bDom * filmColorMix; mb += film.skyShift.bDepth * bDom * filmColorMix;
-          }
-          if (redShift !== 0 && mr > mg * 1.12 && mr > mb * 1.15) {
-            const rDom = Math.min(1, (mr - Math.max(mg, mb)) / 72);
-            mg -= redShift * 0.65 * rDom;
-            mb += redShift * 0.85 * rDom;
-          }
-          if ((film.skinProtect > 0 || skinFlatter > 0) && r > g && g > b && (r - b) > 14 && lum > 0.18 && lum < 0.88) {
-            const sw = Math.max(0, 1 - Math.abs((r - g) - 28) / 48) * film.skinProtect * 0.48;
-            mr += ((r * 1.03 + skinWarm * 0.85) - mr) * sw;
-            mg += ((g * 0.99 + skinWarm * 0.38) - mg) * sw;
-            mb += ((b * 0.94 - skinWarm * 0.35) - mb) * sw;
-            if (skinFlatter > 0) {
-              mr += skinFlatter * 22 * wM;
-              mg += skinFlatter * 12 * wM;
-              mb += skinFlatter * 6 * wM;
-            }
-          }
-          if (filmSaturation !== 1 || vib !== 0) {
-            const gray = 0.299*mr + 0.587*mg + 0.114*mb;
-            const maxC = Math.max(mr, mg, mb), minC = Math.min(mr, mg, mb);
-            const curSat = Math.min(1, (maxC - minC) / 210);
-            const hiDesat = lum > 0.72 ? (lum - 0.72) * 0.42 : 0;
-            const effSat = Math.max(0, (filmSaturation + vib * (1 - curSat * 0.85)) * (1 - hiDesat));
-            mr = gray + (mr - gray) * effSat;
-            mg = gray + (mg - gray) * effSat;
-            mb = gray + (mb - gray) * effSat;
-          }
-          r = mr; g = mg; b = mb;
-        }
-        if (str < 0.999) {
-          r = rBase + (r - rBase) * str; g = gBase + (g - gBase) * str; b = bBase + (b - bBase) * str;
-        }
-        outData[p] = clamp255(r); outData[p+1] = clamp255(g); outData[p+2] = clamp255(b); outData[p+3] = 255;
+    const needSpatial = barrelK > 0.002 || hasCA || shakeMix > 0.03 || deSharp > 0.02;
+    if (!needSpatial) {
+      applyTetraLut3dFast(src, outData, lut32, src.length);
+      if (acutanceEnable) {
+        applyAcutanceCopyFast(outData, src, width, height, sharpRad, acutanceGain);
+        outData = src;
+      }
+    } else {
+      applySpatialSampleFast(src, outData, width, height, barrelK, hasCA, caStr, shakeMix, shakePx, deSharp, lens.edgeSoft || 0, softFocus);
+      applyTetraLut3dFast(outData, outData, lut32, outData.length);
+      if (acutanceEnable) {
+        applyAcutanceCopyFast(outData, src, width, height, sharpRad, acutanceGain);
+        outData = src;
       }
     }
 
@@ -6945,253 +7313,21 @@
       const maxCoCScale = Math.min(1, dofStr * 1.12);
       const mfCoCBase = mfDefocus > 0.015 ? Math.min(1, mfDefocus * 1.35) : 0;
 
-      const div = width >= 540 ? 3 : (width >= 360 ? 2 : 1);
-      const bw = Math.max(48, Math.floor(width / div)), bh = Math.max(48, Math.floor(height / div));
-      const bw2 = Math.max(24, bw >> 1), bh2 = Math.max(24, bh >> 1);
-      const bw4 = Math.max(12, bw2 >> 1), bh4 = Math.max(12, bh2 >> 1);
-
-      const lin1 = new Float32Array(bw * bh * 3);
-      const cocMap = new Float32Array(bw * bh);
-      const { linLut, nTaps, ox, oy, ow } = bokehTbl;
-      const invBw = 1 / bw, invBh = 1 / bh;
-
-      // 1. Build anti-aliased linear-light buffer + smooth gradual CoC map
-      for (let by = 0; by < bh; by++) {
-        const sy0 = Math.min(height - 1, Math.floor((by * height) / bh));
-        const sy1 = div > 1 ? Math.min(height - 1, sy0 + Math.floor(div * 0.5)) : sy0;
-        const ny = ((by + 0.5) * invBh - 0.5) * 2;
-        const dyRaw = ny - fyC;
-        const dy = dyRaw * ayBase * (dyRaw < 0 ? 1.08 : 0.72);
-        const dy2 = dy * dy;
-        for (let bx = 0; bx < bw; bx++) {
-          const sx0 = Math.min(width - 1, Math.floor((bx * width) / bw));
-          const sx1 = div > 1 ? Math.min(width - 1, sx0 + Math.floor(div * 0.5)) : sx0;
-          const p00 = (sy0 * width + sx0) * 4;
-          const bp = (by * bw + bx) * 3;
-          if (div === 1) {
-            lin1[bp] = linLut[outData[p00]];
-            lin1[bp + 1] = linLut[outData[p00 + 1]];
-            lin1[bp + 2] = linLut[outData[p00 + 2]];
-          } else {
-            const p10 = (sy0 * width + sx1) * 4;
-            const p01 = (sy1 * width + sx0) * 4;
-            const p11 = (sy1 * width + sx1) * 4;
-            lin1[bp] = (linLut[outData[p00]] + linLut[outData[p10]] + linLut[outData[p01]] + linLut[outData[p11]]) * 0.25;
-            lin1[bp + 1] = (linLut[outData[p00 + 1]] + linLut[outData[p10 + 1]] + linLut[outData[p01 + 1]] + linLut[outData[p11 + 1]]) * 0.25;
-            lin1[bp + 2] = (linLut[outData[p00 + 2]] + linLut[outData[p10 + 2]] + linLut[outData[p01 + 2]] + linLut[outData[p11 + 2]]) * 0.25;
-          }
-          const u = (bx + 0.5) * invBw;
-          const nx = isDiptychDof ? ((u < 0.5 ? u * 2 : (u - 0.5) * 2) - 0.5) * 2 : (u - 0.5) * 2;
-          const dx = (nx - fxC) * ax;
-          const d = Math.sqrt(dx * dx + dy2);
-          let radCoC = 0;
-          if (dofStr > 0.04 && d > dofRad) {
-            const t = Math.min(1, (d - dofRad) / falloff);
-            radCoC = t * (0.62 + 0.38 * t) * maxCoCScale;
-          }
-          cocMap[by * bw + bx] = radCoC > mfCoCBase ? radCoC : mfCoCBase;
-        }
-      }
-
-      // 2. Build 2x and 4x hierarchical linear mips for silky-smooth bokeh discs
-      const lin2 = new Float32Array(bw2 * bh2 * 3);
-      for (let y2 = 0; y2 < bh2; y2++) {
-        const sy0 = Math.min(bh - 1, y2 * 2), sy1 = Math.min(bh - 1, sy0 + 1);
-        for (let x2 = 0; x2 < bw2; x2++) {
-          const sx0 = Math.min(bw - 1, x2 * 2), sx1 = Math.min(bw - 1, sx0 + 1);
-          const a = (sy0 * bw + sx0) * 3, b = (sy0 * bw + sx1) * 3, c = (sy1 * bw + sx0) * 3, d = (sy1 * bw + sx1) * 3;
-          const dst = (y2 * bw2 + x2) * 3;
-          lin2[dst] = (lin1[a] + lin1[b] + lin1[c] + lin1[d]) * 0.25;
-          lin2[dst + 1] = (lin1[a + 1] + lin1[b + 1] + lin1[c + 1] + lin1[d + 1]) * 0.25;
-          lin2[dst + 2] = (lin1[a + 2] + lin1[b + 2] + lin1[c + 2] + lin1[d + 2]) * 0.25;
-        }
-      }
-      const lin4 = new Float32Array(bw4 * bh4 * 3);
-      for (let y4 = 0; y4 < bh4; y4++) {
-        const sy0 = Math.min(bh2 - 1, y4 * 2), sy1 = Math.min(bh2 - 1, sy0 + 1);
-        for (let x4 = 0; x4 < bw4; x4++) {
-          const sx0 = Math.min(bw2 - 1, x4 * 2), sx1 = Math.min(bw2 - 1, sx0 + 1);
-          const a = (sy0 * bw2 + sx0) * 3, b = (sy0 * bw2 + sx1) * 3, c = (sy1 * bw2 + sx0) * 3, d = (sy1 * bw2 + sx1) * 3;
-          const dst = (y4 * bw4 + x4) * 3;
-          lin4[dst] = (lin2[a] + lin2[b] + lin2[c] + lin2[d]) * 0.25;
-          lin4[dst + 1] = (lin2[a + 1] + lin2[b + 1] + lin2[c + 1] + lin2[d + 1]) * 0.25;
-          lin4[dst + 2] = (lin2[a + 2] + lin2[b + 2] + lin2[c + 2] + lin2[d + 2]) * 0.25;
-        }
-      }
-
-      // 3. Variable-CoC 24-tap Circular Bokeh with Trilinear Mip Blending & Cat's-Eye
-      const blurEffort = Math.max(dofStr, mfDefocus * 1.2);
-      const maxRadPx = Math.max(4, bw * (0.015 + blurEffort * 0.026));
-      const dofBuf = new Float32Array(bw * bh * 3);
-      const bwM1 = bw - 1, bhM1 = bh - 1, bw2M1 = bw2 - 1, bh2M1 = bh2 - 1, bw4M1 = bw4 - 1, bh4M1 = bh4 - 1;
-      const s2x = bw2 / bw, s2y = bh2 / bh, s4x = bw4 / bw, s4y = bh4 / bh;
-
-      for (let by = 0; by < bh; by++) {
-        const ny = ((by + 0.5) * invBh - 0.5) * 2;
-        for (let bx = 0; bx < bw; bx++) {
-          const cIdx = by * bw + bx;
-          const coc = cocMap[cIdx];
-          if (coc < 0.004) continue;
-
-          const radPx = coc * maxRadPx;
-          const nx = ((bx + 0.5) * invBw - 0.5) * 2;
-          const rCorner2 = nx * nx + ny * ny;
-          let catStr = 0, rDirX = 1, rDirY = 0;
-          if (rCorner2 > 0.08 && mfDefocus <= 0.015) {
-            catStr = Math.min(0.36, dofStr * 0.30 * (lens.bokehCatScale ?? 1.0)) * Math.min(1, (rCorner2 - 0.08) * 0.45);
-            const invLen = 1 / Math.sqrt(rCorner2);
-            rDirX = nx * invLen;
-            rDirY = ny * invLen;
-          }
-
-          // Smooth trilinear mip level: 0=lin1, 1=lin2, 2=lin4
-          const subR = radPx * 0.23;
-          const lod = Math.max(0, Math.min(2, Math.log2(Math.max(1, subR * 1.15))));
-          const lodFloor = lod < 1 ? 0 : (lod < 2 ? 1 : 2);
-          const mipFrac = lod - lodFloor;
-          const mipA = lodFloor === 0 ? lin1 : (lodFloor === 1 ? lin2 : lin4);
-          const mwA = lodFloor === 0 ? bw : (lodFloor === 1 ? bw2 : bw4);
-          const mwAM1 = lodFloor === 0 ? bwM1 : (lodFloor === 1 ? bw2M1 : bw4M1);
-          const mhAM1 = lodFloor === 0 ? bhM1 : (lodFloor === 1 ? bh2M1 : bh4M1);
-          const msxA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2x : s4x);
-          const msyA = lodFloor === 0 ? 1 : (lodFloor === 1 ? s2y : s4y);
-
-          const hasBlend = mipFrac > 0.04 && lodFloor < 2;
-          const mipB = lodFloor === 0 ? lin2 : lin4;
-          const mwB = lodFloor === 0 ? bw2 : bw4;
-          const mwBM1 = lodFloor === 0 ? bw2M1 : bw4M1;
-          const mhBM1 = lodFloor === 0 ? bh2M1 : bh4M1;
-          const msxB = lodFloor === 0 ? s2x : s4x;
-          const msyB = lodFloor === 0 ? s2y : s4y;
-
-          let accR = 0, accG = 0, accB = 0, wSum = 0;
-          for (let k = 0; k < nTaps; k++) {
-            let tx = ox[k], ty = oy[k];
-            if (catStr > 0.001) {
-              const proj = tx * rDirX + ty * rDirY;
-              tx -= rDirX * proj * catStr;
-              ty -= rDirY * proj * catStr;
-            }
-            const sx = Math.max(0, Math.min(bwM1, bx + tx * radPx));
-            const sy = Math.max(0, Math.min(bhM1, by + ty * radPx));
-            const w = ow[k];
-
-            const mx = sx * msxA, my = sy * msyA;
-            const mx0 = mx | 0, my0 = my | 0;
-            const mx1 = mx0 < mwAM1 ? mx0 + 1 : mx0;
-            const my1 = my0 < mhAM1 ? my0 + 1 : my0;
-            const fx = mx - mx0, fy = my - my0;
-            const omx = 1 - fx, omy = 1 - fy;
-            const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
-            const q00 = (my0 * mwA + mx0) * 3, q10 = (my0 * mwA + mx1) * 3;
-            const q01 = (my1 * mwA + mx0) * 3, q11 = (my1 * mwA + mx1) * 3;
-
-            let sr = mipA[q00] * w00 + mipA[q10] * w10 + mipA[q01] * w01 + mipA[q11] * w11;
-            let sg = mipA[q00 + 1] * w00 + mipA[q10 + 1] * w10 + mipA[q01 + 1] * w01 + mipA[q11 + 1] * w11;
-            let sb = mipA[q00 + 2] * w00 + mipA[q10 + 2] * w10 + mipA[q01 + 2] * w01 + mipA[q11 + 2] * w11;
-
-            if (hasBlend) {
-              const bxM = sx * msxB, byM = sy * msyB;
-              const bx0 = bxM | 0, by0 = byM | 0;
-              const bx1 = bx0 < mwBM1 ? bx0 + 1 : bx0;
-              const by1 = by0 < mhBM1 ? by0 + 1 : by0;
-              const bfx = bxM - bx0, bfy = byM - by0;
-              const bomx = 1 - bfx, bomy = 1 - bfy;
-              const bw00 = bomx * bomy, bw10 = bfx * bomy, bw01 = bomx * bfy, bw11 = bfx * bfy;
-              const bq00 = (by0 * mwB + bx0) * 3, bq10 = (by0 * mwB + bx1) * 3;
-              const bq01 = (by1 * mwB + bx0) * 3, bq11 = (by1 * mwB + bx1) * 3;
-              const srB = mipB[bq00] * bw00 + mipB[bq10] * bw10 + mipB[bq01] * bw01 + mipB[bq11] * bw11;
-              const sgB = mipB[bq00 + 1] * bw00 + mipB[bq10 + 1] * bw10 + mipB[bq01 + 1] * bw01 + mipB[bq11 + 1] * bw11;
-              const sbB = mipB[bq00 + 2] * bw00 + mipB[bq10 + 2] * bw10 + mipB[bq01 + 2] * bw01 + mipB[bq11 + 2] * bw11;
-              sr += (srB - sr) * mipFrac;
-              sg += (sgB - sg) * mipFrac;
-              sb += (sbB - sb) * mipFrac;
-            }
-
-            accR += sr * w;
-            accG += sg * w;
-            accB += sb * w;
-            wSum += w;
-          }
-          const invW = 1 / Math.max(1e-4, wSum);
-          let lr = accR * invW, lg = accG * invW, lb = accB * invW;
-          if (lr > 1) lr = lr / (1 + (lr - 1) * 0.45);
-          if (lg > 1) lg = lg / (1 + (lg - 1) * 0.45);
-          if (lb > 1) lb = lb / (1 + (lb - 1) * 0.45);
-          const dp = cIdx * 3;
-          dofBuf[dp] = Math.min(255, Math.sqrt(Math.max(0, lr)) * 255);
-          dofBuf[dp + 1] = Math.min(255, Math.sqrt(Math.max(0, lg)) * 255);
-          dofBuf[dp + 2] = Math.min(255, Math.sqrt(Math.max(0, lb)) * 255);
-        }
-      }
-
-      // 4. Wide feather transition composite (0.1..5.5px gradual ease, 100% bokeh beyond)
-      for (let y = 0; y < height; y++) {
-        const gyf = (y / height) * (bh - 1), gy0 = gyf | 0, gy1 = Math.min(bh - 1, gy0 + 1), fy = gyf - gy0;
-        const omy = 1 - fy;
-        for (let x = 0; x < width; x++) {
-          const gxf = (x / width) * (bw - 1), gx0 = gxf | 0, gx1 = Math.min(bw - 1, gx0 + 1), fx = gxf - gx0;
-          const omx = 1 - fx;
-          const w00 = omx * omy, w10 = fx * omy, w01 = omx * fy, w11 = fx * fy;
-          const c00 = gy0 * bw + gx0, c10 = gy0 * bw + gx1, c01 = gy1 * bw + gx0, c11 = gy1 * bw + gx1;
-          const coc = cocMap[c00] * w00 + cocMap[c10] * w10 + cocMap[c01] * w01 + cocMap[c11] * w11;
-          const radPx = coc * maxRadPx;
-          if (radPx <= 0.1) continue;
-          let mix = 1;
-          if (radPx < 5.5) {
-            const t = (radPx - 0.1) / 5.4;
-            mix = t * (2 - t) * 0.4 + t * t * (3 - 2 * t) * 0.6;
-          }
-          const p00 = c00 * 3, p10 = c10 * 3, p01 = c01 * 3, p11 = c11 * 3;
-          const br = dofBuf[p00] * w00 + dofBuf[p10] * w10 + dofBuf[p01] * w01 + dofBuf[p11] * w11;
-          const bg = dofBuf[p00 + 1] * w00 + dofBuf[p10 + 1] * w10 + dofBuf[p01 + 1] * w01 + dofBuf[p11 + 1] * w11;
-          const bb = dofBuf[p00 + 2] * w00 + dofBuf[p10 + 2] * w10 + dofBuf[p01 + 2] * w01 + dofBuf[p11 + 2] * w11;
-          const sp = (y * width + x) * 4;
-          outData[sp] = clamp255(outData[sp] + (br - outData[sp]) * mix);
-          outData[sp + 1] = clamp255(outData[sp + 1] + (bg - outData[sp + 1]) * mix);
-          outData[sp + 2] = clamp255(outData[sp + 2] + (bb - outData[sp + 2]) * mix);
-        }
-      }
+      const div = width >= 2400 ? 6 : (width >= 540 ? 3 : (width >= 360 ? 2 : 1));
+      const { bw, bh, cocMap, dofBuf, maxRadPx } = computeBokehDofFast(outData, width, height, div, bokehTbl, dofStr, dofRad, fxC, fyC, isDiptychDof, ax, ayBase, falloff, maxCoCScale, mfCoCBase, mfDefocus, lens.bokehCatScale ?? 1.0);
+      compositeBokehFeatherFast(outData, width, height, bw, bh, cocMap, dofBuf, maxRadPx);
     }
 
     if (halationAmt > 0 || bloomAmt > 0) {
       const gw = Math.max(32, Math.floor(width / 4)), gh = Math.max(24, Math.floor(height / 4));
       const halBuf = halationAmt > 0 ? new Float32Array(gw * gh * 3) : null;
       const bloomBuf = bloomAmt > 0 ? new Float32Array(gw * gh * 3) : null;
-      for (let gy = 0; gy < gh; gy++) {
-        const sy = Math.min(height - 1, gy * 4 + 1);
-        for (let gx = 0; gx < gw; gx++) {
-          const sp = (sy * width + Math.min(width - 1, gx * 4 + 1)) * 4, gp = (gy * gw + gx) * 3;
-          const r = outData[sp], g = outData[sp+1], b = outData[sp+2], lum = 0.299*r + 0.587*g + 0.114*b;
-          if (halBuf && lum > 195) { const t = (lum - 195) / 60; halBuf[gp] = 255*t; halBuf[gp+1] = 52*t; halBuf[gp+2] = 14*t; }
-          if (bloomBuf && lum > 175) { const t = (lum - 175) / 80; bloomBuf[gp] = r*t; bloomBuf[gp+1] = g*t; bloomBuf[gp+2] = b*t; }
-        }
-      }
+      extractHalationBloomFast(outData, width, height, gw, gh, halBuf, bloomBuf);
       const br = Math.max(3, Math.round(gw * 0.022));
       if (halBuf) { fastBoxBlurRGB(halBuf, gw, gh, br); fastBoxBlurRGB(halBuf, gw, gh, Math.max(2, Math.round(br * 0.6))); }
       if (bloomBuf) fastBoxBlurRGB(bloomBuf, gw, gh, br);
       const halGain = (halationAmt / 100) * 1.15 * str, bloomGain = (bloomAmt / 100) * 0.55;
-      for (let y = 0; y < height; y++) {
-        const gyf = (y / height) * (gh - 1), gy0 = gyf | 0, gy1 = Math.min(gh - 1, gy0 + 1), fy = gyf - gy0;
-        for (let x = 0; x < width; x++) {
-          const gxf = (x / width) * (gw - 1), gx0 = gxf | 0, gx1 = Math.min(gw - 1, gx0 + 1), fx = gxf - gx0;
-          const p00 = (gy0*gw+gx0)*3, p10 = (gy0*gw+gx1)*3, p01 = (gy1*gw+gx0)*3, p11 = (gy1*gw+gx1)*3;
-          const w00 = (1-fx)*(1-fy), w10 = fx*(1-fy), w01 = (1-fx)*fy, w11 = fx*fy;
-          const sp = (y * width + x) * 4;
-          let r = outData[sp], g = outData[sp+1], b = outData[sp+2];
-          if (halBuf) {
-            r = 255 - ((255 - r) * (255 - clamp255((halBuf[p00]*w00+halBuf[p10]*w10+halBuf[p01]*w01+halBuf[p11]*w11)*halGain))) / 255;
-            g = 255 - ((255 - g) * (255 - clamp255((halBuf[p00+1]*w00+halBuf[p10+1]*w10+halBuf[p01+1]*w01+halBuf[p11+1]*w11)*halGain))) / 255;
-            b = 255 - ((255 - b) * (255 - clamp255((halBuf[p00+2]*w00+halBuf[p10+2]*w10+halBuf[p01+2]*w01+halBuf[p11+2]*w11)*halGain))) / 255;
-          }
-          if (bloomBuf) {
-            r = 255 - ((255 - r) * (255 - clamp255((bloomBuf[p00]*w00+bloomBuf[p10]*w10+bloomBuf[p01]*w01+bloomBuf[p11]*w11)*bloomGain))) / 255;
-            g = 255 - ((255 - g) * (255 - clamp255((bloomBuf[p00+1]*w00+bloomBuf[p10+1]*w10+bloomBuf[p01+1]*w01+bloomBuf[p11+1]*w11)*bloomGain))) / 255;
-            b = 255 - ((255 - b) * (255 - clamp255((bloomBuf[p00+2]*w00+bloomBuf[p10+2]*w10+bloomBuf[p01+2]*w01+bloomBuf[p11+2]*w11)*bloomGain))) / 255;
-          }
-          outData[sp] = clamp255(r); outData[sp+1] = clamp255(g); outData[sp+2] = clamp255(b);
-        }
-      }
+      applyHalationCompositeFast(outData, width, height, gw, gh, halBuf, bloomBuf, halGain, bloomGain);
     }
 
     const bodyGrain = body.grainScale || 1.0;
@@ -7205,36 +7341,7 @@
         for (let i = 0; i <= 256; i++) vigPowLut[i] = Math.pow((i / 128) * 0.55, 1.35);
         globalThis.__vigPowLut = vigPowLut;
       }
-      for (let y = 0; y < height; y++) {
-        const ny = (y * invH - 0.5) * 2, ny2 = ny * ny, gy = ((y * grainScale) | 0) & (GRAIN_SIZE - 1);
-        for (let x = 0; x < width; x++) {
-          const sp = (y * width + x) * 4;
-          let r = outData[sp], g = outData[sp+1], b = outData[sp+2];
-          const nx = (x * invW - 0.5) * 2;
-          const r2 = nx * nx + ny2;
-          if (flashBurst) {
-            const fMask = Math.max(0, 1 - r2 * 0.56);
-            const curLum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            const fillHeadroom = Math.max(0.06, 1 - curLum * curLum * 0.90);
-            const fGain = 1 + fMask * 0.16 * fillHeadroom;
-            r = r * fGain + fMask * 7.5 * fillHeadroom;
-            g = g * fGain + fMask * 7.0 * fillHeadroom;
-            b = b * fGain + fMask * 5.5 * fillHeadroom;
-          }
-          if (vigStr > 0.01) {
-            const vig = Math.max(0.18, 1 - vigStr * vigPowLut[Math.min(256, (r2 * 128) | 0)]);
-            r *= vig; g *= vig; b *= vig;
-          }
-          if (grainGain > 0.2) {
-            const gx = ((x * grainScale) | 0) & (GRAIN_SIZE - 1);
-            const lumN = (0.299*r + 0.587*g + 0.114*b) / 255;
-            const n = GRAIN_TILE[gy * GRAIN_SIZE + gx] * grainGain * (0.30 + 2.1 * lumN * (1 - lumN));
-            if (film.isBW) { r += n; g += n; b += n; }
-            else { r += n * 1.02; g += n * 0.98; b += n * 1.03; }
-          }
-          outData[sp] = clamp255(r); outData[sp+1] = clamp255(g); outData[sp+2] = clamp255(b);
-        }
-      }
+      applyGrainVignetteFast(outData, width, height, invW, invH, grainScale, grainGain, vigStr, vigPowLut, !!film.isBW, !!flashBurst, GRAIN_TILE);
     }
 
     const photoCanvas = document.createElement('canvas');
@@ -7578,6 +7685,14 @@
         ${getFramePlacement.toString()}
         ${roundRect.toString()}
         ${blendDoubleExposureBuffers.toString()}
+        ${applyTetraLut3dFast.toString()}
+        ${applyAcutanceCopyFast.toString()}
+        ${compositeBokehFeatherFast.toString()}
+        ${applyHalationCompositeFast.toString()}
+        ${applyGrainVignetteFast.toString()}
+        ${applySpatialSampleFast.toString()}
+        ${computeBokehDofFast.toString()}
+        ${extractHalationBloomFast.toString()}
         ${workerProcess}
         self.onmessage = async event => {
           const message = event.data;
@@ -7588,8 +7703,8 @@
               blendDoubleExposureBuffers(pixels, new Uint8ClampedArray(message.mixPixels), message.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
             }
             const result = processFilmCanvas(new ImageData(pixels, message.width, message.height), message.width, message.height, message.config);
-            if (message.output === 'blob') {
-              const blob = await result.convertToBlob({ type: 'image/jpeg', quality: message.quality || 0.94 });
+            if (message.output === 'blob' && typeof result.convertToBlob === 'function') {
+              const blob = await result.convertToBlob({ type: 'image/jpeg', quality: message.quality || 0.96 });
               self.postMessage({ type: 'result', id: message.id, output: 'blob', blob });
             } else {
               const bitmap = result.transferToImageBitmap();
@@ -7673,7 +7788,7 @@
         mixPixels = canZeroCopyMix ? mData.buffer : mData.slice().buffer;
         transfer.push(mixPixels);
       }
-      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, mixPixels, mixPct: job.mixPct ?? 50, config: job.config, output: 'bitmap', quality: job.quality }, transfer);
+      filmWorker.postMessage({ id: job.id, width: job.width, height: job.height, pixels, mixPixels, mixPct: job.mixPct ?? 50, config: job.config, output: job.output === 'blob' ? 'blob' : 'bitmap', quality: job.quality }, transfer);
     } catch (error) {
       filmWorkerActiveJob = null;
       if (job.imageData?.data?.byteLength) runFilmJobFallback(job).then(job.resolve, job.reject).finally(pumpFilmWorker);
@@ -8142,8 +8257,6 @@
     el._t = setTimeout(() => el.classList.remove('show'), 2200);
   }
 
-  const APERTURE_STOPS = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16];
-  const APERTURE_SUB_STOPS = [1.7, 2.4, 3.3, 4.8, 6.7, 9.5, 13];
   const STOP_SPACING_PX = 48;
   const AP_F14_OFFSET = 2 * Math.log2(1.4);
 
@@ -8411,7 +8524,7 @@
       let edgeEnergy = 0.08;
       let skyScore = 0;
       try {
-        const src = hasLiveVideo ? camVideo : (state.previewSourceCanvas || state.fullSourceCanvas);
+        const src = hasLiveVideo ? camVideo : getCameraSimulatorSource(true);
         if (src) {
           const srcW = src.videoWidth || src.width || 300;
           const srcH = src.videoHeight || src.height || 200;
@@ -8421,7 +8534,7 @@
           const sy = Math.max(0, Math.min(srcH - ph, Math.round(ny * srcH - ph * 0.5)));
           const c = document.createElement('canvas');
           c.width = 10; c.height = 10;
-          const ctx = c.getContext('2d');
+          const ctx = c.getContext('2d', { willReadFrequently: true });
           ctx.drawImage(src, sx, sy, pw, ph, 0, 0, 10, 10);
           const data = ctx.getImageData(0, 0, 10, 10).data;
           let lumSum = 0, gradSum = 0, blueSum = 0, redSum = 0;
@@ -8874,8 +8987,11 @@
   function getLabTargetDimensions(srcCanvas, maxDim, maxPixels = 0) {
     const { body, lens } = getSelectedGear();
     const isUserUploaded = !state.activeSampleId && !state.sourceFromCameraRoll;
+    const isHiResExport = maxDim >= 2400;
     if (state.sourceIsDiptych) {
-      const s = Math.min(1, maxDim / Math.max(srcCanvas.width, srcCanvas.height));
+      const srcLong = Math.max(srcCanvas.width, srcCanvas.height);
+      const targetLong = isHiResExport ? Math.max(3840, Math.min(maxDim, srcLong)) : Math.min(srcLong, maxDim);
+      const s = targetLong / Math.max(1, srcLong);
       return {
         w: Math.max(100, Math.round(srcCanvas.width * s)),
         h: Math.max(100, Math.round(srcCanvas.height * s)),
@@ -8884,7 +9000,7 @@
       };
     }
     if (body.id === 'half-frame' && state.hfDiptychMode) {
-      let w = Math.min(maxDim, 1260);
+      let w = isHiResExport ? Math.min(maxDim, 3840) : Math.min(maxDim, 1260);
       w = Math.max(240, Math.round(w));
       let h = Math.max(160, Math.round(w * (840 / 1260)));
       if (maxPixels > 0 && w * h > maxPixels) {
@@ -8909,7 +9025,9 @@
     else sh = srcW / ratio;
     sw /= Math.max(1.0, zoom || 1.0);
     sh /= Math.max(1.0, zoom || 1.0);
-    const effectiveMax = maxDim > 820 ? Math.min(maxDim, Math.max(240, Math.round(Math.max(sw, sh)))) : maxDim;
+    const effectiveMax = isHiResExport
+      ? Math.max(3840, Math.min(maxDim, Math.max(240, Math.round(Math.max(sw, sh)))))
+      : maxDim;
     let w, h;
     if (ratio >= 1) {
       w = Math.min(effectiveMax, Math.max(180, Math.round(effectiveMax)));
@@ -9237,6 +9355,15 @@
     renderPreview(true);
   }
 
+  let camSceneFullCanvas = null;
+  let camScenePreviewCanvas = null;
+  let camSceneVersion = 0;
+
+  function getCameraSimulatorSource(preview = false) {
+    if (preview) return state.sourceFromCameraRoll ? (camScenePreviewCanvas || SAMPLES[0]?.canvas || state.previewSourceCanvas) : state.previewSourceCanvas;
+    return state.sourceFromCameraRoll ? (camSceneFullCanvas || SAMPLES[0]?.canvas || state.fullSourceCanvas) : (state.fullSourceCanvas || SAMPLES[0]?.canvas);
+  }
+
   function loadSourceCanvas(srcCanvas, exifData = null, opts = {}) {
     state.fullSourceCanvas = srcCanvas;
     state.exportCaption = '';
@@ -9258,19 +9385,29 @@
     state.exif = exifData;
 
     const prevC = makeScaledPreviewCanvas(srcCanvas);
+    if (!opts.fromCameraRoll) {
+      camSceneFullCanvas = srcCanvas;
+      camScenePreviewCanvas = prevC;
+      camSceneVersion += 1;
 
-    // Quick 16-pt luminance sample for telephoto shutter-shake risk estimation
-    try {
-      const meterC = document.createElement('canvas');
-      meterC.width = 4; meterC.height = 4;
-      const mCtx = meterC.getContext('2d');
-      mCtx.drawImage(prevC, 0, 0, 4, 4);
-      const md = mCtx.getImageData(0, 0, 4, 4).data;
-      let sum = 0;
-      for (let i = 0; i < md.length; i += 4) sum += (0.299 * md[i] + 0.587 * md[i + 1] + 0.114 * md[i + 2]) / 255;
-      sceneMeanLum = sum / 16;
-      liveSceneLum = sceneMeanLum;
-    } catch (e) { sceneMeanLum = 0.5; liveSceneLum = 0.5; }
+      // Quick 16-pt luminance sample for camera exposure & telephoto shutter-shake risk estimation
+      try {
+        const meterC = document.createElement('canvas');
+        meterC.width = 4; meterC.height = 4;
+        const mCtx = meterC.getContext('2d', { willReadFrequently: true });
+        mCtx.drawImage(prevC, 0, 0, 4, 4);
+        const md = mCtx.getImageData(0, 0, 4, 4).data;
+        let sum = 0;
+        for (let i = 0; i < md.length; i += 4) sum += (0.299 * md[i] + 0.587 * md[i + 1] + 0.114 * md[i + 2]) / 255;
+        sceneMeanLum = sum / 16;
+        liveSceneLum = sceneMeanLum;
+      } catch (e) { sceneMeanLum = 0.5; liveSceneLum = 0.5; }
+
+      state.phoneId = 'auto-detect';
+      state.focusPoint = { x: 0.5, y: 0.48 };
+      updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
+      cameraLastStaticKey = '';
+    }
 
     state.previewSourceCanvas = prevC;
     state.previewSourceData = null;
@@ -9279,12 +9416,7 @@
       ? Number(opts.frameSeed)
       : (((previewSourceVersion * 2654435761) + (srcCanvas.width * 31) + srcCanvas.height) >>> 0);
     resetLabZoom();
-
-    state.phoneId = 'auto-detect';
-    state.focusPoint = { x: 0.5, y: 0.48 };
-    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf', center: state.focusPoint });
     labRenderDirty = true;
-    cameraLastStaticKey = '';
 
     syncAllUI();
     renderPreview(!!opts.forcePreviewRender);
@@ -12229,20 +12361,9 @@
     return { w: Math.max(220, Math.round(h * ratio)), h, ratio };
   }
 
-  function getCameraCaptureDimensions(body, lens, src = null) {
+  function getCameraCaptureDimensions(body, lens) {
     const ratio = getBodyAspect(body, lens);
-    let maxLong = 3840;
-    const srcW = src?.videoWidth || src?.width || 0;
-    const srcH = src?.videoHeight || src?.height || 0;
-    if (srcW > 0 && srcH > 0) {
-      const srcRatio = srcW / srcH;
-      let sw = srcW, sh = srcH;
-      if (srcRatio > ratio) sw = srcH * ratio;
-      else sh = srcW / ratio;
-      const z = Math.max(1, lens?.cropZoom || 1);
-      const croppedLong = Math.max(sw / z, sh / z);
-      maxLong = Math.min(3840, Math.max(2560, Math.round(croppedLong)));
-    }
+    const maxLong = 3840;
     if (ratio >= 1) {
       const w = maxLong;
       return { w, h: Math.max(420, Math.round(w / ratio)), ratio };
@@ -13364,7 +13485,11 @@
           gl.activeTexture(gl.TEXTURE0);
           gl.bindTexture(gl.TEXTURE_2D, texSrc);
           gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+          if (uploadedSrcW === srcW && uploadedSrcH === srcH && uploadedSrcW > 0) {
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, src);
+          } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+          }
           uploadedSrcVer = isVideo ? -1 : sourceVer;
           uploadedSrcW = srcW; uploadedSrcH = srcH;
         }
@@ -13574,20 +13699,21 @@
       if (document.hidden || isCameraObscuredByOverlay()) return;
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
-      const src = hasLiveVideo ? camVideo : state.previewSourceCanvas;
+      const src = hasLiveVideo ? camVideo : getCameraSimulatorSource(true);
       if (!src) return;
 
       const gpu = getGpuCameraRenderer();
       const gpuReady = !!(gpu && gpu.isSupported());
 
       if (hasLiveVideo) {
-        const interval = gpuReady ? 80 : 140;
+        const isCapturing = !!document.getElementById('btnShutter')?.disabled;
+        const interval = isCapturing ? 180 : (gpuReady ? 90 : 150);
         const elapsed = ts - last;
         const token = (state.camLoopToken = (state.camLoopToken || 0) + 1);
         window.clearTimeout(state.camLoopTimer);
         state.camAnimId = -1;
         if (elapsed < interval) {
-          const wait = Math.max(12, Math.round(interval - elapsed));
+          const wait = Math.max(16, Math.round(interval - elapsed));
           state.camLoopTimer = window.setTimeout(() => {
             state.camLoopTimer = 0;
             if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
@@ -13599,12 +13725,12 @@
           state.camLoopTimer = 0;
           if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
           state.camAnimId = requestAnimationFrame(loop);
-        }, gpuReady ? 68 : 125);
-        if (!gpuReady && cameraJobInFlight) return;
+        }, gpuReady ? 82 : 135);
+        if (isCapturing || (!gpuReady && cameraJobInFlight)) return;
       }
 
       const { phone, body, lens, film } = getSelectedGear();
-      if (hasLiveVideo && (ts - lastLiveMeterTs) >= 320) {
+      if (hasLiveVideo && (ts - lastLiveMeterTs) >= 420) {
         lastLiveMeterTs = ts;
         try {
           if (!liveLumCanvas) {
@@ -13631,7 +13757,7 @@
       const stageDim = getCameraStageDimensions(body, lens);
       const targetW = stageDim.w;
       const targetH = stageDim.h;
-      const stateKey = `${hasLiveVideo ? 'live' : (state.activeSampleId || 'custom')}|${hasLiveVideo ? 'v' : previewSourceVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${Number(lens.focusPos || 0.45).toFixed(2)}|${Number(lens.focusCenterX || 0.5).toFixed(2)},${Number(lens.focusCenterY || 0.48).toFixed(2)}|${state.camShutterSpeed}|${shutterInfo.shakeRisk.toFixed(2)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
+      const stateKey = `${hasLiveVideo ? 'live' : 'sim'}|${hasLiveVideo ? 'v' : camSceneVersion}|${body.id}|${lens.id}|${Number(lens.mm || 50).toFixed(1)}|${Number(state.zoomFocalMm || 50).toFixed(1)}|${Number(lens.activeF || 2.8).toFixed(2)}|${state.focusMode}|${Number(lens.mfDefocus || 0).toFixed(3)}|${Number(lens.focusPos || 0.45).toFixed(2)}|${Number(lens.focusCenterX || 0.5).toFixed(2)},${Number(lens.focusCenterY || 0.48).toFixed(2)}|${state.camShutterSpeed}|${shutterInfo.shakeRisk.toFixed(2)}|${film.id}|${getEffectiveCameraISO(film)}|${cameraExposureEV().toFixed(2)}|${state.warmth}|${state.camFlashOn ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameFirstCanvas ? 'pending-half' : ''}|${targetW}x${targetH}`;
 
       if (!hasLiveVideo && stateKey === cameraLastStaticKey && vfCanvas.width === targetW && vfCanvas.height === targetH) {
         return;
@@ -13666,7 +13792,7 @@
       };
 
       if (gpuReady) {
-        const rendered = gpu.render(src, hasLiveVideo, hasLiveVideo ? -1 : previewSourceVersion, targetW, targetH, vfRatio, vfZoom, vfConfig);
+        const rendered = gpu.render(src, hasLiveVideo, hasLiveVideo ? -1 : camSceneVersion, targetW, targetH, vfRatio, vfZoom, vfConfig);
         if (rendered) {
           if (rendered.style.display !== 'block') rendered.style.display = 'block';
           if (vfCanvas.style.display !== 'none') vfCanvas.style.display = 'none';
@@ -13728,16 +13854,6 @@
     if (state.camStream) stopRealCamera();
   }
 
-  function isCameraLandscape() {
-    return false;
-  }
-  function syncOrientationLayout() {
-    const shell = document.querySelector('.app-shell');
-    if (shell?.classList.contains('cam-landscape')) {
-      shell.classList.remove('cam-landscape');
-      cameraLastStaticKey = '';
-    }
-  }
   let camOrientSyncTimer = 0;
   function syncRealCameraOrientation() {
     window.clearTimeout(camOrientSyncTimer);
@@ -13764,14 +13880,12 @@
   function handleViewportResizeOrOrientation() {
     if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
     cameraLastStaticKey = '';
-    syncOrientationLayout();
     layoutViewfinderStage();
     syncLensBarrelWidgets();
     syncRealCameraOrientation();
     if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
     requestAnimationFrame(() => {
       if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
-      syncOrientationLayout();
       layoutViewfinderStage();
       syncLensBarrelWidgets();
       if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
@@ -13780,7 +13894,6 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) pauseCameraWhenHidden();
     else if (document.getElementById('view-camera').classList.contains('active')) {
-      syncOrientationLayout();
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
       layoutViewfinderStage();
@@ -13827,15 +13940,16 @@
   }
 
   async function saveCameraExposure(rawBlob, shotNumber, opts = {}) {
-    const capC = document.createElement('canvas');
-    const cCtx = capC.getContext('2d', { willReadFrequently: true });
+    let capC = null, cCtx = null;
     let capW = 0, capH = 0;
 
     if (opts.mixCanvas) {
-      const mScale = Math.min(1, 3840 / Math.max(opts.mixCanvas.width, opts.mixCanvas.height));
+      const mScale = 3840 / Math.max(1, opts.mixCanvas.width, opts.mixCanvas.height);
       capW = Math.max(1, Math.round(opts.mixCanvas.width * mScale));
       capH = Math.max(1, Math.round(opts.mixCanvas.height * mScale));
+      capC = document.createElement('canvas');
       capC.width = capW; capC.height = capH;
+      cCtx = capC.getContext('2d', { willReadFrequently: true });
       cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
       const srcA = opts.sourceCanvas;
       const srcRatio = srcA.width / Math.max(1, srcA.height);
@@ -13859,18 +13973,30 @@
       blendDoubleExposureBuffers(srcData.data, mixData.data, opts.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
       cCtx.putImageData(srcData, 0, 0);
     } else if (opts.sourceCanvas) {
-      const scale = Math.min(1, 3840 / Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height));
-      capW = Math.max(1, Math.round(opts.sourceCanvas.width * scale));
-      capH = Math.max(1, Math.round(opts.sourceCanvas.height * scale));
-      capC.width = capW; capC.height = capH;
-      cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
-      cCtx.drawImage(opts.sourceCanvas, 0, 0, capW, capH);
+      const srcMax = Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height);
+      if (srcMax >= 3840 && srcMax <= 4096) {
+        capC = opts.sourceCanvas;
+        capW = capC.width;
+        capH = capC.height;
+        cCtx = capC.getContext('2d', { willReadFrequently: true });
+      } else {
+        const scale = 3840 / Math.max(1, srcMax);
+        capW = Math.max(1, Math.round(opts.sourceCanvas.width * scale));
+        capH = Math.max(1, Math.round(opts.sourceCanvas.height * scale));
+        capC = document.createElement('canvas');
+        capC.width = capW; capC.height = capH;
+        cCtx = capC.getContext('2d', { willReadFrequently: true });
+        cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
+        cCtx.drawImage(opts.sourceCanvas, 0, 0, capW, capH);
+      }
     } else {
       const rawBitmap = await createImageBitmap(rawBlob);
-      const scale = Math.min(1, 3840 / Math.max(rawBitmap.width, rawBitmap.height));
+      const scale = 3840 / Math.max(1, rawBitmap.width, rawBitmap.height);
       capW = Math.max(1, Math.round(rawBitmap.width * scale));
       capH = Math.max(1, Math.round(rawBitmap.height * scale));
+      capC = document.createElement('canvas');
       capC.width = capW; capC.height = capH;
+      cCtx = capC.getContext('2d', { willReadFrequently: true });
       cCtx.imageSmoothingEnabled = true; cCtx.imageSmoothingQuality = 'high';
       cCtx.drawImage(rawBitmap, 0, 0, capW, capH); rawBitmap.close();
     }
@@ -13882,26 +14008,21 @@
     const camEv = cameraExposureEV();
     const camIso = getEffectiveCameraISO(film);
     const camGrain = getEffectiveCameraGrain(film);
+    const workerImgData = cCtx.getImageData(0, 0, capW, capH);
+    const processedPromise = processFilmImage(workerImgData, capW, capH, {
+      phone, body, lens, film, strength: 85, exposureEV: camEv, shutterShakeRisk: camShutterInfo.shakeRisk, warmth: 0,
+      grainAmt: camGrain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
+      leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
+      isDiptych: !!opts.isDiptych,
+      meteredCamera: true,
+      flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
+    }, { output: 'blob', quality: 0.96, transferBuffers: true });
+    const rawPromise = rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.93);
     try {
       state.exposure = Math.max(-200, Math.min(200, Math.round(camEv * 100)));
-      const liveC = document.createElement('canvas');
-      liveC.width = capW;
-      liveC.height = capH;
-      liveC.getContext('2d').drawImage(capC, 0, 0);
-      loadSourceCanvas(liveC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true, frameSeed });
+      loadSourceCanvas(capC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true, frameSeed });
     } catch (ignored) {}
-    const workerImgData = cCtx.getImageData(0, 0, capW, capH);
-    const [processed, finalRawBlob] = await Promise.all([
-      processFilmImage(workerImgData, capW, capH, {
-        phone, body, lens, film, strength: 85, exposureEV: camEv, shutterShakeRisk: camShutterInfo.shakeRisk, warmth: 0,
-        grainAmt: camGrain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
-        leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
-        isDiptych: !!opts.isDiptych,
-        meteredCamera: true,
-        flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.98, transferBuffers: true }),
-      rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.98)
-    ]);
+    const [processed, finalRawBlob] = await Promise.all([processedPromise, rawPromise]);
     const camSpec = buildFilmInfoSpec({
       fromCamera: true,
       isOrig: false,
@@ -13955,6 +14076,8 @@
 
   let cameraRollReady = Promise.resolve();
   let shutterBusy = false;
+  let camPhotoCapsTrackId = '';
+  let camPhotoCaps = null;
   async function captureCameraShot() {
     if (shutterBusy) return;
     if (state.camNeedsRewind || state.camNeedsWind) {
@@ -13985,13 +14108,13 @@
         ? Promise.race([
             (async () => {
               const ic = new ImageCapture(track);
-              let photoOpts;
-              try {
-                const caps = await ic.getPhotoCapabilities?.();
-                if (caps?.imageWidth?.max && caps?.imageHeight?.max) {
-                  photoOpts = { imageWidth: caps.imageWidth.max, imageHeight: caps.imageHeight.max };
-                }
-              } catch (ignored) {}
+              if (camPhotoCapsTrackId !== track.id) {
+                camPhotoCapsTrackId = track.id;
+                try { camPhotoCaps = await ic.getPhotoCapabilities?.(); } catch (ignored) { camPhotoCaps = null; }
+              }
+              const photoOpts = (camPhotoCaps?.imageWidth?.max && camPhotoCaps?.imageHeight?.max)
+                ? { imageWidth: camPhotoCaps.imageWidth.max, imageHeight: camPhotoCaps.imageHeight.max }
+                : undefined;
               const blob = await (photoOpts ? ic.takePhoto(photoOpts) : ic.takePhoto());
               const bmp = await createImageBitmap(blob);
               const vidPx = (camVideo.videoWidth || 0) * (camVideo.videoHeight || 0);
@@ -13999,14 +14122,14 @@
               bmp.close();
               return null;
             })().catch(() => null),
-            new Promise(resolve => setTimeout(() => resolve(null), 1500))
+            new Promise(resolve => setTimeout(() => resolve(null), 1100))
           ])
         : Promise.resolve(null);
       const [capturedStill] = await Promise.all([stillPromise, exposureTimer]);
       stillBitmap = capturedStill;
       if (!stillBitmap && track?.applyConstraints) {
         const curMax = Math.max(camVideo.videoWidth || 0, camVideo.videoHeight || 0);
-        if (curMax > 0 && curMax < 2560) {
+        if (curMax > 0 && curMax < 1280) {
           try {
             await Promise.race([
               track.applyConstraints(getRealCameraVideoConstraints(true)),
@@ -14017,15 +14140,15 @@
           } catch (ignored) {}
         }
       }
-      const src = stillBitmap || (hasLiveVideo ? camVideo : (state.fullSourceCanvas || SAMPLES[0].canvas));
+      const src = stillBitmap || (hasLiveVideo ? camVideo : getCameraSimulatorSource(false));
 
       const capZoom = lens.cropZoom || 1.0;
       const shotNumber = (state.camShotCount % state.camMaxShots) + 1;
 
       if (body.id === 'half-frame' && state.hfDiptychMode) {
         const halfC = document.createElement('canvas');
-        halfC.width = 1200; halfC.height = 1600;
-        drawCameraFrameSource(halfC.getContext('2d'), src, 1200, 1600, capZoom);
+        halfC.width = 1830; halfC.height = 2440;
+        drawCameraFrameSource(halfC.getContext('2d'), src, 1830, 2440, capZoom);
 
         if (!state.halfFrameFirstCanvas) {
           state.halfFrameFirstCanvas = halfC;
@@ -14051,14 +14174,14 @@
 
         const firstHalf = state.halfFrameFirstCanvas;
         const dipC = document.createElement('canvas');
-        dipC.width = 2520; dipC.height = 1680;
-        const dCtx = dipC.getContext('2d');
+        dipC.width = 3840; dipC.height = 2560;
+        const dCtx = dipC.getContext('2d', { willReadFrequently: true });
         dCtx.fillStyle = '#090a0d';
         dCtx.fillRect(0, 0, dipC.width, dipC.height);
-        dCtx.drawImage(firstHalf, 40, 40, 1200, 1600);
-        dCtx.drawImage(halfC, 1280, 40, 1200, 1600);
-        const rawBlob = await canvasToJpegBlob(dipC, 0.98);
-        await saveCameraExposure(rawBlob, shotNumber, { isDiptych: true });
+        dCtx.imageSmoothingEnabled = true; dCtx.imageSmoothingQuality = 'high';
+        dCtx.drawImage(firstHalf, 60, 60, 1830, 2440);
+        dCtx.drawImage(halfC, 1950, 60, 1830, 2440);
+        await saveCameraExposure(null, shotNumber, { sourceCanvas: dipC, isDiptych: true });
         clearPendingHalfFrame();
         return;
       }
@@ -14066,7 +14189,7 @@
       const capDim = getCameraCaptureDimensions(body, lens, src);
       const capC = document.createElement('canvas');
       capC.width = capDim.w; capC.height = capDim.h;
-      drawCameraFrameSource(capC.getContext('2d'), src, capDim.w, capDim.h, capZoom);
+      drawCameraFrameSource(capC.getContext('2d', { willReadFrequently: true }), src, capDim.w, capDim.h, capZoom);
       if (boostedVideoForShot && track?.applyConstraints) {
         boostedVideoForShot = false;
         track.applyConstraints(getRealCameraVideoConstraints(false)).catch(() => {});
@@ -14607,7 +14730,6 @@
     state.activeTab = tabId === 'darkroom' ? 'darkroom' : 'camera';
     scheduleSaveLocalAppState();
     document.querySelector('.app-shell')?.setAttribute('data-active-tab', tabId);
-    syncOrientationLayout();
     document.querySelectorAll('.bnav-btn[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
     document.querySelector('.bnav-group-lab')?.classList.toggle('active', tabId === 'darkroom');
     document.querySelector('.bnav-group-cam')?.classList.toggle('active', tabId === 'camera');
@@ -14616,7 +14738,7 @@
       cameraLastStaticKey = '';
       if (camHudDirty) { camHudDirty = false; syncCameraHudUI(); }
       else syncLensBarrelWidgets();
-      requestAnimationFrame(() => { syncOrientationLayout(); layoutViewfinderStage(); syncLensBarrelWidgets(); });
+      requestAnimationFrame(() => { layoutViewfinderStage(); syncLensBarrelWidgets(); });
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
     } else {
@@ -14950,7 +15072,7 @@
     const spec = buildFilmInfoSpec();
     let baseBlob;
     if (state.labOriginalMode) {
-      baseBlob = await canvasToJpegBlob(src, 0.98);
+      baseBlob = await canvasToJpegBlob(src, 0.96);
     } else {
       const sourceData = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, src.width, src.height);
       let mixImageData = null;
@@ -14965,7 +15087,7 @@
         isDiptych: !!state.sourceIsDiptych,
         meteredCamera: !!state.sourceFromCameraRoll,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
-      }, { output: 'blob', quality: 0.98, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
+      }, { output: 'blob', quality: 0.96, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
       baseBlob = output?.blob;
     }
     if (!baseBlob) return null;
@@ -17053,7 +17175,6 @@
   renderContactSheet();
   cameraRollReady = restoreCameraRoll();
   switchMainTab(state.activeTab === 'darkroom' ? 'darkroom' : 'camera');
-  syncOrientationLayout();
   await loadSampleScenePhotos();
   loadSourceCanvas(SAMPLES[0].canvas, null, { sampleId: SAMPLES[0].id, forcePreviewRender: state.activeTab === 'darkroom' });
   if (hasUrlPreset) showToast('🔗 Applied shared film recipe');
