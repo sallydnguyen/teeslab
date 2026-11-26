@@ -333,6 +333,16 @@
       gap: 6px;
       width: 100%;
     }
+    .combo-trio-grid.hide-lens-card,
+    .gear-compact-grid.hide-lens-card,
+    .clapper-cols.hide-lens-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .combo-trio-grid.hide-lens-card .combo-card[data-open-combo="lens"],
+    .gear-compact-grid.hide-lens-card #labGearBtnLens,
+    .clapper-cols.hide-lens-card .clapper-col[data-picker-tab="lens"] {
+      display: none;
+    }
     .combo-card {
       position: relative;
       background: linear-gradient(180deg, #181a1f 0%, #121418 100%);
@@ -2418,6 +2428,25 @@
       color: #fb923c;
       filter: drop-shadow(0 0 4.5px rgba(249, 115, 22, 0.68));
     }
+    .vf-pns-mode-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      color: #f7ca44;
+      text-shadow: 0 0 6px rgba(250, 204, 21, 0.52);
+      min-width: 18px;
+      text-align: center;
+      line-height: 1;
+    }
+    .vf-pns-mode-badge.is-flex {
+      color: #67e8f9;
+      text-shadow: 0 0 6px rgba(34, 211, 238, 0.65);
+    }
+    .vf-pns-mode-badge.is-time {
+      color: #fb923c;
+      text-shadow: 0 0 6px rgba(249, 115, 22, 0.68);
+    }
 
     /* Medium Format 120 — Waist-Level Ground Glass Etched Grid + High-Contrast Magnifier Loupe */
     .vf-mf-overlay {
@@ -3321,6 +3350,103 @@
       font-size: 8.5px;
       cursor: default;
     }
+    .pns-mode-row {
+      display: flex;
+      align-items: center;
+      height: 30px;
+      background: linear-gradient(180deg, #1b2029 0%, #11151d 100%);
+    }
+    .pns-mode-tag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      cursor: default;
+    }
+    .pns-mode-controls {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 0 8px;
+    }
+    .pns-mode-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pns-mode-btn {
+      height: 21px;
+      min-width: 30px;
+      padding: 0 8px;
+      border-radius: 5px;
+      border: 1px solid #303746;
+      background: #141821;
+      color: #94a3b8;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .pns-mode-btn.active {
+      background: rgba(34, 211, 238, 0.16);
+      border-color: var(--cyan);
+      color: #67e8f9;
+      box-shadow: 0 0 8px rgba(34, 211, 238, 0.25);
+    }
+    .pns-mode-btn[data-pns-mode="T"].active {
+      background: rgba(249, 115, 22, 0.18);
+      border-color: #fb923c;
+      color: #fdba74;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.28);
+    }
+    .pns-half-btn {
+      height: 21px;
+      padding: 0 7px;
+      border-radius: 5px;
+      border: 1px solid #2b3240;
+      background: #10141c;
+      color: #9ca3af;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+    .pns-half-btn.active {
+      background: rgba(74, 222, 128, 0.16);
+      border-color: #4ade80;
+      color: #86efac;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.25);
+    }
+    .pns-mode-val {
+      min-width: 76px;
+      width: auto;
+      padding: 0 7px;
+      color: #f8fafc;
+    }
+    .lens-barrel-ring.is-pns-dial .lens-ring-tag {
+      color: #67e8f9;
+      cursor: pointer;
+    }
+    .lens-barrel-ring.is-pns-dial .lens-ring-val {
+      min-width: 76px;
+      width: auto;
+      padding: 0 7px;
+    }
+    .lens-barrel-ring.is-pns-dial.is-flex .lens-ring-val {
+      color: #fde047;
+    }
+    .lens-barrel-ring.is-pns-dial.is-time-mode .lens-ring-val {
+      color: #fb923c;
+    }
 
     .shutter-flash {
       position: absolute;
@@ -3475,6 +3601,27 @@
     .shutter-btn.needs-rewind .shutter-wind-lbl {
       color: #fff;
       text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+    }
+    .shutter-btn.is-time-open {
+      box-shadow:
+        0 0 0 2px #090b0e,
+        0 0 0 3.5px #fb923c,
+        0 0 20px rgba(249, 115, 22, 0.72),
+        0 6px 16px rgba(0,0,0,0.88);
+    }
+    .shutter-btn.is-time-open::before {
+      background: radial-gradient(circle at 38% 35%, #fed7aa 0%, #f97316 68%, #9a3412 100%);
+    }
+    .shutter-btn.is-time-open::after {
+      display: none;
+    }
+    .shutter-btn.is-time-open .shutter-wind-lbl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 8.5px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.65);
     }
 
     .bottom-nav {
@@ -4928,6 +5075,26 @@
         height: auto;
         background: linear-gradient(180deg, #11151d, #3c4353 50%, #11151d);
       }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .pns-mode-row {
+        flex-direction: column;
+        height: auto;
+        width: 72px;
+        flex-shrink: 0;
+        align-items: stretch;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .pns-mode-controls {
+        flex-direction: column;
+        justify-content: center;
+        padding: 4px;
+        gap: 4px;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .pns-mode-pills {
+        flex-direction: column;
+        width: 100%;
+      }
+      .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .pns-mode-btn {
+        width: 100%;
+      }
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring,
       .app-shell[data-active-tab="camera"]:not(.picker-open) #camLensBarrel .lens-barrel-ring[data-ring="focal"] {
         flex: 1 1 0;
@@ -5692,6 +5859,7 @@
                         <rect x="4" y="4.5" width="14" height="5" rx="0.8" fill="#6b2923" />
                       </svg>
                     </span>
+                    <span class="vf-pns-mode-badge" id="vfPnsModeBadge">P</span>
                     <span class="vf-pns-lcd-val" id="vfPnsLcdVal"><span class="vf-pns-lcd-sr">250</span></span>
                     <svg class="vf-pns-lcd-ico vf-pns-ev-ico" id="vfPnsEvIco" viewBox="0 0 20 18" aria-hidden="true">
                       <rect x="1.5" y="1.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.45" />
@@ -5926,7 +6094,7 @@
           <div class="picker-match-info">
             <span class="picker-match-lbl" id="pickerBodyMatchLbl">Best for SLR:</span>
             <button class="picker-match-link" id="btnJumpRecLens" type="button" title="Jump to Lens options">50mm f/1.2</button>
-            <span style="color:#525a6a;">+</span>
+            <span id="pickerBodyMatchPlus" style="color:#525a6a;">+</span>
             <button class="picker-match-link" id="btnJumpRecFilm" type="button" title="Jump to matching Films">Pro 400H</button>
           </div>
           <button class="picker-match-apply" id="btnApplyBodyMatch" type="button" title="Apply recommended Lens &amp; Film for this body">✦ Apply</button>
@@ -7891,6 +8059,9 @@
     camFlashOn: false,
     camExposureEV: 0,
     camShutterSpeed: 'auto',
+    pnsMode: 'P',
+    pnsFlexShift: 0,
+    pnsAperture: 2.8,
     camISO: null,
     camTrackCapabilities: null,
     camAppliedHardware: {},
@@ -8110,7 +8281,7 @@
     return Number(Math.max(minF, Math.min(maxF, lens.defaultAperture || DEFAULT_LENS_APERTURE)).toFixed(2));
   }
   let apPinnedWideOpen = false;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'labPanelTab', 'labGearSubTab', 'histogramOpen', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'customDate', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'labPanelTab', 'labGearSubTab', 'histogramOpen', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'customDate', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'pnsMode', 'pnsFlexShift', 'pnsAperture', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -8130,6 +8301,9 @@
       if (Object.prototype.hasOwnProperty.call(settings, key)) state[key] = settings[key];
     });
     state.phoneId = 'auto-detect';
+    state.pnsMode = ['P', 'A', 'T'].includes(settings.pnsMode) ? settings.pnsMode : 'P';
+    state.pnsFlexShift = Number.isFinite(Number(settings.pnsFlexShift)) ? Math.max(-12, Math.min(12, Math.round(Number(settings.pnsFlexShift)))) : 0;
+    state.pnsAperture = Number.isFinite(Number(settings.pnsAperture)) ? Math.max(2.8, Math.min(22, Number(settings.pnsAperture))) : 2.8;
     state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
     state.dateStamp = ['off', 'exif-or-today', 'custom'].includes(settings.dateStamp) ? settings.dateStamp : 'off';
     state.customDate = typeof settings.customDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(settings.customDate) ? settings.customDate : '';
@@ -8614,9 +8788,9 @@
     return nextPos;
   }
 
-  function computeFocusOptics(mm, curF, isFixedAperture, lensMeta = null) {
+  function computeFocusOptics(mm, curF, isFixedAperture, lensMeta = null, afOnly = false) {
     const focusLocked = !!isFixedAperture;
-    const focusMode = focusLocked ? 'af' : (state.focusMode === 'mf' ? 'mf' : 'af');
+    const focusMode = (focusLocked || afOnly) ? 'af' : (state.focusMode === 'mf' ? 'mf' : 'af');
     const stops = getFocusStopsForLens(lensMeta);
     const targetPos = Number.isFinite(Number(state.afTargetPos)) ? state.afTargetPos : 0.45;
     const curPos = focusLocked ? targetPos : Math.max(0, Math.min(1, Number.isFinite(Number(state.focusPos)) ? Number(state.focusPos) : targetPos));
@@ -8636,6 +8810,7 @@
     const closeFocusEV = (!focusLocked && displayPos < 0.22) ? -((0.22 - displayPos) / 0.22) * 0.18 : 0;
     return {
       focusLocked,
+      afOnly: !!afOnly,
       focusMode,
       focusStops: stops,
       focusPos: displayPos,
@@ -8757,12 +8932,19 @@
       };
     }
 
+    const isAfOnly = modeId === 'pns' || modeId === 'disposable';
     if (!lens.isZoom) {
       const minF = lens.minF || 2.8;
       const maxF = lens.maxF || 16;
-      const curF = lens.isFixedAperture ? minF : Math.max(minF, Math.min(maxF, Number(state.lensAperture) || minF));
+      const filmForPns = FILM_STOCKS.find(f => f.id === state.filmId) || FILM_STOCKS[0];
+      const pnsPlan = (modeId === 'pns' && !lens.isFixedAperture)
+        ? computePnsExposurePlan(filmForPns)
+        : null;
+      const curF = lens.isFixedAperture
+        ? minF
+        : (pnsPlan ? pnsPlan.activeF : Math.max(minF, Math.min(maxF, Number(state.lensAperture) || minF)));
       const optics = applyApertureOptics(lens, curF, minF, lens.apertureEV || 0);
-      const focusOptics = computeFocusOptics(lens.mm || 50, curF, !!lens.isFixedAperture, lens);
+      const focusOptics = computeFocusOptics(lens.mm || 50, curF, !!lens.isFixedAperture, lens, isAfOnly);
       const apStr = formatApertureLabel(curF);
       const fmtSuffix = lens.formatLabel ? lens.formatLabel.replace(/^120\s*·\s*/, '') : '';
       const label = lens.isFormatLens
@@ -8773,6 +8955,8 @@
         ...lens,
         ...optics,
         ...focusOptics,
+        isIntegratedAuto: isAfOnly,
+        pnsPlan,
         focusCenterX,
         focusCenterY,
         minF,
@@ -8784,6 +8968,181 @@
         ringAngleDeg: ((lens.mm || 50) - 24) * 2.2 + 2 * Math.log2(curF) * 28
       };
     }
+  }
+
+  const PNS_APERTURE_STOPS = [2.8, 3.3, 4, 4.8, 5.6, 6.7, 8, 9.5, 11, 13, 16, 19, 22];
+  const PNS_SHUTTER_STEPS = ['500', '250', '125', '60', '30', '15', '8', '4', '2', '1"', '2"'];
+  const PNS_SHUTTER_HZ = { '500': 500, '250': 250, '125': 125, '60': 60, '30': 30, '15': 15, '8': 8, '4': 4, '2': 2, '1"': 1, '2"': 0.5 };
+  let pnsTimeOpenAt = 0;
+  let pnsTimeTickerId = 0;
+  let pnsTimeDurationOverrideSec = 0;
+  let pnsHalfPressActive = false;
+
+  function snapToPnsAperture(val) {
+    const num = Math.max(2.8, Math.min(22, Number(val) || 2.8));
+    let best = PNS_APERTURE_STOPS[0];
+    let bestD = Infinity;
+    for (const s of PNS_APERTURE_STOPS) {
+      const d = Math.abs(Math.log2(num / s));
+      if (d < bestD) { bestD = d; best = s; }
+    }
+    return best;
+  }
+
+  function formatPnsTimerClock(sec) {
+    const s = Math.max(0, Math.min(600, Number(sec) || 0));
+    if (s < 60) return s < 10 ? `${s.toFixed(1)}s` : `${Math.round(s)}s`;
+    const mins = Math.floor(s / 60);
+    const rem = Math.floor(s % 60);
+    return `${mins}:${String(rem).padStart(2, '0')}`;
+  }
+
+  function computePnsExposurePlan(film = null, opts = {}) {
+    const fObj = film || FILM_STOCKS.find(f => f.id === state.filmId) || FILM_STOCKS[0];
+    const lum = Math.max(0.03, Math.min(1.0, Number(sceneMeanLum) || 0.5));
+    const lumStops = Math.log2(lum / 0.45);
+    const boxIso = fObj?.iso || 400;
+    const effIso = Number.isFinite(state.camISO) && state.camISO > 0 ? state.camISO : boxIso;
+    const isoStops = Math.log2(Math.max(25, effIso) / 400);
+    const afPos = Number.isFinite(Number(state.afTargetPos)) ? state.afTargetPos : 0.45;
+    const focusDropStops = afPos < 0.22 ? -((0.22 - afPos) / 0.22) * 0.18 : 0;
+
+    const mode = ['P', 'A', 'T'].includes(state.pnsMode) ? state.pnsMode : 'P';
+    const evBias = mode === 'T' ? 0 : Math.max(-2, Math.min(2, Number(state.camExposureEV) || 0));
+    const idealHzAt28 = 500 * Math.pow(2, lumStops + isoStops + focusDropStops - evBias);
+
+    if (mode === 'P') {
+      const pairs = [];
+      for (let idx = PNS_SHUTTER_STEPS.length - 1; idx >= 0; idx--) {
+        const sp = PNS_SHUTTER_STEPS[idx];
+        const hz = PNS_SHUTTER_HZ[sp];
+        const rawF = 2.8 * Math.sqrt(Math.max(0.01, idealHzAt28 / hz));
+        if (rawF >= 2.38 && rawF <= 26.0) {
+          pairs.push({ sp, hz, activeF: snapToPnsAperture(rawF) });
+        }
+      }
+      if (!pairs.length) {
+        if (idealHzAt28 >= 500) {
+          pairs.push({ sp: '500', hz: 500, activeF: 22 });
+        } else {
+          pairs.push({ sp: '2"', hz: 0.5, activeF: 2.8 });
+        }
+      }
+      const evAbove2s28 = Math.log2(Math.max(0.05, idealHzAt28) / 0.5);
+      const targetApStops = evAbove2s28 > 7 ? Math.min(6, Math.max(0, (evAbove2s28 - 7) * 0.36)) : 0;
+      const targetBaseF = 2.8 * Math.pow(2, targetApStops * 0.5);
+      let baseIdx = 0;
+      let bestDiff = Infinity;
+      for (let i = 0; i < pairs.length; i++) {
+        const d = Math.abs(Math.log2(pairs[i].activeF / targetBaseF));
+        if (d <= bestDiff) { bestDiff = d; baseIdx = i; }
+      }
+      const rawShift = Math.round(Number(state.pnsFlexShift) || 0);
+      const clampedShift = Math.max(-baseIdx, Math.min(pairs.length - 1 - baseIdx, rawShift));
+      const pairIdx = baseIdx + clampedShift;
+      const pair = pairs[pairIdx];
+      const pairEffAt28 = pair.hz * Math.pow(pair.activeF / 2.8, 2);
+      const rawResid = Math.log2(Math.max(0.02, idealHzAt28) / Math.max(0.02, pairEffAt28));
+      // Keep exact brightness invariant across valid Flexible Program pairs
+      const clampDiff = Math.abs(rawResid) <= 0.32 ? 0 : rawResid;
+      return {
+        mode: 'P',
+        isFlex: clampedShift !== 0,
+        flexShift: clampedShift,
+        pairs,
+        pairIdx,
+        baseIdx,
+        activeF: pair.activeF,
+        effectiveSpeed: pair.sp,
+        hz: pair.hz,
+        durationSec: 1 / pair.hz,
+        isAuto: true,
+        rawStops: evBias + clampDiff,
+        meterDiffEV: evBias + clampDiff,
+        isTimeOpen: false
+      };
+    }
+
+    const activeF = snapToPnsAperture(state.pnsAperture);
+    const idealHz = idealHzAt28 / Math.pow(activeF / 2.8, 2);
+
+    if (mode === 'A') {
+      let bestSp = '250';
+      let bestDiff = Infinity;
+      for (const sp of PNS_SHUTTER_STEPS) {
+        const hz = PNS_SHUTTER_HZ[sp];
+        const d = Math.abs(Math.log2(Math.max(0.02, idealHz) / hz));
+        if (d < bestDiff) { bestDiff = d; bestSp = sp; }
+      }
+      const hz = PNS_SHUTTER_HZ[bestSp];
+      const clampDiff = idealHz > 500
+        ? Math.log2(idealHz / 500)
+        : (idealHz < 0.5 ? Math.log2(idealHz / 0.5) : 0);
+      const rawStops = evBias + clampDiff;
+      return {
+        mode: 'A',
+        isFlex: false,
+        flexShift: 0,
+        pairs: null,
+        pairIdx: 0,
+        baseIdx: 0,
+        activeF,
+        effectiveSpeed: bestSp,
+        hz,
+        durationSec: 1 / hz,
+        isAuto: true,
+        rawStops,
+        meterDiffEV: rawStops,
+        isTimeOpen: false
+      };
+    }
+
+    // Mode 'T' (Time — manual exposure up to 600s / 10 minutes)
+    const isTimeOpen = pnsTimeOpenAt > 0;
+    const liveElapsedSec = isTimeOpen ? Math.min(600, Math.max(0, (Date.now() - pnsTimeOpenAt) / 1000)) : 0;
+    const durSec = Number(opts.timeDurationSec) > 0
+      ? Math.min(600, Math.max(0.05, Number(opts.timeDurationSec)))
+      : (pnsTimeDurationOverrideSec > 0 ? pnsTimeDurationOverrideSec : (isTimeOpen ? Math.max(0.05, liveElapsedSec) : 0));
+    if (durSec > 0 && (!isTimeOpen || Number(opts.timeDurationSec) > 0 || pnsTimeDurationOverrideSec > 0)) {
+      const rawDiff = Math.log2(Math.max(0.01, idealHz) * durSec);
+      const absDiff = Math.abs(rawDiff);
+      const signed = rawDiff >= 0 ? 1 : -1;
+      const meterDiffEV = signed * (absDiff <= 2.5 ? absDiff : (2.5 + (absDiff - 2.5) * 0.45));
+      return {
+        mode: 'T',
+        isFlex: false,
+        flexShift: 0,
+        pairs: null,
+        pairIdx: 0,
+        baseIdx: 0,
+        activeF,
+        effectiveSpeed: 'T',
+        hz: 1 / Math.max(0.05, durSec),
+        durationSec: durSec,
+        isAuto: false,
+        rawStops: rawDiff,
+        meterDiffEV,
+        isTimeOpen,
+        elapsedSec: durSec
+      };
+    }
+    return {
+      mode: 'T',
+      isFlex: false,
+      flexShift: 0,
+      pairs: null,
+      pairIdx: 0,
+      baseIdx: 0,
+      activeF,
+      effectiveSpeed: 'T',
+      hz: 0.5,
+      durationSec: 0,
+      isAuto: false,
+      rawStops: 0,
+      meterDiffEV: 0,
+      isTimeOpen,
+      elapsedSec: liveElapsedSec
+    };
   }
 
   function getSelectedGear() {
@@ -9644,7 +10003,11 @@
       updateLabHistogram();
 
       const liveBadge = document.getElementById('liveGearBadge');
-      if (liveBadge) liveBadge.innerHTML = `${escapeHtml(body.name)} · ${escapeHtml(lensShort)} · <strong>${escapeHtml(film.name)}</strong>`;
+      if (liveBadge) {
+        liveBadge.innerHTML = body.id === 'pns'
+          ? `${escapeHtml(body.name)} · <strong>${escapeHtml(film.name)}</strong>`
+          : `${escapeHtml(body.name)} · ${escapeHtml(lensShort)} · <strong>${escapeHtml(film.name)}</strong>`;
+      }
       output.bitmap?.close();
     } catch (error) { console.error('Preview rendering failed', error); }
   }
@@ -9655,11 +10018,18 @@
 
   function renderComboCards() {
     const { body, lens, film } = getSelectedGear();
-    const lensShort = shortLensLabel(lens);
+    const isPnsBody = body.id === 'pns';
+    const lensShort = isPnsBody ? '' : shortLensLabel(lens);
     const rotQ = Math.round((lens.ringAngleDeg || 0) / 8) * 8;
     const lensSvgKey = `focal/${body.id}/${lens.id}/${lens.focalTag || ''}/${lens.aperture || ''}/${rotQ}`;
 
-    // Lab compact 3-box selector names
+    document.getElementById('camComboTrio')?.classList.toggle('hide-lens-card', isPnsBody);
+    document.getElementById('labGearCompactTrio')?.classList.toggle('hide-lens-card', isPnsBody);
+    document.querySelector('.clapper-cols')?.classList.toggle('hide-lens-card', isPnsBody);
+    if (isPnsBody && state.pickerTab === 'lens') state.pickerTab = 'camera';
+    if (isPnsBody && state.labGearSubTab === 'lens') state.labGearSubTab = 'film';
+
+    // Lab compact box selector names
     const labBodyEl = document.getElementById('labCardBodyName');
     const labLensEl = document.getElementById('labCardLensName');
     const labFilmEl = document.getElementById('labCardFilmName');
@@ -9667,7 +10037,7 @@
     if (labLensEl) labLensEl.textContent = lensShort;
     if (labFilmEl) labFilmEl.textContent = film.name;
 
-    // Camera 3-card deck
+    // Camera deck
     document.getElementById('camCardBodyName').textContent = body.name;
     document.getElementById('camCardLensName').textContent = lensShort;
     document.getElementById('camCardFilmName').textContent = film.name;
@@ -9685,7 +10055,11 @@
     document.getElementById('clapperLensVal').textContent = lensShort;
     document.getElementById('clapperFilmVal').textContent = film.name;
     const liveBadge = document.getElementById('liveGearBadge');
-    if (liveBadge) liveBadge.innerHTML = `${escapeHtml(body.name)} · ${escapeHtml(lensShort)} · <strong>${escapeHtml(film.name)}</strong>`;
+    if (liveBadge) {
+      liveBadge.innerHTML = isPnsBody
+        ? `${escapeHtml(body.name)} · <strong>${escapeHtml(film.name)}</strong>`
+        : `${escapeHtml(body.name)} · ${escapeHtml(lensShort)} · <strong>${escapeHtml(film.name)}</strong>`;
+    }
     const shotNum = String(Math.max(1, state.camShotCount || 1)).padStart(2, '0');
     const rollNum = String(Math.max(1, state.camRollNumber || 1)).padStart(2, '0');
     document.getElementById('clapperSceneLabel').textContent = `SCENE ${shotNum} · ROLL ${rollNum}`;
@@ -9742,6 +10116,10 @@
 
   function renderComboPickerSheet() {
     const { body, lens } = getSelectedGear();
+    const isPnsBody = body.id === 'pns';
+    if (isPnsBody && state.pickerTab === 'lens') state.pickerTab = 'camera';
+    document.querySelector('.clapper-cols')?.classList.toggle('hide-lens-card', isPnsBody);
+
     const focals = getModeFocals(body.id);
     const modeIdx = Math.max(0, VIEWFINDER_MODES.findIndex(m => m.id === body.id)) + 1;
     document.getElementById('pickerBodyCount').innerHTML = `<strong>${String(modeIdx).padStart(2, '0')}</strong>/${VIEWFINDER_MODES.length}`;
@@ -9756,13 +10134,20 @@
     const sceneTitleMap = { portrait: 'Portrait', everyday: 'Everyday', landscape: 'Landscape', night: 'Night' };
     const matchLbl = document.getElementById('pickerBodyMatchLbl');
     const jumpLensBtn = document.getElementById('btnJumpRecLens');
+    const matchPlusEl = document.getElementById('pickerBodyMatchPlus');
     const jumpFilmBtn = document.getElementById('btnJumpRecFilm');
     const applyMatchBtn = document.getElementById('btnApplyBodyMatch');
     if (matchLbl) {
       const themeTag = lens?.recScene ? sceneTitleMap[lens.recScene] : '';
-      matchLbl.textContent = themeTag ? `Best for ${lens.short || lens.focalTag} (${themeTag}):` : `Best for ${body.name}:`;
+      matchLbl.textContent = isPnsBody
+        ? `Best for ${body.name}:`
+        : (themeTag ? `Best for ${lens.short || lens.focalTag} (${themeTag}):` : `Best for ${body.name}:`);
     }
-    if (jumpLensBtn && recLensObj) jumpLensBtn.textContent = recLensObj.label;
+    if (jumpLensBtn) {
+      jumpLensBtn.style.display = isPnsBody ? 'none' : '';
+      if (!isPnsBody && recLensObj) jumpLensBtn.textContent = recLensObj.label;
+    }
+    if (matchPlusEl) matchPlusEl.style.display = isPnsBody ? 'none' : '';
     if (jumpFilmBtn && recFilmObj) jumpFilmBtn.textContent = recFilmObj.name;
     if (applyMatchBtn && recLensObj && recFilmObj) {
       const matchedNow = lens.id === recLensObj.id && state.filmId === recFilmObj.id;
@@ -9932,8 +10317,11 @@
 
   function renderLabGearPanel() {
     const { body, lens, film } = getSelectedGear();
-    const lensShort = shortLensLabel(lens);
+    const isPnsBody = body.id === 'pns';
+    const lensShort = isPnsBody ? '' : shortLensLabel(lens);
     const formatLbl = getBodyFormatLabel(body, lens);
+    document.getElementById('labGearCompactTrio')?.classList.toggle('hide-lens-card', isPnsBody);
+    if (isPnsBody && state.labGearSubTab === 'lens') state.labGearSubTab = 'film';
     if (!['camera', 'lens', 'film'].includes(state.labGearSubTab)) state.labGearSubTab = 'film';
 
     const bodyBox = document.getElementById('labGearBtnBody');
@@ -10756,8 +11144,19 @@
     renderPreview();
   }
 
+  function resetPnsTransientState() {
+    pnsTimeOpenAt = 0;
+    pnsTimeDurationOverrideSec = 0;
+    pnsHalfPressActive = false;
+    if (pnsTimeTickerId) {
+      clearInterval(pnsTimeTickerId);
+      pnsTimeTickerId = 0;
+    }
+  }
+
   function selectViewfinderMode(modeId) {
     const mode = VIEWFINDER_MODES.find(m => m.id === modeId) || VIEWFINDER_MODES[0];
+    resetPnsTransientState();
     state.bodyId = mode.id;
     state.camAELocked = false;
     state.camLockedEV = null;
@@ -10779,10 +11178,10 @@
       state.lensAperture = getDefaultApertureForLens(nextFocal);
     }
     state.focusPoint = { x: 0.5, y: 0.48 };
-    if (nextFocal.isFixedAperture) {
+    if (nextFocal.isFixedAperture || mode.id === 'pns') {
       state.focusMode = 'af';
     }
-    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!nextFocal.isFixedAperture, center: state.focusPoint });
+    updateAdaptiveAfTarget({ syncFocusToAf: state.focusMode !== 'mf' || !!nextFocal.isFixedAperture || mode.id === 'pns', center: state.focusPoint });
     const nextMinF = nextFocal.isZoom ? getZoomMinF(nextFocal, state.zoomFocalMm) : (nextFocal.minF || 2.8);
     apPinnedWideOpen = Math.abs(state.lensAperture - nextMinF) < 0.04;
     if (nextFocal.recScene && ['portrait', 'everyday', 'landscape', 'night'].includes(state.filmBrandFilter)) {
@@ -11281,6 +11680,148 @@
     };
   }
 
+  function buildPnsCommandDialSpec(resolvedLens = null) {
+    const plan = resolvedLens?.pnsPlan || computePnsExposurePlan();
+    if (plan.mode === 'P') {
+      const pairs = Array.isArray(plan.pairs) && plan.pairs.length
+        ? plan.pairs
+        : [{ sp: plan.effectiveSpeed || '125', hz: plan.hz || 125, activeF: plan.activeF || 5.6 }];
+      const stepPx = 50;
+      const maxX = Math.max(stepPx, (pairs.length - 1) * stepPx);
+      const sig = pairs.map(p => `${p.sp}/${p.activeF}`).join(',');
+      const marks = pairs.map((p, idx) => ({
+        x: idx * stepPx,
+        label: `${p.sp}·${p.activeF}`,
+        isMajor: true,
+        adrClass: idx === plan.baseIdx ? 'adr-cyan' : ((p.hz || 125) <= 15 ? 'adr-warm' : '')
+      }));
+      const ticks = [];
+      for (let i = 0; i < pairs.length; i++) {
+        ticks.push({ x: i * stepPx, cls: 'major' });
+        if (i < pairs.length - 1) ticks.push({ x: (i + 0.5) * stepPx, cls: 'half' });
+      }
+      return {
+        modeKey: `pns-dial-P-${plan.baseIdx}-${sig}`,
+        tag: 'DIAL',
+        locked: pairs.length <= 1,
+        minX: 0,
+        maxX,
+        marks,
+        ticks,
+        getCurX: () => {
+          const curPlan = computePnsExposurePlan();
+          const idx = Math.max(0, Math.min(pairs.length - 1, curPlan.pairIdx || 0));
+          return idx * stepPx;
+        },
+        getMinDragX: () => 0,
+        getValText: () => {
+          const curPlan = computePnsExposurePlan();
+          const pTag = curPlan.isFlex ? 'P*' : 'P';
+          return `${pTag} f/${curPlan.activeF}·${formatShutterSpeedSec(curPlan.effectiveSpeed)}`;
+        },
+        applyX: (rawX, isRelease, prevDetent) => {
+          const cx = Math.max(0, Math.min((pairs.length - 1) * stepPx, rawX));
+          const curPlan = computePnsExposurePlan();
+          const len = curPlan.pairs?.length || pairs.length;
+          const idx = Math.max(0, Math.min(len - 1, Math.round(cx / stepPx)));
+          const nextShift = idx - (curPlan.baseIdx || 0);
+          const changed = state.pnsFlexShift !== nextShift;
+          state.pnsFlexShift = nextShift;
+          if (prevDetent !== undefined && prevDetent !== idx) {
+            playShutterDialClickSound(idx === curPlan.baseIdx ? 'auto' : null);
+            try { navigator.vibrate?.(8); } catch (ignored) {}
+          }
+          return { changed: changed || isRelease, needsLayout: true, detent: idx };
+        }
+      };
+    }
+
+    const stops = PNS_APERTURE_STOPS;
+    const stepPx = 28;
+    const maxX = (stops.length - 1) * stepPx;
+    const fullSet = new Set([2.8, 4, 5.6, 8, 11, 16, 22]);
+    const marks = stops.map((f, idx) => ({
+      x: idx * stepPx,
+      label: String(f),
+      isMajor: fullSet.has(f),
+      isMinor: !fullSet.has(f),
+      adrClass: f === 2.8 ? 'adr-cyan' : (f >= 16 ? 'adr-warm' : '')
+    }));
+    const ticks = [];
+    for (let i = 0; i < stops.length; i++) {
+      ticks.push({ x: i * stepPx, cls: fullSet.has(stops[i]) ? 'major' : 'half' });
+    }
+    return {
+      modeKey: `pns-dial-${plan.mode}`,
+      tag: 'DIAL',
+      locked: false,
+      minX: 0,
+      maxX,
+      marks,
+      ticks,
+      getCurX: () => {
+        const f = snapToPnsAperture(state.pnsAperture);
+        const idx = stops.indexOf(f);
+        return (idx >= 0 ? idx : 0) * stepPx;
+      },
+      getMinDragX: () => 0,
+      getValText: () => {
+        const curPlan = computePnsExposurePlan();
+        if (curPlan.mode === 'T') {
+          const tLabel = pnsTimeOpenAt > 0 ? formatPnsTimerClock(curPlan.elapsedSec || 0) : 'T';
+          return `f/${curPlan.activeF} · ${tLabel}`;
+        }
+        return `f/${curPlan.activeF} · ${formatShutterSpeedSec(curPlan.effectiveSpeed)}`;
+      },
+      applyX: (rawX, isRelease, prevDetent) => {
+        const cx = Math.max(0, Math.min(maxX, rawX));
+        const idx = Math.max(0, Math.min(stops.length - 1, Math.round(cx / stepPx)));
+        const nextF = stops[idx];
+        const changed = Math.abs(state.pnsAperture - nextF) > 0.01;
+        state.pnsAperture = nextF;
+        if (prevDetent !== undefined && prevDetent !== idx) {
+          playLensClickSound(true, 'aperture');
+          try { navigator.vibrate?.(8); } catch (ignored) {}
+        }
+        return { changed: changed || isRelease, needsLayout: true, detent: idx };
+      }
+    };
+  }
+
+  function selectPnsMode(nextMode) {
+    const normalized = ['P', 'A', 'T'].includes(nextMode) ? nextMode : 'P';
+    if (state.pnsMode === normalized && pnsTimeOpenAt === 0) return;
+    resetPnsTransientState();
+    state.pnsMode = normalized;
+    if (normalized === 'P') state.pnsFlexShift = 0;
+    playShutterDialClickSound(normalized === 'P' ? 'auto' : normalized);
+    syncAllUI();
+    scheduleCameraSettingsApply();
+    scheduleSaveLocalAppState();
+    const { lens } = getSelectedGear();
+    const plan = lens?.pnsPlan || computePnsExposurePlan();
+    if (normalized === 'P') showToast(`⏱️ 35Ti Mode P · Auto (${formatShutterSpeedSec(plan.effectiveSpeed)} @ f/${plan.activeF})`);
+    else if (normalized === 'A') showToast(`📷 35Ti Mode A · Aperture f/${plan.activeF} (${formatShutterSpeedSec(plan.effectiveSpeed)})`);
+    else showToast(`🌙 35Ti Mode T (Time) · f/${plan.activeF} — Tap shutter to OPEN/CLOSE (≤10m)`);
+  }
+
+  function togglePnsHalfPress(forceActive = null) {
+    if (state.bodyId !== 'pns') return;
+    if (forceActive === null) pnsHalfPressActive = !pnsHalfPressActive;
+    else pnsHalfPressActive = !!forceActive;
+    if (pnsHalfPressActive) {
+      updateAdaptiveAfTarget({ syncFocusToAf: true, center: state.focusPoint });
+      playLensClickSound(true, 'focus');
+      showVfFocusReticle(`${(state.focusPoint.x * 100).toFixed(1)}%`, `${(state.focusPoint.y * 100).toFixed(1)}%`, 950);
+      const { lens } = getSelectedGear();
+      const plan = lens?.pnsPlan || computePnsExposurePlan();
+      showToast(`½ AE/AF Locked · ${plan.mode}${plan.isFlex ? '*' : ''} f/${plan.activeF} · ${plan.mode === 'T' ? 'T' : formatShutterSpeedSec(plan.effectiveSpeed)}`);
+    } else {
+      playLensClickSound(false, 'focus');
+    }
+    syncLensLiveUI(true);
+  }
+
   function syncViewfinderFocusAid(body, lens) {
     const inFocus = !!lens.inFocusPeak;
     const isMfOff = !lens.focusLocked && lens.focusMode === 'mf' && !inFocus;
@@ -11320,7 +11861,7 @@
 
     const afBtn = document.getElementById('btnVfAutoFocus');
     if (afBtn) {
-      afBtn.style.display = lens.focusLocked ? 'none' : '';
+      afBtn.style.display = (lens.focusLocked || body?.id === 'pns') ? 'none' : '';
       const isAf = lens.focusMode === 'af';
       afBtn.classList.toggle('af-active', isAf);
       afBtn.textContent = isAf ? 'AF' : 'AF ↺';
@@ -11438,6 +11979,19 @@
     if (!container || container.dataset.barrelInit) return;
     container.dataset.barrelInit = '1';
     container.innerHTML = `
+      <div class="pns-mode-row" style="display:none;">
+        <span class="lens-ring-tag pns-mode-tag" title="Nikon 35Ti Mode Dial (P / A / T)">MODE</span>
+        <div class="pns-mode-controls">
+          <div class="pns-mode-pills">
+            <button type="button" class="pns-mode-btn" data-pns-mode="P" title="Program AE (turn DIAL for Flexible Program P*)">P</button>
+            <button type="button" class="pns-mode-btn" data-pns-mode="A" title="Aperture Priority (turn DIAL for f/2.8–f/22)">A</button>
+            <button type="button" class="pns-mode-btn" data-pns-mode="T" title="Time Exposure (tap shutter to OPEN &amp; CLOSE up to 10m)">T</button>
+          </div>
+          <button type="button" class="pns-half-btn" title="Half-press AF/AE lock">½ AE/AF</button>
+        </div>
+        <span class="lens-ring-val pns-mode-val">P · f/2.8</span>
+      </div>
+      <div class="lens-barrel-divider pns-mode-divider" style="display:none;"></div>
       <div class="lens-barrel-ring" data-ring="focal" style="display:none;">
         <button type="button" class="lens-ring-tag" title="Pro Zoom ring — tap to step focal lengths">ZOOM</button>
         <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Zoom lens focal length ring">
@@ -11457,7 +12011,7 @@
         </div>
         <span class="lens-ring-val">f/3.5</span>
       </div>
-      <div class="lens-barrel-divider"></div>
+      <div class="lens-barrel-divider ap-divider"></div>
       <div class="lens-barrel-ring is-af in-focus" data-ring="focus">
         <button type="button" class="lens-ring-tag lens-af-btn is-af" title="Auto Focus — tap to return to AF">AF</button>
         <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Manual focus distance ring">
@@ -11468,7 +12022,7 @@
         </div>
         <span class="lens-ring-val" title="Tap to switch to Manual Focus">AF 1.2m</span>
       </div>
-      <div class="lens-barrel-divider"></div>
+      <div class="lens-barrel-divider focus-divider"></div>
       <div class="lens-barrel-ring is-auto" data-ring="shutter">
         <button type="button" class="lens-ring-tag" title="Shutter speed — tap to reset to Auto (A)">SHUTTER</button>
         <div class="lens-ring-viewport" tabindex="0" role="slider" aria-label="Shutter speed ring">
@@ -11480,9 +12034,25 @@
       </div>
     `;
 
+    const pnsModeRow = container.querySelector('.pns-mode-row');
+    const pnsModeDivider = container.querySelector('.pns-mode-divider');
+    const pnsModeValEl = container.querySelector('.pns-mode-val');
+    const pnsModeBtns = Array.from(container.querySelectorAll('.pns-mode-btn[data-pns-mode]'));
+    const pnsHalfBtn = container.querySelector('.pns-half-btn');
+    pnsModeBtns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        selectPnsMode(btn.dataset.pnsMode);
+      });
+    });
+    pnsHalfBtn?.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePnsHalfPress();
+    });
+
     const makeRingController = (ringKind) => {
       const row = container.querySelector(`.lens-barrel-ring[data-ring="${ringKind}"]`);
-      const dividerEl = ringKind === 'focal' ? row.nextElementSibling : null;
+      const dividerEl = (ringKind === 'focal' || ringKind === 'aperture' || ringKind === 'focus') ? row.nextElementSibling : null;
       const tagEl = row.querySelector('.lens-ring-tag');
       const viewport = row.querySelector('.lens-ring-viewport');
       const track = row.querySelector('.lens-ring-track');
@@ -11544,6 +12114,24 @@
       if (ringKind === 'shutter') {
         tagEl.addEventListener('click', e => {
           e.stopPropagation();
+          if (state.bodyId === 'pns') {
+            if (state.pnsMode === 'P' && state.pnsFlexShift !== 0) {
+              state.pnsFlexShift = 0;
+              playShutterDialClickSound('auto');
+              syncLensLiveUI(true);
+              scheduleCameraSettingsApply();
+              scheduleSaveLocalAppState();
+              showToast('⏱️ Program P: Auto pair restored');
+            } else if ((state.pnsMode === 'A' || state.pnsMode === 'T') && Math.abs(state.pnsAperture - 2.8) > 0.05) {
+              state.pnsAperture = 2.8;
+              playShutterDialClickSound('2.8');
+              syncLensLiveUI(true);
+              scheduleCameraSettingsApply();
+              scheduleSaveLocalAppState();
+              showToast(`📷 Aperture: f/2.8 (${state.pnsMode})`);
+            }
+            return;
+          }
           if (state.camShutterSpeed !== 'auto') {
             state.camShutterSpeed = 'auto';
             playShutterDialClickSound('auto');
@@ -11610,11 +12198,20 @@
       };
 
       const renderFrame = (body, rawLens, resolvedLens) => {
+        const isPnsBody = body?.id === 'pns';
         if (ringKind === 'focal') {
-          const showFocal = !!resolvedLens.isZoom;
+          const showFocal = !!resolvedLens.isZoom && !isPnsBody;
           row.style.display = showFocal ? '' : 'none';
           if (dividerEl) dividerEl.style.display = showFocal ? '' : 'none';
           if (!showFocal) {
+            spec = null;
+            return;
+          }
+        }
+        if (ringKind === 'aperture' || ringKind === 'focus') {
+          row.style.display = isPnsBody ? 'none' : '';
+          if (dividerEl) dividerEl.style.display = isPnsBody ? 'none' : '';
+          if (isPnsBody) {
             spec = null;
             return;
           }
@@ -11624,7 +12221,7 @@
           : (ringKind === 'focus'
             ? buildFocusScaleSpec(body, rawLens, resolvedLens)
             : (ringKind === 'shutter'
-              ? buildShutterScaleSpec()
+              ? (isPnsBody ? buildPnsCommandDialSpec(resolvedLens) : buildShutterScaleSpec())
               : buildApertureScaleSpec(body, rawLens, resolvedLens)));
 
         const vert = isVertical();
@@ -11644,6 +12241,10 @@
 
         if (ringKind === 'shutter') {
           const info = getEffectiveShutterInfo(resolvedLens);
+          const pnsPlan = isPnsBody ? (resolvedLens?.pnsPlan || computePnsExposurePlan()) : null;
+          row.classList.toggle('is-pns-dial', isPnsBody);
+          row.classList.toggle('is-flex', isPnsBody && pnsPlan?.mode === 'P' && !!pnsPlan.isFlex);
+          row.classList.toggle('is-time-mode', isPnsBody && pnsPlan?.mode === 'T');
           row.classList.toggle('is-auto', info.isAuto);
           row.classList.toggle('is-shake', info.shakeRisk > 0.06);
         }
@@ -11834,6 +12435,24 @@
     barrelWidgets.push({
       el: container,
       sync: (body, rawLens, resolvedLens) => {
+        const isPnsBody = body?.id === 'pns';
+        if (pnsModeRow) pnsModeRow.style.display = isPnsBody ? '' : 'none';
+        if (pnsModeDivider) pnsModeDivider.style.display = isPnsBody ? '' : 'none';
+        if (isPnsBody) {
+          const plan = resolvedLens?.pnsPlan || computePnsExposurePlan();
+          pnsModeBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.pnsMode === plan.mode));
+          if (pnsHalfBtn) pnsHalfBtn.classList.toggle('active', !!pnsHalfPressActive);
+          if (pnsModeValEl) {
+            if (plan.mode === 'T') {
+              pnsModeValEl.textContent = pnsTimeOpenAt > 0
+                ? `T · ${formatPnsTimerClock(plan.elapsedSec || 0)}`
+                : `T · f/${plan.activeF}`;
+            } else {
+              const pLbl = plan.mode === 'P' && plan.isFlex ? 'P*' : plan.mode;
+              pnsModeValEl.textContent = `${pLbl} · f/${plan.activeF}`;
+            }
+          }
+        }
         focalCtrl.renderFrame(body, rawLens, resolvedLens);
         focusCtrl.renderFrame(body, rawLens, resolvedLens);
         apCtrl.renderFrame(body, rawLens, resolvedLens);
@@ -12264,7 +12883,9 @@
     }
     const isAuto = info
       ? info.isAuto !== false
-      : (!CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) || state.camShutterSpeed === 'auto');
+      : (id === 'pns'
+        ? state.pnsMode !== 'T'
+        : (!CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) || state.camShutterSpeed === 'auto'));
     if (!isAuto) {
       return { isAuto: false, supportsEv: false, supportsAel: false };
     }
@@ -12313,6 +12934,27 @@
 
   function getEffectiveShutterInfo(lens = getSelectedGear().lens, film = getSelectedGear().film) {
     const body = getSelectedGear().body;
+    if (body?.id === 'pns') {
+      const plan = lens?.pnsPlan || computePnsExposurePlan(film);
+      const safeHandheldHz = 35;
+      const shakeRisk = plan.mode === 'T'
+        ? 0
+        : (plan.hz < safeHandheldHz ? Math.min(1, Math.log2(safeHandheldHz / Math.max(0.25, plan.hz)) * 0.36) : 0);
+      const meterState = Math.abs(plan.rawStops) <= 0.35 ? 'ok' : (plan.rawStops > 0 ? 'over' : 'under');
+      return {
+        isAuto: plan.isAuto,
+        autoRec: plan.effectiveSpeed,
+        effectiveSpeed: plan.effectiveSpeed,
+        hz: plan.hz,
+        durationSec: plan.durationSec,
+        safeHandheldHz,
+        shakeRisk,
+        rawStops: plan.rawStops,
+        meterState,
+        meterDiffEV: plan.meterDiffEV,
+        pnsPlan: plan
+      };
+    }
     const cur = CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) ? state.camShutterSpeed : 'auto';
     const isAuto = cur === 'auto';
     const autoRec = computeAutoShutterRec(lens, film);
@@ -12375,7 +13017,7 @@
   const PNS_SEG_MAP = {
     '0': 'abcdef', '1': 'bc', '2': 'abdeg', '3': 'abcdg', '4': 'bcfg',
     '5': 'acdfg', '6': 'acdefg', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg',
-    '-': 'g', 'A': 'abcefg', 'H': 'bcefg', 'L': 'def', ' ': ''
+    '-': 'g', 'A': 'abcefg', 'H': 'bcefg', 'L': 'def', 'P': 'abefg', 'T': 'defg', 't': 'defg', 's': 'acdfg', 'S': 'acdfg', ' ': ''
   };
   const PNS_SEG_POLYS = {
     a: '3.2,1.6 13.8,1.6 11.7,4.1 5.3,4.1',
@@ -12393,11 +13035,13 @@
     for (let i = 0; i < raw.length; i++) {
       const ch = raw[i];
       if (ch === '.' && tokens.length > 0) tokens[tokens.length - 1].dot = true;
-      else if (PNS_SEG_MAP[ch] !== undefined) tokens.push({ ch, dot: false });
+      else if (ch === '"' && tokens.length > 0) tokens[tokens.length - 1].quote = true;
+      else if (ch === ':' && tokens.length > 0) tokens[tokens.length - 1].colon = true;
+      else if (PNS_SEG_MAP[ch] !== undefined) tokens.push({ ch, dot: false, quote: false, colon: false });
     }
-    while (tokens.length < 3) tokens.unshift({ ch: ' ', dot: false });
+    while (tokens.length < 3) tokens.unshift({ ch: ' ', dot: false, quote: false, colon: false });
     const stepW = 19.5;
-    const totalW = Math.round(tokens.length * stepW + 4);
+    const totalW = Math.round(tokens.length * stepW + 6);
     const vColor = isSlow ? '#fb923c' : '#f7ca44';
     const hColor = isSlow ? '#fdba74' : '#f9df6e';
     const hRim = isSlow ? 'rgba(254, 215, 170, 0.45)' : 'rgba(103, 215, 250, 0.46)';
@@ -12419,6 +13063,12 @@
           segs += `<polygon points="${pts}" fill="${offFill}" />`;
         }
       }
+      if (tok.quote) {
+        segs += `<polygon points="15.2,1.6 16.6,1.6 16.0,5.8 14.7,5.8" fill="${hColor}" /><polygon points="17.5,1.6 18.9,1.6 18.3,5.8 17.0,5.8" fill="${hColor}" />`;
+      }
+      if (tok.colon) {
+        segs += `<circle cx="17.8" cy="7.4" r="1.35" fill="${hColor}" /><circle cx="17.8" cy="16.2" r="1.35" fill="${hColor}" />`;
+      }
       segs += tok.dot
         ? `<circle cx="15.8" cy="20.4" r="1.45" fill="${hColor}" />`
         : `<circle cx="15.8" cy="20.4" r="1.2" fill="${offFill}" />`;
@@ -12433,11 +13083,28 @@
     const info = getEffectiveShutterInfo(lens, film);
     const caps = getCameraExposureControlCaps(body, info);
     const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
+    const isPns = body?.id === 'pns';
+    const plan = isPns ? (info.pnsPlan || lens?.pnsPlan || computePnsExposurePlan(film)) : null;
+
+    const modeBadge = document.getElementById('vfPnsModeBadge');
+    if (modeBadge) {
+      if (isPns && plan) {
+        modeBadge.style.display = '';
+        const modeTxt = plan.mode === 'P' && plan.isFlex ? 'P*' : plan.mode;
+        modeBadge.textContent = modeTxt;
+        modeBadge.classList.toggle('is-flex', plan.mode === 'P' && !!plan.isFlex);
+        modeBadge.classList.toggle('is-time', plan.mode === 'T');
+      } else {
+        modeBadge.style.display = 'none';
+      }
+    }
 
     const valEl = document.getElementById('vfPnsLcdVal');
     if (valEl) {
-      const speedTxt = String(info.effectiveSpeed || '250');
-      const isSlow = info.shakeRisk >= 0.45;
+      const speedTxt = (isPns && plan?.mode === 'T')
+        ? (pnsTimeOpenAt > 0 ? formatPnsTimerClock(plan.elapsedSec || 0) : '--')
+        : String(info.effectiveSpeed || '250');
+      const isSlow = (isPns && plan?.mode === 'T') ? true : (info.shakeRisk >= 0.45);
       const key = `${speedTxt}|${isSlow ? 1 : 0}`;
       if (valEl.dataset.segKey !== key) {
         valEl.dataset.segKey = key;
@@ -12777,12 +13444,18 @@
       windBtn.classList.toggle('is-auto', !!state.camAutoWind);
     }
     if (windLbl) windLbl.textContent = needsRewind ? 'REWIND' : (needsWind ? 'WIND' : '');
-    if (shutterWindLbl) shutterWindLbl.textContent = needsRewind ? 'REWIND ↺' : 'WIND ↻';
+    const isPnsTimeOpen = body.id === 'pns' && state.pnsMode === 'T' && pnsTimeOpenAt > 0;
+    const pnsOpenSec = isPnsTimeOpen ? Math.min(600, Math.max(0, (Date.now() - pnsTimeOpenAt) / 1000)) : 0;
+    const pnsOpenLbl = isPnsTimeOpen ? `T·${formatPnsTimerClock(pnsOpenSec)}` : '';
+    if (shutterWindLbl) shutterWindLbl.textContent = isPnsTimeOpen ? pnsOpenLbl : (needsRewind ? 'REWIND ↺' : 'WIND ↻');
     if (shutterBtn) {
-      shutterBtn.classList.toggle('needs-rewind', needsRewind);
-      shutterBtn.classList.toggle('needs-wind', needsWind);
-      shutterBtn.setAttribute('title', needsRewind ? 'Tap to rewind roll' : (needsWind ? 'Tap to wind film' : 'Take photo'));
-      shutterBtn.setAttribute('aria-label', needsRewind ? 'Rewind roll' : (needsWind ? 'Wind film' : 'Take photo'));
+      shutterBtn.classList.toggle('needs-rewind', needsRewind && !isPnsTimeOpen);
+      shutterBtn.classList.toggle('needs-wind', needsWind && !isPnsTimeOpen);
+      shutterBtn.classList.toggle('is-time-open', isPnsTimeOpen);
+      shutterBtn.setAttribute('title', isPnsTimeOpen
+        ? `Time Exposure open (${formatPnsTimerClock(pnsOpenSec)}) — Tap to close shutter`
+        : (needsRewind ? 'Tap to rewind roll' : (needsWind ? 'Tap to wind film' : 'Take photo')));
+      shutterBtn.setAttribute('aria-label', isPnsTimeOpen ? 'Close Time shutter exposure' : (needsRewind ? 'Rewind roll' : (needsWind ? 'Wind film' : 'Take photo')));
     }
 
     syncViewfinderFocusAid(body, lens);
@@ -14074,6 +14747,40 @@
     }
   }
 
+  function openPnsTimeExposure() {
+    if (pnsTimeOpenAt > 0) return;
+    pnsTimeOpenAt = Date.now();
+    pnsTimeDurationOverrideSec = 0;
+    if (state.camSound) {
+      withCamAudio((ctx, out) => {
+        const now = ctx.currentTime + 0.002;
+        mechNoiseBurst(ctx, out, now, 0.007, 'bandpass', 4450, 1.5, 0.14, 3200);
+        mechNoiseBurst(ctx, out, now + 0.004, 0.010, 'bandpass', 4250, 1.05, 0.25, 3400);
+      }, true);
+    }
+    if (pnsTimeTickerId) clearInterval(pnsTimeTickerId);
+    pnsTimeTickerId = window.setInterval(() => {
+      if (!pnsTimeOpenAt || state.bodyId !== 'pns' || state.pnsMode !== 'T') {
+        resetPnsTransientState();
+        syncCameraHudUI();
+        return;
+      }
+      const elapsedSec = (Date.now() - pnsTimeOpenAt) / 1000;
+      if (elapsedSec >= 600) {
+        captureCameraShot();
+        return;
+      }
+      const { body, lens } = getSelectedGear();
+      syncPnsLcdUI(body, lens);
+      syncLensBarrelWidgets();
+      const shutterBtn = document.getElementById('btnShutter');
+      const windLbl = shutterBtn?.querySelector('.shutter-wind-lbl');
+      if (windLbl) windLbl.textContent = `T·${formatPnsTimerClock(elapsedSec)}`;
+    }, 200);
+    syncCameraHudUI();
+    showToast('🌙 Shutter OPEN (Time) — Tap shutter again to close & capture');
+  }
+
   let cameraRollReady = Promise.resolve();
   let shutterBusy = false;
   let camPhotoCapsTrackId = '';
@@ -14085,6 +14792,15 @@
       return;
     }
     if (!state.camStream && !state.fullSourceCanvas && !SAMPLES[0]?.canvas) return;
+    if (state.bodyId === 'pns' && state.pnsMode === 'T') {
+      if (pnsTimeOpenAt <= 0) {
+        openPnsTimeExposure();
+        return;
+      }
+      const elapsedSec = Math.min(600, Math.max(0.05, (Date.now() - pnsTimeOpenAt) / 1000));
+      resetPnsTransientState();
+      pnsTimeDurationOverrideSec = elapsedSec;
+    }
     shutterBusy = true;
     const shutterButton = document.getElementById('btnShutter');
     shutterButton.disabled = true;
@@ -14095,11 +14811,14 @@
       await cameraRollReady;
       const { body, lens, film } = getSelectedGear();
       const shutterInfo = getEffectiveShutterInfo(lens, film);
-      const exposureWaitMs = shutterInfo.durationSec >= 0.06 ? Math.min(2200, Math.round(shutterInfo.durationSec * 1000)) : 0;
+      const wasPnsTimeClose = body.id === 'pns' && pnsTimeDurationOverrideSec > 0;
+      const exposureWaitMs = (!wasPnsTimeClose && shutterInfo.durationSec >= 0.06)
+        ? Math.min(2200, Math.round(shutterInfo.durationSec * 1000))
+        : 0;
       const blackoutMs = Math.max(110, exposureWaitMs);
       const fl = document.getElementById('shutterFlash');
       fl.classList.add('active'); setTimeout(() => fl.classList.remove('active'), blackoutMs);
-      playShutterSound(shutterInfo.durationSec);
+      playShutterSound(wasPnsTimeClose ? 0.015 : shutterInfo.durationSec);
       const exposureTimer = exposureWaitMs > 0 ? new Promise(resolve => setTimeout(resolve, exposureWaitMs)) : null;
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
@@ -14219,8 +14938,11 @@
         track.applyConstraints(getRealCameraVideoConstraints(false)).catch(() => {});
       }
       stillBitmap?.close?.();
+      pnsTimeDurationOverrideSec = 0;
+      pnsHalfPressActive = false;
       shutterBusy = false;
       shutterButton.disabled = false;
+      syncCameraHudUI();
     }
   }
 
@@ -14742,6 +15464,7 @@
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
     } else {
+      resetPnsTransientState();
       stopCameraLoop();
       if (state.camStream) stopRealCamera();
       if (tabId === 'darkroom') {
@@ -14819,7 +15542,10 @@
       ? Math.round(focalMm * 1.44)
       : (body.id === 'medium-format' ? Math.round(focalMm * 0.55) : focalMm);
     const apertureNum = Number((lens.activeF || state.lensAperture || lens.minF || 3.5).toFixed(1));
-    const lensShort = shortLensLabel(lens);
+    const isPnsBody = body.id === 'pns';
+    const lensShort = isPnsBody ? '' : shortLensLabel(lens);
+    const lensDisplayPart = isPnsBody ? '' : ` · ${lensShort}`;
+    const lensUpperPart = isPnsBody ? '' : ` · ${lensShort.toUpperCase()}`;
     const evVal = Number.isFinite(opts.ev) ? opts.ev : (state.exposure / 100);
     const evStr = `${evVal >= 0 ? '+' : ''}${evVal.toFixed(1)} EV`;
     const shutterHz = Number.isFinite(opts.shutterHz) ? opts.shutterHz : 125;
@@ -14841,16 +15567,17 @@
     const filmTypeLabel = film.isBW ? 'Black & White' : (film.brand === 'cinema' ? 'Cinema Film' : 'Color Negative');
     const headline = isOrig ? `Original Photo (Unedited)` : `${film.name} · ISO ${iso}`;
     const subline = isOrig
-      ? `${body.name} · ${lensShort} · Unedited original image`
-      : `${body.name} · ${lensShort} · Strength ${opts.fromCamera ? 85 : state.strength}% · Grain ${grainVal}%`;
+      ? `${body.name}${lensDisplayPart} · Unedited original image`
+      : `${body.name}${lensDisplayPart} · Strength ${opts.fromCamera ? 85 : state.strength}% · Grain ${grainVal}%`;
     const footerLeft = isOrig ? `ORIGINAL · UNEDITED` : `${film.name.toUpperCase()} · ISO ${iso}`;
     const footerRight = isOrig
-      ? `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${dateDisplay}`
-      : `${body.name.toUpperCase()} · ${lensShort.toUpperCase()} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
+      ? `${body.name.toUpperCase()}${lensUpperPart} · ${dateDisplay}`
+      : `${body.name.toUpperCase()}${lensUpperPart} · ${evStr}${state.dateStamp !== 'off' ? ` · ${dateDisplay}` : ''}`;
     const customCaption = String(opts.customCaption ?? (opts.fromCamera ? '' : state.exportCaption) ?? '').trim();
+    const camCaption = isPnsBody ? body.name : `${body.name} - ${lensShort}`;
     const captionText = isOrig
-      ? `Original Photo (Unedited) | ${body.name} - ${lensShort} | ${dateDisplay} | Tee's Film Lab`
-      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${body.name} - ${lensShort} | Shutter: ${shutterHz >= 1 ? `1/${Math.round(shutterHz)}s` : `${(1 / shutterHz).toFixed(1)}s`} | Strength ${opts.fromCamera ? 85 : state.strength}%, Exp ${evStr}, Grain ${grainVal}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
+      ? `Original Photo (Unedited) | ${camCaption} | ${dateDisplay} | Tee's Film Lab`
+      : `Film: ${film.name} (ISO ${iso}, ${filmTypeLabel}) | Camera: ${camCaption} | Shutter: ${shutterHz >= 1 ? `1/${Math.round(shutterHz)}s` : `${(1 / shutterHz).toFixed(1)}s`} | Strength ${opts.fromCamera ? 85 : state.strength}%, Exp ${evStr}, Grain ${grainVal}%, Frame ${frameLabel}${state.leakType !== 'none' && state.leakAmt > 0 ? `, Leak ${state.leakAmt}%` : ''} | ${dateDisplay} | Tee's Film Lab`;
     return {
       film, body, lens, isOrig, iso, focalMm, focal35mm, apertureNum, shutterHz, evVal, lensShort, evStr, frameLabel, filmTypeLabel,
       dateExif, dateDisplay, headline, subline, footerLeft, footerRight, captionText, customCaption
@@ -15475,7 +16202,9 @@
     requestAnimationFrame(layoutViewfinderStage);
   }
   function openComboPicker(focusSection) {
-    state.pickerTab = focusSection || state.pickerTab || 'camera';
+    let targetTab = focusSection || state.pickerTab || 'camera';
+    if (state.bodyId === 'pns' && targetTab === 'lens') targetTab = 'camera';
+    state.pickerTab = targetTab;
     appShell.classList.add('picker-open');
     comboSheet.classList.add('open');
     pickerDirty = false;
@@ -15485,6 +16214,7 @@
     scrollActiveTileIntoView(state.pickerTab);
   }
   function setPickerTab(tab) {
+    if (state.bodyId === 'pns' && tab === 'lens') tab = 'camera';
     state.pickerTab = tab;
     if (tab === 'saved') renderSavedRecipesList();
     syncPickerActiveUI();
@@ -15635,7 +16365,10 @@
       fr: state.frameType,
       ds: state.dateStamp === 'off' ? 'off' : 'on',
       fl: state.camFlashOn ? 1 : 0,
-      hf: state.hfDiptychMode ? 1 : 0
+      hf: state.hfDiptychMode ? 1 : 0,
+      pm: state.pnsMode,
+      pf: state.pnsFlexShift,
+      pa: state.pnsAperture
     };
     return btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
@@ -15669,8 +16402,9 @@
       state.lensAperture = rawLens.isFixedAperture ? minF : clamp(p.ap, minF, rawLens.maxF || 22, defAp);
       apPinnedWideOpen = Math.abs(state.lensAperture - minF) < 0.04;
       updateAdaptiveAfTarget({ syncFocusToAf: false, center: state.focusPoint });
-      state.focusMode = rawLens.isFixedAperture ? 'af' : (p.fm === 'mf' ? 'mf' : 'af');
-      state.focusPos = rawLens.isFixedAperture ? state.afTargetPos : clamp(p.fp, 0, 1, state.afTargetPos);
+      const lockAfOnly = !!rawLens.isFixedAperture || mId === 'pns';
+      state.focusMode = lockAfOnly ? 'af' : (p.fm === 'mf' ? 'mf' : 'af');
+      state.focusPos = lockAfOnly ? state.afTargetPos : clamp(p.fp, 0, 1, state.afTargetPos);
       state.strength = Math.round(clamp(p.st, 0, 100, state.strength));
       state.exposure = Math.round(clamp(p.ev, -150, 150, state.exposure));
       state.warmth = Math.round(clamp(p.w, -40, 40, state.warmth));
@@ -15684,6 +16418,9 @@
       state.dateStamp = p.ds === 'on' ? 'exif-or-today' : 'off';
       if (p.fl !== undefined) state.camFlashOn = !!p.fl;
       if (p.hf !== undefined) state.hfDiptychMode = !!p.hf;
+      if (p.pm !== undefined) state.pnsMode = ['P', 'A', 'T'].includes(p.pm) ? p.pm : 'P';
+      if (p.pf !== undefined) state.pnsFlexShift = Math.round(clamp(p.pf, -12, 12, 0));
+      if (p.pa !== undefined) state.pnsAperture = snapToPnsAperture(clamp(p.pa, 2.8, 22, 2.8));
       saveLocalAppState();
       return true;
     } catch (e) {
