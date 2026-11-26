@@ -6247,13 +6247,13 @@
       recLenses: ['35mm'],
       recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-portra-400'],
       blackLift: 0.020,
-      contrast: 1.12,
-      highlightRolloff: 0.16,
+      contrast: 1.08,
+      highlightRolloff: 0.18,
       bodyWarmth: 1,
       bodyTint: 0,
       grainScale: 1.05,
       softFocus: 0,
-      vignetteBoost: 6,
+      vignetteBoost: 2,
       disposableCast: false
     },
     {
@@ -6307,7 +6307,7 @@
       { id: '35mm', mm: 35, minF: 2.0, maxF: 16, defaultAperture: 2.0, focusProfile: 'rf35', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', recScene: 'everyday', recFilms: ['kodak-portra-400', 'ilford-hp5', 'kodak-gold-200', 'fuji-classic-chrome'], tileSub: 'Everyday · 0.72× RF Prime', meta: '35mm f/2 · Compact M-mount wide-standard prime, crisp micro-contrast & 0.72× brightlines', cropZoom: 1.28, brightlinePct: 78, barrelDistort: 0.002, apertureEV: 0.14, dofStrength: 0.72, dofRadius: 0.38, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011 }
     ],
     pns: [
-      { id: '35mm', mm: 35, minF: 2.8, maxF: 22, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', recScene: 'everyday', recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200'], tileSub: 'Everyday · Sharp prime', meta: '35mm f/2.8 (6 elements in 4 groups) · Edge-to-edge sharpness, crisp contrast & direct flash', cropZoom: 1.24, barrelDistort: 0.004, apertureEV: 0.06, dofStrength: 0.52, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 15, vignetteBase: 17, chromaticAb: 0.14, edgeSoft: 0.013 }
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 22, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', recScene: 'everyday', recFilms: ['kodak-gold-200', 'fuji-superia-400', 'kodak-ultramax-400', 'kodak-colorplus-200'], tileSub: 'Everyday · Sharp prime', meta: '35mm f/2.8 (6 elements in 4 groups) · Edge-to-edge sharpness, crisp contrast & direct flash', cropZoom: 1.24, barrelDistort: 0.004, apertureEV: 0, dofStrength: 0.52, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 15, vignetteBase: 14, chromaticAb: 0.14, edgeSoft: 0.013 }
     ],
     disposable: [
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', recScene: 'everyday', recFilms: ['kodak-ultramax-400', 'fuji-superia-400', 'kodak-gold-200'], tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
@@ -6716,7 +6716,7 @@
     const src = sourceImgData.data;
     const outData = new Uint8ClampedArray(src.length);
     const str = strength / 100;
-    const effectiveEV = exposureEV + (lens.apertureEV || 0);
+    const effectiveEV = exposureEV + (cfg.meteredCamera ? 0 : (lens.apertureEV || 0));
     const totalContrast = body.contrast * (1 - phone.contrastSoften) * film.contrast;
     const totalLift = Math.min(0.14, body.blackLift + film.blackLift * 0.76 + phone.shadowLift * 0.25);
     const totalRolloff = body.highlightRolloff + phone.highlightRecover;
@@ -7215,11 +7215,13 @@
           const nx = (x * invW - 0.5) * 2;
           const r2 = nx * nx + ny2;
           if (flashBurst) {
-            const fMask = Math.max(0, 1 - r2 * 0.52);
-            const fGain = 1 + fMask * 0.42 - (1 - fMask) * 0.16;
-            r = r * fGain + fMask * 16;
-            g = g * fGain + fMask * 15;
-            b = b * fGain + fMask * 12;
+            const fMask = Math.max(0, 1 - r2 * 0.56);
+            const curLum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            const fillHeadroom = Math.max(0.06, 1 - curLum * curLum * 0.90);
+            const fGain = 1 + fMask * 0.16 * fillHeadroom;
+            r = r * fGain + fMask * 7.5 * fillHeadroom;
+            g = g * fGain + fMask * 7.0 * fillHeadroom;
+            b = b * fGain + fMask * 5.5 * fillHeadroom;
           }
           if (vigStr > 0.01) {
             const vig = Math.max(0.18, 1 - vigStr * vigPowLut[Math.min(256, (r2 * 128) | 0)]);
@@ -7773,7 +7775,7 @@
     camFacing: 'environment',
     camAnimId: null,
     camSound: true,
-    camFlashOn: true,
+    camFlashOn: false,
     camExposureEV: 0,
     camShutterSpeed: 'auto',
     camISO: null,
@@ -7894,8 +7896,8 @@
     const database = await openRollDatabase();
     return new Promise((resolve, reject) => {
       const transaction = database.transaction(['camera-roll', 'camera-roll-files'], 'readwrite');
-      const { id, rollId, rollNumber, num, createdAt, filmName, isDiptych, thumbnailBlob, rawBlob, photoBlob } = shot;
-      transaction.objectStore('camera-roll').put({ id, rollId, rollNumber, num, createdAt, filmName, isDiptych: !!isDiptych, thumbnailBlob });
+      const { id, rollId, rollNumber, num, frameSeed, camEv, createdAt, filmName, isDiptych, thumbnailBlob, rawBlob, photoBlob } = shot;
+      transaction.objectStore('camera-roll').put({ id, rollId, rollNumber, num, frameSeed, camEv, createdAt, filmName, isDiptych: !!isDiptych, thumbnailBlob });
       transaction.objectStore('camera-roll-files').put({ id, rawBlob, photoBlob });
       if (isDiptych && rollId) transaction.objectStore('camera-roll-files').delete(`pending-half-frame:${rollId}`);
       transaction.oncomplete = () => resolve();
@@ -9482,6 +9484,7 @@
         dateStampText: formatDateStamp(),
         frameNumberStr: '24A',
         isDiptych: !!state.sourceIsDiptych,
+        meteredCamera: !!state.sourceFromCameraRoll,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'bitmap', coalesceKey: 'preview' });
       if (!output || requestVersion !== previewRequestVersion) { output?.bitmap?.close(); return; }
@@ -12172,9 +12175,12 @@
       ? Math.min(1, Math.log2(safeHandheldHz / Math.max(0.25, hz)) * 0.36)
       : 0;
     const evBias = getEffectiveCamExposureBias(getSelectedGear().body, { isAuto });
+    const rawDiffStops = Math.log2(autoHz / Math.max(0.25, hz));
+    const absDiff = Math.abs(rawDiffStops);
+    const signedDiff = rawDiffStops >= 0 ? 1 : -1;
     const meterDiffEV = isAuto
       ? evBias
-      : Math.log2(autoHz / Math.max(0.25, hz)) * 0.52;
+      : signedDiff * (absDiff <= 2.5 ? absDiff : (2.5 + (absDiff - 2.5) * 0.45));
     return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, meterDiffEV };
   }
 
@@ -12182,10 +12188,8 @@
     const { body, lens, film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
     const evBias = getEffectiveCamExposureBias(body, info);
-    const isoEv = state.camAppliedHardware?.iso ? 0 : getCameraIsoStops(film) * 0.32;
-    const closeEv = lens?.closeFocusEV || 0;
-    const manualShutterEv = info.isAuto ? 0 : info.meterDiffEV;
-    return state.exposure / 100 + (state.camAppliedHardware?.exposureCompensation ? 0 : evBias) + isoEv + closeEv + manualShutterEv;
+    if (!info.isAuto) return info.meterDiffEV;
+    return state.camAppliedHardware?.exposureCompensation ? 0 : evBias;
   }
 
   function getCameraStageDimensions(body, lens) {
@@ -13172,9 +13176,11 @@
         }
         float r2 = nx * nx + ny * ny;
         if (uFlashBurst > 0.5) {
-          float fMask = max(0.0, 1.0 - r2 * 0.52);
-          float fGain = 1.0 + fMask * 0.42 - (1.0 - fMask) * 0.16;
-          rgb = rgb * fGain + vec3(16.0, 15.0, 12.0) * fMask;
+          float fMask = max(0.0, 1.0 - r2 * 0.56);
+          float curLum = dot(rgb, vec3(0.299, 0.587, 0.114)) / 255.0;
+          float fillHeadroom = max(0.06, 1.0 - curLum * curLum * 0.90);
+          float fGain = 1.0 + fMask * 0.16 * fillHeadroom;
+          rgb = rgb * fGain + vec3(7.5, 7.0, 5.5) * (fMask * fillHeadroom);
         }
         if (uVigStr > 0.01) {
           float vr = clamp(r2 * 0.55, 0.0, 2.0);
@@ -13348,7 +13354,7 @@
 
         const { phone, body, lens, film, strength, exposureEV, warmth, grainAmt, halationAmt, bloomAmt, vignetteAmt, flashBurst } = cfg;
         const str = strength / 100;
-        const effectiveEV = exposureEV + (lens.apertureEV || 0);
+        const effectiveEV = exposureEV + (cfg.meteredCamera ? 0 : (lens.apertureEV || 0));
         const totalContrast = body.contrast * (1 - phone.contrastSoften) * film.contrast;
         const totalLift = Math.min(0.14, body.blackLift + film.blackLift * 0.76 + phone.shadowLift * 0.25);
         const totalRolloff = body.highlightRolloff + phone.highlightRecover;
@@ -13635,6 +13641,7 @@
         halationAmt: 0,
         bloomAmt: 0,
         ecoPreview: true,
+        meteredCamera: true,
         vignetteAmt: lens.vignetteBase, leakType: 'none', leakAmt: 0, frameType: 'none',
         dateStampText: '', frameNumberStr: '', flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       };
@@ -13850,19 +13857,20 @@
     }
 
     const frameSeed = (((Number(state.camRollNumber) || 1) * 7919) + (shotNumber * 104729) + (Date.now() & 0xffff)) >>> 0;
-    try {
-      const liveC = document.createElement('canvas');
-      liveC.width = capW;
-      liveC.height = capH;
-      liveC.getContext('2d').drawImage(capC, 0, 0);
-      loadSourceCanvas(liveC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true, frameSeed });
-    } catch (ignored) {}
     const { phone, body, lens, film } = getSelectedGear();
     const numStr = `${String(shotNumber).padStart(2, '0')}A`;
     const camShutterInfo = getEffectiveShutterInfo(lens, film);
     const camEv = cameraExposureEV();
     const camIso = getEffectiveCameraISO(film);
     const camGrain = getEffectiveCameraGrain(film);
+    try {
+      state.exposure = Math.max(-200, Math.min(200, Math.round(camEv * 100)));
+      const liveC = document.createElement('canvas');
+      liveC.width = capW;
+      liveC.height = capH;
+      liveC.getContext('2d').drawImage(capC, 0, 0);
+      loadSourceCanvas(liveC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true, frameSeed });
+    } catch (ignored) {}
     const workerImgData = cCtx.getImageData(0, 0, capW, capH);
     const [processed, finalRawBlob] = await Promise.all([
       processFilmImage(workerImgData, capW, capH, {
@@ -13870,6 +13878,7 @@
         grainAmt: camGrain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed, dateStampText: '', frameNumberStr: numStr,
         isDiptych: !!opts.isDiptych,
+        meteredCamera: true,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'blob', quality: 0.98, transferBuffers: true }),
       rawBlob ? Promise.resolve(rawBlob) : canvasToJpegBlob(capC, 0.98)
@@ -13885,7 +13894,7 @@
     });
     const photoBlob = await injectExifIntoJpegBlob(processed.blob, camSpec);
     const thumbnailBlob = await createShotThumbnail(photoBlob);
-    const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob: finalRawBlob, photoBlob, thumbnailBlob };
+    const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, camEv: Number(camEv.toFixed(2)), createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob: finalRawBlob, photoBlob, thumbnailBlob };
     let persisted = true;
     try { await storeCameraRollShot(shot); } catch (error) { persisted = false; }
 
@@ -13902,7 +13911,7 @@
     saveCameraRollMeta();
 
     state.camRollShots.unshift(persisted
-      ? { id: shot.id, rollId: shot.rollId, rollNumber: shot.rollNumber, num: shot.num, frameSeed: shot.frameSeed, createdAt: shot.createdAt, filmName: shot.filmName, isDiptych: shot.isDiptych, thumbnailBlob: shot.thumbnailBlob }
+      ? { id: shot.id, rollId: shot.rollId, rollNumber: shot.rollNumber, num: shot.num, frameSeed: shot.frameSeed, camEv: shot.camEv, createdAt: shot.createdAt, filmName: shot.filmName, isDiptych: shot.isDiptych, thumbnailBlob: shot.thumbnailBlob }
       : shot);
     state.activeRollShotId = shot.id;
     viewerCurrentIndex = 0;
@@ -14086,6 +14095,9 @@
       source.width = bitmap.width; source.height = bitmap.height;
       source.getContext('2d').drawImage(bitmap, 0, 0);
       bitmap.close();
+      if (Number.isFinite(s.camEv)) {
+        state.exposure = Math.max(-200, Math.min(200, Math.round(s.camEv * 100)));
+      }
       loadSourceCanvas(source, null, { isDiptych: !!s.isDiptych, fromCameraRoll: true, rollShotId: s.id, frameSeed: s.frameSeed, forcePreviewRender: !!opts.forcePreviewRender });
       if (!opts.keepActiveTab) switchMainTab('darkroom');
       if (!opts.silent) showToast(`Shot #${s.num} opened in Lab`);
@@ -14932,6 +14944,7 @@
         grainAmt: state.grain, halationAmt: film.halationBase, bloomAmt: lens.bloomBase, vignetteAmt: lens.vignetteBase,
         leakType: state.leakType, leakAmt: state.leakAmt, frameType: state.frameType, frameSeed: labFrameSeed, dateStampText: formatDateStamp(), frameNumberStr: '36',
         isDiptych: !!state.sourceIsDiptych,
+        meteredCamera: !!state.sourceFromCameraRoll,
         flashBurst: (body.id === 'pns' || body.id === 'disposable') && state.camFlashOn
       }, { output: 'blob', quality: 0.98, mixImageData, mixPct: state.labDoubleExpMix, transferBuffers: true });
       baseBlob = output?.blob;
