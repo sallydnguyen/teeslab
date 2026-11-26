@@ -6307,7 +6307,7 @@
       aspect: 3 / 2,
       meta: 'Nikon F2 Photomic (DP-1) pro 35mm SLR · Type A/K split-image + bottom DP-1 match-needle & ADR',
       defaultFocalId: '50mm',
-      recLenses: ['50mm', '28mm', '35mm'],
+      recLenses: ['50mm', '28-70mm', '85mm'],
       recFilms: ['kodak-portra-400', 'fuji-superia-premium-400', 'kodak-gold-200', 'cinestill-800t'],
       blackLift: 0.024,
       contrast: 1.08,
@@ -6399,10 +6399,25 @@
 
   const FOCAL_OPTIONS_BY_MODE = {
     slr: [
-      { id: '28mm', mm: 28, minF: 2.0, maxF: 22, focusProfile: 'wide', focalTag: '28mm', aperture: 'f/2', label: '28mm f/2', short: '28mm', recScene: 'night', recScenes: ['night', 'landscape', 'everyday'], recFilms: ['cinestill-800t', 'kodak-vision3-500t', 'kodak-ektar-100', 'ilford-hp5', 'kodak-portra-800'], tileSub: 'Night Street · Sharp f/2', meta: 'Nikkor 28mm f/2 AI-S · Crisp edge sharpness & strong micro-contrast even wide open at f/2 for night landscapes, architecture & complex street lights', cropZoom: 1.08, barrelDistort: 0.008, apertureEV: 0.08, dofStrength: 0.50, dofRadius: 0.50, shakeSens: 0, skinFlatter: 0, coatingWarmth: 0, coatingTint: 0, bloomBase: 8, vignetteBase: 17, chromaticAb: 0.07, edgeSoft: 0.004, lensContrast: 1.11, softFocus: 0, bokehCatScale: 1.0 },
-      { id: '35mm', mm: 35, minF: 1.4, maxF: 16, focusProfile: 'wide', focalTag: '35mm', aperture: 'f/1.4', label: '35mm f/1.4', short: '35mm', recScene: 'portrait', recScenes: ['portrait', 'night', 'everyday'], recFilms: ['kodak-portra-800', 'cinestill-800t', 'kodak-portra-400', 'kodak-vision3-500t', 'ilford-hp5'], tileSub: 'Night Portrait · 9-Blade', meta: 'Nikkor 35mm f/1.4 AI-S (9-blade) · Dreamy wide-open film softness & shimmering round bokeh orbs for environmental night street portraits', cropZoom: 1.32, barrelDistort: 0.004, apertureEV: 0.22, dofStrength: 0.86, dofRadius: 0.35, shakeSens: 0, skinFlatter: 0.10, coatingWarmth: 1.5, coatingTint: 0, bloomBase: 32, vignetteBase: 20, chromaticAb: 0.18, edgeSoft: 0.024, lensContrast: 0.96, softFocus: 0.30, bokehCatScale: 0.45 },
-      { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'standard', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-vision3-250d', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Classic MF', meta: '50mm f/1.2 · Manual classic everyday lens, gorgeous rendering & bright f/1.2 bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018 },
-      { id: '85mm', mm: 85, minF: 1.8, maxF: 16, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: 'AF 85mm f/1.8D', short: '85mm', recScene: 'portrait', recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Min 0.85m', meta: 'Nikkor AF 85mm f/1.8D (f/1.8–f/16, min focus 0.85m) · Fast AF portrait prime with smooth creamy bokeh & classic skin rendering', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016 }
+      {
+        id: '28-70mm', isZoom: true, mm: 35, zoomMin: 28, zoomMax: 70, zoomSteps: [28, 35, 50, 70],
+        minF: 2.8, zoomMaxMinF: 2.8, maxF: 22, focusProfile: 'zoom-28-70',
+        focalTag: '28-70mm', aperture: 'f/2.8', label: '28-70mm f/2.8', short: '28-70mm',
+        recScene: 'landscape', recScenes: ['landscape', 'everyday'],
+        recFilms: ['kodak-ektar-100', 'kodak-gold-200', 'fuji-superia-400', 'kodak-portra-400', 'fuji-fujicolor-100'],
+        tileSub: 'Travel · Landscape · Min 0.70m',
+        meta: '28-70mm f/2.8 (f/2.8–f/22, min focus 0.70m, 9-blade) · Versatile large-aperture zoom for travel, landscape & everyday',
+        cropZoom: 1.32, barrelDistort: 0.003, apertureEV: 0.06, dofStrength: 0.68, dofRadius: 0.40,
+        shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 16, vignetteBase: 18,
+        chromaticAb: 0.10, edgeSoft: 0.010, bokehCatScale: 0.45,
+        zoomAnchors: [
+          { mm: 28, cropZoom: 1.08, minF: 2.8, apertureEV: 0.08, dofStrength: 0.54, dofRadius: 0.48, barrelDistort: 0.008, bloomBase: 14, vignetteBase: 17, chromaticAb: 0.10, edgeSoft: 0.010, skinFlatter: 0.02 },
+          { mm: 50, cropZoom: 1.78, minF: 2.8, apertureEV: 0.06, dofStrength: 0.74, dofRadius: 0.36, barrelDistort: 0.001, bloomBase: 16, vignetteBase: 18, chromaticAb: 0.09, edgeSoft: 0.010, skinFlatter: 0.05 },
+          { mm: 70, cropZoom: 2.24, minF: 2.8, apertureEV: 0.04, dofStrength: 0.84, dofRadius: 0.32, barrelDistort: 0.000, bloomBase: 18, vignetteBase: 19, chromaticAb: 0.09, edgeSoft: 0.011, skinFlatter: 0.08 }
+        ]
+      },
+      { id: '50mm', mm: 50, minF: 1.2, maxF: 16, focusProfile: 'slr-50', focalTag: '50mm', aperture: 'f/1.2', label: '50mm f/1.2', short: '50mm', recScene: 'everyday', recScenes: ['everyday', 'night'], recFilms: ['fuji-superia-400', 'kodak-gold-200', 'kodak-vision3-250d', 'kodak-colorplus-200', 'cinestill-800t'], tileSub: 'Everyday · Night f/1.2 · Min 0.50m', meta: '50mm f/1.2 (f/1.2–f/16, min focus 0.50m, 9-blade) · Classic manual everyday prime with bright f/1.2 night bokeh', cropZoom: 1.80, barrelDistort: 0, apertureEV: 0.26, dofStrength: 0.88, dofRadius: 0.34, shakeSens: 0, skinFlatter: 0.06, coatingWarmth: 1, coatingTint: 0, bloomBase: 22, vignetteBase: 19, chromaticAb: 0.18, edgeSoft: 0.018, bokehCatScale: 0.45 },
+      { id: '85mm', mm: 85, minF: 1.8, maxF: 16, focusProfile: 'portrait', focalTag: '85mm', aperture: 'f/1.8', label: '85mm f/1.8', short: '85mm', recScene: 'portrait', recScenes: ['portrait', 'night'], recFilms: ['kodak-portra-400', 'kodak-portra-160', 'fuji-superia-premium-400', 'agfa-apx-400'], tileSub: 'Portrait · Min 0.85m', meta: '85mm f/1.8 (f/1.8–f/16, min focus 0.85m, 9-blade) · Portrait prime with smooth creamy bokeh & classic skin rendering', cropZoom: 2.55, barrelDistort: 0, apertureEV: 0.18, dofStrength: 0.96, dofRadius: 0.28, shakeSens: 0, skinFlatter: 0.14, coatingWarmth: 2, coatingTint: 0, bloomBase: 25, vignetteBase: 20, chromaticAb: 0.16, edgeSoft: 0.016, bokehCatScale: 0.45 }
     ],
     rangefinder: [
       { id: '35mm', mm: 35, minF: 2.0, maxF: 16, defaultAperture: 4.0, focusProfile: 'rf35', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', recScene: 'everyday', recFilms: ['kodak-portra-400', 'ilford-hp5', 'kodak-gold-200', 'fuji-classic-chrome'], tileSub: 'Everyday · 0.72× RF Prime', meta: '35mm f/2 · Compact M-mount wide-standard prime, crisp micro-contrast & 0.72× brightlines', cropZoom: 1.28, brightlinePct: 78, barrelDistort: 0.002, apertureEV: 0.14, dofStrength: 0.72, dofRadius: 0.38, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011 }
@@ -8129,9 +8144,9 @@
     const list = FOCAL_OPTIONS_BY_MODE[modeId] || FOCAL_OPTIONS_BY_MODE.slr;
     if (list.some(f => f.id === oldFocal)) return oldFocal;
     if (modeId === 'slr') {
-      if (oldFocal === '20mm' || oldFocal === '24mm' || oldFocal === '24-70mm') return '28mm';
+      if (oldFocal === '20mm' || oldFocal === '24mm' || oldFocal === '28mm' || oldFocal === '24-70mm' || oldFocal === '35-70mm') return '28-70mm';
+      if (oldFocal === '35mm') return '50mm';
       if (oldFocal === '135mm' || oldFocal === '70-200mm') return '85mm';
-      if (oldFocal === '35-70mm') return '35mm';
     } else if (modeId === 'half-frame') {
       if (oldFocal === '22mm' || oldFocal === '28mm') return '25mm';
       if (oldFocal === '35mm' || oldFocal === '50mm' || oldFocal === '60mm') return '38mm';
@@ -8520,6 +8535,25 @@
       { pos: 0.60, label: '2', meters: 2.0 },
       { pos: 0.74, label: '3', meters: 3.0 },
       { pos: 0.87, label: '5', meters: 5.0 },
+      { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
+    ],
+    'slr-50': [
+      { pos: 0.00, label: '0.5', meters: 0.50, adrClass: 'adr-warm' },
+      { pos: 0.16, label: '0.7', meters: 0.7 },
+      { pos: 0.32, label: '1', meters: 1.0 },
+      { pos: 0.48, label: '1.5', meters: 1.5 },
+      { pos: 0.64, label: '2.5', meters: 2.5 },
+      { pos: 0.78, label: '5', meters: 5.0 },
+      { pos: 0.89, label: '10', meters: 10.0 },
+      { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
+    ],
+    'zoom-28-70': [
+      { pos: 0.00, label: '0.7', meters: 0.70, adrClass: 'adr-warm' },
+      { pos: 0.16, label: '0.9', meters: 0.9 },
+      { pos: 0.32, label: '1.2', meters: 1.2 },
+      { pos: 0.50, label: '2', meters: 2.0 },
+      { pos: 0.68, label: '3', meters: 3.0 },
+      { pos: 0.85, label: '5', meters: 5.0 },
       { pos: 1.00, label: '∞', meters: Infinity, adrClass: 'adr-cyan' }
     ],
     zoom: [
@@ -8912,8 +8946,8 @@
       const apStr = formatApertureLabel(curF);
       const fmtSuffix = lens.formatLabel ? lens.formatLabel.replace(/^120\s*·\s*/, '') : '';
       const displayLabel = lens.isFormatLens && fmtSuffix
-        ? `${zRound}mm ${apStr} (${fmtSuffix} Z)`
-        : `${zRound}mm ${apStr} (Z)`;
+        ? `${zRound}mm ${apStr} (${fmtSuffix})`
+        : `${zRound}mm ${apStr}`;
       const ringAngleDeg = ((zMm - zMin) / Math.max(1, zMax - zMin)) * 140 + 2 * Math.log2(curF) * 28;
       return {
         ...interp,
