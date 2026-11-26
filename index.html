@@ -4679,10 +4679,80 @@
       opacity: 0;
       pointer-events: none;
     }
+    .photo-viewer-exif {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 16px 10px;
+      flex-shrink: 0;
+      z-index: 2;
+      text-align: center;
+      pointer-events: auto;
+    }
+    .photo-viewer-exif:empty {
+      display: none;
+    }
+    .pv-exif-gear {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.25px;
+      color: #e5e7eb;
+    }
+    .pv-exif-body {
+      color: #67e8f9;
+    }
+    .pv-exif-lens {
+      color: #f3f4f6;
+    }
+    .pv-exif-film {
+      color: #fbbf24;
+    }
+    .pv-exif-dot {
+      color: #4b5563;
+      font-weight: 400;
+    }
+    .pv-exif-specs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: #9ca3af;
+    }
+    .pv-exif-chip {
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      color: #d1d5db;
+      line-height: 1.3;
+    }
+    .pv-exif-chip.is-mode {
+      color: #67e8f9;
+      border-color: rgba(34, 211, 238, 0.28);
+      background: rgba(34, 211, 238, 0.09);
+      font-weight: 700;
+    }
+    .pv-exif-chip.is-flash {
+      color: #fde047;
+      border-color: rgba(250, 204, 21, 0.28);
+      background: rgba(250, 204, 21, 0.08);
+    }
     .photo-viewer-botbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
       background: rgba(14, 16, 21, 0.95);
       border-top: 1px solid #232732;
@@ -4696,11 +4766,13 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 150px;
+      flex: 1;
+      min-width: 0;
     }
     .photo-viewer-actions {
       display: flex;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     select { color-scheme: dark; }
@@ -6273,6 +6345,7 @@
           </div>
           <button class="photo-viewer-nav btn-next" id="btnViewerNext" type="button" aria-label="Next photo">›</button>
         </div>
+        <div class="photo-viewer-exif" id="photoViewerExifBar"></div>
         <div class="photo-viewer-botbar">
           <div class="photo-viewer-tag" id="photoViewerFilmTag">🎞️ Film photo</div>
           <div class="photo-viewer-actions">
@@ -6651,6 +6724,11 @@
         const den = view.getUint32(pos + 4, le);
         return den ? (num / den) : null;
       }
+      if (type === 10) {
+        const num = view.getInt32(pos, le);
+        const den = view.getInt32(pos + 4, le);
+        return den ? (num / den) : null;
+      }
       return null;
     };
 
@@ -6659,12 +6737,13 @@
       if (s < tiffStart || s + 2 > view.byteLength) return null;
       const n = view.getUint16(s, le);
       let sub = null;
+      const wantTags = new Set([0x0110, 0x0132, 0x829A, 0x829D, 0x8827, 0x9003, 0x9204, 0x9206, 0xA434]);
       for (let i = 0; i < n; i++) {
         const ep = s + 2 + i * 12;
         if (ep + 12 > view.byteLength) break;
         const tag = view.getUint16(ep, le);
         if (tag === 0x8769) sub = view.getUint32(ep + 8, le);
-        else if (tag === 0x9003 || tag === 0x0132 || tag === 0x9206) {
+        else if (wantTags.has(tag)) {
           const v = readVal(view.getUint16(ep + 2, le), view.getUint32(ep + 4, le), ep + 8);
           if (v !== null && v !== '') tags[tag] = v;
         }
@@ -6676,7 +6755,16 @@
     if (subIfd) parseIfd(subIfd);
     const dateRaw = tags[0x9003] || tags[0x0132] || '';
     const subjectDistance = (Number.isFinite(tags[0x9206]) && tags[0x9206] > 0) ? tags[0x9206] : null;
-    return (dateRaw || subjectDistance !== null) ? { dateRaw, subjectDistance } : null;
+    const model = tags[0x0110] || '';
+    const lensModel = tags[0xA434] || '';
+    const exposureTime = (Number.isFinite(tags[0x829A]) && tags[0x829A] > 0) ? tags[0x829A] : null;
+    const fNumber = (Number.isFinite(tags[0x829D]) && tags[0x829D] > 0) ? tags[0x829D] : null;
+    const iso = (Number.isFinite(tags[0x8827]) && tags[0x8827] > 0) ? Math.round(tags[0x8827]) : null;
+    const evBias = Number.isFinite(tags[0x9204]) ? tags[0x9204] : null;
+    if (!dateRaw && subjectDistance === null && !model && !lensModel && exposureTime === null && fNumber === null && iso === null) {
+      return null;
+    }
+    return { dateRaw, subjectDistance, model, lensModel, exposureTime, fNumber, iso, evBias };
   }
 
   /* ==========================================================================
@@ -8196,8 +8284,16 @@
     const database = await openRollDatabase();
     return new Promise((resolve, reject) => {
       const transaction = database.transaction(['camera-roll', 'camera-roll-files'], 'readwrite');
-      const { id, rollId, rollNumber, num, frameSeed, camEv, createdAt, filmName, isDiptych, thumbnailBlob, rawBlob, photoBlob } = shot;
-      transaction.objectStore('camera-roll').put({ id, rollId, rollNumber, num, frameSeed, camEv, createdAt, filmName, isDiptych: !!isDiptych, thumbnailBlob });
+      const {
+        id, rollId, rollNumber, num, frameSeed, camEv, createdAt,
+        bodyId, bodyName, lensLabel, focalMm, apertureLabel, shutterLabel, shutterHz, exposureMode, iso, filmName, flashOn,
+        isDiptych, thumbnailBlob, rawBlob, photoBlob
+      } = shot;
+      transaction.objectStore('camera-roll').put({
+        id, rollId, rollNumber, num, frameSeed, camEv, createdAt,
+        bodyId, bodyName, lensLabel, focalMm, apertureLabel, shutterLabel, shutterHz, exposureMode, iso, filmName, flashOn: !!flashOn,
+        isDiptych: !!isDiptych, thumbnailBlob
+      });
       transaction.objectStore('camera-roll-files').put({ id, rawBlob, photoBlob });
       if (isDiptych && rollId) transaction.objectStore('camera-roll-files').delete(`pending-half-frame:${rollId}`);
       transaction.oncomplete = () => resolve();
@@ -14741,7 +14837,39 @@
     });
     const photoBlob = await injectExifIntoJpegBlob(processed.blob, camSpec);
     const thumbnailBlob = await createShotThumbnail(photoBlob);
-    const shot = { id: createRollId(), rollId: state.camRollId, rollNumber: state.camRollNumber, num: shotNumber, frameSeed, camEv: Number(camEv.toFixed(2)), createdAt: Date.now(), filmName: film.name, isDiptych: !!opts.isDiptych, rawBlob: finalRawBlob, photoBlob, thumbnailBlob };
+    const shutterStr = (body.id === 'pns' && camShutterInfo.pnsPlan?.mode === 'T')
+      ? `T ${formatPnsTimerClock(camShutterInfo.durationSec)}`
+      : formatShutterSpeedSec(camShutterInfo.effectiveSpeed || (camShutterInfo.hz >= 1 ? String(Math.round(camShutterInfo.hz)) : `${(1 / Math.max(0.05, camShutterInfo.hz)).toFixed(1)}s`));
+    const modeBadgeStr = body.id === 'pns'
+      ? (camShutterInfo.pnsPlan?.isFlex ? 'P*' : (camShutterInfo.pnsPlan?.mode || 'P'))
+      : (camShutterInfo.isAuto ? 'A' : 'M');
+    const shotLensLabel = body.id === 'pns'
+      ? ''
+      : (lens.isZoom ? `${lens.focalTag || '28-70mm'} (${camSpec.focalMm}mm)` : (lens.focalTag || `${camSpec.focalMm}mm`));
+    const shot = {
+      id: createRollId(),
+      rollId: state.camRollId,
+      rollNumber: state.camRollNumber,
+      num: shotNumber,
+      frameSeed,
+      camEv: Number(camEv.toFixed(2)),
+      createdAt: Date.now(),
+      bodyId: body.id,
+      bodyName: body.name,
+      lensLabel: shotLensLabel,
+      focalMm: camSpec.focalMm,
+      apertureLabel: formatApertureLabel(camSpec.apertureNum || lens.activeF || 3.5),
+      shutterLabel: shutterStr,
+      shutterHz: Number(camShutterInfo.hz.toFixed(3)),
+      exposureMode: modeBadgeStr,
+      iso: camIso,
+      filmName: film.name,
+      flashOn: !!((body.id === 'pns' || body.id === 'disposable') && state.camFlashOn),
+      isDiptych: !!opts.isDiptych,
+      rawBlob: finalRawBlob,
+      photoBlob,
+      thumbnailBlob
+    };
     let persisted = true;
     try { await storeCameraRollShot(shot); } catch (error) { persisted = false; }
 
@@ -14758,7 +14886,14 @@
     saveCameraRollMeta();
 
     state.camRollShots.unshift(persisted
-      ? { id: shot.id, rollId: shot.rollId, rollNumber: shot.rollNumber, num: shot.num, frameSeed: shot.frameSeed, camEv: shot.camEv, createdAt: shot.createdAt, filmName: shot.filmName, isDiptych: shot.isDiptych, thumbnailBlob: shot.thumbnailBlob }
+      ? {
+          id: shot.id, rollId: shot.rollId, rollNumber: shot.rollNumber, num: shot.num, frameSeed: shot.frameSeed,
+          camEv: shot.camEv, createdAt: shot.createdAt,
+          bodyId: shot.bodyId, bodyName: shot.bodyName, lensLabel: shot.lensLabel, focalMm: shot.focalMm,
+          apertureLabel: shot.apertureLabel, shutterLabel: shot.shutterLabel, shutterHz: shot.shutterHz,
+          exposureMode: shot.exposureMode, iso: shot.iso, filmName: shot.filmName, flashOn: shot.flashOn,
+          isDiptych: shot.isDiptych, thumbnailBlob: shot.thumbnailBlob
+        }
       : shot);
     state.activeRollShotId = shot.id;
     viewerCurrentIndex = 0;
@@ -15072,6 +15207,75 @@
     }, 200);
   }
 
+  function formatShotClock(ts) {
+    const n = Number(ts);
+    if (!Number.isFinite(n) || n <= 0) return '';
+    const d = new Date(n);
+    const pad = v => String(v).padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function renderPhotoViewerExif(s) {
+    const exifEl = document.getElementById('photoViewerExifBar');
+    if (!exifEl || !s) return;
+    const gearParts = [];
+    if (s.bodyName) gearParts.push(`<span class="pv-exif-body">${escapeHtml(s.bodyName)}</span>`);
+    if (s.lensLabel && s.bodyId !== 'pns' && !String(s.bodyName || '').includes('35Ti')) {
+      gearParts.push(`<span class="pv-exif-lens">${escapeHtml(s.lensLabel)}</span>`);
+    }
+    if (s.filmName) gearParts.push(`<span class="pv-exif-film">${escapeHtml(s.filmName)}</span>`);
+    const gearHtml = gearParts.length
+      ? `<div class="pv-exif-gear">${gearParts.join('<span class="pv-exif-dot">·</span>')}</div>`
+      : '';
+
+    const chips = [];
+    if (s.exposureMode) chips.push(`<span class="pv-exif-chip is-mode">${escapeHtml(s.exposureMode)}</span>`);
+    if (s.apertureLabel) chips.push(`<span class="pv-exif-chip">${escapeHtml(s.apertureLabel)}</span>`);
+    if (s.shutterLabel) chips.push(`<span class="pv-exif-chip">${escapeHtml(s.shutterLabel)}</span>`);
+    if (Number.isFinite(Number(s.iso)) && Number(s.iso) > 0) {
+      chips.push(`<span class="pv-exif-chip">ISO ${Math.round(Number(s.iso))}</span>`);
+    }
+    if (Number.isFinite(Number(s.camEv))) {
+      const evNum = Number(s.camEv);
+      const evTxt = `${evNum >= 0 ? '+' : ''}${evNum.toFixed(1)} EV`;
+      chips.push(`<span class="pv-exif-chip">${escapeHtml(evTxt)}</span>`);
+    }
+    if (s.flashOn) chips.push(`<span class="pv-exif-chip is-flash">⚡ Flash</span>`);
+    const timeStr = formatShotClock(s.createdAt);
+    if (timeStr) chips.push(`<span class="pv-exif-chip">${escapeHtml(timeStr)}</span>`);
+    const specsHtml = chips.length ? `<div class="pv-exif-specs">${chips.join('')}</div>` : '';
+    exifEl.innerHTML = `${gearHtml}${specsHtml}`;
+  }
+
+  async function hydrateShotExifFromBlob(s, blob) {
+    if (!s || !blob || s._exifHydrated) return;
+    s._exifHydrated = true;
+    try {
+      const buf = await blob.arrayBuffer();
+      const exif = parseExifFromArrayBuffer(buf);
+      if (!exif) return;
+      if (!s.bodyName && exif.model) {
+        const dashIdx = exif.model.indexOf(' - ');
+        s.bodyName = dashIdx > 0 ? exif.model.slice(0, dashIdx).trim() : exif.model.trim();
+        if (!s.filmName && dashIdx > 0) s.filmName = exif.model.slice(dashIdx + 3).trim();
+      }
+      if (!s.lensLabel && exif.lensModel && !String(s.bodyName || '').includes('35Ti')) {
+        s.lensLabel = exif.lensModel.split(/\s+/)[0] || exif.lensModel;
+      }
+      if (!s.apertureLabel && exif.fNumber) {
+        s.apertureLabel = formatApertureLabel(exif.fNumber);
+      }
+      if (!s.shutterLabel && exif.exposureTime) {
+        if (exif.exposureTime < 0.7) s.shutterLabel = `1/${Math.max(1, Math.round(1 / exif.exposureTime))}s`;
+        else s.shutterLabel = `${exif.exposureTime.toFixed(1).replace(/\.0$/, '')}s`;
+      }
+      if (!s.iso && exif.iso) s.iso = exif.iso;
+      if (!Number.isFinite(Number(s.camEv)) && Number.isFinite(exif.evBias)) {
+        s.camEv = Number(exif.evBias.toFixed(2));
+      }
+    } catch (ignored) {}
+  }
+
   async function viewerShowShot(index, direction = null) {
     if (index < 0) index = 0;
     if (index >= state.camRollShots.length) index = state.camRollShots.length - 1;
@@ -15092,6 +15296,7 @@
     if (titleEl) titleEl.textContent = `Roll #${s.rollNumber || 1} · Shot #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
     if (counterEl) counterEl.textContent = `${index + 1} / ${state.camRollShots.length}`;
     if (tagEl) tagEl.textContent = s.filmName ? `🎞️ ${s.filmName}` : '🎞️ Film photo';
+    renderPhotoViewerExif(s);
     if (prevBtn) prevBtn.disabled = (index <= 0);
     if (nextBtn) nextBtn.disabled = (index >= state.camRollShots.length - 1);
 
@@ -15101,6 +15306,11 @@
       s._cachedPhotoBlob = cachedFull;
       viewerBlobUrl = URL.createObjectURL(cachedFull);
       imgEl.src = viewerBlobUrl;
+      if (!s.bodyName && !s._exifHydrated) {
+        hydrateShotExifFromBlob(s, cachedFull).then(() => {
+          if (viewerActiveShotId === s.id) renderPhotoViewerExif(s);
+        });
+      }
     } else if (s.thumbnailBlob) {
       viewerBlobUrl = URL.createObjectURL(s.thumbnailBlob);
       imgEl.src = viewerBlobUrl;
@@ -15110,6 +15320,11 @@
           revokeViewerBlobUrl();
           viewerBlobUrl = URL.createObjectURL(files.photoBlob);
           imgEl.src = viewerBlobUrl;
+          if (!s.bodyName && !s._exifHydrated) {
+            hydrateShotExifFromBlob(s, files.photoBlob).then(() => {
+              if (viewerActiveShotId === s.id) renderPhotoViewerExif(s);
+            });
+          }
         }
       }).catch(() => {});
     }
