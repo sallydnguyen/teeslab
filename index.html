@@ -1847,7 +1847,7 @@
       z-index: 3;
     }
 
-    /* Universal Analog Match-Needle Exposure Meter (Hidden on Leica M6 rangefinder which uses bottom LEDs) */
+    /* Universal Analog Match-Needle Exposure Meter (Hidden on cameras with built-in VF meters: Nikon F2 DP-1 & Leica M6 LEDs) */
     .vf-meter-needle-rail {
       position: absolute;
       right: 7px;
@@ -1867,8 +1867,9 @@
       pointer-events: none;
       z-index: 4;
     }
-    .vf-stage[data-vf-mode="slr"] .vf-meter-needle-rail {
-      top: calc(50% - 14px);
+    .vf-stage[data-vf-mode="slr"] .vf-meter-needle-rail,
+    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail {
+      display: none;
     }
     .vf-stage[data-vf-mode="pns"] .vf-meter-needle-rail {
       top: calc(50% - 12px);
@@ -1876,9 +1877,6 @@
     .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
       right: 14px;
       height: 102px;
-    }
-    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail {
-      display: none;
     }
     .vf-meter-needle-svg {
       width: 100%;
@@ -7783,6 +7781,7 @@
     camAppliedHardware: {},
     camAELocked: false,
     camLockedEV: null,
+    camLockedLum: null,
     camNeedsWind: false,
     camNeedsRewind: false,
     lastCompletedRollId: null,
@@ -9030,6 +9029,7 @@
 
   let previewSourceVersion = 0;
   let sceneMeanLum = 0.5;
+  let liveSceneLum = 0.5;
   let labZoom = 1, labPanX = 0, labPanY = 0;
   function applyLabZoomTransform(dragging = false) {
     labZoom = Math.max(1, Math.min(4, Number(labZoom) || 1));
@@ -9260,7 +9260,8 @@
       let sum = 0;
       for (let i = 0; i < md.length; i += 4) sum += (0.299 * md[i] + 0.587 * md[i + 1] + 0.114 * md[i + 2]) / 255;
       sceneMeanLum = sum / 16;
-    } catch (e) { sceneMeanLum = 0.5; }
+      liveSceneLum = sceneMeanLum;
+    } catch (e) { sceneMeanLum = 0.5; liveSceneLum = 0.5; }
 
     state.previewSourceCanvas = prevC;
     state.previewSourceData = null;
@@ -10617,6 +10618,9 @@
   function selectViewfinderMode(modeId) {
     const mode = VIEWFINDER_MODES.find(m => m.id === modeId) || VIEWFINDER_MODES[0];
     state.bodyId = mode.id;
+    state.camAELocked = false;
+    state.camLockedEV = null;
+    state.camLockedLum = null;
     if (mode.id !== 'half-frame') clearPendingHalfFrame();
     const focals = getModeFocals(mode.id);
     const keepCurrent = focals.find(f => f.id === state.lensId);
@@ -12161,7 +12165,13 @@
     return bestSpeed;
   }
 
+  function hasBuiltInVfMeter(body = getSelectedGear().body) {
+    const id = body?.id;
+    return id === 'slr' || id === 'rangefinder';
+  }
+
   function getEffectiveShutterInfo(lens = getSelectedGear().lens, film = getSelectedGear().film) {
+    const body = getSelectedGear().body;
     const cur = CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) ? state.camShutterSpeed : 'auto';
     const isAuto = cur === 'auto';
     const autoRec = computeAutoShutterRec(lens, film);
@@ -12174,22 +12184,29 @@
     const shakeRisk = hz < safeHandheldHz
       ? Math.min(1, Math.log2(safeHandheldHz / Math.max(0.25, hz)) * 0.36)
       : 0;
-    const evBias = getEffectiveCamExposureBias(getSelectedGear().body, { isAuto });
+    const caps = getCameraExposureControlCaps(body, { isAuto });
+    const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
+    const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
+    const aelOffsetEV = (isAuto && hasLiveVideo && caps.supportsAel && state.camAELocked && Number.isFinite(state.camLockedLum) && state.camLockedLum > 0)
+      ? Math.max(-3, Math.min(3, Math.log2(Math.max(0.03, liveSceneLum) / Math.max(0.03, state.camLockedLum))))
+      : 0;
     const rawDiffStops = Math.log2(autoHz / Math.max(0.25, hz));
+    const rawStops = isAuto ? (evBias + aelOffsetEV) : rawDiffStops;
+    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
     const absDiff = Math.abs(rawDiffStops);
     const signedDiff = rawDiffStops >= 0 ? 1 : -1;
     const meterDiffEV = isAuto
-      ? evBias
+      ? rawStops
       : signedDiff * (absDiff <= 2.5 ? absDiff : (2.5 + (absDiff - 2.5) * 0.45));
-    return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, meterDiffEV };
+    return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, rawStops, meterState, meterDiffEV };
   }
 
   function cameraExposureEV() {
     const { body, lens, film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
-    const evBias = getEffectiveCamExposureBias(body, info);
     if (!info.isAuto) return info.meterDiffEV;
-    return state.camAppliedHardware?.exposureCompensation ? 0 : evBias;
+    const evBias = getEffectiveCamExposureBias(body, info);
+    return state.camAppliedHardware?.exposureCompensation ? (info.rawStops - evBias) : info.rawStops;
   }
 
   function getCameraStageDimensions(body, lens) {
@@ -12310,37 +12327,29 @@
     const armEl = document.getElementById('vfGlobalMeterNeedleArm');
     if (!railEl || !armEl) return;
     const gear = (body && lens) ? { body, lens, film: getSelectedGear().film } : getSelectedGear();
-    const isRangefinder = gear.body?.id === 'rangefinder';
-    railEl.hidden = isRangefinder;
-    if (isRangefinder) return;
     const info = getEffectiveShutterInfo(gear.lens, gear.film);
-    const caps = getCameraExposureControlCaps(gear.body, info);
-    const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
-    const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
-    const rawStops = info.isAuto
-      ? evBias
-      : Math.log2(autoHz / Math.max(0.25, info.hz));
-    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
+    const { rawStops, meterState } = info;
     const clampedStops = Math.max(-2.5, Math.min(2.5, rawStops));
     const needleDeg = (clampedStops / 2.5) * 44;
 
     railEl.dataset.state = meterState;
     railEl.dataset.stops = rawStops.toFixed(2);
     armEl.style.transform = `rotate(${needleDeg.toFixed(1)}deg)`;
+    railEl.hidden = hasBuiltInVfMeter(gear.body);
   }
 
   function syncRfMeterLed(body, lens) {
     if (body?.id !== 'rangefinder') return;
     const { film } = getSelectedGear();
-    const info = getEffectiveShutterInfo(lens, film);
-    const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
-    const rawStops = info.isAuto ? 0 : Math.log2(autoHz / Math.max(0.25, info.hz));
-    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
+    const { rawStops, meterState } = getEffectiveShutterInfo(lens, film);
     const meterEl = document.getElementById('vfRfMeter');
     const minusLed = document.getElementById('vfRfLedMinus');
     const okLed = document.getElementById('vfRfLedOk');
     const plusLed = document.getElementById('vfRfLedPlus');
-    if (meterEl) meterEl.dataset.state = meterState;
+    if (meterEl) {
+      meterEl.dataset.state = meterState;
+      meterEl.dataset.stops = rawStops.toFixed(2);
+    }
     minusLed?.classList.toggle('lit', rawStops < -0.35);
     okLed?.classList.toggle('lit', Math.abs(rawStops) < 0.9);
     plusLed?.classList.toggle('lit', rawStops > 0.35);
@@ -12351,13 +12360,9 @@
     const { film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
     const caps = getCameraExposureControlCaps(body, info);
-    const autoHz = SHUTTER_SPEED_HZ[info.autoRec] || 125;
     const evBias = caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
-    const rawStops = info.isAuto
-      ? evBias
-      : Math.log2(autoHz / Math.max(0.25, info.hz));
+    const { rawStops, meterState } = info;
     const stepVal = Math.max(-6, Math.min(6, Math.round(rawStops * 3)));
-    const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
     const clampedStops = Math.max(-2.5, Math.min(2.5, rawStops));
     // Left is + (over), Right is − (under), Center 0px sits inside twin inner notch
     const dp1OffsetPx = Math.abs(clampedStops) < 1e-4 ? 0 : -(clampedStops / 2.5) * 20;
@@ -12375,6 +12380,7 @@
     if (readoutBox) readoutBox.dataset.mode = info.isAuto ? 'A' : 'M';
     if (meterEl) {
       meterEl.dataset.state = meterState;
+      meterEl.dataset.stops = rawStops.toFixed(2);
       meterEl.dataset.step = String(stepVal);
     }
     if (needleEl) {
@@ -12476,6 +12482,7 @@
     if (!expCaps.supportsAel && state.camAELocked) {
       state.camAELocked = false;
       state.camLockedEV = null;
+      state.camLockedLum = null;
     }
 
     const evRow = document.getElementById('vfEvRow');
@@ -13586,7 +13593,7 @@
       }
 
       const { phone, body, lens, film } = getSelectedGear();
-      if (hasLiveVideo && !state.camAELocked && (ts - lastLiveMeterTs) >= 320) {
+      if (hasLiveVideo && (ts - lastLiveMeterTs) >= 320) {
         lastLiveMeterTs = ts;
         try {
           if (!liveLumCanvas) {
@@ -13600,7 +13607,8 @@
           for (let i = 0; i < md.length; i += 4) sum += (0.299 * md[i] + 0.587 * md[i + 1] + 0.114 * md[i + 2]) / 255;
           const measured = sum / 16;
           if (Number.isFinite(measured)) {
-            sceneMeanLum = sceneMeanLum * 0.45 + measured * 0.55;
+            liveSceneLum = liveSceneLum * 0.45 + measured * 0.55;
+            if (!state.camAELocked) sceneMeanLum = liveSceneLum;
             syncVfMeterNeedle(body, lens);
             if (body.id === 'slr') syncSlrMeterLed(body, lens);
             else if (body.id === 'rangefinder') syncRfMeterLed(body, lens);
@@ -16538,8 +16546,11 @@
     if (!getCameraExposureControlCaps().supportsAel) return;
     state.camAELocked = !state.camAELocked;
     state.camLockedEV = state.camAELocked ? state.camExposureEV : null;
+    const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
+    state.camLockedLum = state.camAELocked ? (hasLiveVideo ? liveSceneLum : sceneMeanLum) : null;
     if (state.camAELocked && vfFocusReticle) vfFocusReticle.classList.add('active');
     syncCameraHudUI();
+    scheduleCameraSettingsApply();
     showToast(state.camAELocked ? `🔒 AE Locked (${state.camExposureEV >= 0 ? '+' : ''}${Number(state.camExposureEV).toFixed(1)} EV)` : '🔓 AE Unlocked');
   });
 
