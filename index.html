@@ -225,10 +225,24 @@
       border: 1px solid rgba(52, 211, 153, 0.45);
       color: #6ee7b7;
       box-shadow: 0 2px 10px rgba(16, 185, 129, 0.18);
+      position: relative;
+      touch-action: manipulation;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .btn-save-icon:hover {
-      background: rgba(16, 185, 129, 0.24);
-      border-color: rgba(52, 211, 153, 0.65);
+    .btn-save-icon::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      pointer-events: auto;
+    }
+    .btn-save-icon:hover,
+    .btn-save-icon:active {
+      background: rgba(16, 185, 129, 0.30);
+      border-color: rgba(52, 211, 153, 0.75);
+      transform: scale(0.97);
     }
     .btn-icon-top,
     .btn-topbar-plus {
@@ -3490,8 +3504,8 @@
       pointer-events: none;
     }
     .shutter-btn {
-      width: 66px;
-      height: 66px;
+      width: 68px;
+      height: 68px;
       flex-shrink: 0;
       border-radius: 50%;
       border: none;
@@ -3518,6 +3532,11 @@
       justify-content: center;
       position: relative;
       transition: transform 0.08s ease, opacity 0.14s ease, box-shadow 0.14s ease;
+      touch-action: manipulation;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
     .shutter-btn::before {
       content: "";
@@ -3550,18 +3569,21 @@
       transition: transform 0.06s ease;
       pointer-events: none;
     }
-    .shutter-btn:active {
-      transform: scale(0.96);
-    }
-    .shutter-btn:active::before {
+    .shutter-btn:active,
+    .shutter-btn.is-pressed {
       transform: scale(0.95);
+    }
+    .shutter-btn:active::before,
+    .shutter-btn.is-pressed::before {
+      transform: scale(0.94);
       box-shadow:
         inset 0 3px 6px rgba(15,23,42,0.75),
         inset 0 -1px 2px rgba(255,255,255,0.5),
         0 1px 2px rgba(0,0,0,0.85);
     }
-    .shutter-btn:active::after {
-      transform: scale(0.94);
+    .shutter-btn:active::after,
+    .shutter-btn.is-pressed::after {
+      transform: scale(0.93);
     }
     .shutter-wind-lbl {
       display: none;
@@ -4531,7 +4553,7 @@
     .photo-viewer-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(5, 7, 10, 0.97);
+      background: #000000;
       display: flex;
       flex-direction: column;
       z-index: 90;
@@ -4548,6 +4570,7 @@
       flex-direction: column;
       width: 100%;
       height: 100%;
+      background: #000000;
       user-select: none;
       -webkit-user-select: none;
     }
@@ -4578,22 +4601,35 @@
       color: var(--text-muted);
     }
     .photo-viewer-close {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
       padding: 0;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 15px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #e5e7eb;
       cursor: pointer;
-      transition: background 0.15s ease;
+      position: relative;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.15s ease, transform 0.08s ease;
+    }
+    .photo-viewer-close::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
     }
     .photo-viewer-close:active {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.22);
+      transform: scale(0.95);
     }
     .photo-viewer-stage {
       flex: 1;
@@ -4760,28 +4796,22 @@
     }
     .photo-viewer-botbar {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
-      gap: 8px;
-      padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
-      background: rgba(14, 16, 21, 0.95);
-      border-top: 1px solid #232732;
+      gap: 10px;
+      padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+      background: rgba(0, 0, 0, 0.90);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
       z-index: 2;
     }
     .photo-viewer-tag {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--cyan-bright);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex: 1;
-      min-width: 0;
+      display: none;
     }
     .photo-viewer-actions {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 12px;
       flex-shrink: 0;
     }
 
@@ -6357,11 +6387,11 @@
         </div>
         <div class="photo-viewer-exif" id="photoViewerExifBar"></div>
         <div class="photo-viewer-botbar">
-          <div class="photo-viewer-tag" id="photoViewerFilmTag">🎞️ Film photo</div>
+          <div class="photo-viewer-tag" id="photoViewerFilmTag" style="display:none;"></div>
           <div class="photo-viewer-actions">
-            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="width:34px;height:30px;padding:0;font-size:14px;">🗑</button>
-            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" title="Edit in Lab" aria-label="Edit in Lab" style="width:34px;height:30px;padding:0;font-size:14px;">✏️</button>
-            <button class="btn-pill btn-save-icon" id="btnViewerSave" type="button" title="Save photo" aria-label="Save photo" style="width:34px;height:30px;padding:0;font-size:14px;">💾</button>
+            <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="min-width:44px;min-height:38px;padding:0 12px;font-size:16px;">🗑</button>
+            <button class="btn-pill btn-ghost" id="btnViewerOpenLab" type="button" title="Edit in Lab" aria-label="Edit in Lab" style="min-width:44px;min-height:38px;padding:0 12px;font-size:16px;">✏️</button>
+            <button class="btn-pill btn-save-icon" id="btnViewerSave" type="button" title="Save photo" aria-label="Save photo" style="min-width:48px;min-height:38px;padding:0 14px;font-size:17px;">💾</button>
           </div>
         </div>
       </div>
@@ -8105,7 +8135,11 @@
       blendDoubleExposureBuffers(job.imageData.data, job.mixImageData.data, job.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
     }
     const canvas = processFilmCanvas(job.imageData, job.width, job.height, job.config);
-    if (job.output === 'blob') return { blob: await canvasToJpegBlob(canvas, job.quality || 0.94) };
+    if (job.output === 'blob') {
+      const blob = await canvasToJpegBlob(canvas, job.quality || 0.94);
+      canvas.width = canvas.height = 0;
+      return { blob };
+    }
     return { canvas };
   }
 
@@ -8147,6 +8181,7 @@
             c.getContext('2d').drawImage(bmp, 0, 0);
             bmp.close();
             const blob = await canvasToJpegBlob(c, quality);
+            c.width = c.height = 0;
             resolve({ blob });
           } catch (err) {
             reject(err);
@@ -9811,7 +9846,10 @@
   }
 
   function clearPendingDoubleExp() {
-    state.doubleExpFirstCanvas = null;
+    if (state.doubleExpFirstCanvas) {
+      state.doubleExpFirstCanvas.width = state.doubleExpFirstCanvas.height = 0;
+      state.doubleExpFirstCanvas = null;
+    }
     const ghost = document.getElementById('vfMxGhostImg');
     if (ghost) {
       ghost.removeAttribute('src');
@@ -13460,7 +13498,10 @@
 
   function clearPendingHalfFrame() {
     const pendingRollId = state.camRollId;
-    state.halfFrameFirstCanvas = null;
+    if (state.halfFrameFirstCanvas) {
+      state.halfFrameFirstCanvas.width = state.halfFrameFirstCanvas.height = 0;
+      state.halfFrameFirstCanvas = null;
+    }
     deletePendingHalfFrame(pendingRollId).catch(() => {});
     const ghost = document.getElementById('vfHfGhostImg');
     if (ghost) {
@@ -14805,7 +14846,9 @@
     canvas.height = Math.max(1, Math.round(bitmap.height * scale));
     canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
-    return canvasToJpegBlob(canvas, 0.72);
+    const tb = await canvasToJpegBlob(canvas, 0.72);
+    canvas.width = canvas.height = 0;
+    return tb;
   }
 
   async function saveCameraExposure(rawBlob, shotNumber, opts = {}) {
@@ -14841,6 +14884,7 @@
       const mixData = mixCtx.getImageData(0, 0, capW, capH);
       blendDoubleExposureBuffers(srcData.data, mixData.data, opts.mixPct ?? 50, MX_SQ_LUT, MX_SQRT_LUT);
       cCtx.putImageData(srcData, 0, 0);
+      mixC.width = mixC.height = 0;
     } else if (opts.sourceCanvas) {
       const srcMax = Math.max(opts.sourceCanvas.width, opts.sourceCanvas.height);
       if (srcMax >= 3840 && srcMax <= 4096) {
@@ -14892,6 +14936,18 @@
       loadSourceCanvas(capC, null, { isDiptych: !!opts.isDiptych, fromCameraRoll: true, frameSeed });
     } catch (ignored) {}
     const [processed, finalRawBlob] = await Promise.all([processedPromise, rawPromise]);
+
+    // Free 4K capture canvas from GPU memory now that rawBlob and preview are captured
+    if (capC && capC !== camSceneFullCanvas) {
+      if (state.sourceFromCameraRoll && state.fullSourceCanvas === capC) {
+        state.fullSourceCanvas = null;
+      }
+      capC.width = capC.height = 0;
+    }
+    if (opts.sourceCanvas && opts.sourceCanvas !== camSceneFullCanvas && opts.sourceCanvas !== capC) {
+      opts.sourceCanvas.width = opts.sourceCanvas.height = 0;
+    }
+
     const camSpec = buildFilmInfoSpec({
       fromCamera: true,
       isOrig: false,
@@ -15137,6 +15193,9 @@
         dCtx.drawImage(halfC, 1950, 60, 1830, 2440);
         await saveCameraExposure(null, shotNumber, { sourceCanvas: dipC, isDiptych: true });
         clearPendingHalfFrame();
+        dipC.width = dipC.height = 0;
+        firstHalf.width = firstHalf.height = 0;
+        halfC.width = halfC.height = 0;
         return;
       }
 
@@ -15268,6 +15327,11 @@
         modal.style.display = 'none';
         resetViewerZoom();
         revokeViewerBlobUrl();
+        const imgEl = document.getElementById('photoViewerImg');
+        if (imgEl) imgEl.removeAttribute('src');
+        if (Array.isArray(state.camRollShots)) {
+          state.camRollShots.forEach(s => { delete s._cachedPhotoBlob; });
+        }
         resumeCameraLoopIfVisible();
       }
     }, 200);
@@ -15361,7 +15425,7 @@
 
     if (titleEl) titleEl.textContent = `Roll #${s.rollNumber || 1} · Shot #${String(s.num).padStart(2, '0')}${s.isDiptych ? ' · 2F' : ''}`;
     if (counterEl) counterEl.textContent = `${index + 1} / ${state.camRollShots.length}`;
-    if (tagEl) tagEl.textContent = s.filmName ? `🎞️ ${s.filmName}` : '🎞️ Film photo';
+    if (tagEl) tagEl.textContent = '';
     renderPhotoViewerExif(s);
     if (prevBtn) prevBtn.disabled = (index <= 0);
     if (nextBtn) nextBtn.disabled = (index >= state.camRollShots.length - 1);
@@ -15537,7 +15601,7 @@
         <button class="shot-del-btn" type="button" title="Delete ${shotLabel}" aria-label="Delete ${shotLabel}">🗑</button>
         <div class="shot-foot">
           <span>${shotLabel}</span>
-          <button class="btn-pill btn-save-icon btn-save-shot" type="button" title="Save ${shotLabel}" aria-label="Save ${shotLabel}" style="width:30px;height:24px;padding:0;font-size:12.5px;">💾</button>
+          <button class="btn-pill btn-save-icon btn-save-shot" type="button" title="Save ${shotLabel}" aria-label="Save ${shotLabel}" style="min-width:38px;min-height:30px;padding:0 8px;font-size:14px;">💾</button>
         </div>
       `;
       card.querySelector('img').addEventListener('click', () => openPhotoViewer(idx));
@@ -18004,7 +18068,79 @@
       resetRollBusy = false;
     }
   });
-  document.getElementById('btnShutter').addEventListener('click', captureCameraShot);
+  // Shutter button: supports instant tap, press & hold (nhấn giữ), and haptic physical click
+  const shutterBtnEl = document.getElementById('btnShutter');
+  if (shutterBtnEl) {
+    let shutterActivePointerId = null;
+    let shutterDownStartX = 0;
+    let shutterDownStartY = 0;
+    let lastShutterFireAt = 0;
+    let shutterHoldingPnsLock = false;
+
+    const fireShutter = () => {
+      const now = Date.now();
+      if (now - lastShutterFireAt < 380) return;
+      lastShutterFireAt = now;
+      captureCameraShot();
+    };
+
+    shutterBtnEl.addEventListener('pointerdown', (e) => {
+      if (shutterBtnEl.disabled || shutterBusy) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      shutterActivePointerId = e.pointerId;
+      shutterDownStartX = e.clientX;
+      shutterDownStartY = e.clientY;
+      shutterBtnEl.classList.add('is-pressed');
+      try { navigator.vibrate?.(12); } catch (ignored) {}
+
+      // In Point & Shoot mode, pressing and holding the shutter acts as physical half-press (locks AE/AF)
+      if (state.bodyId === 'pns' && !pnsHalfPressActive && state.pnsMode !== 'T') {
+        togglePnsHalfPress(true);
+        shutterHoldingPnsLock = true;
+      }
+    });
+
+    const releaseShutterPress = (e, shouldTrigger = true) => {
+      if (shutterActivePointerId !== null && e && e.pointerId !== shutterActivePointerId) return;
+      shutterActivePointerId = null;
+      shutterBtnEl.classList.remove('is-pressed');
+
+      if (!shouldTrigger) {
+        if (shutterHoldingPnsLock) {
+          togglePnsHalfPress(false);
+          shutterHoldingPnsLock = false;
+        }
+        return;
+      }
+
+      if (e && e.clientX && e.clientY && (shutterDownStartX || shutterDownStartY)) {
+        const dx = e.clientX - shutterDownStartX;
+        const dy = e.clientY - shutterDownStartY;
+        if (Math.hypot(dx, dy) > 42) {
+          if (shutterHoldingPnsLock) {
+            togglePnsHalfPress(false);
+            shutterHoldingPnsLock = false;
+          }
+          return;
+        }
+      }
+
+      shutterHoldingPnsLock = false;
+      fireShutter();
+    };
+
+    shutterBtnEl.addEventListener('pointerup', (e) => releaseShutterPress(e, true));
+    shutterBtnEl.addEventListener('pointercancel', (e) => releaseShutterPress(e, false));
+    shutterBtnEl.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse' && shutterActivePointerId !== null) {
+        releaseShutterPress(e, false);
+      }
+    });
+
+    shutterBtnEl.addEventListener('click', () => {
+      fireShutter();
+    });
+  }
 
   // Film Advance Lever (tap/swipe to wind, long-press to toggle Auto-Wind) + Film Window
   document.getElementById('camFilmWindow')?.addEventListener('click', () => openComboPicker('film'));
