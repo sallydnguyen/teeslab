@@ -1879,16 +1879,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      display: none !important;
       pointer-events: none;
       z-index: 4;
     }
-    .vf-stage[data-vf-mode="slr"] .vf-meter-needle-rail,
-    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail,
-    .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
-      display: none;
-    }
-    .vf-stage[data-vf-mode="pns"] .vf-meter-needle-rail {
-      top: calc(50% - 12px);
+    .vf-meter-needle-rail {
+      display: none !important;
     }
     .vf-meter-needle-svg {
       width: 100%;
@@ -2046,6 +2042,8 @@
       display: block;
     }
     .vf-penft-needle {
+      transform-box: fill-box;
+      transform-origin: left center;
       transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: transform;
     }
@@ -2794,6 +2792,8 @@
       filter: drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.72));
     }
     .vf-dp1-needle {
+      transform-box: fill-box;
+      transform-origin: center;
       transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: transform;
     }
@@ -13415,7 +13415,8 @@
 
   function getCameraExposureControlCaps(body = getSelectedGear().body, info = null) {
     const id = body?.id || 'slr';
-    if (id === 'half-frame' || id === 'rangefinder') {
+    // Fully mechanical cameras or waist-level finder cameras without electronic auto-exposure or in-viewfinder meters
+    if (id === 'half-frame' || id === 'rangefinder' || id === 'medium-format' || id === 'disposable') {
       return { isAuto: false, supportsEv: false, supportsAel: false };
     }
     const isAuto = info
@@ -13426,13 +13427,13 @@
     if (!isAuto) {
       return { isAuto: false, supportsEv: false, supportsAel: false };
     }
-    if (id === 'slr' || id === 'medium-format') {
+    if (id === 'slr') {
       return { isAuto: true, supportsEv: true, supportsAel: true };
     }
     if (id === 'pns') {
       return { isAuto: true, supportsEv: true, supportsAel: false };
     }
-    return { isAuto: true, supportsEv: false, supportsAel: false };
+    return { isAuto: false, supportsEv: false, supportsAel: false };
   }
 
   function getEffectiveCamExposureBias(body = getSelectedGear().body, info = null) {
@@ -13440,7 +13441,7 @@
     return caps.supportsEv ? (Number(state.camExposureEV) || 0) : 0;
   }
 
-  function computeAutoShutterRec(lens = getSelectedGear().lens, film = getSelectedGear().film) {
+  function computeIdealShutterHz(lens = getSelectedGear().lens, film = getSelectedGear().film) {
     const lum = Math.max(0.03, Math.min(1.0, Number(sceneMeanLum) || 0.5));
     const lumStops = Math.log2(lum / 0.45);
     const effIso = getEffectiveCameraISO(film);
@@ -13449,8 +13450,11 @@
     const apStopsFrom28 = 2 * Math.log2(curF / 2.8);
     const focusDropStops = lens?.closeFocusEV || 0;
     const evBias = getEffectiveCamExposureBias(getSelectedGear().body);
-    const idealHz = 500 * Math.pow(2, lumStops + isoStops - apStopsFrom28 + focusDropStops - evBias);
+    return 500 * Math.pow(2, lumStops + isoStops - apStopsFrom28 + focusDropStops - evBias);
+  }
 
+  function computeAutoShutterRec(lens = getSelectedGear().lens, film = getSelectedGear().film) {
+    const idealHz = computeIdealShutterHz(lens, film);
     let bestSpeed = '250';
     let bestDiff = Infinity;
     for (const sp of SHUTTER_SPEED_STEPS) {
@@ -13466,7 +13470,7 @@
 
   function hasBuiltInVfMeter(body = getSelectedGear().body) {
     const id = body?.id;
-    return id === 'slr' || id === 'rangefinder' || id === 'half-frame';
+    return id === 'slr' || id === 'rangefinder' || id === 'half-frame' || id === 'pns';
   }
 
   function getEffectiveShutterInfo(lens = getSelectedGear().lens, film = getSelectedGear().film) {
@@ -13489,11 +13493,13 @@
         rawStops: plan.rawStops,
         meterState,
         meterDiffEV: plan.meterDiffEV,
-        pnsPlan: plan
+        pnsPlan: plan,
+        idealHz: plan.hz
       };
     }
     const cur = CAMERA_SHUTTER_SPEEDS.includes(state.camShutterSpeed) ? state.camShutterSpeed : 'auto';
     const isAuto = cur === 'auto';
+    const idealHz = computeIdealShutterHz(lens, film);
     const autoRec = computeAutoShutterRec(lens, film);
     const effectiveSpeed = isAuto ? autoRec : cur;
     const hz = SHUTTER_SPEED_HZ[effectiveSpeed] || 125;
@@ -13510,7 +13516,8 @@
     const aelOffsetEV = (isAuto && hasLiveVideo && caps.supportsAel && state.camAELocked && Number.isFinite(state.camLockedLum) && state.camLockedLum > 0)
       ? Math.max(-3, Math.min(3, Math.log2(Math.max(0.03, liveSceneLum) / Math.max(0.03, state.camLockedLum))))
       : 0;
-    const rawDiffStops = Math.log2(autoHz / Math.max(0.25, hz));
+    // Continuous difference in stops between ambient ideal exposure and currently set shutter speed
+    const rawDiffStops = Math.log2(Math.max(0.25, idealHz) / Math.max(0.25, hz));
     const rawStops = isAuto ? (evBias + aelOffsetEV) : rawDiffStops;
     const meterState = Math.abs(rawStops) <= 0.35 ? 'ok' : (rawStops > 0 ? 'over' : 'under');
     const absDiff = Math.abs(rawDiffStops);
@@ -13518,7 +13525,7 @@
     const meterDiffEV = isAuto
       ? rawStops
       : signedDiff * (absDiff <= 2.5 ? absDiff : (2.5 + (absDiff - 2.5) * 0.45));
-    return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, rawStops, meterState, meterDiffEV };
+    return { isAuto, autoRec, effectiveSpeed, hz, durationSec, safeHandheldHz, shakeRisk, rawStops, meterState, meterDiffEV, idealHz };
   }
 
   function cameraExposureEV() {
@@ -13704,18 +13711,10 @@
 
   function syncVfMeterNeedle(body, lens) {
     const railEl = document.getElementById('vfGlobalMeterNeedle');
-    const armEl = document.getElementById('vfGlobalMeterNeedleArm');
-    if (!railEl || !armEl) return;
-    const gear = (body && lens) ? { body, lens, film: getSelectedGear().film } : getSelectedGear();
-    const info = getEffectiveShutterInfo(gear.lens, gear.film);
-    const { rawStops, meterState } = info;
-    const clampedStops = Math.max(-2.5, Math.min(2.5, rawStops));
-    const needleDeg = (clampedStops / 2.5) * 44;
-
-    railEl.dataset.state = meterState;
-    railEl.dataset.stops = rawStops.toFixed(2);
-    armEl.style.transform = `rotate(${needleDeg.toFixed(1)}deg)`;
-    railEl.hidden = hasBuiltInVfMeter(gear.body);
+    if (railEl) {
+      railEl.style.display = 'none';
+      railEl.hidden = true;
+    }
   }
 
   function syncRfMeterLed(body, lens) {
@@ -13738,11 +13737,12 @@
   function syncHalfFrameMeter(body, lens) {
     if (body?.id !== 'half-frame') return;
     const { film } = getSelectedGear();
-    const { rawStops, meterState } = getEffectiveShutterInfo(lens, film);
+    const info = getEffectiveShutterInfo(lens, film);
+    const { rawStops, meterState, idealHz, hz } = info;
     const minF = Math.max(1.0, Number(lens?.minF) || 1.8);
     const curF = Math.max(minF, Number(lens?.activeF) || minF);
     const apertureStops = Math.log2(curF / minF) * 2;
-    const penNum = apertureStops + rawStops;
+    const penNum = apertureStops + Math.log2(Math.max(0.25, idealHz || 125) / Math.max(0.25, hz || 125));
     const clampedNum = Math.max(-0.9, Math.min(7.9, penNum));
     const needleY = 24 + clampedNum * 15;
 
@@ -13753,6 +13753,7 @@
       meterEl.dataset.num = penNum.toFixed(1);
     }
     if (needleEl) {
+      needleEl.setAttribute('transform', `translate(0, ${needleY.toFixed(1)})`);
       needleEl.style.transform = `translateY(${needleY.toFixed(1)}px)`;
     }
   }
@@ -13786,10 +13787,11 @@
       meterEl.dataset.step = String(stepVal);
     }
     if (needleEl) {
+      needleEl.setAttribute('transform', `translate(${dp1OffsetPx.toFixed(1)}, 0)`);
       needleEl.style.transform = `translateX(${dp1OffsetPx.toFixed(1)}px)`;
     }
-    minusEl?.classList.toggle('active', !info.isAuto ? (meterState === 'under' || meterState === 'ok') : (meterState === 'under'));
-    plusEl?.classList.toggle('active', !info.isAuto ? (meterState === 'over' || meterState === 'ok') : (meterState === 'over'));
+    minusEl?.classList.toggle('active', meterState === 'under');
+    plusEl?.classList.toggle('active', meterState === 'over');
 
     if (shutterEl) {
       const sp = info.effectiveSpeed || '250';
