@@ -275,12 +275,30 @@
       color: var(--cyan);
     }
     .btn-topbar-save {
+      width: 28px;
       height: 28px;
-      padding: 0 12px;
-      border-radius: 14px;
-      font-size: 11.5px;
-      font-weight: 800;
-      letter-spacing: 0.1px;
+      padding: 0;
+      border-radius: 50%;
+      background: #151922;
+      border: 1px solid #2a303d;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-primary);
+      position: relative;
+      touch-action: manipulation;
+      transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease, transform 0.1s ease;
+    }
+    .btn-topbar-save::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+    }
+    .btn-topbar-save:active {
+      transform: scale(0.94);
+      border-color: var(--cyan);
+      color: var(--cyan);
     }
     .topbar-menu-wrap {
       position: relative;
@@ -3664,10 +3682,14 @@
       display: contents;
     }
     .app-shell[data-active-tab="darkroom"] .bnav-btn[data-tab="darkroom"] {
-      display: none;
+      order: 1;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan-border);
     }
     .app-shell[data-active-tab="darkroom"] .bnav-roll-btn {
-      order: 1;
+      order: 2;
       width: auto;
       height: 36px;
       padding: 0 10px;
@@ -3682,31 +3704,6 @@
     .app-shell[data-active-tab="darkroom"] .bnav-roll-btn .roll-count-badge {
       position: static;
       margin-left: 1px;
-    }
-    .bnav-lab-save-btn {
-      display: none;
-    }
-    .app-shell[data-active-tab="darkroom"] .bnav-lab-save-btn {
-      order: 2;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      border: 1px solid rgba(251, 191, 36, 0.45);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
-      cursor: pointer;
-      transition: transform 0.1s ease, filter 0.1s ease;
-    }
-    .app-shell[data-active-tab="darkroom"] .bnav-lab-save-btn:active {
-      transform: scale(0.96);
-      filter: brightness(1.15);
     }
     .app-shell[data-active-tab="darkroom"] .bnav-group-cam {
       order: 3;
@@ -5520,7 +5517,7 @@
       <div class="topbar-actions">
         <input type="file" id="fileInput" accept="image/*" hidden />
         <button class="btn-topbar-plus" id="btnOpenSamples" type="button" title="Add or switch photo" aria-label="Add photo">＋</button>
-        <button class="btn-pill btn-save btn-topbar-save" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">Save</button>
+        <button class="btn-topbar-save" id="btnExport" type="button" title="Save edited photo" aria-label="Save edited photo">💾</button>
         <div class="topbar-menu-wrap" id="topbarMenuWrap">
           <button class="btn-icon-top" id="btnLabMenu" type="button" title="More Lab options" aria-label="More options" aria-expanded="false" aria-haspopup="menu">⋯</button>
           <div class="topbar-menu-popover" id="labMenuPopover" role="menu">
@@ -6135,10 +6132,6 @@
 
       <button class="shutter-btn bnav-shutter" id="btnShutter" type="button" title="Take photo" aria-label="Take photo">
         <span class="shutter-wind-lbl" aria-hidden="true">WIND ↻</span>
-      </button>
-
-      <button class="bnav-lab-save-btn" id="btnLabSaveBottom" type="button" title="Save / Export photo" aria-label="Save edited photo">
-        <span>💾 Save</span>
       </button>
 
       <div class="bnav-group bnav-group-cam active">
@@ -16437,7 +16430,6 @@
   document.getElementById('btnRotatePhoto')?.addEventListener('click', () => rotateLabPhoto(false));
   document.getElementById('btnRotatePhotoCW')?.addEventListener('click', () => rotateLabPhoto(true));
   document.getElementById('btnExport').addEventListener('click', openExportSheet);
-  document.getElementById('btnLabSaveBottom')?.addEventListener('click', openExportSheet);
   document.getElementById('btnCloseExportSheet')?.addEventListener('click', () => {
     document.getElementById('exportSheetBackdrop')?.classList.remove('open');
   });
@@ -18442,7 +18434,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261126-1616';
+  const APP_BUILD = '20261126-1728';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
