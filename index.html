@@ -1883,15 +1883,12 @@
       z-index: 4;
     }
     .vf-stage[data-vf-mode="slr"] .vf-meter-needle-rail,
-    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail {
+    .vf-stage[data-vf-mode="rangefinder"] .vf-meter-needle-rail,
+    .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
       display: none;
     }
     .vf-stage[data-vf-mode="pns"] .vf-meter-needle-rail {
       top: calc(50% - 12px);
-    }
-    .vf-stage[data-vf-mode="half-frame"] .vf-meter-needle-rail {
-      right: 14px;
-      height: 102px;
     }
     .vf-meter-needle-svg {
       width: 100%;
@@ -2006,11 +2003,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 30px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       transform: translate(-50%, -50%);
-      border-radius: 6px;
+      border-radius: 50%;
       border: 1.5px solid rgba(34, 211, 238, 0.78);
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 70%, transparent 100%);
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.48), inset 0 0 0 1px rgba(0, 0, 0, 0.32);
       transition: border-color 0.14s ease, box-shadow 0.14s ease;
     }
@@ -2020,15 +2018,36 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      background: rgba(34, 211, 238, 0.9);
+      background: rgba(34, 211, 238, 0.88);
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.85);
       transform: translate(-50%, -50%);
     }
-    .vf-hfs-reticle::before { width: 8px; height: 1.5px; }
-    .vf-hfs-reticle::after { width: 1.5px; height: 8px; }
+    .vf-hfs-reticle::before { width: 7px; height: 1.4px; }
+    .vf-hfs-reticle::after { width: 1.4px; height: 7px; }
     .vf-hfs-reticle.in-focus {
       border-color: rgba(74, 222, 128, 0.88);
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 8px rgba(74, 222, 128, 0.25);
+    }
+    /* Olympus Pen FT left-side 0-7 TTL Number Meter */
+    .vf-penft-meter {
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 154px;
+      pointer-events: none;
+      z-index: 4;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.65));
+    }
+    .vf-penft-meter-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .vf-penft-needle {
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
     }
     .vf-hf-ghost {
       display: none;
@@ -5926,6 +5945,36 @@
                 <span class="vf-hfs-horizon l"></span>
                 <span class="vf-hfs-horizon r"></span>
                 <div class="vf-hfs-reticle" id="vfHfsReticle"></div>
+                <div class="vf-penft-meter" id="vfPenFtMeter" data-state="ok" data-num="0">
+                  <svg class="vf-penft-meter-svg" viewBox="0 0 24 154" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" y="0.5" width="23" height="153" rx="2" fill="rgba(244, 241, 228, 0.84)" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+                    <rect x="1" y="1" width="22" height="14" rx="1" fill="rgba(16, 18, 22, 0.82)"/>
+                    <rect x="1" y="139" width="22" height="14" rx="1" fill="rgba(16, 18, 22, 0.82)"/>
+                    <g font-family="ui-monospace, monospace" font-size="9.5" font-weight="800" fill="#18181b" text-anchor="middle">
+                      <text x="14.5" y="27">0</text>
+                      <text x="14.5" y="42">1</text>
+                      <text x="14.5" y="57">2</text>
+                      <text x="14.5" y="72">3</text>
+                      <text x="14.5" y="87">4</text>
+                      <text x="14.5" y="102">5</text>
+                      <text x="14.5" y="117">6</text>
+                      <text x="14.5" y="132">7</text>
+                    </g>
+                    <g stroke="#27272a" stroke-width="0.9">
+                      <line x1="1" y1="24" x2="5" y2="24"/>
+                      <line x1="1" y1="39" x2="5" y2="39"/>
+                      <line x1="1" y1="54" x2="5" y2="54"/>
+                      <line x1="1" y1="69" x2="5" y2="69"/>
+                      <line x1="1" y1="84" x2="5" y2="84"/>
+                      <line x1="1" y1="99" x2="5" y2="99"/>
+                      <line x1="1" y1="114" x2="5" y2="114"/>
+                      <line x1="1" y1="129" x2="5" y2="129"/>
+                    </g>
+                    <g class="vf-penft-needle" id="vfPenFtNeedle" style="transform: translateY(24px);">
+                      <polygon points="1,-2 18.5,0 1,2" fill="#09090b"/>
+                    </g>
+                  </svg>
+                </div>
                 <img class="vf-hf-ghost" id="vfHfGhostImg" alt="" />
                 <div class="vf-hf-diptych-bar" id="vfHfDiptychBar">
                   <span id="vfHfHalfLabel">1/2</span>
@@ -12206,6 +12255,7 @@
     if (typeof syncCameraExposureHudControls === 'function') syncCameraExposureHudControls(body, lens);
     if (typeof syncSlrMeterLed === 'function') syncSlrMeterLed(body, lens);
     if (typeof syncRfMeterLed === 'function') syncRfMeterLed(body, lens);
+    if (typeof syncHalfFrameMeter === 'function') syncHalfFrameMeter(body, lens);
     if (typeof syncPnsLcdUI === 'function') syncPnsLcdUI(body, lens);
     if (typeof syncVfMeterNeedle === 'function') syncVfMeterNeedle(body, lens);
 
@@ -13210,7 +13260,7 @@
 
   function hasBuiltInVfMeter(body = getSelectedGear().body) {
     const id = body?.id;
-    return id === 'slr' || id === 'rangefinder';
+    return id === 'slr' || id === 'rangefinder' || id === 'half-frame';
   }
 
   function getEffectiveShutterInfo(lens = getSelectedGear().lens, film = getSelectedGear().film) {
@@ -13433,6 +13483,28 @@
     plusLed?.classList.toggle('lit', rawStops > 0.35);
   }
 
+  function syncHalfFrameMeter(body, lens) {
+    if (body?.id !== 'half-frame') return;
+    const { film } = getSelectedGear();
+    const { rawStops, meterState } = getEffectiveShutterInfo(lens, film);
+    const minF = Math.max(1.0, Number(lens?.minF) || 1.8);
+    const curF = Math.max(minF, Number(lens?.activeF) || minF);
+    const apertureStops = Math.log2(curF / minF) * 2;
+    const penNum = apertureStops + rawStops;
+    const clampedNum = Math.max(-0.9, Math.min(7.9, penNum));
+    const needleY = 24 + clampedNum * 15;
+
+    const meterEl = document.getElementById('vfPenFtMeter');
+    const needleEl = document.getElementById('vfPenFtNeedle');
+    if (meterEl) {
+      meterEl.dataset.state = meterState;
+      meterEl.dataset.num = penNum.toFixed(1);
+    }
+    if (needleEl) {
+      needleEl.style.transform = `translateY(${needleY.toFixed(1)}px)`;
+    }
+  }
+
   function syncSlrMeterLed(body, lens) {
     if (body?.id !== 'slr') return;
     const { film } = getSelectedGear();
@@ -13538,6 +13610,7 @@
 
     syncSlrMeterLed(body, lens);
     syncRfMeterLed(body, lens);
+    syncHalfFrameMeter(body, lens);
     syncPnsLcdUI(body, lens);
     syncVfMeterNeedle(body, lens);
     syncViewfinderFocusAid(body, lens);
@@ -13745,6 +13818,7 @@
     syncViewfinderFocusAid(body, lens);
     syncSlrMeterLed(body, lens);
     syncRfMeterLed(body, lens);
+    syncHalfFrameMeter(body, lens);
     syncPnsLcdUI(body, lens);
     syncVfMeterNeedle(body, lens);
     syncLensBarrelWidgets();
@@ -14706,6 +14780,7 @@
             syncVfMeterNeedle(body, lens);
             if (body.id === 'slr') syncSlrMeterLed(body, lens);
             else if (body.id === 'rangefinder') syncRfMeterLed(body, lens);
+            else if (body.id === 'half-frame') syncHalfFrameMeter(body, lens);
             else if (body.id === 'pns' || body.id === 'disposable') syncPnsLcdUI(body, lens);
           }
         } catch (ignored) {}
