@@ -1768,7 +1768,7 @@
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 2px;
       margin-top: 2px;
     }
@@ -1776,14 +1776,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 27px;
+      height: 33px;
+      width: 100%;
       flex: 1;
       min-width: 0;
       margin-top: 0;
     }
     #camComboTrio .combo-card-nav-row .combo-card-art svg,
     #camComboTrio .combo-card-nav-row .combo-card-art img {
-      height: 26px;
+      height: 32px;
       width: auto;
       max-width: 100%;
       object-fit: contain;
@@ -1794,27 +1795,7 @@
       display: none;
     }
     #camComboTrio .card-step-btn {
-      position: static;
-      transform: none;
-      width: 24px;
-      height: 26px;
-      flex-shrink: 0;
-      padding: 0;
-      border-radius: 5px;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #2a303d;
-      color: var(--cyan);
-    }
-    #camComboTrio .card-step-btn:active {
-      transform: scale(0.94);
-      background: var(--cyan-dim);
-      border-color: var(--cyan);
+      display: none !important;
     }
     #camComboTrio .combo-card-tag {
       font-size: 7.5px;
@@ -1830,16 +1811,11 @@
         padding: 3px 3px 3px;
       }
       #camComboTrio .combo-card-nav-row .combo-card-art {
-        height: 22px;
+        height: 26px;
       }
       #camComboTrio .combo-card-nav-row .combo-card-art svg,
       #camComboTrio .combo-card-nav-row .combo-card-art img {
-        height: 21px;
-      }
-      #camComboTrio .card-step-btn {
-        width: 20px;
-        height: 22px;
-        font-size: 12px;
+        height: 25px;
       }
     }
     .vf-stage {
@@ -3688,14 +3664,10 @@
       display: contents;
     }
     .app-shell[data-active-tab="darkroom"] .bnav-btn[data-tab="darkroom"] {
-      order: 1;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--cyan-dim);
-      border: 1px solid var(--cyan-border);
+      display: none;
     }
     .app-shell[data-active-tab="darkroom"] .bnav-roll-btn {
-      order: 2;
+      order: 1;
       width: auto;
       height: 36px;
       padding: 0 10px;
@@ -3710,6 +3682,31 @@
     .app-shell[data-active-tab="darkroom"] .bnav-roll-btn .roll-count-badge {
       position: static;
       margin-left: 1px;
+    }
+    .bnav-lab-save-btn {
+      display: none;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-lab-save-btn {
+      order: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
+      cursor: pointer;
+      transition: transform 0.1s ease, filter 0.1s ease;
+    }
+    .app-shell[data-active-tab="darkroom"] .bnav-lab-save-btn:active {
+      transform: scale(0.96);
+      filter: brightness(1.15);
     }
     .app-shell[data-active-tab="darkroom"] .bnav-group-cam {
       order: 3;
@@ -4046,6 +4043,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
+    }
+    #pickerFilmTrack.is-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 6px !important;
+      max-height: 230px !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding: 4px 2px 8px;
+    }
+    #pickerFilmTrack.is-grid .picker-tile {
+      width: 100% !important;
+      min-width: 0 !important;
     }
 
     .filter-chip {
@@ -4783,7 +4793,7 @@
     }
     .photo-viewer-botbar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       gap: 10px;
       padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
@@ -4791,6 +4801,11 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
       z-index: 2;
+    }
+    .photo-viewer-close-bot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .photo-viewer-tag {
       display: none;
@@ -6122,6 +6137,10 @@
         <span class="shutter-wind-lbl" aria-hidden="true">WIND ↻</span>
       </button>
 
+      <button class="bnav-lab-save-btn" id="btnLabSaveBottom" type="button" title="Save / Export photo" aria-label="Save edited photo">
+        <span>💾 Save</span>
+      </button>
+
       <div class="bnav-group bnav-group-cam active">
         <button class="bnav-btn active" data-tab="camera" type="button" title="Camera — tap while in Camera to flip front/rear">
           <span class="bnav-cam-ico-wrap">
@@ -6215,13 +6234,16 @@
       </div>
 
       <div class="picker-section" id="pickerSecFilm">
-        <div class="h-scroll" id="filmBrandPills" style="margin-bottom:6px;">
-          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (27)</button>
-          <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (11)</button>
-          <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
-          <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
-          <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
-          <button class="filter-chip" data-fbrand="night" type="button">Night</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          <div class="h-scroll" id="filmBrandPills" style="margin-bottom:0;flex:1;min-width:0;">
+            <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (27)</button>
+            <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (11)</button>
+            <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
+            <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
+            <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
+            <button class="filter-chip" data-fbrand="night" type="button">Night</button>
+          </div>
+          <button class="filter-chip btn-film-grid-toggle" id="btnFilmViewMode" type="button" title="Switch between 1-row track and 3-column grid" aria-label="Toggle Film Grid View" style="flex-shrink:0;padding:2px 8px;font-size:11px;border-color:rgba(255,255,255,0.18);display:inline-flex;align-items:center;gap:3px;">▦ Grid</button>
         </div>
         <div class="h-scroll" id="pickerFilmTrack"></div>
       </div>
@@ -6371,6 +6393,7 @@
         </div>
         <div class="photo-viewer-exif" id="photoViewerExifBar"></div>
         <div class="photo-viewer-botbar">
+          <button class="btn-pill btn-ghost photo-viewer-close-bot" id="btnClosePhotoViewerBot" type="button" title="Close viewer" aria-label="Close viewer" style="width:34px;height:30px;padding:0;font-size:14px;">✕</button>
           <div class="photo-viewer-tag" id="photoViewerFilmTag" style="display:none;"></div>
           <div class="photo-viewer-actions">
             <button class="btn-pill btn-danger-ghost" id="btnViewerDelete" type="button" title="Delete photo from roll" aria-label="Delete photo from roll" style="width:34px;height:30px;padding:0;font-size:14px;">🗑</button>
@@ -15619,11 +15642,28 @@
     cameraThumbUrls.clear();
     document.getElementById('contactCount').textContent = state.camRollShots.length;
     const grid = document.getElementById('contactSheetGrid');
+    if (!grid) return;
+    const clearBtn = document.getElementById('btnClearRollShots');
     if (state.camRollShots.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;color:var(--text-muted);font-size:11.5px;padding:12px 0;">No photos on this roll yet. Tap the shutter in Camera to shoot!</div>`;
+      if (clearBtn) clearBtn.style.display = 'none';
+      grid.innerHTML = `
+        <div class="contact-sheet-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center;gap:10px;">
+          <div style="font-size:38px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));">🎞️</div>
+          <div style="font-size:13.5px;font-weight:700;color:var(--text-primary);letter-spacing:0.2px;">Cuộn phim chưa có ảnh</div>
+          <div style="font-size:11.5px;color:var(--text-muted);max-width:240px;line-height:1.45;">Bấm cò chụp ở Camera để bắt đầu chụp khung hình đầu tiên.</div>
+          <button class="btn-pill btn-primary" id="btnEmptyRollShoot" type="button" style="margin-top:6px;padding:7px 18px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 12px rgba(34,211,238,0.25);">📸 Chụp tấm đầu tiên</button>
+        </div>
+      `;
+      grid.querySelector('#btnEmptyRollShoot')?.addEventListener('click', () => {
+        const cs = document.getElementById('contactSheetBackdrop');
+        if (cs) cs.classList.remove('open');
+        switchMainTab('camera');
+        resumeCameraLoopIfVisible();
+      });
       updateSaveAllUI();
       return;
     }
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
     grid.innerHTML = '';
     state.camRollShots.forEach((s, idx) => {
       const card = document.createElement('div');
@@ -16397,6 +16437,7 @@
   document.getElementById('btnRotatePhoto')?.addEventListener('click', () => rotateLabPhoto(false));
   document.getElementById('btnRotatePhotoCW')?.addEventListener('click', () => rotateLabPhoto(true));
   document.getElementById('btnExport').addEventListener('click', openExportSheet);
+  document.getElementById('btnLabSaveBottom')?.addEventListener('click', openExportSheet);
   document.getElementById('btnCloseExportSheet')?.addEventListener('click', () => {
     document.getElementById('exportSheetBackdrop')?.classList.remove('open');
   });
@@ -16593,6 +16634,23 @@
   window.addEventListener('pointerup', endLabPointer);
   window.addEventListener('pointercancel', endLabPointer);
   window.addEventListener('blur', () => endLabPointer());
+
+  const stagePhotoSlotEl = document.getElementById('stagePhotoSlot');
+  let stageSlotSwipeStartX = 0, stageSlotSwipeStartY = 0;
+  stagePhotoSlotEl?.addEventListener('pointerdown', e => {
+    if (e.target.closest('#canvasStack') || e.target.closest('.photo-viewer-nav') || (e.button && e.button !== 0)) return;
+    stageSlotSwipeStartX = e.clientX;
+    stageSlotSwipeStartY = e.clientY;
+  });
+  stagePhotoSlotEl?.addEventListener('pointerup', e => {
+    if (!stageSlotSwipeStartX) return;
+    const dx = e.clientX - stageSlotSwipeStartX;
+    const dy = e.clientY - stageSlotSwipeStartY;
+    stageSlotSwipeStartX = 0;
+    if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      stepLabPhoto(dx < 0 ? 1 : -1);
+    }
+  });
 
   // Docked Clapperboard Combo Picker (Preview / Viewfinder stays unobstructed above)
   const appShell = document.querySelector('.app-shell');
@@ -16920,6 +16978,21 @@
       state.filmBrandFilter = btn.dataset.fbrand;
       renderComboPickerSheet();
     });
+  });
+
+  // Film Picker Grid ⇄ Track toggle
+  const btnFilmViewMode = document.getElementById('btnFilmViewMode');
+  const pickerFilmTrack = document.getElementById('pickerFilmTrack');
+  let filmPickerIsGrid = false;
+  btnFilmViewMode?.addEventListener('click', () => {
+    filmPickerIsGrid = !filmPickerIsGrid;
+    pickerFilmTrack?.classList.toggle('is-grid', filmPickerIsGrid);
+    btnFilmViewMode.textContent = filmPickerIsGrid ? '▤ Track' : '▦ Grid';
+    btnFilmViewMode.classList.toggle('active', filmPickerIsGrid);
+    if (filmPickerIsGrid && pickerFilmTrack) {
+      const activeTile = pickerFilmTrack.querySelector('.picker-tile.active');
+      if (activeTile) activeTile.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
   });
 
   // Film Info modal ('i' button on any film roll — shows film details + 2 real sample photos immediately)
@@ -17506,6 +17579,7 @@
   const photoViewerEl = document.getElementById('photoViewerBackdrop');
   const photoViewerStageEl = document.getElementById('photoViewerStage');
   document.getElementById('btnClosePhotoViewer')?.addEventListener('click', closePhotoViewer);
+  document.getElementById('btnClosePhotoViewerBot')?.addEventListener('click', closePhotoViewer);
   document.getElementById('btnViewerPrev')?.addEventListener('click', () => {
     if (viewerCurrentIndex > 0) viewerShowShot(viewerCurrentIndex - 1, 'prev');
   });
@@ -17536,7 +17610,7 @@
   const activeViewerPointers = new Map();
   let viewerPinchStartDist = 0, viewerPinchStartZoom = 1, viewerPinchStartMidX = 0, viewerPinchStartMidY = 0, viewerPinchStartPanX = 0, viewerPinchStartPanY = 0;
   let viewerPanDrag = null;
-  let vSwipeStartX = 0, vSwipeStartY = 0, vSwipeCurrentX = 0, vSwipeStartTime = 0, vIsSwiping = false;
+  let vSwipeStartX = 0, vSwipeStartY = 0, vSwipeCurrentX = 0, vSwipeCurrentY = 0, vSwipeStartTime = 0, vIsSwiping = false;
   if (photoViewerStageEl) {
     photoViewerStageEl.addEventListener('pointerdown', e => {
       if (e.target.closest('button') || (e.button && e.button !== 0)) return;
@@ -17564,6 +17638,7 @@
           vSwipeStartX = e.clientX;
           vSwipeStartY = e.clientY;
           vSwipeCurrentX = e.clientX;
+          vSwipeCurrentY = e.clientY;
           vSwipeStartTime = Date.now();
           if (imgWrap) imgWrap.style.transition = 'none';
         }
@@ -17595,17 +17670,25 @@
         applyViewerZoomTransform(true);
       } else if (vIsSwiping && viewerZoom <= 1.05) {
         vSwipeCurrentX = e.clientX;
+        vSwipeCurrentY = e.clientY;
         const dx = vSwipeCurrentX - vSwipeStartX;
-        const dy = e.clientY - vSwipeStartY;
-        if (Math.abs(dx) > 6) viewerGestureBlockCloseUntil = Date.now() + 350;
+        const dy = vSwipeCurrentY - vSwipeStartY;
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) viewerGestureBlockCloseUntil = Date.now() + 350;
+        const imgWrap = document.getElementById('photoViewerImgWrap');
         if (Math.abs(dx) > Math.abs(dy) * 0.7) {
-          const imgWrap = document.getElementById('photoViewerImgWrap');
           if (imgWrap) {
             let appliedDx = dx;
             if ((viewerCurrentIndex <= 0 && dx > 0) || (viewerCurrentIndex >= state.camRollShots.length - 1 && dx < 0)) {
               appliedDx = dx * 0.28;
             }
             imgWrap.style.transform = `translateX(${appliedDx}px)`;
+          }
+        } else if (dy > 0 && Math.abs(dy) > Math.abs(dx) * 1.1) {
+          if (imgWrap) {
+            const pullDown = Math.min(dy, 120);
+            const scale = Math.max(0.85, 1 - dy / 600);
+            imgWrap.style.transform = `translateY(${pullDown}px) scale(${scale})`;
+            imgWrap.style.opacity = `${Math.max(0.5, 1 - dy / 300)}`;
           }
         }
       }
@@ -17626,12 +17709,24 @@
       if (!vIsSwiping) return;
       vIsSwiping = false;
       const dx = vSwipeCurrentX - vSwipeStartX;
-      const dy = (e?.clientY || vSwipeStartY) - vSwipeStartY;
+      const dy = (e?.clientY || vSwipeCurrentY || vSwipeStartY) - vSwipeStartY;
       const elapsed = Math.max(1, Date.now() - vSwipeStartTime);
       const velocity = Math.abs(dx) / elapsed;
+      const vVelocity = Math.abs(dy) / elapsed;
       const isHorizontal = Math.abs(dx) > Math.abs(dy) * 0.7;
       const imgWrap = document.getElementById('photoViewerImgWrap');
       const threshold = 36;
+
+      if (!isHorizontal && dy > 45 && (dy > 70 || vVelocity > 0.22) && viewerZoom <= 1.05) {
+        viewerGestureBlockCloseUntil = Date.now() + 350;
+        if (imgWrap) {
+          imgWrap.style.transition = 'transform 0.18s ease-out, opacity 0.18s ease-out';
+          imgWrap.style.transform = 'translateY(120px) scale(0.82)';
+          imgWrap.style.opacity = '0';
+        }
+        setTimeout(() => closePhotoViewer(), 160);
+        return;
+      }
 
       if (isHorizontal && (dx < -threshold || (dx < -16 && velocity > 0.3))) {
         viewerGestureBlockCloseUntil = Date.now() + 350;
@@ -18347,7 +18442,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261122-1759';
+  const APP_BUILD = '20261126-1616';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
