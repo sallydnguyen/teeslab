@@ -3491,6 +3491,7 @@
       align-items: center;
       height: 30px;
       background: linear-gradient(180deg, #1b2029 0%, #11151d 100%);
+      overflow: hidden;
     }
     .pns-mode-tag {
       display: flex;
@@ -3498,6 +3499,7 @@
       justify-content: center;
       color: #cbd5e1;
       cursor: default;
+      flex-shrink: 0;
     }
     .pns-mode-controls {
       flex: 1;
@@ -3505,28 +3507,39 @@
       height: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 0 8px;
+      justify-content: flex-start;
+      gap: 5px;
+      padding: 0 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pns-mode-controls::-webkit-scrollbar {
+      display: none;
     }
     .pns-mode-pills {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
+      flex-shrink: 0;
     }
     .pns-mode-btn {
       height: 21px;
-      min-width: 30px;
-      padding: 0 8px;
+      width: 25px;
+      min-width: 25px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 5px;
       border: 1px solid #303746;
       background: #141821;
       color: #94a3b8;
       font-family: var(--mono);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.2px;
       cursor: pointer;
+      flex-shrink: 0;
       transition: all 0.12s ease;
     }
     .pns-mode-btn.active {
@@ -3543,17 +3556,18 @@
     }
     .pns-half-btn {
       height: 21px;
-      padding: 0 7px;
+      padding: 0 6px;
       border-radius: 5px;
       border: 1px solid #2b3240;
       background: #10141c;
       color: #9ca3af;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 700;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
       transition: all 0.12s ease;
     }
     .pns-half-btn.active {
@@ -3570,11 +3584,12 @@
       background: #10141c;
       color: #9ca3af;
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 700;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
       transition: all 0.12s ease;
     }
     .pns-pano-btn.active {
@@ -3590,10 +3605,15 @@
       box-shadow: 0 0 8px rgba(245, 158, 11, 0.40);
     }
     .pns-mode-val {
-      min-width: 76px;
+      min-width: 52px;
       width: auto;
-      padding: 0 7px;
+      max-width: 72px;
+      padding: 0 5px;
       color: #f8fafc;
+      font-size: 8.5px;
+      flex-shrink: 0;
+      text-align: center;
+      justify-content: center;
     }
     .lens-barrel-ring.is-pns-dial .lens-ring-tag {
       color: #67e8f9;
@@ -12979,14 +12999,13 @@
           if (btnPnsPano) btnPnsPano.classList.toggle('active', !!state.pnsPanorama);
           if (btnPnsIllum) btnPnsIllum.classList.toggle('active', !!state.pnsIlluminator);
           if (pnsModeValEl) {
-            const panoSuffix = state.pnsPanorama ? ' · PANO' : '';
             if (plan.mode === 'T') {
               pnsModeValEl.textContent = pnsTimeOpenAt > 0
                 ? `T · ${formatPnsTimerClock(plan.elapsedSec || 0)}`
-                : `T · f/${plan.activeF}${panoSuffix}`;
+                : `T · f/${plan.activeF}`;
             } else {
               const pLbl = plan.mode === 'P' && plan.isFlex ? 'P*' : plan.mode;
-              pnsModeValEl.textContent = `${pLbl} · f/${plan.activeF}${panoSuffix}`;
+              pnsModeValEl.textContent = `${pLbl} · f/${plan.activeF}`;
             }
           }
         }
