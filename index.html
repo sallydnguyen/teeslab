@@ -1723,13 +1723,15 @@
       color: #fbbf24;
       background: transparent;
       border: none;
-      animation: windPulse 1.15s ease-in-out infinite;
     }
     .cam-wind-lever.needs-rewind {
       color: #ef4444;
       background: transparent;
       border: none;
-      animation: windPulseRed 1.05s ease-in-out infinite;
+    }
+    .cam-wind-lever.needs-wind svg,
+    .cam-wind-lever.needs-rewind svg {
+      animation: windLeverPulse 1.15s ease-in-out infinite;
     }
     .cam-wind-lever.needs-wind .wind-StatusDot {
       fill: #fbbf24;
@@ -1744,13 +1746,9 @@
     .cam-wind-lever:active .wind-arm {
       transform: rotate(-34deg);
     }
-    @keyframes windPulse {
-      0%, 100% { filter: drop-shadow(0 0 2px rgba(34, 211, 238, 0.35)); }
-      50% { filter: drop-shadow(0 0 7px rgba(34, 211, 238, 0.85)); }
-    }
-    @keyframes windPulseRed {
-      0%, 100% { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.4)); }
-      50% { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9)); }
+    @keyframes windLeverPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.62; }
     }
 
     /* Viewfinder Box & Mode-Specific Stages */
@@ -1874,11 +1872,6 @@
       background: rgba(6, 9, 14, 0.36);
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.34), inset 0 0 8px rgba(0, 0, 0, 0.24);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       display: none !important;
       pointer-events: none;
       z-index: 4;
@@ -1949,7 +1942,6 @@
       height: 14px;
       border-color: rgba(255,255,255,0.86);
       border-style: solid;
-      filter: drop-shadow(0 0 2px rgba(0,0,0,0.88));
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.15s ease;
@@ -2327,32 +2319,30 @@
     }
     .vf-pns-frame-svg .pns-etch-ink {
       fill: none;
-      stroke: rgba(247, 234, 182, 0.92);
+      stroke: rgba(247, 234, 182, 0.94);
       stroke-width: 2.15;
       stroke-linecap: square;
       stroke-linejoin: miter;
-      filter: drop-shadow(0 0 1.5px rgba(254, 240, 138, 0.40));
-      transition: stroke 0.18s ease, filter 0.18s ease;
+      transition: stroke 0.18s ease;
     }
     .vf-pns-frame-svg .pns-etch-parallax {
       fill: none;
-      stroke: rgba(247, 234, 182, 0.88);
+      stroke: rgba(247, 234, 182, 0.90);
       stroke-width: 1.85;
       stroke-linecap: square;
       stroke-linejoin: miter;
-      filter: drop-shadow(0 0 1.5px rgba(254, 240, 138, 0.35));
-      transition: stroke 0.18s ease, filter 0.18s ease;
+      transition: stroke 0.18s ease;
     }
     .vf-pns-frame-svg .pns-etch-subtle {
       fill: none;
-      stroke: rgba(246, 232, 184, 0.38);
+      stroke: rgba(246, 232, 184, 0.42);
       stroke-width: 1.35;
       stroke-linecap: square;
       stroke-linejoin: miter;
-      transition: stroke 0.18s ease, filter 0.18s ease;
+      transition: stroke 0.18s ease;
     }
     .vf-pns-frame-svg .pns-pano-guide {
-      stroke: rgba(246, 232, 184, 0.28);
+      stroke: rgba(246, 232, 184, 0.30);
       stroke-width: 1.0;
     }
 
@@ -2376,25 +2366,23 @@
     }
     .vf-pns-af-bracket .pns-af-ink {
       fill: none;
-      stroke: rgba(246, 233, 184, 0.90);
+      stroke: rgba(246, 233, 184, 0.92);
       stroke-width: 2.0;
       stroke-linecap: square;
       stroke-linejoin: miter;
-      transition: stroke 0.14s ease, filter 0.14s ease;
+      transition: stroke 0.14s ease;
     }
     .vf-pns-af-bracket .pns-af-pip {
       stroke-width: 1.5;
     }
     .vf-pns-af-bracket.in-focus .pns-af-ink {
-      stroke: rgba(234, 244, 198, 0.95);
-      filter: drop-shadow(0 0 2.8px rgba(134, 239, 172, 0.45));
+      stroke: rgba(234, 244, 198, 0.96);
     }
     .vf-pns-af-bracket.mf-off {
       animation: pnsAfBlink 0.65s infinite ease-in-out;
     }
     .vf-pns-af-bracket.mf-off .pns-af-ink {
       stroke: rgba(251, 191, 36, 0.95);
-      filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.50));
     }
     @keyframes pnsAfBlink {
       0%, 100% { opacity: 0.95; }
@@ -2437,8 +2425,7 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(ellipse 95% 90% at 50% 50%, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.10) 60%, rgba(0, 0, 0, 0.35) 100%);
-      mix-blend-mode: screen;
+      background: radial-gradient(ellipse 95% 90% at 50% 50%, rgba(245, 158, 11, 0.14) 0%, rgba(217, 119, 6, 0.08) 60%, rgba(0, 0, 0, 0.25) 100%);
       z-index: 1;
       animation: pnsIllumWarmup 0.22s ease-out;
     }
@@ -2450,18 +2437,13 @@
     .vf-pns-overlay.is-illuminated .pns-etch-parallax,
     .vf-pns-overlay.is-illuminated .pns-af-ink {
       stroke: #fbbf24 !important;
-      filter: drop-shadow(0 0 3.5px rgba(245, 158, 11, 0.95)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.55)) !important;
     }
     .vf-pns-overlay.is-illuminated .pns-etch-subtle,
     .vf-pns-overlay.is-illuminated .pns-pano-guide {
-      stroke: rgba(251, 191, 36, 0.58) !important;
-      filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45)) !important;
+      stroke: rgba(251, 191, 36, 0.65) !important;
     }
     .vf-pns-overlay.is-illuminated .vf-pns-bottom-bezel {
-      box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.38), 0 0 14px rgba(245, 158, 11, 0.30);
-    }
-    .vf-pns-overlay.is-illuminated .vf-pns-seg-svg {
-      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.65));
+      box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.38), 0 0 10px rgba(245, 158, 11, 0.25);
     }
 
     /* Bottom Optical Pitch-Black Readout Mask + Glowing Nikon 35Ti Dichromatic EL Segments */
@@ -2500,7 +2482,6 @@
       width: 24px;
       height: 18px;
       display: block;
-      filter: drop-shadow(0 0 3px rgba(248, 226, 134, 0.36));
     }
     .vf-pns-fmt-pano-svg {
       width: 20px;
@@ -2533,21 +2514,16 @@
       width: auto;
       display: block;
       overflow: visible;
-      filter: drop-shadow(0 0 3.5px rgba(250, 204, 21, 0.34));
-    }
-    .vf-pns-lcd-val.is-slow .vf-pns-seg-svg {
-      filter: drop-shadow(0 0 4.5px rgba(249, 115, 22, 0.56));
     }
     .vf-pns-lcd-ico {
       flex-shrink: 0;
       color: #4a1e1a;
       opacity: 0.42;
-      transition: color 0.14s ease, opacity 0.14s ease, filter 0.14s ease;
+      transition: color 0.14s ease, opacity 0.14s ease;
     }
     .vf-pns-lcd-ico.active {
       color: #f6c945;
       opacity: 0.98;
-      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.62));
     }
     .vf-pns-ev-ico {
       width: 18px;
@@ -2560,7 +2536,6 @@
     }
     .vf-pns-flash-ico.active {
       color: #fb923c;
-      filter: drop-shadow(0 0 4.5px rgba(249, 115, 22, 0.68));
     }
     .vf-pns-mode-badge {
       font-family: var(--mono);
@@ -2602,7 +2577,6 @@
       height: 13px;
       border-color: rgba(255, 255, 255, 0.92);
       border-style: solid;
-      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.88));
     }
     .vf-mf-corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
     .vf-mf-corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
@@ -2975,10 +2949,8 @@
       gap: 6px;
       padding: 2px 9px;
       border-radius: 999px;
-      background: rgba(5, 7, 10, 0.78);
+      background: rgba(5, 7, 10, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
       font-family: var(--mono);
       line-height: 1;
       z-index: 4;
@@ -7138,21 +7110,24 @@
       { id: 'midnight-car', title: 'Midnight car', src: './assets/samples/night-car.jpg', focusMeters: 3.0, nearMeters: 1.3, farMeters: 12 },
       { id: 'galaxy-night', title: 'Galaxy', src: './assets/samples/galaxy.jpg', focusMeters: Infinity, nearMeters: 15, farMeters: Infinity }
     ];
-    return scenes.map(scene => ({
+    return scenes.map((scene, idx) => ({
       ...scene,
       loaded: false,
       _promise: null,
-      canvas: Object.assign(document.createElement('canvas'), { width: 1200, height: 800 })
+      canvas: idx === 0 ? Object.assign(document.createElement('canvas'), { width: 1200, height: 800 }) : null
     }));
   }
 
   function ensureSampleLoaded(scene) {
     if (!scene) return Promise.resolve();
-    if (scene.loaded) return Promise.resolve();
+    if (scene.loaded && scene.canvas) return Promise.resolve();
     if (scene._promise) return scene._promise;
     scene._promise = new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = () => {
+        if (!scene.canvas) {
+          scene.canvas = Object.assign(document.createElement('canvas'), { width: 1200, height: 800 });
+        }
         const canvas = scene.canvas, ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
@@ -7173,7 +7148,6 @@
 
   async function loadSampleScenePhotos() {
     await ensureSampleLoaded(SAMPLES[0]);
-    Promise.all(SAMPLES.slice(1).map(s => ensureSampleLoaded(s).catch(() => {})));
   }
   /* ==========================================================================
      4. GRAIN TEXTURE, OPTICAL BLUR & FILM COLOR ENGINE
@@ -10180,6 +10154,7 @@
     state.halfFrameLabSecondSampleId = opts.sampleId !== undefined ? opts.sampleId : null;
     state.halfFrameLabSecondFromCameraRoll = !!opts.fromCameraRoll;
     if (!opts.keepTargetSlot) state.halfFrameTargetSlot = 1;
+    previewSourceVersion += 1;
     labRenderDirty = true;
     syncAllUI();
     renderPreview(!!opts.forcePreviewRender);
@@ -10420,12 +10395,13 @@
   let renderRaf = null;
   let previewRequestVersion = 0;
   let renderTimer = 0;
+  let labPreviewCropCache = { key: '', canvas: null, data: null, w: 0, h: 0 };
   function scheduleRender() {
     if (renderRaf || renderTimer) return;
     renderTimer = window.setTimeout(() => {
       renderTimer = 0;
       renderRaf = requestAnimationFrame(() => { renderRaf = null; renderPreview(); });
-    }, 52);
+    }, 72);
   }
 
   async function renderPreview(force = false) {
@@ -10440,11 +10416,28 @@
     const isMobile = window.matchMedia('(max-width: 700px)').matches;
     const maxDim = isMobile ? 540 : 720;
     const maxPixels = isMobile ? 190000 : 280000;
-    const sourceCanvas = buildLabCroppedCanvas(state.previewSourceCanvas, maxDim, true, maxPixels);
-    const sourceData = sourceCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
     const frameType = state.frameType;
     const { phone, body, lens, film } = getSelectedGear();
     const lensShort = shortLensLabel(lens);
+
+    const cropKey = `${previewSourceVersion}|${state.activeSampleId || ''}|${body.id}|${lens.id}|${state.zoomFocalMm}|${state.pnsPanorama ? 1 : 0}|${state.hfDiptychMode ? 1 : 0}|${state.halfFrameLabSecondSampleId || ''}|${state.halfFrameLabSecondPreviewCanvas ? 1 : 0}|${state.labDoubleExpSampleId || ''}|${state.labDoubleExpPreviewCanvas ? state.labDoubleExpMix : 0}|${state.sourceIsDiptych ? 1 : 0}|${state.sourceFromCameraRoll ? 1 : 0}|${maxDim}|${maxPixels}`;
+    let sourceCanvas;
+    let sourceData;
+    if (labPreviewCropCache.key === cropKey && labPreviewCropCache.canvas && labPreviewCropCache.data) {
+      sourceCanvas = labPreviewCropCache.canvas;
+      sourceData = new ImageData(new Uint8ClampedArray(labPreviewCropCache.data), labPreviewCropCache.w, labPreviewCropCache.h);
+    } else {
+      sourceCanvas = buildLabCroppedCanvas(state.previewSourceCanvas, maxDim, true, maxPixels);
+      const rawImg = sourceCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+      labPreviewCropCache = {
+        key: cropKey,
+        canvas: sourceCanvas,
+        data: new Uint8ClampedArray(rawImg.data),
+        w: sourceCanvas.width,
+        h: sourceCanvas.height
+      };
+      sourceData = rawImg;
+    }
 
     if (state.labOriginalMode) {
       previewRequestVersion += 1;
@@ -11567,6 +11560,7 @@
       const img = document.createElement('img');
       img.src = s.src;
       img.alt = s.title;
+      img.loading = 'lazy';
       img.decoding = 'async';
       const lbl = document.createElement('span');
       lbl.textContent = s.title;
@@ -11731,15 +11725,36 @@
     return { ctx, out: camAudioBus };
   }
 
+  let camAudioIdleTimer = 0;
+  function suspendCamAudioNow() {
+    window.clearTimeout(camAudioIdleTimer);
+    camAudioIdleTimer = 0;
+    try {
+      if (state.audioCtx && state.audioCtx.state === 'running') {
+        state.audioCtx.suspend().catch(() => {});
+      }
+    } catch (e) {}
+  }
+  function scheduleCamAudioSuspend() {
+    window.clearTimeout(camAudioIdleTimer);
+    camAudioIdleTimer = window.setTimeout(suspendCamAudioNow, 4500);
+  }
+
   function withCamAudio(fn, resumeIfSuspended = false) {
     if (!state.camSound) return;
     try {
       const { ctx, out } = ensureCamAudioContext();
       if (ctx.state === 'suspended') {
-        if (resumeIfSuspended) ctx.resume().then(() => fn(ctx, out)).catch(() => {});
+        if (resumeIfSuspended) {
+          ctx.resume().then(() => {
+            fn(ctx, out);
+            scheduleCamAudioSuspend();
+          }).catch(() => {});
+        }
         return;
       }
       fn(ctx, out);
+      scheduleCamAudioSuspend();
     } catch (e) {}
   }
 
@@ -11868,7 +11883,7 @@
         mechNoiseBurst(ctx, out, now, 0.005, 'bandpass', isRf ? 5000 : 4550, 2.4, 0.095, 3100);
         mechKnockTone(ctx, out, now, 0.009, 520, 280, 0.024, 'sine');
       }
-    }, kind === 'mount' || kind === 'af' || kind === 'film' || kind === 'ev');
+    }, true);
   }
 
   function buildTopScaleSpec(body, resolvedLens) {
@@ -13652,13 +13667,13 @@
     const modeBadge = document.getElementById('vfPnsModeBadge');
     if (modeBadge) {
       if (isPns && plan) {
-        modeBadge.style.display = '';
+        if (modeBadge.style.display !== '') modeBadge.style.display = '';
         const modeTxt = plan.mode === 'P' && plan.isFlex ? 'P*' : plan.mode;
-        modeBadge.textContent = modeTxt;
+        if (modeBadge.textContent !== modeTxt) modeBadge.textContent = modeTxt;
         modeBadge.classList.toggle('is-flex', plan.mode === 'P' && !!plan.isFlex);
         modeBadge.classList.toggle('is-time', plan.mode === 'T');
       } else {
-        modeBadge.style.display = 'none';
+        if (modeBadge.style.display !== 'none') modeBadge.style.display = 'none';
       }
     }
 
@@ -13685,13 +13700,13 @@
 
     const fmtFull = document.getElementById('vfPnsFmtFull');
     const fmtPano = document.getElementById('vfPnsFmtPano');
-    if (fmtFull) {
+    if (fmtFull && fmtFull.dataset.panoState !== (isPano ? '1' : '0')) {
+      fmtFull.dataset.panoState = isPano ? '1' : '0';
       fmtFull.style.opacity = isPano ? '0.34' : '1';
-      fmtFull.style.filter = isPano ? 'none' : 'drop-shadow(0 0 3px rgba(248, 226, 134, 0.45))';
     }
-    if (fmtPano) {
+    if (fmtPano && fmtPano.dataset.panoState !== (isPano ? '1' : '0')) {
+      fmtPano.dataset.panoState = isPano ? '1' : '0';
       fmtPano.style.opacity = isPano ? '1' : '0.34';
-      fmtPano.style.filter = isPano ? 'drop-shadow(0 0 3.5px rgba(248, 226, 134, 0.70))' : 'none';
       const panoRect = fmtPano.querySelector('rect');
       const panoPath = fmtPano.querySelector('path');
       if (panoRect) panoRect.setAttribute('fill', isPano ? '#f9e696' : '#6b2923');
@@ -13730,7 +13745,7 @@
 
   function syncVfMeterNeedle(body, lens) {
     const railEl = document.getElementById('vfGlobalMeterNeedle');
-    if (railEl) {
+    if (railEl && !railEl.hidden) {
       railEl.style.display = 'none';
       railEl.hidden = true;
     }
@@ -13744,9 +13759,10 @@
     const minusLed = document.getElementById('vfRfLedMinus');
     const okLed = document.getElementById('vfRfLedOk');
     const plusLed = document.getElementById('vfRfLedPlus');
-    if (meterEl) {
+    const stopsKey = rawStops.toFixed(2);
+    if (meterEl && meterEl.dataset.stops !== stopsKey) {
       meterEl.dataset.state = meterState;
-      meterEl.dataset.stops = rawStops.toFixed(2);
+      meterEl.dataset.stops = stopsKey;
     }
     minusLed?.classList.toggle('lit', rawStops < -0.35);
     okLed?.classList.toggle('lit', Math.abs(rawStops) < 0.9);
@@ -13757,23 +13773,25 @@
     if (body?.id !== 'half-frame') return;
     const { film } = getSelectedGear();
     const info = getEffectiveShutterInfo(lens, film);
-    const { rawStops, meterState, idealHz, hz } = info;
+    const { meterState, idealHz, hz } = info;
     const minF = Math.max(1.0, Number(lens?.minF) || 1.8);
     const curF = Math.max(minF, Number(lens?.activeF) || minF);
     const apertureStops = Math.log2(curF / minF) * 2;
     const penNum = apertureStops + Math.log2(Math.max(0.25, idealHz || 125) / Math.max(0.25, hz || 125));
     const clampedNum = Math.max(-0.9, Math.min(7.9, penNum));
-    const needleY = 24 + clampedNum * 15;
+    const needleYStr = (24 + clampedNum * 15).toFixed(1);
 
     const meterEl = document.getElementById('vfPenFtMeter');
     const needleEl = document.getElementById('vfPenFtNeedle');
-    if (meterEl) {
+    const numKey = penNum.toFixed(1);
+    if (meterEl && (meterEl.dataset.num !== numKey || meterEl.dataset.state !== meterState)) {
       meterEl.dataset.state = meterState;
-      meterEl.dataset.num = penNum.toFixed(1);
+      meterEl.dataset.num = numKey;
     }
-    if (needleEl) {
-      needleEl.setAttribute('transform', `translate(0, ${needleY.toFixed(1)})`);
-      needleEl.style.transform = `translateY(${needleY.toFixed(1)}px)`;
+    if (needleEl && needleEl.dataset.y !== needleYStr) {
+      needleEl.dataset.y = needleYStr;
+      needleEl.setAttribute('transform', `translate(0, ${needleYStr})`);
+      needleEl.style.transform = `translateY(${needleYStr}px)`;
     }
   }
 
@@ -13788,6 +13806,7 @@
     const clampedStops = Math.max(-2.5, Math.min(2.5, rawStops));
     // Left is + (over), Right is − (under), Center 0px sits inside twin inner notch
     const dp1OffsetPx = Math.abs(clampedStops) < 1e-4 ? 0 : -(clampedStops / 2.5) * 20;
+    const dp1Str = dp1OffsetPx.toFixed(1);
 
     const readoutBox = document.getElementById('vfSlrReadout');
     const meterEl = document.getElementById('vfSlrMeter');
@@ -13799,38 +13818,45 @@
     const biasEl = document.getElementById('vfSlrBiasVal');
     const aelEl = document.getElementById('vfSlrAelVal');
 
-    if (readoutBox) readoutBox.dataset.mode = info.isAuto ? 'A' : 'M';
-    if (meterEl) {
+    const modeKey = info.isAuto ? 'A' : 'M';
+    if (readoutBox && readoutBox.dataset.mode !== modeKey) readoutBox.dataset.mode = modeKey;
+    const stopsStr = rawStops.toFixed(2);
+    if (meterEl && (meterEl.dataset.stops !== stopsStr || meterEl.dataset.state !== meterState)) {
       meterEl.dataset.state = meterState;
-      meterEl.dataset.stops = rawStops.toFixed(2);
+      meterEl.dataset.stops = stopsStr;
       meterEl.dataset.step = String(stepVal);
     }
-    if (needleEl) {
-      needleEl.setAttribute('transform', `translate(${dp1OffsetPx.toFixed(1)}, 0)`);
-      needleEl.style.transform = `translateX(${dp1OffsetPx.toFixed(1)}px)`;
+    if (needleEl && needleEl.dataset.x !== dp1Str) {
+      needleEl.dataset.x = dp1Str;
+      needleEl.setAttribute('transform', `translate(${dp1Str}, 0)`);
+      needleEl.style.transform = `translateX(${dp1Str}px)`;
     }
     minusEl?.classList.toggle('active', meterState === 'under');
     plusEl?.classList.toggle('active', meterState === 'over');
 
     if (shutterEl) {
       const sp = info.effectiveSpeed || '250';
-      shutterEl.textContent = sp;
+      if (shutterEl.textContent !== sp) shutterEl.textContent = sp;
       shutterEl.classList.toggle('is-slow', info.shakeRisk >= 0.45);
     }
     if (apEl) {
       const numF = Number(lens?.activeF || lens?.minF || 3.5);
       const fVal = formatApertureLabel(numF).replace(/^f\//i, '');
-      apEl.textContent = fVal;
+      if (apEl.textContent !== fVal) apEl.textContent = fVal;
     }
     if (biasEl) {
       if (caps.supportsEv && Math.abs(evBias) >= 0.05) {
-        biasEl.style.display = '';
-        biasEl.textContent = `${evBias > 0 ? '+' : ''}${evBias.toFixed(1)}`;
+        const biasTxt = `${evBias > 0 ? '+' : ''}${evBias.toFixed(1)}`;
+        if (biasEl.style.display !== '') biasEl.style.display = '';
+        if (biasEl.textContent !== biasTxt) biasEl.textContent = biasTxt;
       } else {
-        biasEl.style.display = 'none';
+        if (biasEl.style.display !== 'none') biasEl.style.display = 'none';
       }
     }
-    if (aelEl) aelEl.style.display = (caps.supportsAel && state.camAELocked) ? '' : 'none';
+    if (aelEl) {
+      const wantDisp = (caps.supportsAel && state.camAELocked) ? '' : 'none';
+      if (aelEl.style.display !== wantDisp) aelEl.style.display = wantDisp;
+    }
   }
 
   function layoutViewfinderStage() {
@@ -13838,7 +13864,7 @@
     const stage = document.getElementById('vfStage');
     if (!box || !stage) return;
     const { body, lens } = getSelectedGear();
-    stage.dataset.vfMode = body.id;
+    if (stage.dataset.vfMode !== body.id) stage.dataset.vfMode = body.id;
 
     const targetRatio = getCameraStageDimensions(body, lens).ratio;
     const bw = box.clientWidth;
@@ -13864,21 +13890,30 @@
         photoW = photoH * targetRatio;
         w = Math.min(bw, photoW + bezelW);
       }
-      stage.style.width = `${Math.round(w)}px`;
-      stage.style.height = `${Math.round(h)}px`;
+      const roundW = Math.round(w);
+      const roundH = Math.round(h);
       const shiftY = Math.round((topReserve - botReserve) * 0.5);
-      stage.style.transform = `translateY(${shiftY}px)`;
+      const layoutKey = `${roundW}x${roundH}|${shiftY}`;
+      if (stage.dataset.layoutKey !== layoutKey) {
+        stage.dataset.layoutKey = layoutKey;
+        stage.style.width = `${roundW}px`;
+        stage.style.height = `${roundH}px`;
+        stage.style.transform = `translateY(${shiftY}px)`;
+      }
     }
 
     if (body.id === 'rangefinder') {
       const bl = document.getElementById('vfRfBrightline');
       const ft = document.getElementById('vfRfFocalTag');
       const pct = lens.brightlinePct || 78;
-      if (bl) {
-        bl.style.width = `${pct}%`;
-        bl.style.height = `${pct}%`;
+      const pctStr = `${pct}%`;
+      if (bl && bl.dataset.pct !== pctStr) {
+        bl.dataset.pct = pctStr;
+        bl.style.width = pctStr;
+        bl.style.height = pctStr;
       }
-      if (ft) ft.textContent = `${lens.focalTag || lens.label} · 0.72×`;
+      const rfTxt = `${lens.focalTag || lens.label} · 0.72×`;
+      if (ft && ft.textContent !== rfTxt) ft.textContent = rfTxt;
     }
 
     syncSlrMeterLed(body, lens);
@@ -14105,7 +14140,7 @@
   let cameraSettingsTimer = 0;
   function scheduleCameraSettingsApply() {
     window.clearTimeout(cameraSettingsTimer);
-    cameraSettingsTimer = window.setTimeout(() => applyCameraHardwareSettings(), 140);
+    cameraSettingsTimer = window.setTimeout(() => applyCameraHardwareSettings(), 200);
   }
 
   async function applyCameraHardwareSettings() {
@@ -14169,8 +14204,8 @@
     const land = isCameraViewportLandscape();
     return {
       facingMode: state.camFacing,
-      width: { ideal: land ? (hiRes ? 3840 : 1440) : (hiRes ? 2160 : 1080) },
-      height: { ideal: land ? (hiRes ? 2160 : 1080) : (hiRes ? 3840 : 1440) },
+      width: { ideal: land ? (hiRes ? 3840 : 960) : (hiRes ? 2160 : 720) },
+      height: { ideal: land ? (hiRes ? 2160 : 720) : (hiRes ? 3840 : 960) },
       frameRate: { ideal: hiRes ? 24 : 12, max: hiRes ? 30 : 15 }
     };
   }
@@ -14267,13 +14302,14 @@
       }`;
 
     const FS_GRADE = `#version 300 es
-      precision highp float;
+      precision mediump float;
       in vec2 vUv;
       out vec4 fragColor;
       uniform sampler2D uSrc;
       uniform sampler2D uToneLut;
       uniform vec2 uCropScale;
       uniform vec2 uInvSize;
+      uniform float uFlipSrcY;
       uniform float uBarrelK;
       uniform float uCaStr;
       uniform float uShakeMix;
@@ -14305,6 +14341,7 @@
 
       vec3 sampleSrc(vec2 fUv) {
         vec2 suv = clamp(vec2(0.5) + (fUv - 0.5) * uCropScale, vec2(0.0), vec2(1.0));
+        if (uFlipSrcY > 0.5) suv.y = 1.0 - suv.y;
         return texture(uSrc, suv).rgb * 255.0;
       }
 
@@ -14474,6 +14511,7 @@
       uniform float uDofRad;
       uniform float uMfDefocus;
       uniform float uCatScale;
+      uniform int uTapStep;
 
       float evalCoC(vec2 uv, out vec2 nPos) {
         nPos = vec2(uv.x * 2.0 - 1.0, 1.0 - 2.0 * uv.y);
@@ -14536,6 +14574,7 @@
           vec3(-0.54751, 0.77877, 0.95197), vec3(-0.12649, -0.97609, 0.98425)
         );
         for (int i = 0; i < 16; i++) {
+          if (uTapStep > 1 && (i - (i / 2) * 2) != 0) continue;
           float rN = TAPS[i].z;
           vec2 off = TAPS[i].xy;
           if (catStr > 0.001) {
@@ -14554,7 +14593,7 @@
       }`;
 
     const FS_COMPOSITE = `#version 300 es
-      precision highp float;
+      precision mediump float;
       in vec2 vUv;
       out vec4 fragColor;
       uniform sampler2D uBase;
@@ -14630,8 +14669,8 @@
           rgb *= vig;
         }
         if (uGrainGain > 0.2) {
-          vec2 px = vec2(gl_FragCoord.x - 0.5, uSize.y - gl_FragCoord.y - 0.5);
-          vec2 gUv = (floor(px * uGrainScale) + 0.5) / 256.0;
+          vec2 px = mod(vec2(gl_FragCoord.x - 0.5, uSize.y - gl_FragCoord.y - 0.5) * uGrainScale, 256.0);
+          vec2 gUv = (floor(px) + 0.5) / 256.0;
           float gn = (texture(uGrain, gUv).r * 255.0 - 127.5) / 28.0;
           float lumN = dot(rgb, vec3(0.299, 0.587, 0.114)) / 255.0;
           float n = gn * uGrainGain * (0.30 + 2.1 * lumN * (1.0 - lumN));
@@ -14777,6 +14816,7 @@
       drawQuad(pBlur, dstFbo.fbo, curQw, curQh);
     }
 
+    const previewMatrixBuf = new Array(9);
     return {
       isSupported: () => !lost && !!gl && !gl.isContextLost(),
       render(src, isVideo, sourceVer, w, h, targetRatio, zoomFactor, cfg) {
@@ -14788,7 +14828,7 @@
         if (isVideo || sourceVer !== uploadedSrcVer || srcW !== uploadedSrcW || srcH !== uploadedSrcH) {
           gl.activeTexture(gl.TEXTURE0);
           gl.bindTexture(gl.TEXTURE_2D, texSrc);
-          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
           if (uploadedSrcW === srcW && uploadedSrcH === srcH && uploadedSrcW > 0) {
             gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, src);
           } else {
@@ -14844,11 +14884,16 @@
 
         const m = film.matrix, sT = film.shadowTint, mT = film.midTint, hT = film.highlightTint;
         const filmColorMix = 0.70, filmTintMix = 0.70;
-        const previewMatrix = [
-          1 + (m[0] - 1) * filmColorMix, m[1] * filmColorMix, m[2] * filmColorMix,
-          m[3] * filmColorMix, 1 + (m[4] - 1) * filmColorMix, m[5] * filmColorMix,
-          m[6] * filmColorMix, m[7] * filmColorMix, 1 + (m[8] - 1) * filmColorMix
-        ];
+        previewMatrixBuf[0] = 1 + (m[0] - 1) * filmColorMix;
+        previewMatrixBuf[1] = m[1] * filmColorMix;
+        previewMatrixBuf[2] = m[2] * filmColorMix;
+        previewMatrixBuf[3] = m[3] * filmColorMix;
+        previewMatrixBuf[4] = 1 + (m[4] - 1) * filmColorMix;
+        previewMatrixBuf[5] = m[5] * filmColorMix;
+        previewMatrixBuf[6] = m[6] * filmColorMix;
+        previewMatrixBuf[7] = m[7] * filmColorMix;
+        previewMatrixBuf[8] = 1 + (m[8] - 1) * filmColorMix;
+
         const previewSaturation = 1 + ((film.saturation ?? 1) - 1) * 0.76;
         const softFocus = Math.max(body.softFocus || 0, lens.softFocus || 0);
         const deSharp = Math.min(0.85, phone.deSharpen + (lens.edgeSoft || 0) * 0.45 + softFocus * 0.65);
@@ -14858,6 +14903,7 @@
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texLut); gl.uniform1i(ug.uToneLut, 1);
         gl.uniform2f(ug.uCropScale, cropScaleX, cropScaleY);
         gl.uniform2f(ug.uInvSize, 1 / w, 1 / h);
+        gl.uniform1f(ug.uFlipSrcY, 1.0);
         gl.uniform1f(ug.uBarrelK, lens.barrelDistort || 0);
         gl.uniform1f(ug.uCaStr, (lens.chromaticAb || 0) * (w / 900));
         gl.uniform1f(ug.uShakeMix, shakeMix);
@@ -14872,7 +14918,7 @@
         gl.uniform1f(ug.uIsBW, film.isBW ? 1 : 0);
         const bwW = film.bwWeights || [0.33, 0.5, 0.17];
         gl.uniform3f(ug.uBwWeights, bwW[0], bwW[1], bwW[2]);
-        gl.uniformMatrix3fv(ug.uFilmMatrix, false, (window.__vfMat3Buf || (window.__vfMat3Buf = new Float32Array(9)), window.__vfMat3Buf[0] = previewMatrix[0], window.__vfMat3Buf[1] = previewMatrix[3], window.__vfMat3Buf[2] = previewMatrix[6], window.__vfMat3Buf[3] = previewMatrix[1], window.__vfMat3Buf[4] = previewMatrix[4], window.__vfMat3Buf[5] = previewMatrix[7], window.__vfMat3Buf[6] = previewMatrix[2], window.__vfMat3Buf[7] = previewMatrix[5], window.__vfMat3Buf[8] = previewMatrix[8], window.__vfMat3Buf));
+        gl.uniformMatrix3fv(ug.uFilmMatrix, false, (window.__vfMat3Buf || (window.__vfMat3Buf = new Float32Array(9)), window.__vfMat3Buf[0] = previewMatrixBuf[0], window.__vfMat3Buf[1] = previewMatrixBuf[3], window.__vfMat3Buf[2] = previewMatrixBuf[6], window.__vfMat3Buf[3] = previewMatrixBuf[1], window.__vfMat3Buf[4] = previewMatrixBuf[4], window.__vfMat3Buf[5] = previewMatrixBuf[7], window.__vfMat3Buf[6] = previewMatrixBuf[2], window.__vfMat3Buf[7] = previewMatrixBuf[5], window.__vfMat3Buf[8] = previewMatrixBuf[8], window.__vfMat3Buf));
         gl.uniform3f(ug.uShadowTint, sT[0] * filmTintMix, sT[1] * filmTintMix, sT[2] * filmTintMix);
         gl.uniform3f(ug.uMidTint, mT[0] * filmTintMix, mT[1] * filmTintMix, mT[2] * filmTintMix);
         gl.uniform3f(ug.uHighlightTint, hT[0] * filmTintMix, hT[1] * filmTintMix, hT[2] * filmTintMix);
@@ -14894,7 +14940,10 @@
         const rawDofStr = lens.dofStrength || 0;
         const mfDefocus = lens.mfDefocus || 0;
         const ecoLive = !!cfg.ecoPreview;
-        const runLiveDof = ecoLive ? (rawDofStr > 0.35 || mfDefocus > 0.04) : (rawDofStr > 0.04 || mfDefocus > 0.015);
+        const isEcoVideo = ecoLive && isVideo;
+        const runLiveDof = isEcoVideo
+          ? (mfDefocus > 0.04 || rawDofStr >= 0.72)
+          : (ecoLive ? (rawDofStr > 0.35 || mfDefocus > 0.04) : (rawDofStr > 0.04 || mfDefocus > 0.015));
         const dofStr = runLiveDof ? rawDofStr : 0;
         const effMfDefocus = runLiveDof ? mfDefocus : 0;
         const focusCX = Number.isFinite(lens.focusCenterX) ? lens.focusCenterX : 0.5;
@@ -14914,6 +14963,7 @@
           gl.uniform1f(pBokeh.u.uDofRad, lens.dofRadius ?? 0.42);
           gl.uniform1f(pBokeh.u.uMfDefocus, effMfDefocus);
           gl.uniform1f(pBokeh.u.uCatScale, lens.bokehCatScale ?? 1.0);
+          gl.uniform1i(pBokeh.u.uTapStep, isEcoVideo ? 2 : 1);
           drawQuad(pBokeh, fboDof.fbo, curHw, curHh);
 
           gl.bindTexture(gl.TEXTURE_2D, fboBase.tex);
@@ -14988,19 +15038,41 @@
     );
   }
 
+  let camOverlaySleepTimer = 0;
+  let camSleptByOverlay = false;
+  function cancelOverlayCameraSleep() {
+    window.clearTimeout(camOverlaySleepTimer);
+    camOverlaySleepTimer = 0;
+  }
+  function scheduleOverlayCameraSleep() {
+    cancelOverlayCameraSleep();
+    if (!state.camStream) return;
+    camOverlaySleepTimer = window.setTimeout(() => {
+      camOverlaySleepTimer = 0;
+      if (state.camStream && !document.hidden && isCameraObscuredByOverlay()) {
+        camSleptByOverlay = true;
+        pauseCameraWhenHidden();
+      }
+    }, 2200);
+  }
+
   function startCameraLoop() {
     if (state.camAnimId) return;
     const viewCamEl = document.getElementById('view-camera');
+    const appShellEl = document.querySelector('.app-shell');
     let cpuTmp = null, cpuCtx = null;
     let vfCtx = null;
-    let liveLumCanvas = null, liveLumCtx = null, lastLiveMeterTs = 0;
+    let liveLumCanvas = null, liveLumCtx = null, lastLiveMeterTs = 0, lastMeterSyncLum = -1;
     let last = 0;
     let lastVideoTime = -1;
     let lastLiveKey = '';
     const loop = (ts) => {
       state.camAnimId = null;
       if (viewCamEl && !viewCamEl.classList.contains('active')) return;
-      if (document.hidden || isCameraObscuredByOverlay()) return;
+      if (document.hidden || isCameraObscuredByOverlay()) {
+        if (isCameraObscuredByOverlay()) scheduleOverlayCameraSleep();
+        return;
+      }
 
       const hasLiveVideo = !!(state.camStream && camVideo.readyState >= 2);
       const src = hasLiveVideo ? camVideo : getCameraSimulatorSource(true);
@@ -15011,7 +15083,8 @@
 
       if (hasLiveVideo) {
         const isCapturing = !!document.getElementById('btnShutter')?.disabled;
-        const interval = isCapturing ? 180 : (gpuReady ? 90 : 150);
+        const slowThrottle = !!(appShellEl?.classList.contains('picker-open') || state.camNeedsRewind);
+        const interval = isCapturing ? 200 : (slowThrottle ? 240 : (gpuReady ? 105 : 220));
         const elapsed = ts - last;
         const token = (state.camLoopToken = (state.camLoopToken || 0) + 1);
         window.clearTimeout(state.camLoopTimer);
@@ -15029,12 +15102,12 @@
           state.camLoopTimer = 0;
           if (state.camAnimId !== -1 || state.camLoopToken !== token) return;
           state.camAnimId = requestAnimationFrame(loop);
-        }, gpuReady ? 82 : 135);
+        }, slowThrottle ? 230 : (gpuReady ? 95 : 205));
         if (isCapturing || (!gpuReady && cameraJobInFlight)) return;
       }
 
       const { phone, body, lens, film } = getSelectedGear();
-      if (hasLiveVideo && (ts - lastLiveMeterTs) >= 420) {
+      if (hasLiveVideo && (ts - lastLiveMeterTs) >= 550) {
         lastLiveMeterTs = ts;
         try {
           if (!liveLumCanvas) {
@@ -15050,11 +15123,14 @@
           if (Number.isFinite(measured)) {
             liveSceneLum = liveSceneLum * 0.45 + measured * 0.55;
             if (!state.camAELocked) sceneMeanLum = liveSceneLum;
-            syncVfMeterNeedle(body, lens);
-            if (body.id === 'slr') syncSlrMeterLed(body, lens);
-            else if (body.id === 'rangefinder') syncRfMeterLed(body, lens);
-            else if (body.id === 'half-frame') syncHalfFrameMeter(body, lens);
-            else if (body.id === 'pns' || body.id === 'disposable') syncPnsLcdUI(body, lens);
+            if (lastMeterSyncLum < 0 || Math.abs(liveSceneLum - lastMeterSyncLum) >= 0.008) {
+              lastMeterSyncLum = liveSceneLum;
+              syncVfMeterNeedle(body, lens);
+              if (body.id === 'slr') syncSlrMeterLed(body, lens);
+              else if (body.id === 'rangefinder') syncRfMeterLed(body, lens);
+              else if (body.id === 'half-frame') syncHalfFrameMeter(body, lens);
+              else if (body.id === 'pns' || body.id === 'disposable') syncPnsLcdUI(body, lens);
+            }
           }
         } catch (ignored) {}
       }
@@ -15140,9 +15216,10 @@
     if (state.camAnimId && state.camAnimId !== -1) cancelAnimationFrame(state.camAnimId);
     state.camAnimId = null;
     cameraJobInFlight = false;
+    if (isCameraObscuredByOverlay()) scheduleOverlayCameraSleep();
   }
 
-  function stopRealCamera() {
+  function stopRealCamera(resumeLoop = true) {
     if (state.camStream) state.camStream.getTracks().forEach(track => track.stop());
     state.camStream = null;
     state.camTrackCapabilities = null;
@@ -15151,12 +15228,16 @@
     const srcBtn = document.getElementById('camSourceStatus');
     if (srcBtn) { srcBtn.textContent = 'Simulated'; srcBtn.classList.remove('live'); }
     cameraLastStaticKey = '';
-    if (document.getElementById('view-camera')?.classList.contains('active')) startCameraLoop();
+    if (resumeLoop && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden && !isCameraObscuredByOverlay()) {
+      startCameraLoop();
+    }
   }
 
   function pauseCameraWhenHidden() {
+    cancelOverlayCameraSleep();
     stopCameraLoop();
-    if (state.camStream) stopRealCamera();
+    if (state.camStream) stopRealCamera(false);
+    if (typeof suspendCamAudioNow === 'function') suspendCamAudioNow();
   }
 
   let camOrientSyncTimer = 0;
@@ -15198,7 +15279,9 @@
   }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) pauseCameraWhenHidden();
-    else if (document.getElementById('view-camera').classList.contains('active')) {
+    else if (document.getElementById('view-camera').classList.contains('active') && !isCameraObscuredByOverlay()) {
+      camSleptByOverlay = false;
+      camSleptByIdle = false;
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
       layoutViewfinderStage();
@@ -15210,22 +15293,25 @@
   let camSleptByIdle = false;
   function resetCameraIdleTimer() {
     window.clearTimeout(camIdleTimer);
-    if (camSleptByIdle && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden) {
+    if (camSleptByIdle && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden && !isCameraObscuredByOverlay()) {
       camSleptByIdle = false;
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
     }
-    if (!document.getElementById('view-camera')?.classList.contains('active')) return;
+    if (!document.getElementById('view-camera')?.classList.contains('active') || isCameraObscuredByOverlay()) return;
     camIdleTimer = window.setTimeout(() => {
-      if (state.camStream && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden) {
+      if (state.camStream && document.getElementById('view-camera')?.classList.contains('active') && !document.hidden && !isCameraObscuredByOverlay()) {
         camSleptByIdle = true;
         pauseCameraWhenHidden();
         showToast('🔋 Camera paused (idle) — tap to resume');
       }
-    }, 30000);
+    }, 22000);
   }
-  document.getElementById('view-camera')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
-  document.getElementById('btnShutter')?.addEventListener('pointerdown', resetCameraIdleTimer, { passive: true });
+  document.addEventListener('pointerdown', e => {
+    if (document.getElementById('view-camera')?.classList.contains('active') && !isCameraObscuredByOverlay()) {
+      resetCameraIdleTimer();
+    }
+  }, { passive: true });
   resetCameraIdleTimer();
   window.addEventListener('resize', handleViewportResizeOrOrientation);
   window.addEventListener('orientationchange', handleViewportResizeOrOrientation);
@@ -15541,7 +15627,7 @@
               new Promise(resolve => setTimeout(resolve, 650))
             ]);
             boostedVideoForShot = true;
-            await new Promise(resolve => setTimeout(resolve, 110));
+            await new Promise(resolve => setTimeout(resolve, 150));
           } catch (ignored) {}
         }
       }
@@ -15697,8 +15783,14 @@
   }
 
   function resumeCameraLoopIfVisible() {
+    cancelOverlayCameraSleep();
     if (document.getElementById('view-camera')?.classList.contains('active') && !document.hidden && !isCameraObscuredByOverlay()) {
       startCameraLoop();
+      if (camSleptByOverlay) {
+        camSleptByOverlay = false;
+        if (state.camLiveEnabled) startRealCamera();
+      }
+      resetCameraIdleTimer();
     }
   }
 
@@ -15709,7 +15801,10 @@
     stopCameraLoop();
     resetViewerZoom();
     modal.style.display = 'flex';
-    requestAnimationFrame(() => modal.classList.add('open'));
+    requestAnimationFrame(() => {
+      modal.classList.add('open');
+      scheduleOverlayCameraSleep();
+    });
     viewerShowShot(index);
   }
 
@@ -16253,15 +16348,21 @@
     document.querySelectorAll('.view-section').forEach(s => s.classList.toggle('active', s.id === `view-${tabId}`));
     if (tabId === 'camera') {
       cameraLastStaticKey = '';
+      camSleptByOverlay = false;
+      camSleptByIdle = false;
       if (camHudDirty) { camHudDirty = false; syncCameraHudUI(); }
       else syncLensBarrelWidgets();
       requestAnimationFrame(() => { layoutViewfinderStage(); syncLensBarrelWidgets(); });
       startCameraLoop();
       if (state.camLiveEnabled) startRealCamera();
+      resetCameraIdleTimer();
     } else {
       resetPnsTransientState();
+      cancelOverlayCameraSleep();
+      window.clearTimeout(camIdleTimer);
       stopCameraLoop();
-      if (state.camStream) stopRealCamera();
+      if (state.camStream) stopRealCamera(false);
+      if (typeof suspendCamAudioNow === 'function') suspendCamAudioNow();
       if (tabId === 'darkroom') {
         if (tweaksDirty) { tweaksDirty = false; renderTweaksDock(); }
         if (labRenderDirty || !lastLabSourceMeta) renderPreview(true);
@@ -17510,6 +17611,7 @@
     }
 
     filmInfoBackdrop.classList.add('open');
+    scheduleOverlayCameraSleep();
     const cardEl = filmInfoBackdrop.querySelector('.sheet-card');
     if (cardEl) cardEl.scrollTop = 0;
   }
@@ -17772,6 +17874,7 @@
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
+    scheduleOverlayCameraSleep();
   }
   function openSampleSheetForDoubleExp() {
     state.sampleSheetTargetMode = 'mx2';
@@ -17780,14 +17883,17 @@
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
+    scheduleOverlayCameraSleep();
   }
   function openSampleSheetForCameraDoubleExp() {
+    stopCameraLoop();
     state.sampleSheetTargetMode = 'cam-mx1';
     const titleEl = document.getElementById('sampleSheetTitle');
     if (titleEl) titleEl.textContent = '🎞️ Double Exposure · Choose Base 1/2';
     renderHalfFrameLabUI();
     renderSampleStrip();
     sampleSheet.classList.add('open');
+    scheduleOverlayCameraSleep();
   }
   document.querySelectorAll('#sampleSourceTabs [data-sample-source]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -17902,7 +18008,8 @@
   document.getElementById('btnOpenContactSheet').addEventListener('click', () => {
     stopCameraLoop();
     contactSheet.classList.add('open');
-    prewarmCameraRollBlobs(8);
+    scheduleOverlayCameraSleep();
+    prewarmCameraRollBlobs(4);
   });
   document.getElementById('btnCloseContactSheet').addEventListener('click', () => {
     contactSheet.classList.remove('open');
@@ -18782,7 +18889,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261126-1728';
+  const APP_BUILD = '20261127-0720';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
