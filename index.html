@@ -2315,56 +2315,155 @@
     }
     .vf-pns-frame-svg .pns-etch-back {
       fill: none;
-      stroke: rgba(0, 0, 0, 0.48);
+      stroke: rgba(0, 0, 0, 0.52);
       stroke-width: 3.8;
-      stroke-linecap: butt;
+      stroke-linecap: square;
       stroke-linejoin: miter;
     }
     .vf-pns-frame-svg .pns-etch-fringe {
       fill: none;
       stroke: rgba(110, 215, 250, 0.44);
       stroke-width: 2.3;
-      stroke-linecap: butt;
+      stroke-linecap: square;
       stroke-linejoin: miter;
     }
     .vf-pns-frame-svg .pns-etch-ink {
       fill: none;
-      stroke: rgba(247, 234, 182, 0.90);
+      stroke: rgba(247, 234, 182, 0.92);
       stroke-width: 2.15;
-      stroke-linecap: butt;
+      stroke-linecap: square;
       stroke-linejoin: miter;
+      filter: drop-shadow(0 0 1.5px rgba(254, 240, 138, 0.40));
+      transition: stroke 0.18s ease, filter 0.18s ease;
+    }
+    .vf-pns-frame-svg .pns-etch-parallax {
+      fill: none;
+      stroke: rgba(247, 234, 182, 0.88);
+      stroke-width: 1.85;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      filter: drop-shadow(0 0 1.5px rgba(254, 240, 138, 0.35));
+      transition: stroke 0.18s ease, filter 0.18s ease;
     }
     .vf-pns-frame-svg .pns-etch-subtle {
       fill: none;
-      stroke: rgba(246, 232, 184, 0.24);
-      stroke-width: 1.25;
-      stroke-linecap: butt;
+      stroke: rgba(246, 232, 184, 0.38);
+      stroke-width: 1.35;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      transition: stroke 0.18s ease, filter 0.18s ease;
+    }
+    .vf-pns-frame-svg .pns-pano-guide {
+      stroke: rgba(246, 232, 184, 0.28);
+      stroke-width: 1.0;
+    }
+
+    /* Nikon 35Ti Iconic [   ] Central Autofocus Target Brackets */
+    .vf-pns-af-bracket {
+      transform-origin: 180px 120px;
+    }
+    .vf-pns-af-bracket .pns-af-back {
+      fill: none;
+      stroke: rgba(0, 0, 0, 0.50);
+      stroke-width: 3.6;
+      stroke-linecap: square;
       stroke-linejoin: miter;
     }
-    .vf-pns-af-oval .pns-af-back {
+    .vf-pns-af-bracket .pns-af-fringe {
       fill: none;
-      stroke: rgba(0, 0, 0, 0.46);
-      stroke-width: 3.6;
-      transition: stroke 0.14s ease;
-    }
-    .vf-pns-af-oval .pns-af-fringe {
-      fill: none;
-      stroke: rgba(125, 211, 252, 0.34);
+      stroke: rgba(125, 211, 252, 0.36);
       stroke-width: 2.2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
     }
-    .vf-pns-af-oval .pns-af-ink {
+    .vf-pns-af-bracket .pns-af-ink {
       fill: none;
-      stroke: rgba(246, 233, 184, 0.86);
+      stroke: rgba(246, 233, 184, 0.90);
       stroke-width: 2.0;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
       transition: stroke 0.14s ease, filter 0.14s ease;
     }
-    .vf-pns-af-oval.in-focus .pns-af-ink {
-      stroke: rgba(234, 244, 198, 0.92);
-      filter: drop-shadow(0 0 2.5px rgba(134, 239, 172, 0.36));
+    .vf-pns-af-bracket .pns-af-pip {
+      stroke-width: 1.5;
     }
-    .vf-pns-af-oval.mf-off .pns-af-ink {
-      stroke: rgba(251, 191, 36, 0.92);
-      filter: drop-shadow(0 0 2.5px rgba(245, 158, 11, 0.40));
+    .vf-pns-af-bracket.in-focus .pns-af-ink {
+      stroke: rgba(234, 244, 198, 0.95);
+      filter: drop-shadow(0 0 2.8px rgba(134, 239, 172, 0.45));
+    }
+    .vf-pns-af-bracket.mf-off {
+      animation: pnsAfBlink 0.65s infinite ease-in-out;
+    }
+    .vf-pns-af-bracket.mf-off .pns-af-ink {
+      stroke: rgba(251, 191, 36, 0.95);
+      filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.50));
+    }
+    @keyframes pnsAfBlink {
+      0%, 100% { opacity: 0.95; }
+      50% { opacity: 0.18; }
+    }
+
+    /* Nikon 35Ti Mechanical Panorama Sliding Blades */
+    .vf-pns-pano-blade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: #020306;
+      z-index: 2;
+      pointer-events: none;
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.92);
+    }
+    .vf-pns-pano-blade.blade-top {
+      top: 0;
+      height: 27.5%;
+      transform: translateY(-100%);
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+    }
+    .vf-pns-pano-blade.blade-bottom {
+      bottom: 0;
+      height: 27.5%;
+      transform: translateY(100%);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.12);
+    }
+    .vf-pns-overlay.is-panorama .vf-pns-pano-blade.blade-top {
+      transform: translateY(0);
+    }
+    .vf-pns-overlay.is-panorama .vf-pns-pano-blade.blade-bottom {
+      transform: translateY(0);
+    }
+
+    /* Nikon 35Ti Amber Night Illuminator (Backlit optical reticle & LCD) */
+    .vf-pns-overlay.is-illuminated .vf-pns-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 95% 90% at 50% 50%, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.10) 60%, rgba(0, 0, 0, 0.35) 100%);
+      mix-blend-mode: screen;
+      z-index: 1;
+      animation: pnsIllumWarmup 0.22s ease-out;
+    }
+    @keyframes pnsIllumWarmup {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+    .vf-pns-overlay.is-illuminated .pns-etch-ink,
+    .vf-pns-overlay.is-illuminated .pns-etch-parallax,
+    .vf-pns-overlay.is-illuminated .pns-af-ink {
+      stroke: #fbbf24 !important;
+      filter: drop-shadow(0 0 3.5px rgba(245, 158, 11, 0.95)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.55)) !important;
+    }
+    .vf-pns-overlay.is-illuminated .pns-etch-subtle,
+    .vf-pns-overlay.is-illuminated .pns-pano-guide {
+      stroke: rgba(251, 191, 36, 0.58) !important;
+      filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45)) !important;
+    }
+    .vf-pns-overlay.is-illuminated .vf-pns-bottom-bezel {
+      box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.38), 0 0 14px rgba(245, 158, 11, 0.30);
+    }
+    .vf-pns-overlay.is-illuminated .vf-pns-seg-svg {
+      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.65));
     }
 
     /* Bottom Optical Pitch-Black Readout Mask + Glowing Nikon 35Ti Dichromatic EL Segments */
@@ -3462,6 +3561,33 @@
       border-color: #4ade80;
       color: #86efac;
       box-shadow: 0 0 8px rgba(74, 222, 128, 0.25);
+    }
+    .pns-pano-btn, .pns-illum-btn {
+      height: 21px;
+      padding: 0 6px;
+      border-radius: 5px;
+      border: 1px solid #2b3240;
+      background: #10141c;
+      color: #9ca3af;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+    .pns-pano-btn.active {
+      background: rgba(251, 146, 60, 0.20);
+      border-color: #fb923c;
+      color: #fdba74;
+      box-shadow: 0 0 8px rgba(251, 146, 60, 0.35);
+    }
+    .pns-illum-btn.active {
+      background: rgba(245, 158, 11, 0.22);
+      border-color: #f59e0b;
+      color: #fbbf24;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.40);
     }
     .pns-mode-val {
       min-width: 76px;
@@ -5989,42 +6115,66 @@
               </div>
 
 
-              <!-- Nikon 35Ti Quartz Date (PnS): Optical Albada Brightframe Glass + Center AF Oval + Pitch-Black Backlit LCD -->
+              <!-- Nikon 35Ti Quartz Date (PnS): Optical Brightframe Glass + Center AF Brackets [ ] + Parallax Marks + Backlit LCD -->
               <div class="vf-pns-overlay vf-disp-overlay" aria-hidden="true">
                 <div class="vf-pns-glass">
+                  <!-- Physical Sliding Panorama Blades (13×36mm mechanical crop) -->
+                  <div class="vf-pns-pano-blade blade-top"></div>
+                  <div class="vf-pns-pano-blade blade-bottom"></div>
+
                   <svg class="vf-pns-frame-svg" id="vfPnsFrameSvg" viewBox="0 0 360 240" preserveAspectRatio="none">
-                    <!-- Main 35mm optical brightline brackets with subtle optical contrast & cyan prism dispersion -->
-                    <path class="pns-etch-back" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
-                    <path class="pns-etch-fringe" transform="translate(0.9, 0.7)" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
-                    <path class="pns-etch-ink" d="M 34 64 V 22 H 118 M 242 22 H 326 V 64 M 34 176 V 218 H 118 M 242 218 H 326 V 176" />
-                    <!-- Subtle etched panorama crop ticks & close-focus parallax hints -->
-                    <path class="pns-etch-subtle" d="M 34 50 H 46 M 314 50 H 326 M 34 190 H 46 M 314 190 H 326 M 50 64 V 44 H 78 M 282 44 H 310 V 64" />
-                    <g class="vf-pns-af-oval in-focus" id="vfPnsAfBracket">
-                      <rect class="pns-af-back" x="160" y="109" width="40" height="22" rx="11" />
-                      <rect class="pns-af-fringe" transform="translate(0.7, 0.6)" x="160" y="109" width="40" height="22" rx="11" />
-                      <rect class="pns-af-ink" x="160" y="109" width="40" height="22" rx="11" />
+                    <!-- 1. Main 35mm optical bright-line frame (3:2 format) with optical chromatic fringing -->
+                    <path class="pns-etch-back" d="M 36 68 V 24 H 116 M 244 24 H 324 V 68 M 36 172 V 216 H 116 M 244 216 H 324 V 172" />
+                    <path class="pns-etch-fringe" transform="translate(0.9, 0.7)" d="M 36 68 V 24 H 116 M 244 24 H 324 V 68 M 36 172 V 216 H 116 M 244 216 H 324 V 172" />
+                    <path class="pns-etch-ink" d="M 36 68 V 24 H 116 M 244 24 H 324 V 68 M 36 172 V 216 H 116 M 244 216 H 324 V 172" />
+
+                    <!-- 2. Authentic Nikon 35Ti Close-Up Parallax Compensation Marks 0.4m–0.8m (┌ and ┐ at top corners) -->
+                    <path class="pns-etch-back" d="M 58 72 V 48 H 90 M 302 72 V 48 H 270" />
+                    <path class="pns-etch-fringe" transform="translate(0.8, 0.6)" d="M 58 72 V 48 H 90 M 302 72 V 48 H 270" />
+                    <path class="pns-etch-parallax" d="M 58 72 V 48 H 90 M 302 72 V 48 H 270" />
+
+                    <!-- 3. Panorama 13×36mm framing ticks & dashed guide lines -->
+                    <path class="pns-etch-subtle" d="M 36 66 H 52 M 308 66 H 324 M 36 174 H 52 M 308 174 H 324" />
+                    <line class="pns-etch-subtle pns-pano-guide" x1="56" y1="66" x2="304" y2="66" stroke-dasharray="3 7" />
+                    <line class="pns-etch-subtle pns-pano-guide" x1="56" y1="174" x2="304" y2="174" stroke-dasharray="3 7" />
+
+                    <!-- 4. Iconic Nikon 35Ti Autofocus Center Target Brackets [   ] + Center Pip -->
+                    <g class="vf-pns-af-bracket in-focus" id="vfPnsAfBracket">
+                      <!-- Left Bracket [ -->
+                      <path class="pns-af-back" d="M 167 109 H 160 V 131 H 167" />
+                      <path class="pns-af-fringe" transform="translate(0.7, 0.6)" d="M 167 109 H 160 V 131 H 167" />
+                      <path class="pns-af-ink" d="M 167 109 H 160 V 131 H 167" />
+
+                      <!-- Right Bracket ] -->
+                      <path class="pns-af-back" d="M 193 109 H 200 V 131 H 193" />
+                      <path class="pns-af-fringe" transform="translate(0.7, 0.6)" d="M 193 109 H 200 V 131 H 193" />
+                      <path class="pns-af-ink" d="M 193 109 H 200 V 131 H 193" />
+
+                      <!-- Center Reticle Pip -->
+                      <path class="pns-af-back" d="M 178.5 120 H 181.5 M 180 118.5 V 121.5" />
+                      <path class="pns-af-ink pns-af-pip" d="M 178.5 120 H 181.5 M 180 118.5 V 121.5" />
                     </g>
                   </svg>
                 </div>
                 <div class="vf-pns-bottom-bezel">
-                  <div class="vf-pns-lcd-window" id="vfPnsLcdBar">
-                    <span class="vf-pns-fmt-marks">
-                      <svg class="vf-pns-fmt-full-svg" viewBox="0 0 26 20" aria-hidden="true">
+                  <div class="vf-pns-lcd-window" id="vfPnsLcdBar" title="Nikon 35Ti Optical LCD Readout (tap for Illuminator)">
+                    <span class="vf-pns-fmt-marks" id="vfPnsFmtMarks" title="Nikon 35Ti Format: Standard 3:2 / Panorama 13×36 (tap to switch)">
+                      <svg class="vf-pns-fmt-full-svg" id="vfPnsFmtFull" viewBox="0 0 26 20" aria-hidden="true">
                         <path d="M 2 6.5 V 2.5 H 7 M 19 2.5 H 24 V 6.5 M 2 13.5 V 17.5 H 7 M 19 17.5 H 24 V 13.5" fill="none" stroke="rgba(125,211,252,0.88)" stroke-width="1.6" stroke-linecap="square" />
                         <rect x="5" y="4.5" width="16" height="11" rx="1.1" fill="#f9e696" stroke="rgba(125,211,252,0.45)" stroke-width="0.65" />
                       </svg>
-                      <svg class="vf-pns-fmt-pano-svg" viewBox="0 0 22 14" aria-hidden="true">
+                      <svg class="vf-pns-fmt-pano-svg" id="vfPnsFmtPano" viewBox="0 0 22 14" aria-hidden="true">
                         <path d="M 1.5 5 V 2 H 5.5 M 16.5 2 H 20.5 V 5 M 1.5 9 V 12 H 5.5 M 16.5 12 H 20.5 V 9" fill="none" stroke="#8b3b34" stroke-width="1.35" stroke-linecap="square" />
                         <rect x="4" y="4.5" width="14" height="5" rx="0.8" fill="#6b2923" />
                       </svg>
                     </span>
                     <span class="vf-pns-mode-badge" id="vfPnsModeBadge">P</span>
                     <span class="vf-pns-lcd-val" id="vfPnsLcdVal"><span class="vf-pns-lcd-sr">250</span></span>
-                    <svg class="vf-pns-lcd-ico vf-pns-ev-ico" id="vfPnsEvIco" viewBox="0 0 20 18" aria-hidden="true">
+                    <svg class="vf-pns-lcd-ico vf-pns-ev-ico" id="vfPnsEvIco" viewBox="0 0 20 18" aria-hidden="true" title="Exposure Compensation (±2EV)">
                       <rect x="1.5" y="1.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.45" />
                       <path d="M 15.2 3.2 L 4.8 14.8 M 4.4 6.5 H 8.4 M 6.4 4.5 V 8.5 M 11.6 12 H 15.6" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" />
                     </svg>
-                    <svg class="vf-pns-lcd-ico vf-pns-flash-ico" id="vfPnsFlashIco" viewBox="0 0 14 18" aria-hidden="true">
+                    <svg class="vf-pns-lcd-ico vf-pns-flash-ico" id="vfPnsFlashIco" viewBox="0 0 14 18" aria-hidden="true" title="Speedlight Flash Ready">
                       <polygon points="8.8,1 2.0,9.8 6.8,9.8 4.9,17 12.2,8.0 7.4,8.0" fill="currentColor" />
                     </svg>
                   </div>
@@ -6505,7 +6655,7 @@
       name: 'Nikon 35Ti',
       formatLabel: '35mm Compact · AF',
       aspect: 3 / 2,
-      meta: 'Nikon 35Ti luxury titanium compact · 35mm f/2.8 & direct flash',
+      meta: 'Nikon 35Ti luxury titanium compact · 35mm f/2.8 Nikkor, illuminated finder & 13×36 Panorama',
       defaultFocalId: '35mm',
       recLenses: ['35mm'],
       recFilms: ['kodak-gold-200', 'fuji-c200', 'kodak-ultramax-400', 'kodak-portra-400'],
@@ -6585,7 +6735,7 @@
       { id: '35mm', mm: 35, minF: 2.0, maxF: 16, defaultAperture: 4.0, focusProfile: 'rf35', focalTag: '35mm', aperture: 'f/2', label: '35mm f/2', short: '35mm', recScene: 'everyday', recFilms: ['kodak-portra-400', 'kodak-gold-200', 'fuji-c200', 'ilford-hp5'], tileSub: 'Everyday · 0.72× RF Prime', meta: '35mm f/2 · Compact M-mount wide-standard prime, crisp micro-contrast & 0.72× brightlines', cropZoom: 1.28, brightlinePct: 78, barrelDistort: 0.002, apertureEV: 0.14, dofStrength: 0.72, dofRadius: 0.38, shakeSens: 0, skinFlatter: 0.04, coatingWarmth: 0, coatingTint: 0, bloomBase: 14, vignetteBase: 16, chromaticAb: 0.11, edgeSoft: 0.011 }
     ],
     pns: [
-      { id: '35mm', mm: 35, minF: 2.8, maxF: 22, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', recScene: 'everyday', recFilms: ['kodak-gold-200', 'fuji-c200', 'kodak-ultramax-400', 'kodak-portra-400'], tileSub: 'Everyday · Sharp prime', meta: '35mm f/2.8 (6 elements in 4 groups) · Edge-to-edge sharpness, crisp contrast & direct flash', cropZoom: 1.24, barrelDistort: 0.004, apertureEV: 0, dofStrength: 0.52, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 15, vignetteBase: 14, chromaticAb: 0.14, edgeSoft: 0.013 }
+      { id: '35mm', mm: 35, minF: 2.8, maxF: 22, focusProfile: 'pns', focalTag: '35mm', aperture: 'f/2.8', label: '35mm f/2.8', short: '35mm', recScene: 'everyday', recFilms: ['kodak-gold-200', 'fuji-c200', 'kodak-ultramax-400', 'kodak-portra-400'], tileSub: 'Everyday · Sharp prime', meta: '35mm f/2.8 Nikkor (6 elements in 4 groups) · Razor sharpness, parallax-compensated finder & 13×36 Panorama', cropZoom: 1.24, barrelDistort: 0.004, apertureEV: 0, dofStrength: 0.52, dofRadius: 0.46, shakeSens: 0, skinFlatter: 0.02, coatingWarmth: 1, coatingTint: 0, bloomBase: 15, vignetteBase: 14, chromaticAb: 0.14, edgeSoft: 0.013 }
     ],
     disposable: [
       { id: '32mm', mm: 32, minF: 10, maxF: 10, isFixedAperture: true, focusProfile: 'fixed', focalTag: '32mm', aperture: 'f/10', label: '32mm f/10', short: '32mm', recScene: 'everyday', recFilms: ['kodak-ultramax-400', 'kodak-gold-200', 'fuji-c200'], tileSub: 'Fixed · Daylight/Flash', meta: 'Fixed 32mm plastic lens · Deep focus with toggleable direct flash', cropZoom: 1.12, barrelDistort: 0.018, apertureEV: -0.10, dofStrength: 0, dofRadius: 1.0, shakeSens: 0, skinFlatter: 0, coatingWarmth: -2, coatingTint: -4, bloomBase: 28, vignetteBase: 26, chromaticAb: 0.55, edgeSoft: 0.06 }
@@ -8351,6 +8501,8 @@
     pnsMode: 'P',
     pnsFlexShift: 0,
     pnsAperture: 2.8,
+    pnsPanorama: false,
+    pnsIlluminator: false,
     camISO: null,
     camTrackCapabilities: null,
     camAppliedHardware: {},
@@ -8578,7 +8730,7 @@
     return Number(Math.max(minF, Math.min(maxF, lens.defaultAperture || DEFAULT_LENS_APERTURE)).toFixed(2));
   }
   let apPinnedWideOpen = false;
-  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'labPanelTab', 'labGearSubTab', 'histogramOpen', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'customDate', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'pnsMode', 'pnsFlexShift', 'pnsAperture', 'camISO', 'camAutoWind'];
+  const SYNC_FIELDS = ['phoneId', 'bodyId', 'lensId', 'lensFocalMm', 'lensAperture', 'zoomFocalMm', 'focusMode', 'focusPos', 'filmId', 'filmBrandFilter', 'labPanelTab', 'labGearSubTab', 'histogramOpen', 'strength', 'exposure', 'warmth', 'grain', 'halation', 'bloom', 'vignette', 'leakType', 'leakAmt', 'frameType', 'dateStamp', 'customDate', 'hfDiptychMode', 'activeTab', 'camFacing', 'camFlashOn', 'camExposureEV', 'camShutterSpeed', 'pnsMode', 'pnsFlexShift', 'pnsAperture', 'pnsPanorama', 'camISO', 'camAutoWind'];
   function stateSnapshot() {
     const settings = {};
     SYNC_FIELDS.forEach(key => { settings[key] = state[key]; });
@@ -8601,6 +8753,7 @@
     state.pnsMode = ['P', 'A', 'T'].includes(settings.pnsMode) ? settings.pnsMode : 'P';
     state.pnsFlexShift = Number.isFinite(Number(settings.pnsFlexShift)) ? Math.max(-12, Math.min(12, Math.round(Number(settings.pnsFlexShift)))) : 0;
     state.pnsAperture = Number.isFinite(Number(settings.pnsAperture)) ? Math.max(2.8, Math.min(22, Number(settings.pnsAperture))) : 2.8;
+    state.pnsPanorama = !!settings.pnsPanorama;
     state.frameType = ['none', '35mm-sprocket', 'darkroom-white', 'polaroid'].includes(settings.frameType) ? settings.frameType : 'darkroom-white';
     state.dateStamp = ['off', 'exif-or-today', 'custom'].includes(settings.dateStamp) ? settings.dateStamp : 'off';
     state.customDate = typeof settings.customDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(settings.customDate) ? settings.customDate : '';
@@ -9486,10 +9639,14 @@
     if (body?.id === 'half-frame' && !state.hfDiptychMode && isCameraViewportLandscape()) {
       return 4 / 3;
     }
+    if (body?.id === 'pns' && state.pnsPanorama) {
+      return 36 / 13;
+    }
     return lens?.formatAspect || body?.aspect || (3 / 2);
   }
 
   function getBodyFormatLabel(body, lens) {
+    if (body?.id === 'pns' && state.pnsPanorama) return '35mm · 13×36 Panorama';
     return lens?.formatLabel || body?.formatLabel || '35mm · 3:2';
   }
 
@@ -10374,8 +10531,9 @@
     document.getElementById('clapperFilmVal').textContent = film.name;
     const liveBadge = document.getElementById('liveGearBadge');
     if (liveBadge) {
+      const pnsPanoTag = (isPnsBody && state.pnsPanorama) ? ' (Pano)' : '';
       liveBadge.innerHTML = isPnsBody
-        ? `${escapeHtml(body.name)} · <strong>${escapeHtml(film.name)}</strong>`
+        ? `${escapeHtml(body.name)}${pnsPanoTag} · <strong>${escapeHtml(film.name)}</strong>`
         : `${escapeHtml(body.name)} · ${escapeHtml(lensShort)} · <strong>${escapeHtml(film.name)}</strong>`;
     }
     const shotNum = String(Math.max(1, state.camShotCount || 1)).padStart(2, '0');
@@ -12152,6 +12310,39 @@
     syncLensLiveUI(true);
   }
 
+  function togglePnsPanorama(forceVal = null) {
+    if (state.bodyId !== 'pns') return;
+    if (forceVal === null) state.pnsPanorama = !state.pnsPanorama;
+    else state.pnsPanorama = !!forceVal;
+    playShutterDialClickSound('click');
+    showToast(state.pnsPanorama ? '📐 Nikon 35Ti Panorama 13×36mm' : '📷 Nikon 35Ti Standard 24×36mm');
+    syncAllUI();
+    scheduleCameraSettingsApply();
+    scheduleSaveLocalAppState();
+  }
+
+  let pnsIllumTimer = 0;
+  function togglePnsIlluminator(forceVal = null) {
+    if (state.bodyId !== 'pns') return;
+    if (forceVal === null) state.pnsIlluminator = !state.pnsIlluminator;
+    else state.pnsIlluminator = !!forceVal;
+    if (state.pnsIlluminator) {
+      playLensClickSound(true, 'light');
+      showToast('💡 Nikon 35Ti Viewfinder Illuminator ON');
+      window.clearTimeout(pnsIllumTimer);
+      pnsIllumTimer = window.setTimeout(() => {
+        if (state.pnsIlluminator) {
+          state.pnsIlluminator = false;
+          syncAllUI();
+        }
+      }, 10000);
+    } else {
+      window.clearTimeout(pnsIllumTimer);
+      showToast('💡 Illuminator OFF');
+    }
+    syncAllUI();
+  }
+
   function syncViewfinderFocusAid(body, lens) {
     const inFocus = !!lens.inFocusPeak;
     const isMfOff = !lens.focusLocked && lens.focusMode === 'mf' && !inFocus;
@@ -12319,6 +12510,8 @@
             <button type="button" class="pns-mode-btn" data-pns-mode="T" title="Time Exposure (tap shutter to OPEN &amp; CLOSE up to 10m)">T</button>
           </div>
           <button type="button" class="pns-half-btn" title="Half-press AF/AE lock">½ AE/AF</button>
+          <button type="button" class="pns-pano-btn" id="btnPnsPano" title="Nikon 35Ti Panorama switch (13×36mm mechanical crop)">PANO</button>
+          <button type="button" class="pns-illum-btn" id="btnPnsIllum" title="Nikon 35Ti Illuminator (Amber Night Backlight)">💡 LIGHT</button>
         </div>
         <span class="lens-ring-val pns-mode-val">P · f/2.8</span>
       </div>
@@ -12370,6 +12563,8 @@
     const pnsModeValEl = container.querySelector('.pns-mode-val');
     const pnsModeBtns = Array.from(container.querySelectorAll('.pns-mode-btn[data-pns-mode]'));
     const pnsHalfBtn = container.querySelector('.pns-half-btn');
+    const btnPnsPano = container.querySelector('#btnPnsPano');
+    const btnPnsIllum = container.querySelector('#btnPnsIllum');
     pnsModeBtns.forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
@@ -12379,6 +12574,14 @@
     pnsHalfBtn?.addEventListener('click', e => {
       e.stopPropagation();
       togglePnsHalfPress();
+    });
+    btnPnsPano?.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePnsPanorama();
+    });
+    btnPnsIllum?.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePnsIlluminator();
     });
 
     const makeRingController = (ringKind) => {
@@ -12773,14 +12976,17 @@
           const plan = resolvedLens?.pnsPlan || computePnsExposurePlan();
           pnsModeBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.pnsMode === plan.mode));
           if (pnsHalfBtn) pnsHalfBtn.classList.toggle('active', !!pnsHalfPressActive);
+          if (btnPnsPano) btnPnsPano.classList.toggle('active', !!state.pnsPanorama);
+          if (btnPnsIllum) btnPnsIllum.classList.toggle('active', !!state.pnsIlluminator);
           if (pnsModeValEl) {
+            const panoSuffix = state.pnsPanorama ? ' · PANO' : '';
             if (plan.mode === 'T') {
               pnsModeValEl.textContent = pnsTimeOpenAt > 0
                 ? `T · ${formatPnsTimerClock(plan.elapsedSec || 0)}`
-                : `T · f/${plan.activeF}`;
+                : `T · f/${plan.activeF}${panoSuffix}`;
             } else {
               const pLbl = plan.mode === 'P' && plan.isFlex ? 'P*' : plan.mode;
-              pnsModeValEl.textContent = `${pLbl} · f/${plan.activeF}`;
+              pnsModeValEl.textContent = `${pLbl} · f/${plan.activeF}${panoSuffix}`;
             }
           }
         }
@@ -13443,6 +13649,52 @@
       }
       valEl.classList.toggle('is-slow', isSlow);
     }
+    const pnsOverlay = document.querySelector('.vf-pns-overlay');
+    const isPano = !!state.pnsPanorama;
+    const isIllum = !!(state.pnsIlluminator || pnsHalfPressActive);
+    if (pnsOverlay) {
+      pnsOverlay.classList.toggle('is-panorama', isPano);
+      pnsOverlay.classList.toggle('is-illuminated', isIllum);
+    }
+
+    const fmtFull = document.getElementById('vfPnsFmtFull');
+    const fmtPano = document.getElementById('vfPnsFmtPano');
+    if (fmtFull) {
+      fmtFull.style.opacity = isPano ? '0.34' : '1';
+      fmtFull.style.filter = isPano ? 'none' : 'drop-shadow(0 0 3px rgba(248, 226, 134, 0.45))';
+    }
+    if (fmtPano) {
+      fmtPano.style.opacity = isPano ? '1' : '0.34';
+      fmtPano.style.filter = isPano ? 'drop-shadow(0 0 3.5px rgba(248, 226, 134, 0.70))' : 'none';
+      const panoRect = fmtPano.querySelector('rect');
+      const panoPath = fmtPano.querySelector('path');
+      if (panoRect) panoRect.setAttribute('fill', isPano ? '#f9e696' : '#6b2923');
+      if (panoPath) panoPath.setAttribute('stroke', isPano ? 'rgba(125,211,252,0.88)' : '#8b3b34');
+    }
+
+    const fmtMarks = document.getElementById('vfPnsFmtMarks');
+    if (fmtMarks && !fmtMarks.dataset.bound) {
+      fmtMarks.dataset.bound = '1';
+      fmtMarks.style.cursor = 'pointer';
+      fmtMarks.style.pointerEvents = 'auto';
+      fmtMarks.addEventListener('click', e => {
+        e.stopPropagation();
+        togglePnsPanorama();
+      });
+    }
+
+    const lcdBar = document.getElementById('vfPnsLcdBar');
+    if (lcdBar && !lcdBar.dataset.bound) {
+      lcdBar.dataset.bound = '1';
+      lcdBar.style.cursor = 'pointer';
+      lcdBar.style.pointerEvents = 'auto';
+      lcdBar.addEventListener('click', e => {
+        if (e.target.closest('#vfPnsFmtMarks')) return;
+        e.stopPropagation();
+        togglePnsIlluminator();
+      });
+    }
+
     const evIco = document.getElementById('vfPnsEvIco');
     if (evIco) evIco.classList.toggle('active', !!(caps.supportsEv && Math.abs(evBias) >= 0.05));
 
