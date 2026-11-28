@@ -4178,7 +4178,7 @@
       text-overflow: ellipsis;
       max-width: 100%;
     }
-    #pickerFilmTrack.is-grid {
+    .picker-grid-3 {
       display: grid !important;
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       gap: 6px !important;
@@ -4186,15 +4186,29 @@
       overflow-y: auto !important;
       overflow-x: hidden !important;
       padding: 4px 2px 8px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.16) transparent;
     }
-    #pickerFilmTrack.is-grid .picker-tile {
+    #pickerBodyTrack.picker-grid-3,
+    #pickerLensTrack.picker-grid-3 {
+      max-height: 176px !important;
+    }
+    .picker-grid-3 .picker-tile {
       width: 100% !important;
       min-width: 0 !important;
     }
 
+    .filter-pills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
     .filter-chip {
       flex-shrink: 0;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 12px;
       font-size: 10px;
       font-weight: 600;
@@ -6499,7 +6513,7 @@
           </div>
           <button class="picker-match-apply" id="btnApplyBodyMatch" type="button" title="Apply recommended Lens &amp; Film for this body">✦ Apply</button>
         </div>
-        <div class="h-scroll" id="pickerBodyTrack"></div>
+        <div class="picker-grid-3" id="pickerBodyTrack"></div>
       </div>
 
       <div class="picker-section" id="pickerSecLens">
@@ -6507,7 +6521,7 @@
           <span class="picker-spec-note" id="pickerLensEffect">Standard · Half-body portrait &amp; all genres</span>
           <span class="picker-spec-stat" id="pickerLensStat">f/1.2 · 1.80x</span>
         </div>
-        <div class="h-scroll" id="lensScenePills" style="margin-bottom:6px;display:none;">
+        <div class="filter-pills-wrap" id="lensScenePills" style="display:none;">
           <button class="filter-chip active" data-lscene="all" type="button">All</button>
           <button class="filter-chip" data-lscene="landscape" type="button">Landscape</button>
           <button class="filter-chip" data-lscene="everyday" type="button">Everyday</button>
@@ -6515,24 +6529,21 @@
           <button class="filter-chip" data-lscene="night" type="button">Night</button>
         </div>
         <div class="lens-barrel-dock lens-barrel-picker" id="pickerLensBarrel" aria-label="Lens focal length and aperture rings"></div>
-        <div class="h-scroll" id="pickerLensTrack"></div>
+        <div class="picker-grid-3" id="pickerLensTrack"></div>
       </div>
 
       <div class="picker-section" id="pickerSecFilm">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-          <div class="h-scroll" id="filmBrandPills" style="margin-bottom:0;flex:1;min-width:0;">
-            <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (27)</button>
-            <button class="filter-chip" data-fbrand="hk" id="btnFilmHkFilter" type="button">🇭🇰 Hong Kong (12)</button>
-            <button class="filter-chip" data-fbrand="jp" id="btnFilmJpFilter" type="button">🇯🇵 Nhật Bản (15)</button>
-            <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (11)</button>
-            <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
-            <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
-            <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
-            <button class="filter-chip" data-fbrand="night" type="button">Night</button>
-          </div>
-          <button class="filter-chip btn-film-grid-toggle" id="btnFilmViewMode" type="button" title="Switch between 1-row track and 3-column grid" aria-label="Toggle Film Grid View" style="flex-shrink:0;padding:2px 8px;font-size:11px;border-color:rgba(255,255,255,0.18);display:inline-flex;align-items:center;gap:3px;">▦ Grid</button>
+        <div class="filter-pills-wrap" id="filmBrandPills">
+          <button class="filter-chip active" data-fbrand="all" id="btnFilmAllFilter" type="button">All (33)</button>
+          <button class="filter-chip" data-fbrand="match" id="btnFilmMatchFilter" type="button">★ Best (11)</button>
+          <button class="filter-chip" data-fbrand="portrait" type="button">Portrait</button>
+          <button class="filter-chip" data-fbrand="everyday" type="button">Everyday</button>
+          <button class="filter-chip" data-fbrand="landscape" type="button">Landscape</button>
+          <button class="filter-chip" data-fbrand="night" type="button">Night</button>
+          <button class="filter-chip" data-fbrand="hk" id="btnFilmHkFilter" type="button">HK (8)</button>
+          <button class="filter-chip" data-fbrand="jp" id="btnFilmJpFilter" type="button">JP (8)</button>
         </div>
-        <div class="h-scroll" id="pickerFilmTrack"></div>
+        <div class="picker-grid-3" id="pickerFilmTrack"></div>
       </div>
 
       <div class="picker-section" id="pickerSecSaved">
@@ -6846,37 +6857,43 @@
 
   const FILM_STOCKS = [
     // Kodak (alphabetical)
-    { id: 'kodak-colorplus-200', vibe: 'hk', brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.09, blackLift: 0.027, grainBase: 24, grainSize: 1.00, halationBase: 14, isBW: false },
-    { id: 'kodak-ektachrome-e100', vibe: 'jp', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektachrome E100', subtitle: 'Ultra-fine grain & neutral vivid slide', iso: 100, edgeCode: 'KODAK E100        14', matrix: [1.07,-0.02,-0.02,-0.02,1.05,-0.01,-0.01,-0.01,1.08], shadowTint: [-5,0,10], midTint: [4,2,2], highlightTint: [6,4,0], foliageShift: {gBoost:8,bShift:-2,rShift:2,satScale:1.10}, skyShift: {cyanBoost:2,bDepth:24}, redHueShift: -4, skinWarmth: 4, vibrance: 0.12, skinProtect: 0.75, saturation: 1.14, contrast: 1.18, blackLift: 0.010, grainBase: 8, grainSize: 0.72, halationBase: 8, isBW: false },
-    { id: 'kodak-ektar-100', vibe: 'jp', brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.14, blackLift: 0.012, grainBase: 10, grainSize: 0.76, halationBase: 13, isBW: false },
-    { id: 'kodak-gold-200', vibe: 'hk', brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.03, blackLift: 0.030, grainBase: 21, grainSize: 0.96, halationBase: 22, isBW: false },
-    { id: 'kodak-portra-160', vibe: 'jp', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.89, blackLift: 0.052, grainBase: 12, grainSize: 0.80, halationBase: 13, isBW: false },
-    { id: 'kodak-portra-400', vibe: 'jp', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
-    { id: 'kodak-portra-800', vibe: 'hk', brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.05, blackLift: 0.035, grainBase: 28, grainSize: 1.06, halationBase: 26, isBW: false },
-    { id: 'kodak-tri-x-400', vibe: 'hk', brand: 'bw', brandLabel: 'KODAK', name: 'Tri-X 400', subtitle: 'Iconic street contrast & gritty silver grain', iso: 400, edgeCode: 'KODAK 400TX       19', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [1,1,0], midTint: [2,2,-1], highlightTint: [4,3,-1], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.18, blackLift: 0.032, grainBase: 30, grainSize: 1.06, halationBase: 8, isBW: true, bwWeights: [0.38,0.48,0.14] },
-    { id: 'kodak-ultramax-400', vibe: 'jp', brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
+    { id: 'kodak-colorplus-200', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'ColorPlus 200', subtitle: 'Soft vintage sand · Crisp contrast', iso: 200, edgeCode: 'KODAK 200 VR PLUS  09', matrix: [1.02,0.02,-0.01,0.01,1.00,-0.01,-0.02,0.01,0.96], shadowTint: [2,3,-2], midTint: [7,5,-5], highlightTint: [11,8,-5], foliageShift: {gBoost:-3,bShift:-5,rShift:8,satScale:0.88}, skyShift: {cyanBoost:10,bDepth:1}, redHueShift: -5, skinWarmth: 5, vibrance: -0.07, skinProtect: 0.84, saturation: 0.91, contrast: 1.09, blackLift: 0.027, grainBase: 24, grainSize: 1.00, halationBase: 14, isBW: false },
+    { id: 'kodak-ektachrome-e100', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Ektachrome E100', subtitle: 'Ultra-fine grain & neutral vivid slide', iso: 100, edgeCode: 'KODAK E100        14', matrix: [1.07,-0.02,-0.02,-0.02,1.05,-0.01,-0.01,-0.01,1.08], shadowTint: [-5,0,10], midTint: [4,2,2], highlightTint: [6,4,0], foliageShift: {gBoost:8,bShift:-2,rShift:2,satScale:1.10}, skyShift: {cyanBoost:2,bDepth:24}, redHueShift: -4, skinWarmth: 4, vibrance: 0.12, skinProtect: 0.75, saturation: 1.14, contrast: 1.18, blackLift: 0.010, grainBase: 8, grainSize: 0.72, halationBase: 8, isBW: false },
+    { id: 'kodak-ektar-100', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Ektar 100', subtitle: 'Rich and ultra-fine', iso: 100, edgeCode: 'KODAK EKTAR 100   04A', matrix: [1.09,-0.03,-0.02,-0.02,1.04,-0.01,-0.02,-0.02,1.06], shadowTint: [3,-4,10], midTint: [10,1,-5], highlightTint: [12,5,-5], foliageShift: {gBoost:10,bShift:-6,rShift:6,satScale:1.14}, skyShift: {cyanBoost:6,bDepth:18}, redHueShift: -5, skinWarmth: 6, vibrance: 0.14, skinProtect: 0.58, saturation: 1.18, contrast: 1.14, blackLift: 0.012, grainBase: 10, grainSize: 0.76, halationBase: 13, isBW: false },
+    { id: 'kodak-gold-200', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Gold 200', subtitle: 'Warm golden-amber · Golden hour', iso: 200, edgeCode: 'KODAK GB 200-6    22A', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.94], shadowTint: [3,4,-3], midTint: [11,5,-9], highlightTint: [17,9,-10], foliageShift: {gBoost:2,bShift:-5,rShift:10,satScale:1.02}, skyShift: {cyanBoost:4,bDepth:8}, redHueShift: -8, skinWarmth: 8, vibrance: 0.06, skinProtect: 0.85, saturation: 1.10, contrast: 1.03, blackLift: 0.030, grainBase: 21, grainSize: 0.96, halationBase: 22, isBW: false },
+    { id: 'kodak-portra-160', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 160', subtitle: 'Fine pastel daylight skin', iso: 160, edgeCode: 'KODAK PORTRA 160  14A', matrix: [1.03,0.03,-0.02,0.01,1.01,-0.01,-0.01,0.02,0.97], shadowTint: [4,4,-1], midTint: [8,5,-4], highlightTint: [12,9,-3], foliageShift: {gBoost:-6,bShift:4,rShift:6,satScale:0.78}, skyShift: {cyanBoost:13,bDepth:-7}, redHueShift: -5, skinWarmth: 6, vibrance: -0.09, skinProtect: 0.91, saturation: 0.88, contrast: 0.89, blackLift: 0.052, grainBase: 12, grainSize: 0.80, halationBase: 13, isBW: false },
+    { id: 'kodak-portra-400', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 400', subtitle: 'Smooth warm cream skin', iso: 400, edgeCode: 'KODAK PORTRA 400  29A', matrix: [1.04,0.03,-0.03,0.01,1.01,-0.01,-0.02,0.02,0.95], shadowTint: [5,3,-3], midTint: [10,6,-6], highlightTint: [15,10,-5], foliageShift: {gBoost:-6,bShift:-6,rShift:12,satScale:0.84}, skyShift: {cyanBoost:11,bDepth:-5}, redHueShift: -7, skinWarmth: 7, vibrance: -0.06, skinProtect: 0.89, saturation: 0.93, contrast: 0.93, blackLift: 0.044, grainBase: 18, grainSize: 0.92, halationBase: 18, isBW: false },
+    { id: 'kodak-portra-800', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'Portra 800', subtitle: 'Vivid warm sunsets', iso: 800, edgeCode: 'KODAK PORTRA 800  31', matrix: [1.05,0.02,-0.02,0.01,1.01,-0.01,-0.02,0.01,0.95], shadowTint: [7,3,-4], midTint: [12,5,-7], highlightTint: [15,8,-7], foliageShift: {gBoost:-4,bShift:-6,rShift:12,satScale:0.98}, skyShift: {cyanBoost:5,bDepth:7}, redHueShift: -8, skinWarmth: 7, vibrance: 0.04, skinProtect: 0.85, saturation: 1.06, contrast: 1.05, blackLift: 0.035, grainBase: 28, grainSize: 1.06, halationBase: 26, isBW: false },
+    { id: 'kodak-tri-x-400', vibe: null, brand: 'bw', brandLabel: 'KODAK', name: 'Tri-X 400', subtitle: 'Iconic street contrast & gritty silver grain', iso: 400, edgeCode: 'KODAK 400TX       19', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [1,1,0], midTint: [2,2,-1], highlightTint: [4,3,-1], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.18, blackLift: 0.032, grainBase: 30, grainSize: 1.06, halationBase: 8, isBW: true, bwWeights: [0.38,0.48,0.14] },
+    { id: 'kodak-ultramax-400', vibe: null, brand: 'kodak', brandLabel: 'KODAK', name: 'UltraMax 400', subtitle: 'Deep blue skies', iso: 400, edgeCode: 'KODAK GC 400-8    17', matrix: [1.05,0.01,-0.02,0.0,1.02,-0.01,-0.01,-0.02,1.05], shadowTint: [-7,0,15], midTint: [8,4,-5], highlightTint: [12,7,-6], foliageShift: {gBoost:6,bShift:-4,rShift:8,satScale:1.06}, skyShift: {cyanBoost:-2,bDepth:20}, redHueShift: -6, skinWarmth: 5, vibrance: 0.08, skinProtect: 0.75, saturation: 1.10, contrast: 1.09, blackLift: 0.024, grainBase: 27, grainSize: 1.04, halationBase: 19, isBW: false },
+    { id: 'kodak-vision3-200t', vibe: 'hk', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 200T', subtitle: 'Emerald-cyan shadows & HK cinema tungsten', iso: 200, edgeCode: 'KODAK 5213 200T   17', matrix: [0.95,0.03,0.02,-0.01,1.04,0.02,0.01,0.05,1.04], shadowTint: [-15,12,17], midTint: [-6,5,9], highlightTint: [10,7,-3], foliageShift: {gBoost:6,bShift:15,rShift:-12,satScale:0.94}, skyShift: {cyanBoost:20,bDepth:10}, redHueShift: -5, skinWarmth: 5, vibrance: 0.02, skinProtect: 0.80, saturation: 0.99, contrast: 1.00, blackLift: 0.036, grainBase: 16, grainSize: 0.88, halationBase: 12, isBW: false },
     { id: 'kodak-vision3-250d', vibe: 'hk', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 250D', subtitle: 'Warm daylight cinema & smooth skin', iso: 250, edgeCode: 'KODAK 5207 250D   25A', matrix: [1.04,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.02,0.97], shadowTint: [-3,3,4], midTint: [6,4,-3], highlightTint: [13,8,-5], foliageShift: {gBoost:4,bShift:-2,rShift:5,satScale:1.00}, skyShift: {cyanBoost:8,bDepth:11}, redHueShift: -7, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.86, saturation: 1.03, contrast: 0.99, blackLift: 0.036, grainBase: 17, grainSize: 0.90, halationBase: 13, isBW: false },
     { id: 'kodak-vision3-500t', vibe: 'hk', brand: 'cinema', brandLabel: 'KODAK', name: 'Vision3 500T', subtitle: 'Rich cinema tungsten & clean shadows', iso: 500, edgeCode: 'KODAK 5219 500T   42', matrix: [0.96,0.02,0.02,-0.01,1.02,0.03,0.01,0.05,1.06], shadowTint: [-14,8,18], midTint: [-6,3,10], highlightTint: [11,6,-4], foliageShift: {gBoost:3,bShift:14,rShift:-10,satScale:0.95}, skyShift: {cyanBoost:18,bDepth:12}, redHueShift: -6, skinWarmth: 5, vibrance: 0.03, skinProtect: 0.78, saturation: 1.00, contrast: 1.01, blackLift: 0.038, grainBase: 22, grainSize: 0.96, halationBase: 14, isBW: false },
 
     // Fujifilm (alphabetical)
     { id: 'fuji-c200', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor C200', subtitle: 'Japanese cool greens · Clean daylight', iso: 200, edgeCode: 'FUJICOLOR C200    06', matrix: [0.98,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,1.01], shadowTint: [-12,14,11], midTint: [-3,5,3], highlightTint: [6,5,2], foliageShift: {gBoost:16,bShift:13,rShift:-14,satScale:1.02}, skyShift: {cyanBoost:17,bDepth:8}, redHueShift: 5, skinWarmth: 3, vibrance: 0.04, skinProtect: 0.80, saturation: 1.01, contrast: 1.04, blackLift: 0.024, grainBase: 18, grainSize: 0.92, halationBase: 14, isBW: false },
-    { id: 'fuji-classic-chrome', vibe: 'hk', brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
+    { id: 'fuji-classic-chrome', vibe: null, brand: 'fuji', brandLabel: 'FUJI', name: 'Classic Chrome', subtitle: 'Muted vintage editorial', iso: 200, edgeCode: 'FUJICHROME CC   08A', matrix: [0.94,0.07,-0.01,0.01,0.98,0.02,-0.02,0.07,0.95], shadowTint: [-10,6,12], midTint: [-3,2,-2], highlightTint: [10,8,-4], foliageShift: {gBoost:-8,bShift:11,rShift:6,satScale:0.68}, skyShift: {cyanBoost:24,bDepth:-12}, redHueShift: -8, skinWarmth: 2, vibrance: -0.15, skinProtect: 0.64, saturation: 0.76, contrast: 1.13, blackLift: 0.028, grainBase: 16, grainSize: 0.88, halationBase: 9, isBW: false },
     { id: 'fuji-fujicolor-100', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Fujicolor 100', subtitle: 'Crisp daylight cool-green', iso: 100, edgeCode: 'FUJICOLOR 100     07', matrix: [0.97,0.02,0.01,-0.02,1.03,0.02,-0.01,0.03,1.02], shadowTint: [-10,12,11], midTint: [-2,4,4], highlightTint: [5,7,4], foliageShift: {gBoost:14,bShift:12,rShift:-12,satScale:1.00}, skyShift: {cyanBoost:16,bDepth:10}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 0.99, contrast: 1.03, blackLift: 0.022, grainBase: 11, grainSize: 0.80, halationBase: 11, isBW: false },
+    { id: 'fuji-industrial-100', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Industrial 100', subtitle: 'Crisp Japanese domestic cool-cyan street', iso: 100, edgeCode: 'FUJI 100 GYOMU   12', matrix: [0.97,0.02,0.01,-0.02,1.04,0.02,-0.01,0.04,1.02], shadowTint: [-12,13,13], midTint: [-3,4,4], highlightTint: [6,6,3], foliageShift: {gBoost:15,bShift:14,rShift:-13,satScale:1.02}, skyShift: {cyanBoost:18,bDepth:11}, redHueShift: 6, skinWarmth: 2, vibrance: 0.03, skinProtect: 0.78, saturation: 1.00, contrast: 1.06, blackLift: 0.020, grainBase: 14, grainSize: 0.84, halationBase: 10, isBW: false },
+    { id: 'fuji-natura-1600', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Natura 1600', subtitle: 'Legendary Japan ISO 1600 pastel glow', iso: 1600, edgeCode: 'FUJI NATURA 1600 36', matrix: [0.99,0.03,0.02,-0.01,1.04,0.02,-0.01,0.04,1.00], shadowTint: [-11,13,14], midTint: [4,6,3], highlightTint: [12,8,2], foliageShift: {gBoost:12,bShift:16,rShift:-12,satScale:0.92}, skyShift: {cyanBoost:19,bDepth:2}, redHueShift: 3, skinWarmth: 6, vibrance: -0.02, skinProtect: 0.88, saturation: 0.96, contrast: 0.95, blackLift: 0.046, grainBase: 36, grainSize: 1.16, halationBase: 22, isBW: false },
     { id: 'fuji-pro-400h', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Pro 400H', subtitle: 'Pastel teal', iso: 400, edgeCode: 'FUJI PRO 400H   24A', matrix: [0.95,0.03,0.02,-0.02,1.03,0.03,-0.01,0.05,1.01], shadowTint: [-12,16,15], midTint: [-3,7,6], highlightTint: [4,7,5], foliageShift: {gBoost:10,bShift:20,rShift:-16,satScale:0.84}, skyShift: {cyanBoost:22,bDepth:-4}, redHueShift: 5, skinWarmth: 3, vibrance: -0.07, skinProtect: 0.84, saturation: 0.90, contrast: 0.93, blackLift: 0.048, grainBase: 17, grainSize: 0.92, halationBase: 12, isBW: false },
-    { id: 'fuji-provia-100f', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Provia 100F', subtitle: 'Professional neutral color & ultra-fine detail', iso: 100, edgeCode: 'FUJI PROVIA 100F  11', matrix: [0.99,0.01,0.01,-0.01,1.03,0.01,-0.01,0.01,1.04], shadowTint: [-8,6,10], midTint: [-2,3,4], highlightTint: [4,4,2], foliageShift: {gBoost:12,bShift:8,rShift:-8,satScale:1.06}, skyShift: {cyanBoost:12,bDepth:18}, redHueShift: 2, skinWarmth: 3, vibrance: 0.08, skinProtect: 0.82, saturation: 1.08, contrast: 1.15, blackLift: 0.014, grainBase: 9, grainSize: 0.74, halationBase: 7, isBW: false },
+    { id: 'fuji-provia-100f', vibe: null, brand: 'fuji', brandLabel: 'FUJI', name: 'Provia 100F', subtitle: 'Professional neutral color & ultra-fine detail', iso: 100, edgeCode: 'FUJI PROVIA 100F  11', matrix: [0.99,0.01,0.01,-0.01,1.03,0.01,-0.01,0.01,1.04], shadowTint: [-8,6,10], midTint: [-2,3,4], highlightTint: [4,4,2], foliageShift: {gBoost:12,bShift:8,rShift:-8,satScale:1.06}, skyShift: {cyanBoost:12,bDepth:18}, redHueShift: 2, skinWarmth: 3, vibrance: 0.08, skinProtect: 0.82, saturation: 1.08, contrast: 1.15, blackLift: 0.014, grainBase: 9, grainSize: 0.74, halationBase: 7, isBW: false },
     { id: 'fuji-superia-400', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia 400', subtitle: 'Signature Japanese greens', iso: 400, edgeCode: 'FUJI SUPERIA 400   12', matrix: [0.96,0.02,0.02,-0.03,1.06,0.01,0.02,0.04,0.99], shadowTint: [-15,18,10], midTint: [-2,6,4], highlightTint: [9,3,4], foliageShift: {gBoost:19,bShift:15,rShift:-18,satScale:1.06}, skyShift: {cyanBoost:15,bDepth:7}, redHueShift: 9, skinWarmth: 2, vibrance: 0.04, skinProtect: 0.68, saturation: 1.04, contrast: 1.05, blackLift: 0.026, grainBase: 25, grainSize: 1.02, halationBase: 16, isBW: false },
     { id: 'fuji-superia-premium-400', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Premium 400', subtitle: 'Soft Japanese skin & greens', iso: 400, edgeCode: 'FUJI PREMIUM 400  19', matrix: [1.00,0.02,0.01,-0.02,1.04,0.01,-0.01,0.03,0.98], shadowTint: [-8,11,10], midTint: [6,5,1], highlightTint: [11,8,1], foliageShift: {gBoost:14,bShift:12,rShift:-11,satScale:0.98}, skyShift: {cyanBoost:13,bDepth:4}, redHueShift: 2, skinWarmth: 6, vibrance: 0.02, skinProtect: 0.86, saturation: 1.01, contrast: 0.98, blackLift: 0.038, grainBase: 20, grainSize: 0.95, halationBase: 16, isBW: false },
-    { id: 'fuji-velvia-50', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Velvia 50', subtitle: 'Legendary emerald saturation & deep contrast', iso: 50, edgeCode: 'FUJI RVP 50       21', matrix: [1.10,-0.04,-0.03,-0.03,1.12,0.01,-0.02,0.02,1.14], shadowTint: [-14,12,18], midTint: [-4,8,6], highlightTint: [8,5,2], foliageShift: {gBoost:26,bShift:16,rShift:-20,satScale:1.28}, skyShift: {cyanBoost:20,bDepth:26}, redHueShift: 8, skinWarmth: 3, vibrance: 0.22, skinProtect: 0.45, saturation: 1.30, contrast: 1.25, blackLift: 0.008, grainBase: 7, grainSize: 0.68, halationBase: 6, isBW: false },
+    { id: 'fuji-velvia-50', vibe: null, brand: 'fuji', brandLabel: 'FUJI', name: 'Velvia 50', subtitle: 'Legendary emerald saturation & deep contrast', iso: 50, edgeCode: 'FUJI RVP 50       21', matrix: [1.10,-0.04,-0.03,-0.03,1.12,0.01,-0.02,0.02,1.14], shadowTint: [-14,12,18], midTint: [-4,8,6], highlightTint: [8,5,2], foliageShift: {gBoost:26,bShift:16,rShift:-20,satScale:1.28}, skyShift: {cyanBoost:20,bDepth:26}, redHueShift: 8, skinWarmth: 3, vibrance: 0.22, skinProtect: 0.45, saturation: 1.30, contrast: 1.25, blackLift: 0.008, grainBase: 7, grainSize: 0.68, halationBase: 6, isBW: false },
+    { id: 'fuji-venus-800', vibe: 'jp', brand: 'fuji', brandLabel: 'FUJI', name: 'Superia Venus 800', subtitle: 'Rosy Japanese dusk highlights & vivid greens', iso: 800, edgeCode: 'FUJI VENUS 800   24', matrix: [1.01,0.02,0.01,-0.02,1.05,0.01,0.0,0.03,0.99], shadowTint: [-10,12,10], midTint: [4,5,2], highlightTint: [13,6,4], foliageShift: {gBoost:17,bShift:13,rShift:-14,satScale:1.04}, skyShift: {cyanBoost:14,bDepth:6}, redHueShift: 4, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.84, saturation: 1.05, contrast: 1.01, blackLift: 0.034, grainBase: 28, grainSize: 1.06, halationBase: 20, isBW: false },
 
-    // Other Brands (Agfa, CineStill, Ilford, Lomography, PoPho)
-    { id: 'agfa-apx-400', vibe: 'jp', brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.06, blackLift: 0.030, grainBase: 23, grainSize: 0.96, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] },
+    // Other Brands (Agfa, Amber, CineStill, Ilford, Lomography, PoPho)
+    { id: 'agfa-apx-400', vibe: null, brand: 'bw', brandLabel: 'AGFA', name: 'Agfa APX 400', subtitle: 'Smooth silver monochrome', iso: 400, edgeCode: 'AGFA APX 400      15', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,4], midTint: [1,1,2], highlightTint: [2,2,4], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.06, blackLift: 0.030, grainBase: 23, grainSize: 0.96, halationBase: 6, isBW: true, bwWeights: [0.30,0.56,0.14] },
+    { id: 'amber-t800', vibe: 'hk', brand: 'cinema', brandLabel: 'RETO', name: 'Amber T800', subtitle: 'HK tungsten night & warm amber halation', iso: 800, edgeCode: 'RETO AMBER T800  27', matrix: [0.97,0.02,0.02,-0.01,1.02,0.03,0.02,0.05,1.07], shadowTint: [-18,10,22], midTint: [-7,3,13], highlightTint: [18,8,-9], foliageShift: {gBoost:3,bShift:16,rShift:-12,satScale:0.96}, skyShift: {cyanBoost:21,bDepth:12}, redHueShift: -9, skinWarmth: 6, vibrance: 0.05, skinProtect: 0.72, saturation: 1.06, contrast: 1.08, blackLift: 0.032, grainBase: 28, grainSize: 1.05, halationBase: 64, isBW: false },
+    { id: 'cinestill-50d', vibe: 'hk', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 50D', subtitle: 'Ultra-fine sunlit gold & cinema halation', iso: 50, edgeCode: 'CINESTILL 50D    05', matrix: [1.06,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.01,0.97], shadowTint: [-3,3,5], midTint: [9,5,-4], highlightTint: [16,9,-6], foliageShift: {gBoost:5,bShift:-3,rShift:6,satScale:1.05}, skyShift: {cyanBoost:9,bDepth:14}, redHueShift: -8, skinWarmth: 7, vibrance: 0.08, skinProtect: 0.87, saturation: 1.06, contrast: 1.03, blackLift: 0.030, grainBase: 9, grainSize: 0.74, halationBase: 48, isBW: false },
     { id: 'cinestill-400d', vibe: 'hk', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 400D', subtitle: 'Daylight cinema tones & soft red halation', iso: 400, edgeCode: 'CINESTILL 400D   28', matrix: [1.04,0.02,-0.02,0.01,1.02,-0.01,-0.01,0.02,0.97], shadowTint: [-4,3,5], midTint: [7,4,-3], highlightTint: [14,8,-5], foliageShift: {gBoost:4,bShift:-2,rShift:6,satScale:1.02}, skyShift: {cyanBoost:8,bDepth:12}, redHueShift: -7, skinWarmth: 6, vibrance: 0.06, skinProtect: 0.86, saturation: 1.04, contrast: 1.01, blackLift: 0.034, grainBase: 21, grainSize: 0.96, halationBase: 44, isBW: false },
     { id: 'cinestill-800t', vibe: 'hk', brand: 'cinema', brandLabel: 'CINE', name: 'CineStill 800T', subtitle: 'Teal nights & red halation', iso: 800, edgeCode: 'CINESTILL 800T   35A', matrix: [0.94,0.01,0.03,-0.01,1.03,0.04,0.02,0.07,1.09], shadowTint: [-21,11,25], midTint: [-11,5,16], highlightTint: [16,4,-7], foliageShift: {gBoost:2,bShift:20,rShift:-16,satScale:0.94}, skyShift: {cyanBoost:24,bDepth:12}, redHueShift: -8, skinWarmth: 4, vibrance: 0.02, skinProtect: 0.66, saturation: 1.01, contrast: 1.07, blackLift: 0.034, grainBase: 26, grainSize: 1.02, halationBase: 72, isBW: false },
-    { id: 'ilford-delta-100', vibe: 'jp', brand: 'bw', brandLabel: 'ILFORD', name: 'Delta 100', subtitle: 'Razor sharpness & ultra-fine core-shell grain', iso: 100, edgeCode: 'ILFORD DELTA 100  08', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,2], midTint: [1,1,1], highlightTint: [2,2,2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.08, blackLift: 0.024, grainBase: 12, grainSize: 0.78, halationBase: 5, isBW: true, bwWeights: [0.32,0.54,0.14] },
-    { id: 'ilford-delta-3200', vibe: 'hk', brand: 'bw', brandLabel: 'ILFORD', name: 'Delta 3200', subtitle: 'Ultra-high speed & bold atmospheric grain', iso: 3200, edgeCode: 'ILFORD DELTA 3200 36', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,1], midTint: [3,2,0], highlightTint: [5,4,1], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.14, blackLift: 0.048, grainBase: 44, grainSize: 1.28, halationBase: 12, isBW: true, bwWeights: [0.34,0.50,0.16] },
-    { id: 'ilford-hp5', vibe: 'jp', brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.12, blackLift: 0.044, grainBase: 31, grainSize: 1.08, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
+    { id: 'ilford-delta-100', vibe: null, brand: 'bw', brandLabel: 'ILFORD', name: 'Delta 100', subtitle: 'Razor sharpness & ultra-fine core-shell grain', iso: 100, edgeCode: 'ILFORD DELTA 100  08', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [0,1,2], midTint: [1,1,1], highlightTint: [2,2,2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.08, blackLift: 0.024, grainBase: 12, grainSize: 0.78, halationBase: 5, isBW: true, bwWeights: [0.32,0.54,0.14] },
+    { id: 'ilford-delta-3200', vibe: null, brand: 'bw', brandLabel: 'ILFORD', name: 'Delta 3200', subtitle: 'Ultra-high speed & bold atmospheric grain', iso: 3200, edgeCode: 'ILFORD DELTA 3200 36', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,1], midTint: [3,2,0], highlightTint: [5,4,1], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.14, blackLift: 0.048, grainBase: 44, grainSize: 1.28, halationBase: 12, isBW: true, bwWeights: [0.34,0.50,0.16] },
+    { id: 'ilford-hp5', vibe: null, brand: 'bw', brandLabel: 'B&W', name: 'Ilford HP5', subtitle: 'Documentary black & white', iso: 400, edgeCode: 'ILFORD HP5 PLUS 400', matrix: [1,0,0,0,1,0,0,0,1], shadowTint: [2,2,0], midTint: [3,2,-2], highlightTint: [5,3,-2], foliageShift: null, skyShift: null, skinProtect: 0, saturation: 0, contrast: 1.12, blackLift: 0.044, grainBase: 31, grainSize: 1.08, halationBase: 8, isBW: true, bwWeights: [0.34,0.52,0.14] },
     { id: 'lomo-800', vibe: 'hk', brand: 'cinema', brandLabel: 'LOMO', name: 'Lomography 800', subtitle: 'Punchy warm night & amber', iso: 800, edgeCode: 'LOMOCOLOR 800     30', matrix: [1.07,0.01,-0.02,0.0,1.01,-0.01,-0.01,-0.01,1.01], shadowTint: [3,-2,11], midTint: [12,4,-7], highlightTint: [17,9,-8], foliageShift: {gBoost:6,bShift:-6,rShift:10,satScale:1.08}, skyShift: {cyanBoost:0,bDepth:16}, redHueShift: -7, skinWarmth: 7, vibrance: 0.10, skinProtect: 0.74, saturation: 1.14, contrast: 1.08, blackLift: 0.022, grainBase: 29, grainSize: 1.08, halationBase: 28, isBW: false },
-    { id: 'popho-luminar-100', vibe: 'hk', brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.98, blackLift: 0.026, grainBase: 10, grainSize: 0.76, halationBase: 18, isBW: false }
+    { id: 'popho-luminar-100', vibe: null, brand: 'cinema', brandLabel: 'POPHO', name: 'PoPho Luminar 100', subtitle: 'Aerial warm reds & fine grain', iso: 100, edgeCode: 'POPHO LUMINAR 100 18', matrix: [1.06,0.02,-0.02,0.0,1.01,-0.01,-0.02,0.01,1.00], shadowTint: [2,3,-2], midTint: [9,5,-5], highlightTint: [15,7,-6], foliageShift: {gBoost:4,bShift:-4,rShift:10,satScale:1.02}, skyShift: {cyanBoost:6,bDepth:15}, redHueShift: -11, skinWarmth: 6, vibrance: 0.07, skinProtect: 0.82, saturation: 1.07, contrast: 0.98, blackLift: 0.026, grainBase: 10, grainSize: 0.76, halationBase: 18, isBW: false }
   ];
 
   const POPULAR_BEST_FILM_IDS = [
@@ -6904,15 +6921,21 @@
     'fuji-superia-400': 'Signature Japanese greens',
     'kodak-ultramax-400': 'Deep blue skies & punchy everyday color',
     'fuji-classic-chrome': 'Muted vintage editorial',
+    'kodak-vision3-200t': 'Emerald-cyan shadows & HK cinema tungsten',
     'kodak-vision3-250d': 'Warm daylight cinema & smooth skin',
     'kodak-portra-400': 'Smooth warm cream skin · Portrait flagship',
     'kodak-portra-160': 'Fine pastel daylight skin · Flattering softness',
     'fuji-pro-400h': 'Pastel teal',
     'fuji-superia-premium-400': 'Soft Japanese skin & greens',
+    'fuji-industrial-100': 'Crisp Japanese domestic cool-cyan street',
+    'fuji-venus-800': 'Rosy Japanese dusk highlights & vivid greens',
+    'fuji-natura-1600': 'Legendary Japan ISO 1600 pastel glow',
     'kodak-portra-800': 'Vivid warm sunsets & night speed',
     'kodak-ektar-100': 'Ultra-vivid saturation & microscopic detail',
     'fuji-fujicolor-100': 'Crisp daylight cool-green',
     'popho-luminar-100': 'Aerial warm reds & fine grain',
+    'amber-t800': 'HK tungsten night & warm amber halation',
+    'cinestill-50d': 'Ultra-fine sunlit gold & cinema halation',
     'cinestill-800t': 'Teal nights & signature red halation',
     'kodak-vision3-500t': 'Rich cinema tungsten & clean shadows',
     'lomo-800': 'Punchy warm night & amber',
@@ -6933,199 +6956,190 @@
   });
 
   const FILM_VIBE_META = {
-    hk: { label: '🇭🇰 Hong Kong', badge: '🇭🇰 HK', className: 'is-hk', infoClass: 'vibe-hk' },
-    jp: { label: '🇯🇵 Nhật Bản', badge: '🇯🇵 JP', className: 'is-jp', infoClass: 'vibe-jp' }
+    hk: { label: 'HK Style', badge: 'HK', shortLabel: 'HK', className: 'is-hk', infoClass: 'vibe-hk' },
+    jp: { label: 'JP Style', badge: 'JP', shortLabel: 'JP', className: 'is-jp', infoClass: 'vibe-jp' }
   };
 
   const FILM_GUIDE_META = {
     'kodak-gold-200': {
       scenes: ['landscape', 'everyday'],
-      tip: 'Tông ấm vàng nắng nhẹ, hoài cổ, hạt vừa — du lịch, đời thường ban ngày & chụp nắng chiều.',
-      vibeLabel: '🇭🇰 HK Warm Afternoon',
-      vibeGear: 'Pentax K1000 · 50mm f/1.4',
-      vibeNote: 'Nắng xiên qua hẻm nhỏ, tiệm trà sữa Cha Chaan Teng vàng ấm hoài cổ.'
+      tip: 'Tông ấm vàng nắng nhẹ, hoài cổ, hạt vừa — du lịch, đời thường ban ngày & chụp nắng chiều.'
     },
     'kodak-colorplus-200': {
       scenes: ['everyday', 'landscape'],
-      tip: 'Crisp retro contrast and sandy warmth for travel, vintage cafes & street.',
-      vibeLabel: '🇭🇰 HK Vintage Sand',
-      vibeGear: 'Canon AE-1 · 35mm f/2',
-      vibeNote: 'Chung cư cũ thập niên 90, biển hiệu chữ phồn thể & ánh nắng gắt hơi cát vàng.'
+      tip: 'Crisp retro contrast and sandy warmth for travel, vintage cafes & street.'
     },
     'fuji-superia-400': {
       scenes: ['everyday'],
       tip: 'Everyday street stock with crisp Japanese greens & lively contrast (PnS / SLR).',
-      vibeLabel: '🇯🇵 JP Tokyo Street',
+      vibeLabel: 'JP Tokyo Street',
       vibeGear: 'Pentax K1000 · 35mm f/2',
       vibeNote: 'Ngã tư thành phố, máy bán nước tự động & hàng cây xanh mát kiểu đường phố Tokyo.'
     },
     'kodak-ultramax-400': {
       scenes: ['everyday', 'landscape', 'night'],
-      tip: 'Màu rực, tương phản cao, tông xanh dương & vàng nổi bật — đa dụng du lịch & đời thường từ nắng tới trời râm.',
-      vibeLabel: '🇯🇵 JP Crisp Blue Sky',
-      vibeGear: 'Nikon 35Ti · 35mm f/2.8',
-      vibeNote: 'Đi bộ dưới bầu trời xanh thẫm, biển báo giao thông & ánh nắng ban trưa sắc nét.'
+      tip: 'Màu rực, tương phản cao, tông xanh dương & vàng nổi bật — đa dụng du lịch & đời thường từ nắng tới trời râm.'
     },
     'fuji-classic-chrome': {
       scenes: ['everyday', 'portrait'],
-      tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.',
-      vibeLabel: '🇭🇰 HK Moody Concrete',
-      vibeGear: 'Leica M6 · 35mm f/2',
-      vibeNote: 'Trời mây xám, đường ướt sau mưa & góc chụp phóng sự bê tông tối giản.'
+      tip: 'Muted editorial contrast — ideal for overcast mood, documentary & steel tones.'
+    },
+    'kodak-vision3-200t': {
+      scenes: ['night', 'everyday', 'portrait'],
+      tip: 'Motion picture 200T tungsten stock (5213) — subtle jade-cyan shadow cast, fine grain & classic Hong Kong indie cinema feel.',
+      vibeLabel: 'HK Wong Kar-wai Emerald',
+      vibeGear: 'Leica M6 · 35mm f/1.4',
+      vibeNote: 'Ánh đèn huỳnh quang xanh ngọc hành lang cũ, quán ăn đêm & ánh sáng cửa sổ mưa.'
     },
     'kodak-vision3-250d': {
       scenes: ['everyday', 'portrait', 'landscape'],
       tip: 'Motion picture 250D daylight stock (5207) with remjet — natural vivid daylight color, flattering skin tones & huge cinema highlight latitude.',
-      vibeLabel: '🇭🇰 HK Retro Cinema',
+      vibeLabel: 'HK Retro Cinema',
       vibeGear: 'Contax G2 · 35mm f/2',
-      vibeNote: 'Phố chợ buổi trưa rực nắng, dải highlight điện ảnh mượt & tông da ấm.'
+      vibeNote: 'Phố chợ buổi trưa rực nắng, dải highlight điện ảnh mượt & tông da ấm hoài cổ.'
     },
     'kodak-portra-400': {
       scenes: ['portrait', 'everyday'],
-      tip: '⭐ "Vua" film chân dung chuẩn nhất: hạt mịn, giữ chi tiết sáng cực tốt, da sáng mịn màng trong mọi điều kiện sáng.',
-      vibeLabel: '🇯🇵 JP Clean Warmth',
-      vibeGear: 'Contax G2 · 50mm f/1.4',
-      vibeNote: 'Chân dung bốn mùa, nắng chiều ven biển và quán café sáng mịn da tự nhiên.'
+      tip: '⭐ "Vua" film chân dung chuẩn nhất: hạt mịn, giữ chi tiết sáng cực tốt, da sáng mịn màng trong mọi điều kiện sáng.'
     },
     'kodak-portra-160': {
       scenes: ['portrait', 'landscape'],
-      tip: 'Hạt siêu mịn, tông da cực tự nhiên, màu pastel dịu — chân dung ngoài trời đủ sáng & thời trang.',
-      vibeLabel: '🇯🇵 JP Pale Pastel',
-      vibeGear: 'Leica M6 · 50mm f/2',
-      vibeNote: 'Ánh nắng ban mai dịu mắt, trang phục sáng màu phong cách tạp chí Popeye / Brutus.'
+      tip: 'Hạt siêu mịn, tông da cực tự nhiên, màu pastel dịu — chân dung ngoài trời đủ sáng & thời trang.'
     },
     'fuji-pro-400h': {
       scenes: ['portrait', 'everyday'],
       tip: 'Airy pastel teal for overcast portraits, weddings & minimal cafes.',
-      vibeLabel: '🇯🇵 JP Pastel Airy',
+      vibeLabel: 'JP Pastel Airy',
       vibeGear: 'Olympus OM-1 · 50mm f/1.4',
-      vibeNote: 'Bầu trời râm mát, hoa anh đào & ảnh cưới thanh thoát dịu mắt (nên chụp dư nhẹ +1 EV).'
+      vibeNote: 'Bầu trời râm mát, hoa anh đào & chân dung thanh thoát dịu mắt (nên chụp dư nhẹ +1 EV).'
     },
     'fuji-superia-premium-400': {
       scenes: ['portrait', 'everyday'],
       tip: 'Warmer Japanese skin tones and softer shadows than X-Tra 400.',
-      vibeLabel: '🇯🇵 JP Soft Portrait',
+      vibeLabel: 'JP Soft Portrait',
       vibeGear: 'Contax T2 · 38mm f/2.8',
-      vibeNote: 'Chân dung ánh sáng cửa sổ nhẹ nhàng, tông da hồng hào mượt vùng tối.'
+      vibeNote: 'Chân dung ánh sáng cửa sổ nhẹ nhàng, tông da hồng hào mượt vùng tối đặc trưng Nhật.'
+    },
+    'fuji-industrial-100': {
+      scenes: ['everyday', 'landscape'],
+      tip: 'Japan domestic業務用100 daylight roll with cool cyan-green cast, crisp shadows & classic film punch.',
+      vibeLabel: 'JP Domestic Gyomu 100',
+      vibeGear: 'Nikon 35Ti · 35mm f/2.8',
+      vibeNote: 'Phố nhỏ ban trưa nắng, bảng hiệu & nhà ga vắng mang màu lục lam hoài cổ của Nhật.'
+    },
+    'fuji-venus-800': {
+      scenes: ['night', 'everyday', 'portrait'],
+      tip: 'Cult Japan-exclusive ISO 800 emulsion with 4th color layer, lively magenta dusk warmth & vibrant Japanese greens.',
+      vibeLabel: 'JP Festival Dusk',
+      vibeGear: 'Nikon FM2 · 50mm f/1.4',
+      vibeNote: 'Lễ hội tối, đèn lồng phố ăn uống & ánh sáng hoàng hôn rực rỡ không cần flash.'
+    },
+    'fuji-natura-1600': {
+      scenes: ['night', 'portrait', 'everyday'],
+      tip: 'Legendary discontinued Japanese ISO 1600 low-light stock — creamy pastel shadows, delicate skin tones & natural ambient grain.',
+      vibeLabel: 'JP Ambient Low-Light',
+      vibeGear: 'Nikon 35Ti · 35mm f/2.8 (hoặc 50mm f/1.2)',
+      vibeNote: 'Ánh sáng trong nhà, tàu điện đêm & phố mờ không flash với sắc pastel dịu đặc trưng Nhật.'
     },
     'kodak-portra-800': {
       scenes: ['night', 'portrait', 'everyday'],
-      tip: 'Nhạy sáng cao ISO 800, màu ấm nhẹ, hạt mịn so với ISO cao — chân dung thiếu sáng, chụp đêm, hoàng hôn & trong nhà.',
-      vibeLabel: '🇭🇰 HK Golden Dusk',
-      vibeGear: 'Leica M6 · 50mm f/1.4',
-      vibeNote: 'Chân dung ánh đèn vàng ấm trong tiệm ăn đêm & bến phà hoàng hôn Cửu Long.'
+      tip: 'Nhạy sáng cao ISO 800, màu ấm nhẹ, hạt mịn so với ISO cao — chân dung thiếu sáng, chụp đêm, hoàng hôn & trong nhà.'
     },
     'kodak-ektar-100': {
       scenes: ['landscape'],
-      tip: 'Hạt mịn nhất nhóm C-41, màu cực rực, tương phản cao — phong cảnh, thiên nhiên, du lịch & kiến trúc.',
-      vibeLabel: '🇯🇵 JP Seaside Vivid',
-      vibeGear: 'Nikon FM2 · 35mm f/2',
-      vibeNote: 'Biển xanh ngắt Kamakura, tàu điện ven bờ & nắng rực rỡ chi tiết siêu mịn.'
+      tip: 'Hạt mịn nhất nhóm C-41, màu cực rực, tương phản cao — phong cảnh, thiên nhiên, du lịch & kiến trúc.'
     },
     'fuji-fujicolor-100': {
       scenes: ['landscape', 'everyday'],
       tip: 'Clean, tight fine-grain daylight roll for sunny landscapes, city walks & architecture.',
-      vibeLabel: '🇯🇵 JP Sunny Minimal',
+      vibeLabel: 'JP Sunny Minimal',
       vibeGear: 'Canon AE-1 · 50mm f/1.4',
       vibeNote: 'Đền gỗ Kyoto trời nắng đẹp, dải xanh sạch tinh khiết và hạt siêu mịn.'
     },
     'popho-luminar-100': {
       scenes: ['landscape'],
-      tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range for landscapes.',
-      vibeLabel: '🇭🇰 HK Crimson Brick',
+      tip: 'Aerial Kodak Aerocolor IV stock with glowing warm reds & wide dynamic range for landscapes.'
+    },
+    'amber-t800': {
+      scenes: ['night', 'everyday'],
+      tip: 'Hong Kong RETO Tungsten 800 film (remjet removed) with cool cyan-teal night shadows & glowing amber-red halation.',
+      vibeLabel: 'HK RETO Neon Glow',
       vibeGear: 'Contax T2 · 38mm f/2.8',
-      vibeNote: 'Đèn lồng, bảng hiệu sắc đỏ ấm nổi bật & ánh nắng chiều tương phản mượt.'
+      vibeNote: 'Đèn đường natri vàng cam, taxi đỏ & bảng hiệu neon đêm Cửu Long với quầng sáng rực.'
+    },
+    'cinestill-50d': {
+      scenes: ['landscape', 'portrait', 'everyday'],
+      tip: 'Daylight ISO 50 cinema emulsion (Vision3 50D, remjet removed) with microscopic grain, golden sunlight & subtle red halation.',
+      vibeLabel: 'HK Sunlit Cinema',
+      vibeGear: 'Leica M6 · 50mm f/2',
+      vibeNote: 'Nắng vàng gắt chiếu qua tòa nhà cao tầng, phản chiếu kính xe & biển hiệu sắc nét.'
     },
     'cinestill-800t': {
       scenes: ['night', 'everyday'],
       tip: '⭐ Đỉnh cao chụp đêm đặc trưng nhất: cân bằng đèn Tungsten (tông xanh lạnh), tạo quầng sáng đỏ (halation) quanh đèn neon & đèn đường.',
-      vibeLabel: '🇭🇰 HK Neon Night',
+      vibeLabel: 'HK Neon Night',
       vibeGear: 'Leica M6 · 35mm f/1.4',
       vibeNote: 'Biển hiệu neon xanh-đỏ Vượng Giác, xe tram đêm & quầng halation kiểu Vương Gia Vệ.'
     },
     'kodak-vision3-500t': {
       scenes: ['night', 'everyday'],
       tip: 'Motion picture 500T tungsten stock (5219) with remjet — wide dynamic range, cool night tones & clean highlights without heavy halation.',
-      vibeLabel: '🇭🇰 HK Cinema Tungsten',
+      vibeLabel: 'HK Cinema Tungsten',
       vibeGear: 'Nikon FM2 · 50mm f/1.4',
       vibeNote: 'Hành lang chung cư cũ ánh đèn huỳnh quang & phố đêm giữ highlight sạch.'
     },
     'lomo-800': {
       scenes: ['night', 'everyday'],
       tip: 'Warm saturated low-light color with bold grain — fun for night cafes & street.',
-      vibeLabel: '🇭🇰 HK Amber Street',
+      vibeLabel: 'HK Amber Street',
       vibeGear: 'Nikon 35Ti · 35mm f/2.8',
       vibeNote: 'Taxi đỏ, ánh đèn đường natri vàng cam & nhịp phố đêm rực màu phóng khoáng.'
     },
     'ilford-hp5': {
       scenes: ['everyday', 'night'],
-      tip: '⭐ Film đen trắng kinh điển: tương phản vừa phải, dải xám rộng, rất dễ đẩy ISO — đời thường đường phố & phóng sự.',
-      vibeLabel: '🇯🇵 JP Moriyama B&W',
-      vibeGear: 'Leica M6 · 28mm f/2.8',
-      vibeNote: 'Chụp nhanh đường phố Shinjuku, bóng nắng dải xám giàu chi tiết & linh hoạt.'
+      tip: '⭐ Film đen trắng kinh điển: tương phản vừa phải, dải xám rộng, rất dễ đẩy ISO — đời thường đường phố & phóng sự.'
     },
     'agfa-apx-400': {
       scenes: ['portrait', 'everyday', 'night'],
-      tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.',
-      vibeLabel: '🇯🇵 JP Zen Slate B&W',
-      vibeGear: 'Olympus OM-1 · 50mm f/1.4',
-      vibeNote: 'Sân vườn tĩnh lặng, mái ngói sau mưa với sắc xám bạc chuyển tông êm dịu.'
+      tip: 'Smoother silver-slate gradation and finer midtones for cafe shadows & B&W portraits.'
     },
     'fuji-c200': {
       scenes: ['everyday', 'landscape'],
       tip: 'Tông mát, ngả xanh lá nhẹ đặc trưng của Fuji, da sáng — đời thường, du lịch & cây cối trong ánh sáng dịu.',
-      vibeLabel: '🇯🇵 JP Everyday Green',
+      vibeLabel: 'JP Everyday Green',
       vibeGear: 'Nikon 35Ti · 35mm f/2.8',
       vibeNote: 'Ga tàu ngoại ô, hàng cây xanh mướt & nắng nhẹ thanh lịch chuẩn vibe phim Nhật.'
     },
     'cinestill-400d': {
       scenes: ['everyday', 'portrait', 'landscape'],
       tip: 'Daylight motion-picture emulsion (5500K) with rich warm skin, wide latitude & glowing red halation.',
-      vibeLabel: '🇭🇰 HK Warm Cinema',
+      vibeLabel: 'HK Warm Cinema',
       vibeGear: 'Contax T2 · 38mm f/2.8',
       vibeNote: 'Ánh nắng muộn xuyên qua hẻm nhỏ cùng quầng đỏ điện ảnh dịu quanh nguồn sáng.'
     },
     'kodak-ektachrome-e100': {
       scenes: ['landscape', 'everyday'],
-      tip: 'Film dương bản (slide): hạt cực mịn, màu trung tính, trong trẻo, bầu trời xanh sâu — phong cảnh & du lịch trời nắng.',
-      vibeLabel: '🇯🇵 JP Alpine Blue',
-      vibeGear: 'Olympus OM-1 · 35mm f/2',
-      vibeNote: 'Mùa đông Hokkaido tuyết trắng sạch sẽ, bầu trời xanh thẳm tinh khiết không ám màu.'
+      tip: 'Film dương bản (slide): hạt cực mịn, màu trung tính, trong trẻo, bầu trời xanh sâu — phong cảnh & du lịch trời nắng.'
     },
     'fuji-velvia-50': {
       scenes: ['landscape'],
-      tip: 'The king of landscape slide films — extreme color saturation, deep Velvia greens & high contrast.',
-      vibeLabel: '🇯🇵 JP Vivid Nature',
-      vibeGear: 'Nikon FM2 · 28mm f/2.8',
-      vibeNote: 'Núi Phú Sĩ bình minh, lá phong đỏ rực & rừng thông tương phản sâu thẳm.'
+      tip: 'The king of landscape slide films — extreme color saturation, deep Velvia greens & high contrast.'
     },
     'fuji-provia-100f': {
       scenes: ['landscape', 'everyday', 'portrait'],
-      tip: 'Reference professional slide film — balanced neutral saturation, ultra-fine grain & natural daylight tones.',
-      vibeLabel: '🇯🇵 JP Crisp Slide',
-      vibeGear: 'Contax G2 · 35mm f/2',
-      vibeNote: 'Ánh sáng ban mai trong veo, sắc màu chuẩn xác như ảnh tạp chí nhiếp ảnh Nhật.'
+      tip: 'Reference professional slide film — balanced neutral saturation, ultra-fine grain & natural daylight tones.'
     },
     'kodak-tri-x-400': {
       scenes: ['everyday', 'portrait', 'night'],
-      tip: 'Legendary documentary & street B&W with gritty silver grain, rich dark blacks & brilliant highlights.',
-      vibeLabel: '🇭🇰 HK Rainy Noir B&W',
-      vibeGear: 'Leica M3 · 50mm f/1.4',
-      vibeNote: 'Phố cũ dưới mưa đêm, khói bếp đường phố với hạt bạc gai góc & tương phản đậm.'
+      tip: 'Legendary documentary & street B&W with gritty silver grain, rich dark blacks & brilliant highlights.'
     },
     'ilford-delta-100': {
       scenes: ['portrait', 'landscape', 'everyday'],
-      tip: 'Modern tabular-grain black & white film with razor-sharp edge acutance & virtually invisible grain.',
-      vibeLabel: '🇯🇵 JP Minimal Arch B&W',
-      vibeGear: 'Leica M3 · 50mm f/2',
-      vibeNote: 'Kiến trúc bê tông tối giản Tadao Ando & khung hình tĩnh vật siêu sắc nét.'
+      tip: 'Modern tabular-grain black & white film with razor-sharp edge acutance & virtually invisible grain.'
     },
     'ilford-delta-3200': {
       scenes: ['night', 'everyday'],
-      tip: 'Film đen trắng ISO 3200 siêu nhạy sáng, hạt to rõ tạo chất bụi bặm — chụp đêm không flash, concert & đường phố tối.',
-      vibeLabel: '🇭🇰 HK Midnight B&W',
-      vibeGear: 'Nikon FM2 · 35mm f/1.4',
-      vibeNote: 'Chợ đêm khuất sáng, cầu thang khuất đèn & chuyển động ban đêm không cần flash.'
+      tip: 'Film đen trắng ISO 3200 siêu nhạy sáng, hạt to rõ tạo chất bụi bặm — chụp đêm không flash, concert & đường phố tối.'
     }
   };
 
@@ -7252,6 +7266,30 @@
     'ilford-delta-3200': [
       { src: './assets/film-samples/ilford-delta-3200-1.jpg', caption: 'Night street rain & gritty atmospheric grain', credit: 'boklm' },
       { src: './assets/film-samples/ilford-delta-3200-2.jpg', caption: 'Low-light indoor jazz & dramatic grain', credit: 'Colin Poe' }
+    ],
+    'kodak-vision3-200t': [
+      { src: './assets/film-samples/kodak-vision3-200t-1.jpg', caption: 'Golden hour street alley', credit: 'Bastian Kratzke' },
+      { src: './assets/film-samples/kodak-vision3-200t-2.jpg', caption: 'Sculptural roof chimneys', credit: 'Bastian Kratzke' }
+    ],
+    'fuji-industrial-100': [
+      { src: './assets/film-samples/fuji-industrial-100-1.jpg', caption: 'Glass canyon & cool clouds', credit: 'Stephen Dowling' },
+      { src: './assets/film-samples/fuji-industrial-100-2.jpg', caption: 'Thames harbor daylight', credit: 'Stephen Dowling' }
+    ],
+    'fuji-venus-800': [
+      { src: './assets/film-samples/fuji-venus-800-1.jpg', caption: 'Sugamo festival lanterns', credit: 'Richard Haw' },
+      { src: './assets/film-samples/fuji-venus-800-2.jpg', caption: 'Rainy Shinjuku lantern alley', credit: 'Richard Haw' }
+    ],
+    'fuji-natura-1600': [
+      { src: './assets/film-samples/fuji-natura-1600-1.jpg', caption: 'Festival market twilight', credit: 'Richard Haw' },
+      { src: './assets/film-samples/fuji-natura-1600-2.jpg', caption: 'Night fruit stand glow', credit: 'Richard Haw' }
+    ],
+    'amber-t800': [
+      { src: './assets/film-samples/amber-t800-1.jpg', caption: 'Tungsten indoor rehearsal', credit: 'E. Woods' },
+      { src: './assets/film-samples/amber-t800-2.jpg', caption: 'Parking deck amber halation', credit: 'E. Woods' }
+    ],
+    'cinestill-50d': [
+      { src: './assets/film-samples/cinestill-50d-1.jpg', caption: 'Sunlit porch & bulb halation', credit: 'Samantha Stortecky' },
+      { src: './assets/film-samples/cinestill-50d-2.jpg', caption: 'Sunlit garden blossoms', credit: 'Samantha Stortecky' }
     ]
   };
 
@@ -11001,9 +11039,9 @@
     const allChip = document.getElementById('btnFilmAllFilter');
     if (allChip) allChip.textContent = `All (${FILM_STOCKS.length})`;
     const hkChip = document.getElementById('btnFilmHkFilter');
-    if (hkChip) hkChip.textContent = `🇭🇰 Hong Kong (${hkCount})`;
+    if (hkChip) hkChip.textContent = `HK (${hkCount})`;
     const jpChip = document.getElementById('btnFilmJpFilter');
-    if (jpChip) jpChip.textContent = `🇯🇵 Nhật Bản (${jpCount})`;
+    if (jpChip) jpChip.textContent = `JP (${jpCount})`;
     const matchChip = document.getElementById('btnFilmMatchFilter');
     if (matchChip) matchChip.textContent = `★ Best (${POPULAR_BEST_FILM_IDS.length})`;
 
@@ -11018,7 +11056,7 @@
       filmTrack.innerHTML = '';
       filteredFilms.forEach(f => {
         const isRec = POPULAR_BEST_FILM_SET.has(f.id);
-        const vibeMeta = FILM_VIBE_META[f.vibe] || FILM_VIBE_META.jp;
+        const vibeMeta = f.vibe ? FILM_VIBE_META[f.vibe] : null;
         const btn = document.createElement('div');
         btn.setAttribute('role', 'button');
         btn.tabIndex = 0;
@@ -11029,7 +11067,7 @@
           : '';
         btn.innerHTML = `
           <button class="picker-info-btn" type="button" title="${escapeHtml(f.name)} info" aria-label="${escapeHtml(f.name)} info">i</button>
-          <span class="picker-vibe-badge ${vibeMeta.className}" title="${escapeHtml(vibeMeta.label)}">${vibeMeta.badge}</span>
+          ${vibeMeta ? `<span class="picker-vibe-badge ${vibeMeta.className}" title="${escapeHtml(vibeMeta.label)}">${vibeMeta.badge}</span>` : ''}
           ${badgeHtml}
           <div class="combo-card-art">${renderFilmArt(f.id, f.name)}</div>
           <span class="picker-tile-name">${escapeHtml(f.name)}</span>
@@ -11215,7 +11253,7 @@
       if (dd.dataset.renderKey !== rKey) {
         dd.dataset.renderKey = rKey;
         const sceneBarHtml = focals.length > 1 ? `
-          <div class="h-scroll" id="labLensScenePills" style="margin-bottom:6px;">
+          <div class="filter-pills-wrap" id="labLensScenePills">
             <button class="filter-chip" data-lab-lscene="all" type="button">All</button>
             <button class="filter-chip" data-lab-lscene="landscape" type="button">Landscape</button>
             <button class="filter-chip" data-lab-lscene="everyday" type="button">Everyday</button>
@@ -11283,15 +11321,15 @@
             <span class="lab-gear-subnote" id="labGearFilmNote"></span>
             <span class="lab-gear-substat" id="labGearFilmStat"></span>
           </div>
-          <div class="h-scroll" id="labFilmBrandPills" style="margin-bottom:6px;">
+          <div class="filter-pills-wrap" id="labFilmBrandPills">
             <button class="filter-chip" data-lab-fbrand="all" type="button">All (${FILM_STOCKS.length})</button>
-            <button class="filter-chip" data-lab-fbrand="hk" type="button">🇭🇰 Hong Kong (${hkCount})</button>
-            <button class="filter-chip" data-lab-fbrand="jp" type="button">🇯🇵 Nhật Bản (${jpCount})</button>
             <button class="filter-chip" data-lab-fbrand="match" type="button">★ Best (${POPULAR_BEST_FILM_IDS.length})</button>
             <button class="filter-chip" data-lab-fbrand="portrait" type="button">Portrait</button>
             <button class="filter-chip" data-lab-fbrand="everyday" type="button">Everyday</button>
             <button class="filter-chip" data-lab-fbrand="landscape" type="button">Landscape</button>
             <button class="filter-chip" data-lab-fbrand="night" type="button">Night</button>
+            <button class="filter-chip" data-lab-fbrand="hk" type="button">HK (${hkCount})</button>
+            <button class="filter-chip" data-lab-fbrand="jp" type="button">JP (${jpCount})</button>
           </div>
           <div class="lab-gear-grid-3" id="labGearFilmGrid"></div>
         `;
@@ -11305,7 +11343,7 @@
         const gridEl = dd.querySelector('#labGearFilmGrid');
         filteredFilms.forEach(f => {
           const isRec = POPULAR_BEST_FILM_SET.has(f.id);
-          const vibeMeta = FILM_VIBE_META[f.vibe] || FILM_VIBE_META.jp;
+          const vibeMeta = f.vibe ? FILM_VIBE_META[f.vibe] : null;
           const btn = document.createElement('div');
           btn.setAttribute('role', 'button');
           btn.tabIndex = 0;
@@ -11313,7 +11351,7 @@
           btn.className = `picker-tile${isRec ? ' is-rec' : ''}`;
           btn.innerHTML = `
             <button class="picker-info-btn" type="button" title="${escapeHtml(f.name)} info" aria-label="${escapeHtml(f.name)} info">i</button>
-            <span class="picker-vibe-badge ${vibeMeta.className}" title="${escapeHtml(vibeMeta.label)}">${vibeMeta.badge}</span>
+            ${vibeMeta ? `<span class="picker-vibe-badge ${vibeMeta.className}" title="${escapeHtml(vibeMeta.label)}">${vibeMeta.badge}</span>` : ''}
             ${isRec ? '<span class="picker-rec-badge" title="Popular & Recommended film">★ Best</span>' : ''}
             <div class="combo-card-art">${renderFilmArt(f.id, f.name)}</div>
             <span class="picker-tile-name">${escapeHtml(f.name)}</span>
@@ -17382,9 +17420,15 @@
     requestAnimationFrame(() => {
       const activeTile = secEl.querySelector('.picker-tile.active');
       const track = activeTile?.parentElement;
-      if (activeTile && track && track.scrollWidth > track.clientWidth) {
-        const targetLeft = activeTile.offsetLeft - (track.clientWidth - activeTile.offsetWidth) / 2;
-        track.scrollLeft = Math.max(0, Math.min(track.scrollWidth - track.clientWidth, targetLeft));
+      if (activeTile && track) {
+        if (track.scrollHeight > track.clientHeight) {
+          const targetTop = activeTile.offsetTop - (track.clientHeight - activeTile.offsetHeight) / 2;
+          track.scrollTop = Math.max(0, Math.min(track.scrollHeight - track.clientHeight, targetTop));
+        }
+        if (track.scrollWidth > track.clientWidth) {
+          const targetLeft = activeTile.offsetLeft - (track.clientWidth - activeTile.offsetWidth) / 2;
+          track.scrollLeft = Math.max(0, Math.min(track.scrollWidth - track.clientWidth, targetLeft));
+        }
       }
     });
   }
@@ -17700,20 +17744,8 @@
     });
   });
 
-  // Film Picker Grid ⇄ Track toggle
-  const btnFilmViewMode = document.getElementById('btnFilmViewMode');
+  // Film Picker renders as 3-column grid by default
   const pickerFilmTrack = document.getElementById('pickerFilmTrack');
-  let filmPickerIsGrid = false;
-  btnFilmViewMode?.addEventListener('click', () => {
-    filmPickerIsGrid = !filmPickerIsGrid;
-    pickerFilmTrack?.classList.toggle('is-grid', filmPickerIsGrid);
-    btnFilmViewMode.textContent = filmPickerIsGrid ? '▤ Track' : '▦ Grid';
-    btnFilmViewMode.classList.toggle('active', filmPickerIsGrid);
-    if (filmPickerIsGrid && pickerFilmTrack) {
-      const activeTile = pickerFilmTrack.querySelector('.picker-tile.active');
-      if (activeTile) activeTile.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }
-  });
 
   // Film Info modal ('i' button on any film roll — shows film details + 2 real sample photos immediately)
   const filmInfoBackdrop = document.getElementById('filmInfoBackdrop');
@@ -17735,7 +17767,7 @@
   }
   function describeFilmProcess(f) {
     if (f.isBW) return 'True B&W';
-    if (f.id === 'kodak-vision3-500t' || f.id === 'kodak-vision3-250d') return 'ECN-2 Cine';
+    if (f.id === 'kodak-vision3-500t' || f.id === 'kodak-vision3-250d' || f.id === 'kodak-vision3-200t') return 'ECN-2 Cine';
     if (f.id === 'kodak-ektachrome-e100' || f.id === 'fuji-velvia-50' || f.id === 'fuji-provia-100f' || f.id === 'fuji-classic-chrome') return 'E-6 Slide';
     return 'C-41 Color';
   }
@@ -17810,7 +17842,7 @@
     const isBest = POPULAR_BEST_FILM_SET.has(f.id) || recFilmList.includes(f.id);
     const isLoaded = f.id === state.filmId;
     const meta = FILM_GUIDE_META[f.id] || {};
-    const vibeMeta = FILM_VIBE_META[f.vibe] || FILM_VIBE_META.jp;
+    const vibeMeta = f.vibe ? FILM_VIBE_META[f.vibe] : null;
     const scenes = Array.isArray(meta.scenes) ? meta.scenes : [];
     const sceneNames = { portrait: 'Portrait', everyday: 'Everyday', landscape: 'Landscape', night: 'Night' };
     const samples = FILM_SAMPLE_PHOTOS[f.id] || [];
@@ -17821,11 +17853,11 @@
     const bodyEl = document.getElementById('filmInfoBody');
     if (bodyEl) {
       const tagsHtml = scenes.map(s => `<span class="film-info-tag">${escapeHtml(sceneNames[s] || s)}</span>`).join('');
-      const vibeCardHtml = (meta.vibeGear || meta.vibeNote)
+      const vibeCardHtml = (vibeMeta && (meta.vibeGear || meta.vibeNote))
         ? `<div class="film-info-vibe-card ${vibeMeta.className}">
             <div class="film-info-vibe-head">
               <span>${escapeHtml(meta.vibeLabel || vibeMeta.label)}</span>
-              <span>Vibe Pairing</span>
+              <span>${escapeHtml(vibeMeta.shortLabel)} Style</span>
             </div>
             ${meta.vibeGear ? `<div class="film-info-vibe-gear">📷 ${escapeHtml(meta.vibeGear)}</div>` : ''}
             ${meta.vibeNote ? `<div class="film-info-vibe-note">${escapeHtml(meta.vibeNote)}</div>` : ''}
@@ -17850,7 +17882,7 @@
             <div class="film-info-title-row">
               <span class="film-info-name">${escapeHtml(f.name)}</span>
               <span class="film-info-badge">${escapeHtml(f.brandLabel)} · ISO ${f.iso}</span>
-              <span class="film-info-badge ${vibeMeta.infoClass}">${vibeMeta.label}</span>
+              ${vibeMeta ? `<span class="film-info-badge ${vibeMeta.infoClass}">${escapeHtml(vibeMeta.shortLabel)}</span>` : ''}
               ${isBest ? '<span class="film-info-badge best">★ Best</span>' : ''}
             </div>
             <div class="film-info-tone">${escapeHtml(f.subtitle)}</div>
@@ -19181,7 +19213,7 @@
   } catch (ignored) {}
 
   // Bootstrap
-  const APP_BUILD = '20261127-2010';
+  const APP_BUILD = '20261127-2050';
   async function checkLiveBuildUpdate() {
     try {
       const res = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tees-lab-shell-v228';
+const CACHE_NAME = 'tees-lab-shell-v229';
 const CORE_FILES = [
   './', './index.html', './manifest.json', './logo.jpg', './version.json',
   './assets/samples/coffee.jpg',
@@ -14,11 +14,14 @@ const WARM_FILES = [
   './assets/gear/films/fuji-c200.webp',
   './assets/gear/films/fuji-classic-chrome.webp',
   './assets/gear/films/fuji-fujicolor-100.webp',
+  './assets/gear/films/fuji-industrial-100.webp',
+  './assets/gear/films/fuji-natura-1600.webp',
   './assets/gear/films/fuji-pro-400h.webp',
   './assets/gear/films/fuji-provia-100f.webp',
   './assets/gear/films/fuji-superia-400.webp',
   './assets/gear/films/fuji-superia-premium-400.webp',
   './assets/gear/films/fuji-velvia-50.webp',
+  './assets/gear/films/fuji-venus-800.webp',
   './assets/gear/films/kodak-colorplus-200.webp',
   './assets/gear/films/kodak-ektachrome-e100.webp',
   './assets/gear/films/kodak-ektar-100.webp',
@@ -28,8 +31,11 @@ const WARM_FILES = [
   './assets/gear/films/kodak-portra-800.webp',
   './assets/gear/films/kodak-tri-x-400.webp',
   './assets/gear/films/kodak-ultramax-400.webp',
+  './assets/gear/films/kodak-vision3-200t.webp',
   './assets/gear/films/kodak-vision3-250d.webp',
   './assets/gear/films/kodak-vision3-500t.webp',
+  './assets/gear/films/amber-t800.webp',
+  './assets/gear/films/cinestill-50d.webp',
   './assets/gear/films/cinestill-400d.webp',
   './assets/gear/films/cinestill-800t.webp',
   './assets/gear/films/ilford-delta-100.webp',
